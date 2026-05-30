@@ -211,7 +211,7 @@ export default function HeatmapPage() {
       </div>
 
       {/* ── MAIN LAYOUT ──────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 20, alignItems: 'start' }}>
+      <div className="responsive-map-layout" style={{ alignItems: 'start' }}>
 
         {/* ── LEFT: MAP GRID ──────────────────────────────── */}
         <div>
@@ -237,7 +237,7 @@ export default function HeatmapPage() {
           </div>
 
           {/* District Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 10 }}>
+          <div className="responsive-grid-6">
             {KARNATAKA_DISTRICTS.map((d) => {
               const count = getCrimeCount(d, activeFilter);
               const isSelected = selectedDistrict?.id === d.id;

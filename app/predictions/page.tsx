@@ -162,7 +162,7 @@ export default function PredictionsPage() {
       </div>
 
       {/* SECTION 1: TOP METRICS */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 28 }}>
+      <div className="responsive-grid-4" style={{ marginBottom: 28 }}>
         {topMetrics.map((m) => {
           const Icon = m.icon;
           return (
@@ -242,7 +242,7 @@ export default function PredictionsPage() {
       </div>
 
       {/* SECTION 3 + 4: DISTRICT RISK + CONFIDENCE TABLE */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 20, marginBottom: 24 }}>
+      <div className="responsive-grid-2-1" style={{ marginBottom: 24 }}>
         {/* DISTRICT RISK FORECAST */}
         <div className="glass-card" style={{ padding: 24 }}>
           <div className="section-header" style={{ marginBottom: 18 }}>
@@ -347,7 +347,7 @@ export default function PredictionsPage() {
           <div className="section-header-line" />
           <span className="section-title">AI Prediction Insights</span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+        <div className="responsive-grid-3">
           {aiInsights.map((ins) => {
             const Icon = ins.icon;
             return (

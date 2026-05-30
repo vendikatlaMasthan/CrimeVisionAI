@@ -107,7 +107,7 @@ export default function CommissionerPage() {
       </div>
 
       {/* ── EXECUTIVE STATS ROW ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 18, marginBottom: 24 }}>
+      <div className="responsive-grid-4" style={{ marginBottom: 24 }}>
         {[
           { label: 'Total State Crimes', value: COMMISSIONER_METRICS.totalCrimes.toLocaleString(), sub: 'Recorded Year-to-Date', color: '#00f0ff', icon: BarChart3 },
           { label: 'Active Investigation Cases', value: COMMISSIONER_METRICS.activeCases.toLocaleString(), sub: 'Across 31 Districts', color: '#f59e0b', icon: Users },
@@ -139,7 +139,7 @@ export default function CommissionerPage() {
       </div>
 
       {/* ── MIDDLE ROW: STATE OVERVIEW + ACTIVE THREATS ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 20, marginBottom: 24 }}>
+      <div className="responsive-grid-2-1" style={{ marginBottom: 24 }}>
         
         {/* District Crime Volume */}
         <div className="glass-card" style={{ padding: 24 }}>
@@ -216,7 +216,7 @@ export default function CommissionerPage() {
           <span className="badge badge-cyan" style={{ marginLeft: 8 }}>PREVENTIVE ACTION LIST</span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        <div className="responsive-grid-3">
           {COMMISSIONER_RECOMMENDATIONS.map((rec) => {
             const isApproved = approvedRecs.has(rec.id);
             return (
@@ -287,7 +287,7 @@ export default function CommissionerPage() {
           <div className="section-header-line" />
           <h2 className="section-title">State specialized Force Status</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 16 }}>
+        <div className="responsive-grid-4" style={{ marginBottom: 16 }}>
           {[
             { label: 'Deployed Officers', value: '28,450', color: '#10b981' },
             { label: 'Active Cyber Units', value: '589 units', color: '#00f0ff' },

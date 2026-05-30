@@ -99,7 +99,7 @@ export default function InsightsPage() {
       </div>
 
       {/* SECTION 1: INSIGHT SUMMARY CARDS */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 28 }}>
+      <div className="responsive-grid-4" style={{ marginBottom: 28 }}>
         {AI_INSIGHTS_SUMMARY.map((item) => {
           const palette = INSIGHT_COLORS[item.color] || INSIGHT_COLORS.cyan;
           return (
@@ -117,7 +117,7 @@ export default function InsightsPage() {
       </div>
 
       {/* SECTION 2 + 3: XAI ALERTS + RADAR CHART */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 20, marginBottom: 28 }}>
+      <div className="responsive-grid-1-340" style={{ marginBottom: 28 }}>
         {/* LEFT: EXPLAINABLE AI ALERTS */}
         <div>
           <div className="section-header">
@@ -319,7 +319,7 @@ export default function InsightsPage() {
           <span className="section-title">AI Pattern Matrix</span>
           <span className="badge badge-cyan" style={{ marginLeft: 4 }}>6 Patterns Identified</span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+        <div className="responsive-grid-3">
           {patternCards.map((card) => {
             const Icon = card.icon;
             return (

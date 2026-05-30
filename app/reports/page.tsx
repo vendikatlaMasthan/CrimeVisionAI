@@ -210,7 +210,7 @@ export default function ReportsPage() {
       </div>
 
       {/* REPORT CARDS GRID */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18, marginBottom: 28 }}>
+      <div className="responsive-grid-3" style={{ marginBottom: 28 }}>
         {REPORTS.map((report) => {
           const Icon = report.icon;
           const isDL = downloading === report.id;
@@ -295,7 +295,7 @@ export default function ReportsPage() {
             <span className="badge badge-green" style={{ marginLeft: 8 }}>✓ Generated Successfully</span>
           )}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 20 }}>
+        <div className="responsive-grid-3" style={{ marginBottom: 20 }}>
           {CHECKBOXES.map((cb) => (
             <label
               key={cb.id}
@@ -418,7 +418,7 @@ export default function ReportsPage() {
               <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>
                 District Risk Heatmap Preview
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+              <div className="responsive-grid-5">
                 {heatmapDistricts.map((d) => (
                   <div key={d.name} style={{
                     background: getHeatColor(d.score),

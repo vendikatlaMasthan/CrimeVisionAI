@@ -102,7 +102,7 @@ export default function InvestigatorPage() {
       </div>
 
       {/* TWO COLUMN CHAT LAYOUT */}
-      <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 20, flex: 1, alignItems: 'stretch' }}>
+      <div className="responsive-chat-layout" style={{ flex: 1, alignItems: 'stretch' }}>
         
         {/* LEFT PANEL: SUGGESTIONS & STATUS */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>

@@ -572,7 +572,7 @@ export default function NetworkPage() {
       </div>
 
       {/* ── LAYOUT ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
+      <div className="responsive-grid-1-340">
 
         {/* LEFT: CANVAS AREA */}
         <div>

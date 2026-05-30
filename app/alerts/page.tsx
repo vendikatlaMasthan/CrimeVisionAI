@@ -158,7 +158,7 @@ export default function AlertsPage() {
       </div>
 
       {/* ALERT STATS ROW */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 22 }}>
+      <div className="responsive-grid-4" style={{ marginBottom: 22 }}>
         {[
           { label: 'Critical Alerts', value: criticalCount, color: '#ef4444', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.25)', pulse: true, icon: AlertTriangle },
           { label: 'High Priority', value: highCount, color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)', pulse: false, icon: Shield },
@@ -242,7 +242,7 @@ export default function AlertsPage() {
       </div>
 
       {/* MAIN LAYOUT: ALERT FEED + COMMAND PANEL */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 20 }}>
+      <div className="responsive-grid-1-340">
         {/* LEFT: ALERT FEED */}
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>

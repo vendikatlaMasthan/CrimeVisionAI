@@ -97,7 +97,7 @@ export default function AnomalyPage() {
       </div>
 
       {/* STATS ROW */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
+      <div className="responsive-grid-4" style={{ marginBottom: 24 }}>
         {[
           { label: 'Active Anomalies', value: activeCount, sub: 'Triggered alarms', color: '#ef4444', icon: AlertTriangle, bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.2)' },
           { label: 'Critical Spikes', value: criticalCount, sub: 'Immediate attention', color: '#f59e0b', icon: ShieldAlert, bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.2)' },
@@ -148,7 +148,7 @@ export default function AnomalyPage() {
           <div className="section-header-line" style={{ background: '#ef4444' }} />
           <span className="section-title">Active Anomaly Flags</span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="responsive-grid-2">
           {anomalyList.map((anom) => {
             const isCritical = anom.severity === 'critical';
             const isDismissed = anom.status === 'False Positive';

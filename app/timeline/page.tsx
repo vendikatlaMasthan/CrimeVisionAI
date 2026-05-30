@@ -235,7 +235,7 @@ function SeasonalGrid() {
           </span>
         </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }}>
+      <div className="responsive-grid-6">
         {SEASONAL_CRIMES.map(m => {
           const { bg, text } = getColor(m.crimes, m.spike);
           return (
@@ -422,7 +422,7 @@ export default function TimelinePage() {
       </div>
 
       {/* INSIGHT CARDS ROW */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
+      <div className="responsive-grid-4" style={{ marginBottom: 24 }}>
         {TIMELINE_INSIGHTS.map(insight => (
           <div key={insight.title} className="glass-card" style={{ padding: 20 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
@@ -473,7 +473,7 @@ export default function TimelinePage() {
       </div>
 
       {/* COMPARATIVE ANALYSIS */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+      <div className="responsive-grid-2">
         {/* Weekday vs Weekend */}
         <div className="glass-card" style={{ padding: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>

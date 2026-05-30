@@ -135,7 +135,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── PRIMARY METRIC CARDS ──────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 18, marginBottom: 18 }}>
+      <div className="responsive-grid-4" style={{ marginBottom: 18 }}>
         {/* Total Crimes */}
         <div className="glass-card" style={{ padding: 22 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
@@ -227,7 +227,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── SECONDARY METRICS ────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 24 }}>
+      <div className="responsive-grid-4" style={{ marginBottom: 24 }}>
         {[
           { label: 'Arrests MTD', value: SUMMARY_METRICS.arrestsThisMonth.toLocaleString(), icon: <Users size={16} color="#8b5cf6" />, color: '#8b5cf6' },
           { label: 'Charges Filed', value: SUMMARY_METRICS.chargesFiledMTD.toLocaleString(), icon: <FileText size={16} color="#0ea5e9" />, color: '#0ea5e9' },
@@ -251,7 +251,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── MAIN CHARTS ROW ──────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 18, marginBottom: 24 }}>
+      <div className="responsive-grid-2-1" style={{ marginBottom: 24 }}>
         {/* Area Chart */}
         <div className="glass-card" style={{ padding: 24 }}>
           <div className="section-header">
@@ -336,7 +336,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── BOTTOM ROW ───────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 18, marginBottom: 24 }}>
+      <div className="responsive-grid-3-2" style={{ marginBottom: 24 }}>
         {/* Incidents Table */}
         <div className="glass-card" style={{ padding: 24 }}>
           <div className="section-header">
@@ -428,7 +428,7 @@ export default function DashboardPage() {
           </span>
           <span className="badge badge-amber" style={{ fontSize: 10 }}>{AI_ALERTS.length} ACTIVE</span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14 }}>
+        <div className="responsive-grid-3">
           {AI_ALERTS.slice(0, 3).map((alert) => (
             <div
               key={alert.id}

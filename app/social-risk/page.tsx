@@ -94,7 +94,7 @@ export default function SocialRiskPage() {
           <h2 className="section-title">Correlation Coefficients</h2>
           <span className="badge badge-purple" style={{ marginLeft: 'auto' }}>Pearson R Analysis</span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+        <div className="responsive-grid-3">
           {SOCIO_CORRELATIONS.map(cor => {
             const isPositive = cor.direction === 'positive';
             const absVal = Math.abs(cor.correlation);
@@ -144,7 +144,7 @@ export default function SocialRiskPage() {
           <div style={{ width: 3, height: 22, background: '#00f0ff', borderRadius: 2 }} />
           <h2 className="section-title">Scatter Plot Analysis — Districts</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="responsive-grid-2">
           {[
             { x: 'unemploymentRate', xLabel: 'Unemployment Rate (%)', y: 'crimeRate', yLabel: 'Crime Rate', title: 'Unemployment vs Crime Rate' },
             { x: 'educationIndex', xLabel: 'Education Index', y: 'crimeRate', yLabel: 'Crime Rate', title: 'Education Index vs Crime Rate' },
@@ -273,7 +273,7 @@ export default function SocialRiskPage() {
           <div style={{ width: 3, height: 22, background: '#10b981', borderRadius: 2 }} />
           <h2 className="section-title">Key Research Findings</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        <div className="responsive-grid-3">
           {[
             {
               icon: <AlertTriangle size={22} color="#ef4444" />,
