@@ -2,5 +2,6 @@
   "name": "crimevisionai",
   "version": "1.0.0",
   "homepage": "index.html",
+  "404": "404.html",
   "description": "CrimeVision AI — Karnataka State Police Crime Intelligence Platform"
 }

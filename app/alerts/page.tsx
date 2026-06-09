@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import {
   Bell, AlertTriangle, Shield, CheckCircle, Radio, Zap,
   ChevronRight, Clock, MapPin, X, RefreshCw, Send,
-  Users, Phone, Eye, Activity, Filter,
+  Users, Phone, Eye, Activity, Filter, Trash2, ArrowUpRight
 } from 'lucide-react';
-import { LIVE_ALERTS, AI_ALERTS } from '@/lib/mockData';
+import Link from 'next/link';
+import { LIVE_ALERTS, FIR_RECORDS, CRIMINAL_PROFILES } from '@/lib/mockData';
 
 type Severity = 'all' | 'critical' | 'high' | 'medium' | 'low';
 type Category = 'all' | 'Cybercrime' | 'Financial Crime' | 'Gang Activity' | 'Drug Related' | 'Fraud' | 'Organized Crime';
@@ -57,7 +58,6 @@ const tickerItems = LIVE_ALERTS.map(a => {
 });
 const TICKER_TEXT = tickerItems.join('    ·    ') + '    ·    ' + tickerItems.join('    ·    ');
 
-// Category stats
 const categoryStats = [
   { name: 'Cybercrime', count: 3, color: '#00f0ff' },
   { name: 'Financial Crime', count: 2, color: '#10b981' },
@@ -72,9 +72,11 @@ export default function AlertsPage() {
   const [acknowledged, setAcknowledged] = useState<Set<string>>(
     new Set(LIVE_ALERTS.filter(a => a.acknowledged).map(a => a.id))
   );
-  const [lastUpdated, setLastUpdated] = useState<string>('');
   const [dispatched, setDispatched] = useState<Set<string>>(new Set());
   const [escalated, setEscalated] = useState<Set<string>>(new Set());
+  const [closedAlerts, setClosedAlerts] = useState<Set<string>>(new Set());
+  const [selectedAlertId, setSelectedAlertId] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<string>('');
 
   useEffect(() => {
     const updateTime = () => {
@@ -85,31 +87,80 @@ export default function AlertsPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const filteredAlerts = LIVE_ALERTS
-    .filter(a => selectedSeverity === 'all' || a.severity === selectedSeverity)
+  const activeAlerts = LIVE_ALERTS.filter(a => !closedAlerts.has(a.id));
+
+  // Compute severity of alerts dynamically (in case of escalations)
+  const getAlertSeverity = (alertId: string, baseSeverity: string): string => {
+    return escalated.has(alertId) ? 'critical' : baseSeverity;
+  };
+
+  const filteredAlerts = activeAlerts
+    .filter(a => {
+      const currentSev = getAlertSeverity(a.id, a.severity);
+      return selectedSeverity === 'all' || currentSev === selectedSeverity;
+    })
     .filter(a => {
       if (selectedCategory === 'all') return true;
       if (selectedCategory === 'Gang Activity') return a.category === 'Gang Activity';
       return a.category === selectedCategory;
     })
-    .sort((a, b) => (SEVERITY_ORDER[a.severity] ?? 9) - (SEVERITY_ORDER[b.severity] ?? 9));
+    .sort((a, b) => {
+      const sevA = getAlertSeverity(a.id, a.severity);
+      const sevB = getAlertSeverity(b.id, b.severity);
+      return (SEVERITY_ORDER[sevA] ?? 9) - (SEVERITY_ORDER[sevB] ?? 9);
+    });
 
-  const criticalCount = LIVE_ALERTS.filter(a => a.severity === 'critical').length;
-  const highCount = LIVE_ALERTS.filter(a => a.severity === 'high').length;
+  const criticalCount = activeAlerts.filter(a => getAlertSeverity(a.id, a.severity) === 'critical').length;
+  const highCount = activeAlerts.filter(a => getAlertSeverity(a.id, a.severity) === 'high').length;
   const underResponse = dispatched.size + 5;
 
-  const handleAcknowledge = (id: string) => {
+  const handleAcknowledge = (id: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
     setAcknowledged(prev => { const s = new Set(prev); s.add(id); return s; });
   };
-  const handleDispatch = (id: string) => {
+
+  const handleDispatch = (id: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
     setDispatched(prev => { const s = new Set(prev); s.add(id); return s; });
   };
-  const handleEscalate = (id: string) => {
+
+  const handleEscalate = (id: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
     setEscalated(prev => { const s = new Set(prev); s.add(id); return s; });
   };
 
+  const handleCloseAlert = (id: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setClosedAlerts(prev => { const s = new Set(prev); s.add(id); return s; });
+    if (selectedAlertId === id) {
+      setSelectedAlertId(null);
+    }
+  };
+
+  // Find selected alert details
+  const selectedAlert = activeAlerts.find(a => a.id === selectedAlertId);
+
+  // Compute related cases & suspects inside drawer
+  const drawerInfo = selectedAlert ? (() => {
+    const relatedFirs = FIR_RECORDS.filter(f => f.district === selectedAlert.district).slice(0, 2);
+    const relatedSuspects = relatedFirs.map(f => f.suspectDetails.name);
+    
+    // Add default if empty
+    if (relatedFirs.length === 0) {
+      const defaultSuspect = CRIMINAL_PROFILES.find(c => c.district === selectedAlert.district) || CRIMINAL_PROFILES[0];
+      relatedSuspects.push(defaultSuspect.name);
+    }
+
+    return {
+      firs: relatedFirs,
+      suspects: relatedSuspects,
+      officer: "Inspector Girish",
+    };
+  })() : null;
+
   return (
     <div className="page-content" style={{ padding: '28px' }}>
+      
       {/* PAGE HEADER */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
         <div style={{
@@ -243,6 +294,7 @@ export default function AlertsPage() {
 
       {/* MAIN LAYOUT: ALERT FEED + COMMAND PANEL */}
       <div className="responsive-grid-1-340">
+        
         {/* LEFT: ALERT FEED */}
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
@@ -259,16 +311,18 @@ export default function AlertsPage() {
               </div>
             )}
             {filteredAlerts.map((alert) => {
+              const severityVal = getAlertSeverity(alert.id, alert.severity);
               const isAcked = acknowledged.has(alert.id);
               const isDispatched = dispatched.has(alert.id);
               const isEscalated = escalated.has(alert.id);
-              const isCritical = alert.severity === 'critical';
-              const borderColor = SEVERITY_BORDER[alert.severity] ?? '#64748b';
+              const isCritical = severityVal === 'critical';
+              const borderColor = SEVERITY_BORDER[severityVal] ?? '#64748b';
 
               return (
                 <div
                   key={alert.id}
-                  className={`alert-card ${isCritical ? 'animate-alert-flash' : ''}`}
+                  onClick={() => setSelectedAlertId(alert.id)}
+                  className={`alert-card cursor-pointer hover:-translate-y-0.5 transition-all ${isCritical ? 'animate-alert-flash' : ''}`}
                   style={{
                     borderLeftColor: borderColor,
                     background: isCritical ? 'rgba(30,8,8,0.85)' : 'rgba(10,22,40,0.88)',
@@ -281,12 +335,12 @@ export default function AlertsPage() {
                 >
                   {/* TOP ROW */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
-                    <span className={SEVERITY_BADGE[alert.severity]} style={
-                      alert.severity === 'medium'
+                    <span className={SEVERITY_BADGE[severityVal]} style={
+                      severityVal === 'medium'
                         ? { background: 'rgba(234,179,8,0.15)', color: '#facc15', border: '1px solid rgba(234,179,8,0.35)' }
                         : {}
                     }>
-                      {alert.severity.toUpperCase()}
+                      {severityVal.toUpperCase()}
                     </span>
                     <span className={CATEGORY_BADGE[alert.category] || 'badge badge-gray'} style={{ fontSize: 10 }}>
                       {alert.category}
@@ -305,8 +359,9 @@ export default function AlertsPage() {
                   </div>
 
                   {/* TITLE */}
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#f1f5f9', marginBottom: 6, lineHeight: 1.4 }}>
-                    {alert.title}
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#f1f5f9', marginBottom: 6, lineHeight: 1.4 }} className="flex justify-between items-center">
+                    <span>{alert.title}</span>
+                    <ArrowUpRight size={14} className="text-slate-500 hover:text-white" />
                   </div>
 
                   {/* DESCRIPTION */}
@@ -333,7 +388,7 @@ export default function AlertsPage() {
                     <button
                       className="cyber-btn cyber-btn-red"
                       style={{ fontSize: 11, padding: '7px 14px' }}
-                      onClick={() => handleDispatch(alert.id)}
+                      onClick={(e) => handleDispatch(alert.id, e)}
                       disabled={isDispatched}
                     >
                       <Send size={11} /> {isDispatched ? 'Dispatched ✓' : 'Dispatch'}
@@ -341,7 +396,7 @@ export default function AlertsPage() {
                     <button
                       className="cyber-btn cyber-btn-amber"
                       style={{ fontSize: 11, padding: '7px 14px' }}
-                      onClick={() => handleAcknowledge(alert.id)}
+                      onClick={(e) => handleAcknowledge(alert.id, e)}
                       disabled={isAcked}
                     >
                       <CheckCircle size={11} /> {isAcked ? 'Acknowledged ✓' : 'Acknowledge'}
@@ -349,10 +404,17 @@ export default function AlertsPage() {
                     <button
                       className="cyber-btn cyber-btn-purple"
                       style={{ fontSize: 11, padding: '7px 14px' }}
-                      onClick={() => handleEscalate(alert.id)}
+                      onClick={(e) => handleEscalate(alert.id, e)}
                       disabled={isEscalated}
                     >
                       <ChevronRight size={11} /> {isEscalated ? 'Escalated ✓' : 'Escalate'}
+                    </button>
+                    <button
+                      className="cyber-btn"
+                      style={{ fontSize: 11, padding: '7px 14px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+                      onClick={(e) => handleCloseAlert(alert.id, e)}
+                    >
+                      <Trash2 size={11} /> Resolve
                     </button>
                   </div>
                 </div>
@@ -467,6 +529,174 @@ export default function AlertsPage() {
           </div>
         </div>
       </div>
+
+      {/* ALERT DETAILS SLIDE-OVER DRAWER */}
+      {selectedAlert && drawerInfo && (
+        <div className="fixed inset-0 z-50 flex justify-end" style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}>
+          <div className="absolute inset-0" onClick={() => setSelectedAlertId(null)} />
+          <div 
+            className="relative w-[480px] max-w-full h-full p-6 flex flex-col border-l border-white/10 z-10 transition-all duration-300"
+            style={{
+              background: 'rgba(2, 6, 23, 0.98)',
+              backdropFilter: 'blur(24px)',
+              boxShadow: '-10px 0 30px rgba(0,0,0,0.5)',
+            }}
+          >
+            {/* DRAWER HEADER */}
+            <div className="flex justify-between items-start mb-6 pb-4 border-b border-white/5">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-[10px] font-mono tracking-widest text-[#00f0ff] font-black">{selectedAlert.id}</span>
+                  <span className="w-1 h-3 rounded bg-cyan-400" />
+                  <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{selectedAlert.timestamp}</span>
+                </div>
+                <h2 className="text-lg font-black text-slate-100">{selectedAlert.title}</h2>
+              </div>
+              <button 
+                onClick={() => setSelectedAlertId(null)} 
+                className="p-1 text-slate-500 hover:text-white rounded-lg hover:bg-white/5 cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* DRAWER BODY */}
+            <div className="flex-1 overflow-y-auto space-y-5 pr-1 text-xs">
+              
+              {/* STATUS SUMMARY */}
+              <div className="responsive-grid-2">
+                <div className="bg-black/20 p-3 rounded-lg border border-white/5">
+                  <span className="text-slate-500 uppercase tracking-wider text-[9px] block">Severity</span>
+                  <span className={`${SEVERITY_BADGE[getAlertSeverity(selectedAlert.id, selectedAlert.severity)]} mt-1 inline-block uppercase`}>
+                    {getAlertSeverity(selectedAlert.id, selectedAlert.severity)}
+                  </span>
+                </div>
+                <div className="bg-black/20 p-3 rounded-lg border border-white/5">
+                  <span className="text-slate-500 uppercase tracking-wider text-[9px] block">District Location</span>
+                  <span className="text-slate-200 font-bold block mt-1.5">{selectedAlert.district} Command</span>
+                </div>
+              </div>
+
+              {/* DETAILS DESCRIPTION */}
+              <div className="bg-black/15 p-3.5 rounded-lg border border-white/5 leading-relaxed text-slate-300">
+                <span className="text-slate-500 uppercase tracking-wider text-[9px] block mb-1">Alert Description</span>
+                {selectedAlert.description}
+              </div>
+
+              {/* FORENSIC EVIDENCE */}
+              <div className="bg-black/15 p-3.5 rounded-lg border border-white/5 leading-relaxed text-slate-300">
+                <span className="text-slate-500 uppercase tracking-wider text-[9px] block mb-1">Scanned Evidence</span>
+                <span className="text-[#00f0ff] font-bold block mt-0.5">{selectedAlert.evidence}</span>
+              </div>
+
+              {/* ACCUSED SUSPECTS */}
+              <div className="bg-black/15 p-3.5 rounded-lg border border-white/5 text-slate-300">
+                <span className="text-slate-500 uppercase tracking-wider text-[9px] block mb-1.5">Identified Accused Profile</span>
+                {drawerInfo.suspects.map((name, i) => (
+                  <div key={i} className="flex justify-between items-center mt-1 py-1.5 border-b border-white/5 last:border-b-0">
+                    <span className="font-bold text-slate-200">{name}</span>
+                    <Link 
+                      href={`/search?query=${name}`}
+                      onClick={() => setSelectedAlertId(null)}
+                      className="text-[#00f0ff] hover:underline flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider"
+                    >
+                      Inspect Profile <ArrowUpRight size={10} />
+                    </Link>
+                  </div>
+                ))}
+              </div>
+
+              {/* RELATED FIRS */}
+              <div className="bg-black/15 p-3.5 rounded-lg border border-white/5 text-slate-300">
+                <span className="text-slate-500 uppercase tracking-wider text-[9px] block mb-1.5">Connected Case Files (FIRs)</span>
+                {drawerInfo.firs.length === 0 ? (
+                  <span className="text-slate-500 italic block mt-1">No active FIRs connected to this district.</span>
+                ) : (
+                  drawerInfo.firs.map(fir => (
+                    <div key={fir.id} className="flex justify-between items-center mt-1 py-1.5 border-b border-white/5 last:border-b-0">
+                      <div>
+                        <span className="font-mono font-bold text-[#00f0ff]">{fir.firNumber}</span>
+                        <span className="text-[10px] text-slate-400 block mt-0.5">{fir.crimeCategory}</span>
+                      </div>
+                      <Link 
+                        href={`/fir?id=${fir.id}`}
+                        onClick={() => setSelectedAlertId(null)}
+                        className="cyber-btn text-[10px] py-1 px-2.5 bg-cyan-950/20 text-[#00f0ff] border border-[#00f0ff]/20 rounded-md"
+                      >
+                        Open Case
+                      </Link>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* TIMELINE */}
+              <div className="bg-black/15 p-3.5 rounded-lg border border-white/5 text-slate-300">
+                <span className="text-slate-500 uppercase tracking-wider text-[9px] block mb-2.5">Alert Response Stepper</span>
+                <div className="relative pl-5 border-l border-white/10 space-y-4 ml-1.5">
+                  <div className="relative">
+                    <span className="absolute -left-[24px] top-1 w-3.5 h-3.5 rounded-full bg-[#10b981] flex items-center justify-center">
+                      <CheckCircle size={8} color="#fff" />
+                    </span>
+                    <div>
+                      <span className="font-bold text-slate-200">Alert Triggered</span>
+                      <p className="text-[10px] text-slate-500">AI monitoring engines flagged activity parameters.</p>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <span className="absolute -left-[24px] top-1 w-3.5 h-3.5 rounded-full bg-[#10b981] flex items-center justify-center">
+                      <CheckCircle size={8} color="#fff" />
+                    </span>
+                    <div>
+                      <span className="font-bold text-slate-200">Acknowledge Command</span>
+                      <p className="text-[10px] text-slate-500">
+                        {acknowledged.has(selectedAlert.id) ? "Alert has been acknowledged by regional desk." : "Pending operator response."}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <span className={`absolute -left-[24px] top-1 w-3.5 h-3.5 rounded-full flex items-center justify-center ${
+                      dispatched.has(selectedAlert.id) ? 'bg-[#10b981]' : 'bg-slate-800'
+                    }`}>
+                      {dispatched.has(selectedAlert.id) && <CheckCircle size={8} color="#fff" />}
+                    </span>
+                    <div className={dispatched.has(selectedAlert.id) ? '' : 'opacity-40'}>
+                      <span className="font-bold text-slate-200">Tactical Unit Dispatched</span>
+                      <p className="text-[10px] text-slate-500">
+                        {dispatched.has(selectedAlert.id) ? "SIT response units dispatched to coordinates." : "Standing by for tactical dispatch."}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* DRAWER FOOTER ACTIONS */}
+            <div className="flex gap-2 mt-6 pt-4 border-t border-white/5">
+              <button
+                className="cyber-btn cyber-btn-red flex-1 justify-center py-2.5 text-xs font-bold"
+                onClick={(e) => handleDispatch(selectedAlert.id, e)}
+                disabled={dispatched.has(selectedAlert.id)}
+              >
+                <Send size={12} /> {dispatched.has(selectedAlert.id) ? 'Dispatched ✓' : 'Dispatch Desk'}
+              </button>
+              <button
+                className="cyber-btn cyber-btn-purple flex-1 justify-center py-2.5 text-xs font-bold"
+                onClick={(e) => handleEscalate(selectedAlert.id, e)}
+                disabled={escalated.has(selectedAlert.id)}
+              >
+                <ChevronRight size={12} /> {escalated.has(selectedAlert.id) ? 'Escalated Critical' : 'Escalate Alert'}
+              </button>
+              <button
+                className="cyber-btn flex-1 justify-center py-2.5 text-xs font-bold bg-slate-900 border border-red-500/20 text-red-400 hover:bg-red-500/10"
+                onClick={(e) => handleCloseAlert(selectedAlert.id, e)}
+              >
+                <Trash2 size={12} /> Close Alert
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

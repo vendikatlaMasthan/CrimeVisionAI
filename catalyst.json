@@ -1,5 +1,8 @@
 {
   "client": {
-    "source": "out"
+    "source": "out",
+    "scripts": {
+      "predeploy": "npm run build"
+    }
   }
 }

@@ -666,3 +666,204 @@ export const AI_INSIGHTS_SUMMARY = [
     color: "purple",
   },
 ];
+
+// ─────────────────────────────────────────────
+// PROGRAMMATIC HACKATHON DATA ENGINE
+// ─────────────────────────────────────────────
+
+const firstNames = ["Rajesh", "Amit", "Imran", "Venkatesh", "Suresh", "Priya", "Deepak", "Anil", "Sunil", "Vijay", "Sandeep", "Karan", "Mohammad", "Vikram", "Shiva", "Manjunath", "Lokesh", "Kiran", "Naveen", "Abhishek"];
+const lastNames = ["Kumar", "Sheikh", "Rao", "Patel", "Nayak", "Desai", "Gowda", "Sharma", "Reddy", "Bhat", "Joshi", "Hegde", "Patil", "Siddiqui", "Pai", "Naidu", "Acharya", "Murthy", "Swamy", "Prasad"];
+const officerNames = ["ACP Chandrashekar", "Inspector Girish", "Sub-Inspector Poornima", "ACP Raghavendra", "Inspector Shalini", "Deputy Commissioner Patil", "Inspector Manjunath", "Sub-Inspector Divya"];
+const crimeCategories = ["Cybercrime", "Theft & Burglary", "Sand Mining", "Assault & Violence", "Narcotic Trafficking", "Organized Crime", "Fraud", "Rape", "Murder", "Drug Cases", "Financial Fraud"];
+const statusOptions: ("investigating" | "arrested" | "resolved" | "monitoring")[] = ["investigating", "arrested", "resolved", "monitoring"];
+const districts = ["Bengaluru Urban", "Kalaburagi", "Raichur", "Ballari", "Belagavi", "Mysuru", "Mangaluru", "Hubballi-Dharwad", "Vijayapura", "Shivamogga", "Tumakuru"];
+
+export interface CriminalProfile {
+  id: string;
+  name: string;
+  age: number;
+  gender: string;
+  district: string;
+  crimeHistory: string[];
+  arrestCount: number;
+  riskLevel: "Low" | "Medium" | "High" | "Critical";
+  knownAssociates: string[];
+  vehiclesUsed: string[];
+  mobileNumbers: string[];
+  bankAccounts: string[];
+  recentActivity: string;
+  profileScore: number;
+  status: string;
+}
+
+const generatedCriminals: CriminalProfile[] = [];
+for (let i = 1; i <= 105; i++) {
+  const fName = firstNames[i % firstNames.length];
+  const lName = lastNames[(i * 3) % lastNames.length];
+  const name = `${fName} ${lName}`;
+  const age = 22 + (i % 40);
+  const gender = i % 15 === 0 ? "Female" : "Male";
+  const district = districts[i % districts.length];
+  const arrestCount = 1 + (i % 6);
+  const riskScore = 40 + (i % 58);
+  const riskLevel = riskScore > 85 ? "Critical" : riskScore > 70 ? "High" : riskScore > 50 ? "Medium" : "Low";
+  
+  const history: string[] = [];
+  const cat = crimeCategories[i % crimeCategories.length];
+  history.push(`${cat} Incident (${2020 + (i % 5)})`);
+  if (i % 3 === 0) history.push(`Theft & Robbery Case (${2022 + (i % 3)})`);
+  if (i % 5 === 0) history.push(`Assault Charge (${2023})`);
+
+  generatedCriminals.push({
+    id: `susp_${i}`,
+    name,
+    age,
+    gender,
+    district,
+    crimeHistory: history,
+    arrestCount,
+    riskLevel,
+    knownAssociates: [],
+    vehiclesUsed: [`KA-0${1 + (i % 9)}-${String.fromCharCode(65 + (i % 26))}${String.fromCharCode(66 + (i % 26))}-${1000 + (i * 7) % 9000}`],
+    mobileNumbers: [`+91-9${1000 + (i * 13) % 9000}-${50000 + (i * 7) % 50000}`],
+    bankAccounts: [`SBI ****${3000 + (i * 11) % 7000}`],
+    recentActivity: `Last seen in ${district} district on 2026-05-${10 + (i % 20)}`,
+    profileScore: riskScore,
+    status: riskLevel === "Critical" ? "Wanted" : "Under Surveillance"
+  });
+}
+
+// Populate associates
+for (let i = 0; i < generatedCriminals.length; i++) {
+  const c = generatedCriminals[i];
+  const associate1 = generatedCriminals[(i + 1) % generatedCriminals.length].name;
+  const associate2 = generatedCriminals[(i + 3) % generatedCriminals.length].name;
+  c.knownAssociates = [associate1, associate2];
+}
+
+export const CRIMINAL_PROFILES = generatedCriminals;
+
+export interface FIRRecord {
+  id: string;
+  firNumber: string;
+  date: string;
+  district: string;
+  crimeCategory: string;
+  suspectDetails: CriminalProfile;
+  victimDetails: {
+    name: string;
+    age: number;
+    gender: string;
+    status: string;
+  };
+  evidenceCount: number;
+  investigationStatus: "investigating" | "arrested" | "resolved" | "monitoring";
+  assignedOfficer: string;
+  riskScore: number;
+  timeline: {
+    timestamp: string;
+    officerName: string;
+    notes: string;
+    status: string;
+  }[];
+}
+
+export const FIR_RECORDS: FIRRecord[] = [];
+for (let i = 1; i <= 55; i++) {
+  const district = districts[i % districts.length];
+  const category = crimeCategories[i % crimeCategories.length];
+  const suspect = generatedCriminals[i - 1];
+  const status = statusOptions[i % statusOptions.length];
+  const officer = officerNames[i % officerNames.length];
+  const evidenceCount = 2 + (i % 8);
+  const riskScore = suspect.profileScore;
+  const date = `2026-05-${String(1 + (i % 28)).padStart(2, "0")}`;
+
+  const victimFName = lastNames[i % lastNames.length];
+  const victimLName = firstNames[(i * 2) % firstNames.length];
+  const victimName = `${victimLName} ${victimFName}`;
+  const victimAge = 25 + (i % 35);
+  const victimGender = i % 4 === 0 ? "Female" : "Male";
+
+  const timelineSteps = [
+    { timestamp: `${date} 09:00 AM`, officerName: officer, notes: "FIR registered based on complaint received.", status: "FIR Registered" },
+    { timestamp: `${date} 02:30 PM`, officerName: officer, notes: `${evidenceCount} pieces of physical evidence recovered from crime scene.`, status: "Evidence Collected" },
+  ];
+
+  if (status !== "investigating") {
+    timelineSteps.push({ timestamp: `${date} 04:00 PM`, officerName: officer, notes: `Mobile signal tower dump analyzed. Suspect device IMEI tracked.`, status: "Mobile Tracking" });
+  }
+  if (status === "arrested" || status === "resolved" || status === "monitoring") {
+    timelineSteps.push({ timestamp: `${date} 05:00 PM`, officerName: officer, notes: `Financial logs matching bank transfers scrutinized. Account frozen.`, status: "Bank Analysis" });
+    timelineSteps.push({ timestamp: `${date} 06:30 PM`, officerName: officer, notes: `Active associates link identified. Network graph updated.`, status: "Network Mapping" });
+    timelineSteps.push({ timestamp: `${date} 08:00 PM`, officerName: officer, notes: `Suspect name confirmed through photo matching.`, status: "Suspect Identified" });
+  }
+  if (status === "arrested" || status === "resolved") {
+    timelineSteps.push({ timestamp: `${date} 10:00 PM`, officerName: officer, notes: `Target apprehended. Suspect taken into custody.`, status: "Arrest Made" });
+  }
+  if (status === "resolved") {
+    timelineSteps.push({ timestamp: `${date} 11:30 PM`, officerName: officer, notes: `Chargesheet drafted and filed under relevant sections of IPC/BNS.`, status: "Charges Filed" });
+    timelineSteps.push({ timestamp: `${date} 11:59 PM`, officerName: officer, notes: `Magistrate order obtained. Investigation completed.`, status: "Case Closed" });
+  }
+
+  FIR_RECORDS.push({
+    id: `KA-2026-${String(1000 + i).slice(1)}`,
+    firNumber: `FIR/2026/${district.substring(0, 3).toUpperCase()}/${100 + i}`,
+    date,
+    district,
+    crimeCategory: category,
+    suspectDetails: suspect,
+    victimDetails: {
+      name: victimName,
+      age: victimAge,
+      gender: victimGender,
+      status: status === "resolved" ? "Compensated" : "Awaiting Trial"
+    },
+    evidenceCount,
+    investigationStatus: status,
+    assignedOfficer: officer,
+    riskScore,
+    timeline: timelineSteps
+  });
+}
+
+// Generate relationships mapping (200+ links) for CRIMINAL_NETWORK
+const newNetworkNodes = [...CRIMINAL_NETWORK.nodes];
+const newNetworkLinks = [...CRIMINAL_NETWORK.links];
+
+for (let i = 7; i < generatedCriminals.length; i++) {
+  const c = generatedCriminals[i];
+  newNetworkNodes.push({
+    id: c.id,
+    label: c.name,
+    type: "suspect",
+    risk: c.riskLevel.toLowerCase() as any,
+    district: c.district,
+    crimes: c.crimeHistory.length + 1,
+    age: c.age,
+    status: c.riskLevel === "Critical" ? "Wanted" : "Under Surveillance"
+  });
+}
+
+for (let i = 1; i <= 30; i++) {
+  newNetworkNodes.push({ id: `ba_gen_${i}`, label: `SBI Account ****${4000 + i * 13}`, type: "bank", district: districts[i % districts.length] });
+  newNetworkNodes.push({ id: `veh_gen_${i}`, label: `KA-0${1 + (i % 9)}-XY-${2000 + i * 7}`, type: "vehicle", district: districts[i % districts.length] });
+  newNetworkNodes.push({ id: `mob_gen_${i}`, label: `+91-95432-${10000 + i * 17}`, type: "mobile", district: districts[i % districts.length] });
+}
+
+for (let i = 0; i < generatedCriminals.length; i++) {
+  const c = generatedCriminals[i];
+  newNetworkLinks.push({ source: c.id, target: `l${1 + (i % 5)}`, strength: 1 + (i % 3) });
+  newNetworkLinks.push({ source: c.id, target: `ba_gen_${1 + (i % 30)}`, strength: 2 + (i % 3) });
+  newNetworkLinks.push({ source: c.id, target: `mob_gen_${1 + (i % 30)}`, strength: 3 });
+  newNetworkLinks.push({ source: c.id, target: `veh_gen_${1 + (i % 30)}`, strength: 2 });
+  if (i < generatedCriminals.length - 1) {
+    newNetworkLinks.push({ source: c.id, target: generatedCriminals[i + 1].id, strength: 1 + (i % 4) });
+  }
+}
+
+export const EXTENDED_CRIMINAL_NETWORK = {
+  nodes: newNetworkNodes,
+  links: newNetworkLinks
+};
+

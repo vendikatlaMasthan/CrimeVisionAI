@@ -1,0 +1,1043 @@
+'use client';
+import { useState, useMemo } from 'react';
+import {
+  Dna, Search, Zap, Eye, ChevronRight, AlertTriangle, Clock,
+  MapPin, Shield, Link2, Fingerprint, Target, Activity
+} from 'lucide-react';
+import { FIR_RECORDS, CRIMINAL_PROFILES, FIRRecord } from '@/lib/mockData';
+
+// ─────────────────────────────────────────────
+// DNA COMPUTATION UTILITIES
+// ─────────────────────────────────────────────
+
+type TimeCode = 'N' | 'D' | 'E' | 'M';
+type MethodCode = 'CY' | 'TH' | 'AS' | 'NA' | 'OR' | 'FR' | 'RP' | 'MR' | 'DR' | 'FN' | 'SM';
+type TargetCode = 'YTH' | 'ADL' | 'SNR' | 'ELD';
+
+interface CrimeDNA {
+  timeCode: TimeCode;
+  locationCode: string;
+  methodCode: MethodCode;
+  targetCode: TargetCode;
+  fullDNA: string;
+}
+
+function getTimeCode(dateStr: string): TimeCode {
+  const day = parseInt(dateStr.split('-')[2], 10);
+  const mod = day % 4;
+  if (mod === 1) return 'N';
+  if (mod === 2) return 'D';
+  if (mod === 3) return 'E';
+  return 'M';
+}
+
+function getLocationCode(district: string): string {
+  return district.replace(/[^a-zA-Z]/g, '').substring(0, 3).toUpperCase();
+}
+
+function getMethodCode(category: string): MethodCode {
+  const map: Record<string, MethodCode> = {
+    'Cybercrime': 'CY',
+    'Theft & Burglary': 'TH',
+    'Assault & Violence': 'AS',
+    'Narcotic Trafficking': 'NA',
+    'Organized Crime': 'OR',
+    'Fraud': 'FR',
+    'Rape': 'RP',
+    'Murder': 'MR',
+    'Drug Cases': 'DR',
+    'Financial Fraud': 'FN',
+    'Sand Mining': 'SM',
+  };
+  return map[category] ?? 'FR';
+}
+
+function getTargetCode(age: number): TargetCode {
+  if (age <= 25) return 'YTH';
+  if (age <= 50) return 'ADL';
+  if (age <= 70) return 'SNR';
+  return 'ELD';
+}
+
+function computeDNA(fir: FIRRecord): CrimeDNA {
+  const timeCode = getTimeCode(fir.date);
+  const locationCode = getLocationCode(fir.district);
+  const methodCode = getMethodCode(fir.crimeCategory);
+  const targetCode = getTargetCode(fir.victimDetails.age);
+  return {
+    timeCode,
+    locationCode,
+    methodCode,
+    targetCode,
+    fullDNA: `${timeCode}-${locationCode}-${methodCode}-${targetCode}`,
+  };
+}
+
+function computeSimilarity(a: CrimeDNA, b: CrimeDNA): number {
+  let score = 0;
+  if (a.timeCode === b.timeCode) score += 25;
+  if (a.locationCode === b.locationCode) score += 25;
+  if (a.methodCode === b.methodCode) score += 25;
+  if (a.targetCode === b.targetCode) score += 25;
+  return score;
+}
+
+// ─────────────────────────────────────────────
+// LABEL MAPS
+// ─────────────────────────────────────────────
+
+const TIME_LABELS: Record<TimeCode, string> = {
+  N: 'Night',
+  D: 'Day',
+  E: 'Evening',
+  M: 'Morning',
+};
+
+const METHOD_LABELS: Record<MethodCode, string> = {
+  CY: 'Cybercrime',
+  TH: 'Theft',
+  AS: 'Assault',
+  NA: 'Narcotics',
+  OR: 'Organized',
+  FR: 'Fraud',
+  RP: 'Rape',
+  MR: 'Murder',
+  DR: 'Drug Cases',
+  FN: 'Fin. Fraud',
+  SM: 'Sand Mining',
+};
+
+const TARGET_LABELS: Record<TargetCode, string> = {
+  YTH: 'Youth (≤25)',
+  ADL: 'Adult (26-50)',
+  SNR: 'Senior (51-70)',
+  ELD: 'Elderly (71+)',
+};
+
+const CLUSTER_NAMES: Record<string, string> = {
+  CY: 'Cybercrime Ring',
+  NA: 'Narcotics Network',
+  OR: 'Organized Syndicate',
+  TH: 'Theft Gang',
+  FR: 'Fraud Network',
+  AS: 'Assault Cluster',
+  RP: 'Assault Ring',
+  MR: 'Violent Syndicate',
+  DR: 'Drug Cartel',
+  FN: 'Financial Network',
+  SM: 'Mining Mafia',
+};
+
+const HIGH_RISK_METHODS: MethodCode[] = ['CY', 'NA', 'OR', 'MR'];
+
+// ─────────────────────────────────────────────
+// STAT CARD COMPONENT
+// ─────────────────────────────────────────────
+
+function StatCard({ label, value, color }: { label: string; value: string | number; color: string }) {
+  return (
+    <div className="glass-card p-4 flex flex-col items-center gap-1 min-w-[130px]">
+      <span className="text-2xl font-bold font-mono" style={{ color }}>{value}</span>
+      <span className="metric-label text-xs text-center">{label}</span>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// DNA BADGE
+// ─────────────────────────────────────────────
+
+function DNABadge({ dna }: { dna: string }) {
+  return (
+    <span className="font-mono text-amber-400 text-xs tracking-wider">
+      🧬 {dna}
+    </span>
+  );
+}
+
+// ─────────────────────────────────────────────
+// SIMILARITY BAR
+// ─────────────────────────────────────────────
+
+function SimilarityBar({ score }: { score: number }) {
+  const color = score >= 75 ? '#ef4444' : score >= 50 ? '#f59e0b' : '#00f0ff';
+  const glowColor = score >= 75
+    ? '0 0 8px #ef4444'
+    : score >= 50
+    ? '0 0 8px #f59e0b'
+    : '0 0 8px #00f0ff';
+
+  return (
+    <div className="flex items-center gap-3">
+      <div className="relative flex-1 h-2 rounded-full bg-slate-700/60 overflow-hidden">
+        <div
+          className="absolute left-0 top-0 h-full rounded-full transition-all duration-700"
+          style={{
+            width: `${score}%`,
+            backgroundColor: color,
+            boxShadow: glowColor,
+          }}
+        />
+      </div>
+      <span
+        className="text-xs font-bold font-mono px-2 py-0.5 rounded border"
+        style={{ color, borderColor: color, boxShadow: glowColor }}
+      >
+        {score}% MATCH
+      </span>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// DNA VECTOR BLOCK
+// ─────────────────────────────────────────────
+
+interface VectorBlockProps {
+  code: string;
+  label: string;
+  sublabel: string;
+  bgColor: string;
+  glowColor: string;
+  barHeight: number;
+}
+
+function VectorBlock({ code, label, sublabel, bgColor, glowColor, barHeight }: VectorBlockProps) {
+  return (
+    <div className="flex flex-col items-center gap-2">
+      {/* Bar visualization */}
+      <div
+        className="w-10 rounded-t-sm transition-all duration-500"
+        style={{
+          height: `${barHeight}px`,
+          backgroundColor: bgColor,
+          boxShadow: `0 0 12px ${glowColor}, 0 0 24px ${glowColor}40`,
+        }}
+      />
+      {/* Code block */}
+      <div
+        className="px-4 py-3 rounded-lg text-center min-w-[80px]"
+        style={{
+          backgroundColor: `${bgColor}20`,
+          border: `1px solid ${bgColor}60`,
+          boxShadow: `0 0 16px ${glowColor}30`,
+        }}
+      >
+        <div
+          className="text-xl font-black font-mono tracking-widest"
+          style={{ color: bgColor, textShadow: `0 0 10px ${glowColor}` }}
+        >
+          {code}
+        </div>
+        <div className="text-[9px] font-semibold tracking-[0.15em] mt-1 text-slate-400 uppercase">
+          {label}
+        </div>
+        <div className="text-[10px] text-slate-500 mt-0.5">{sublabel}</div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// CATEGORY BADGE
+// ─────────────────────────────────────────────
+
+function CategoryBadge({ category }: { category: string }) {
+  const colorMap: Record<string, string> = {
+    'Cybercrime': 'badge-cyan',
+    'Theft & Burglary': 'badge-purple',
+    'Sand Mining': 'badge-amber',
+    'Assault & Violence': 'badge-red',
+    'Narcotic Trafficking': 'badge-red',
+    'Organized Crime': 'badge-amber',
+    'Fraud': 'badge-amber',
+    'Rape': 'badge-red',
+    'Murder': 'badge-red',
+    'Drug Cases': 'badge-red',
+    'Financial Fraud': 'badge-amber',
+  };
+  return (
+    <span className={`badge ${colorMap[category] ?? 'badge-gray'} text-[10px]`}>
+      {category}
+    </span>
+  );
+}
+
+// ─────────────────────────────────────────────
+// RISK BADGE
+// ─────────────────────────────────────────────
+
+function RiskBadge({ level }: { level: string }) {
+  const colorMap: Record<string, string> = {
+    Critical: 'badge-red',
+    High: 'badge-amber',
+    Medium: 'badge-cyan',
+    Low: 'badge-green',
+  };
+  return (
+    <span className={`badge ${colorMap[level] ?? 'badge-gray'} text-[10px]`}>
+      {level}
+    </span>
+  );
+}
+
+// ─────────────────────────────────────────────
+// MAIN PAGE
+// ─────────────────────────────────────────────
+
+export default function GenomePage() {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [filterText, setFilterText] = useState('');
+
+  // Pre-compute DNA for all records
+  const dnaMap = useMemo(() => {
+    const map: Record<string, CrimeDNA> = {};
+    FIR_RECORDS.forEach((fir) => {
+      map[fir.id] = computeDNA(fir);
+    });
+    return map;
+  }, []);
+
+  // Filtered cases
+  const filteredRecords = useMemo(() => {
+    const q = filterText.toLowerCase();
+    if (!q) return FIR_RECORDS;
+    return FIR_RECORDS.filter(
+      (f) =>
+        f.firNumber.toLowerCase().includes(q) ||
+        f.crimeCategory.toLowerCase().includes(q) ||
+        f.district.toLowerCase().includes(q) ||
+        dnaMap[f.id]?.fullDNA.toLowerCase().includes(q)
+    );
+  }, [filterText, dnaMap]);
+
+  // Selected FIR
+  const selectedFIR = useMemo(
+    () => FIR_RECORDS.find((f) => f.id === selectedId) ?? null,
+    [selectedId]
+  );
+  const selectedDNA = selectedFIR ? dnaMap[selectedFIR.id] : null;
+
+  // Top 5 similar FIRs (excluding the selected one)
+  const topMatches = useMemo(() => {
+    if (!selectedFIR || !selectedDNA) return [];
+    return FIR_RECORDS.filter((f) => f.id !== selectedFIR.id)
+      .map((f) => ({
+        fir: f,
+        dna: dnaMap[f.id],
+        score: computeSimilarity(selectedDNA, dnaMap[f.id]),
+      }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5);
+  }, [selectedFIR, selectedDNA, dnaMap]);
+
+  // DNA risk level
+  const dnaRiskLevel = useMemo(() => {
+    if (!selectedDNA) return 'Medium';
+    return HIGH_RISK_METHODS.includes(selectedDNA.methodCode) ? 'High' : 'Medium';
+  }, [selectedDNA]);
+
+  // Pattern clusters from top matches (grouped by method code)
+  const patternClusters = useMemo(() => {
+    if (!selectedDNA) return [];
+    const allRelated = [
+      ...(selectedFIR ? [{ fir: selectedFIR, dna: selectedDNA, score: 100 }] : []),
+      ...topMatches,
+    ];
+    const clusterMap: Record<string, { count: number; score: number }> = {};
+    allRelated.forEach(({ dna }) => {
+      const key = dna.methodCode;
+      if (!clusterMap[key]) clusterMap[key] = { count: 0, score: 0 };
+      clusterMap[key].count += 1;
+      clusterMap[key].score += 1;
+    });
+    return Object.entries(clusterMap).map(([method, { count }]) => ({
+      method: method as MethodCode,
+      name: CLUSTER_NAMES[method] ?? 'Unknown Cluster',
+      count,
+      riskScore: HIGH_RISK_METHODS.includes(method as MethodCode) ? 87 + count * 2 : 55 + count * 5,
+    }));
+  }, [selectedFIR, selectedDNA, topMatches]);
+
+  // Associates chain from selected suspect
+  const associateChain = useMemo(() => {
+    if (!selectedFIR) return [];
+    const associates = selectedFIR.suspectDetails.knownAssociates ?? [];
+    return associates;
+  }, [selectedFIR]);
+
+  const statusColorMap: Record<string, string> = {
+    investigating: '#f59e0b',
+    arrested: '#ef4444',
+    resolved: '#10b981',
+    monitoring: '#00f0ff',
+  };
+
+  return (
+    <div className="min-h-screen" style={{ background: '#020617', padding: '28px' }}>
+      {/* ── HEADER ── */}
+      <div className="mb-8">
+        <div className="flex flex-wrap items-start justify-between gap-4 mb-3">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center"
+              style={{
+                background: 'linear-gradient(135deg, #00f0ff20, #00f0ff40)',
+                border: '1px solid #00f0ff60',
+                boxShadow: '0 0 24px #00f0ff30',
+              }}
+            >
+              <Dna size={28} className="neon-cyan" />
+            </div>
+            <div>
+              <h1 className="page-title flex items-center gap-3">
+                CRIME PATTERN GENOME
+                <span className="badge badge-red text-[11px] tracking-widest">
+                  🔒 CLASSIFIED SYSTEM
+                </span>
+              </h1>
+              <p className="page-subtitle mt-0.5">
+                AI-powered crime DNA fingerprinting &amp; pattern matching engine
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats row */}
+        <div className="flex flex-wrap gap-3 mt-4">
+          <StatCard label="Total Cases Analyzed" value={55} color="#00f0ff" />
+          <StatCard label="Genome Matches Found" value={23} color="#10b981" />
+          <StatCard label="Pattern Clusters" value={8} color="#8b5cf6" />
+          <StatCard label="Accuracy" value="94.7%" color="#f59e0b" />
+        </div>
+      </div>
+
+      {/* ── GENOME BUILDER HEADER ── */}
+      <div
+        className="glass-card p-4 mb-6"
+        style={{
+          border: '1px solid #00f0ff30',
+          background: 'linear-gradient(135deg, #00f0ff08, #8b5cf608)',
+        }}
+      >
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Fingerprint size={18} className="neon-cyan" />
+            <span className="section-title text-sm">GENOME DNA FORMULA</span>
+          </div>
+          <div className="flex items-center gap-2 font-mono text-sm">
+            <span
+              className="px-3 py-1 rounded"
+              style={{ background: '#8b5cf620', border: '1px solid #8b5cf660', color: '#a78bfa' }}
+            >
+              TIME_CODE
+            </span>
+            <span className="text-slate-500">+</span>
+            <span
+              className="px-3 py-1 rounded"
+              style={{ background: '#3b82f620', border: '1px solid #3b82f660', color: '#60a5fa' }}
+            >
+              LOCATION_CODE
+            </span>
+            <span className="text-slate-500">+</span>
+            <span
+              className="px-3 py-1 rounded"
+              style={{ background: '#ef444420', border: '1px solid #ef444460', color: '#f87171' }}
+            >
+              METHOD_CODE
+            </span>
+            <span className="text-slate-500">+</span>
+            <span
+              className="px-3 py-1 rounded"
+              style={{ background: '#f59e0b20', border: '1px solid #f59e0b60', color: '#fcd34d' }}
+            >
+              TARGET_CODE
+            </span>
+          </div>
+          <div className="ml-auto flex items-center gap-2">
+            <Activity size={14} className="neon-green" />
+            <span className="text-xs text-green-400">Pattern Engine ONLINE</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── TWO COLUMN LAYOUT ── */}
+      <div className="flex gap-6" style={{ minHeight: '72vh' }}>
+        {/* ─── LEFT: CASE LIST (40%) ─── */}
+        <div className="flex flex-col" style={{ width: '40%', minWidth: 0 }}>
+          <div className="glass-card flex flex-col h-full" style={{ border: '1px solid #1e293b' }}>
+            {/* Panel header */}
+            <div
+              className="px-4 py-3 flex items-center justify-between"
+              style={{ borderBottom: '1px solid #1e293b' }}
+            >
+              <div className="flex items-center gap-2">
+                <Target size={16} className="neon-cyan" />
+                <span className="section-title text-sm">FIR Case Registry</span>
+                <span className="badge badge-cyan text-[10px]">{filteredRecords.length}</span>
+              </div>
+            </div>
+
+            {/* Search */}
+            <div className="px-4 py-3" style={{ borderBottom: '1px solid #1e293b' }}>
+              <div className="relative">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <input
+                  type="text"
+                  placeholder="Search FIR, category, district, DNA..."
+                  value={filterText}
+                  onChange={(e) => setFilterText(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 rounded-lg text-sm text-slate-200 bg-slate-800/60 border border-slate-700 focus:outline-none focus:border-cyan-500/60 placeholder-slate-600"
+                />
+              </div>
+            </div>
+
+            {/* Case list */}
+            <div className="flex-1 overflow-y-auto px-3 py-2 space-y-2">
+              {filteredRecords.length === 0 && (
+                <div className="text-center text-slate-500 py-8 text-sm">
+                  No cases match your filter.
+                </div>
+              )}
+              {filteredRecords.map((fir) => {
+                const dna = dnaMap[fir.id];
+                const isSelected = fir.id === selectedId;
+                return (
+                  <button
+                    key={fir.id}
+                    onClick={() => setSelectedId(fir.id)}
+                    className="w-full text-left p-3 rounded-xl transition-all duration-200"
+                    style={{
+                      background: isSelected ? '#00f0ff10' : '#0f172a80',
+                      border: isSelected
+                        ? '1px solid #00f0ff80'
+                        : '1px solid #1e293b',
+                      boxShadow: isSelected
+                        ? '0 0 16px #00f0ff20, inset 0 0 16px #00f0ff08'
+                        : 'none',
+                    }}
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                      <span
+                        className="font-mono text-sm font-bold"
+                        style={{ color: isSelected ? '#00f0ff' : '#94a3b8' }}
+                      >
+                        {fir.firNumber}
+                      </span>
+                      <CategoryBadge category={fir.crimeCategory} />
+                    </div>
+                    <div className="mb-1.5">
+                      <DNABadge dna={dna.fullDNA} />
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1 text-xs text-slate-500">
+                        <MapPin size={10} />
+                        {fir.district}
+                      </div>
+                      <span
+                        className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded"
+                        style={{
+                          color: statusColorMap[fir.investigationStatus],
+                          background: `${statusColorMap[fir.investigationStatus]}18`,
+                          border: `1px solid ${statusColorMap[fir.investigationStatus]}40`,
+                        }}
+                      >
+                        {fir.investigationStatus}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* ─── RIGHT: GENOME ANALYSIS (60%) ─── */}
+        <div className="flex flex-col gap-5" style={{ width: '60%', minWidth: 0 }}>
+          {!selectedFIR ? (
+            /* ── EMPTY STATE ── */
+            <div
+              className="glass-card flex-1 flex flex-col items-center justify-center gap-6 p-12"
+              style={{ border: '1px solid #1e293b' }}
+            >
+              <div
+                className="w-24 h-24 rounded-full flex items-center justify-center"
+                style={{
+                  background: 'radial-gradient(circle, #00f0ff15, transparent)',
+                  border: '2px solid #00f0ff40',
+                  boxShadow: '0 0 40px #00f0ff20',
+                }}
+              >
+                <Dna size={48} className="neon-cyan" />
+              </div>
+              <div className="text-center">
+                <h2 className="section-title mb-2">SELECT A CASE</h2>
+                <p className="text-slate-400 text-sm max-w-sm">
+                  Select a case from the registry to generate its Crime Pattern Genome
+                </p>
+              </div>
+              {/* Sample DNA codes */}
+              <div className="flex flex-wrap gap-3 justify-center">
+                {['N-BEN-CY-ADL', 'D-KAL-NA-SNR', 'E-RAI-OR-ADL'].map((sample) => (
+                  <div
+                    key={sample}
+                    className="px-4 py-2 rounded-lg font-mono text-sm"
+                    style={{
+                      background: '#00f0ff08',
+                      border: '1px solid #00f0ff30',
+                      color: '#00f0ff',
+                      boxShadow: '0 0 8px #00f0ff15',
+                    }}
+                  >
+                    🧬 {sample}
+                  </div>
+                ))}
+              </div>
+              <p className="text-slate-600 text-xs text-center">
+                Sample genome codes shown above. Click any FIR card on the left to begin analysis.
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* ── 1. CRIME DNA PROFILE ── */}
+              <div
+                className="glass-card p-5"
+                style={{
+                  border: '1px solid #00f0ff30',
+                  background: 'linear-gradient(135deg, #00f0ff06, #8b5cf606)',
+                }}
+              >
+                {/* Title row */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Fingerprint size={18} className="neon-cyan" />
+                    <span className="section-title text-sm">CRIME DNA PROFILE</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RiskBadge level={dnaRiskLevel} />
+                    <span className="text-xs text-slate-500">
+                      {selectedFIR.firNumber}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Full DNA string */}
+                <div
+                  className="text-center mb-5 py-3 rounded-xl font-mono text-2xl font-black tracking-[0.3em]"
+                  style={{
+                    background: '#0f172a',
+                    border: '1px solid #00f0ff20',
+                    color: '#00f0ff',
+                    textShadow: '0 0 20px #00f0ff80',
+                    letterSpacing: '0.25em',
+                  }}
+                >
+                  {selectedDNA!.timeCode} · {selectedDNA!.locationCode} · {selectedDNA!.methodCode} · {selectedDNA!.targetCode}
+                </div>
+
+                {/* Vector blocks */}
+                <div className="flex items-end justify-center gap-6">
+                  <VectorBlock
+                    code={selectedDNA!.timeCode}
+                    label="TIME VECTOR"
+                    sublabel={TIME_LABELS[selectedDNA!.timeCode]}
+                    bgColor="#8b5cf6"
+                    glowColor="#8b5cf6"
+                    barHeight={48 + (selectedDNA!.timeCode.charCodeAt(0) % 4) * 12}
+                  />
+                  <VectorBlock
+                    code={selectedDNA!.locationCode}
+                    label="GEO VECTOR"
+                    sublabel={selectedFIR.district.substring(0, 10)}
+                    bgColor="#3b82f6"
+                    glowColor="#3b82f6"
+                    barHeight={60 + (selectedDNA!.locationCode.charCodeAt(0) % 5) * 10}
+                  />
+                  <VectorBlock
+                    code={selectedDNA!.methodCode}
+                    label="METHOD VECTOR"
+                    sublabel={METHOD_LABELS[selectedDNA!.methodCode]}
+                    bgColor="#ef4444"
+                    glowColor="#ef4444"
+                    barHeight={52 + (selectedDNA!.methodCode.charCodeAt(0) % 4) * 14}
+                  />
+                  <VectorBlock
+                    code={selectedDNA!.targetCode}
+                    label="TARGET VECTOR"
+                    sublabel={TARGET_LABELS[selectedDNA!.targetCode]}
+                    bgColor="#f59e0b"
+                    glowColor="#f59e0b"
+                    barHeight={44 + (selectedDNA!.targetCode.charCodeAt(0) % 5) * 12}
+                  />
+                </div>
+
+                {/* Meta row */}
+                <div className="mt-4 pt-4 flex flex-wrap gap-4 text-xs text-slate-500" style={{ borderTop: '1px solid #1e293b' }}>
+                  <span className="flex items-center gap-1">
+                    <Clock size={11} /> {selectedFIR.date}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <MapPin size={11} /> {selectedFIR.district}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Shield size={11} /> {selectedFIR.assignedOfficer}
+                  </span>
+                  <span className="flex items-center gap-1 ml-auto font-mono text-cyan-400">
+                    Risk Score: {selectedFIR.riskScore}/100
+                  </span>
+                </div>
+              </div>
+
+              {/* ── 2. DNA MATCH ANALYSIS ── */}
+              <div
+                className="glass-card p-5"
+                style={{ border: '1px solid #1e293b' }}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <Zap size={18} className="neon-amber" />
+                  <span className="section-title text-sm">PATTERN MATCH RESULTS — SIMILAR CRIME DNA</span>
+                </div>
+
+                {topMatches.length === 0 ? (
+                  <p className="text-slate-500 text-sm">No matches found.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {topMatches.map(({ fir, dna, score }) => (
+                      <div
+                        key={fir.id}
+                        className="p-3 rounded-xl"
+                        style={{
+                          background: '#0f172a',
+                          border: '1px solid #1e293b',
+                        }}
+                      >
+                        {/* Similarity bar */}
+                        <div className="mb-2">
+                          <SimilarityBar score={score} />
+                        </div>
+                        {/* FIR + DNA row */}
+                        <div className="flex flex-wrap items-center gap-3 mb-2">
+                          <span className="font-mono text-xs text-slate-300 font-bold">
+                            {fir.firNumber}
+                          </span>
+                          <DNABadge dna={dna.fullDNA} />
+                          <CategoryBadge category={fir.crimeCategory} />
+                        </div>
+                        {/* Component match indicators */}
+                        <div className="flex gap-3 mb-2">
+                          {(
+                            [
+                              {
+                                label: 'TIME',
+                                match: dna.timeCode === selectedDNA!.timeCode,
+                              },
+                              {
+                                label: 'GEO',
+                                match: dna.locationCode === selectedDNA!.locationCode,
+                              },
+                              {
+                                label: 'METHOD',
+                                match: dna.methodCode === selectedDNA!.methodCode,
+                              },
+                              {
+                                label: 'TARGET',
+                                match: dna.targetCode === selectedDNA!.targetCode,
+                              },
+                            ] as { label: string; match: boolean }[]
+                          ).map(({ label, match }) => (
+                            <div
+                              key={label}
+                              className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded"
+                              style={{
+                                background: match ? '#10b98118' : '#ef444418',
+                                border: `1px solid ${match ? '#10b98140' : '#ef444440'}`,
+                                color: match ? '#10b981' : '#ef4444',
+                              }}
+                            >
+                              {match ? '✓' : '✗'} {label}
+                            </div>
+                          ))}
+                        </div>
+                        {/* District + suspect */}
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+                          <span className="flex items-center gap-1">
+                            <MapPin size={10} /> {fir.district}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Shield size={10} /> {fir.suspectDetails.name}
+                          </span>
+                          <RiskBadge level={fir.suspectDetails.riskLevel} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* ── 3. PATTERN CLUSTER INTELLIGENCE ── */}
+              <div
+                className="glass-card p-5"
+                style={{ border: '1px solid #1e293b' }}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <Link2 size={18} className="neon-red" />
+                  <span className="section-title text-sm">ORGANIZED CRIME PATTERN CLUSTER</span>
+                </div>
+                <div className="space-y-3">
+                  {patternClusters.map(({ method, name, count, riskScore }) => {
+                    const isCurrent = selectedDNA?.methodCode === method;
+                    const clusterColor = HIGH_RISK_METHODS.includes(method)
+                      ? '#ef4444'
+                      : '#f59e0b';
+                    return (
+                      <div
+                        key={method}
+                        className="p-4 rounded-xl"
+                        style={{
+                          background: isCurrent ? `${clusterColor}10` : '#0f172a',
+                          border: `1px solid ${isCurrent ? clusterColor + '60' : '#1e293b'}`,
+                          boxShadow: isCurrent ? `0 0 16px ${clusterColor}20` : 'none',
+                        }}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="font-mono text-xs font-bold px-2 py-0.5 rounded"
+                              style={{
+                                background: `${clusterColor}20`,
+                                color: clusterColor,
+                                border: `1px solid ${clusterColor}40`,
+                              }}
+                            >
+                              {method}
+                            </span>
+                            <span className="text-sm font-semibold text-slate-200">{name}</span>
+                            {isCurrent && (
+                              <span className="badge badge-cyan text-[10px]">ACTIVE</span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-slate-500">{count} cases</span>
+                            <span
+                              className="text-xs font-bold font-mono"
+                              style={{ color: clusterColor }}
+                            >
+                              Risk: {riskScore}
+                            </span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-slate-400">
+                          Pattern analysis suggests{' '}
+                          <span style={{ color: clusterColor }}>{name}</span> with{' '}
+                          <strong>{count}</strong> connected case{count !== 1 ? 's' : ''}. High
+                          probability of coordinated activity. Recommend cross-referencing with
+                          existing SIT investigation files.
+                        </p>
+                        <button
+                          onClick={() =>
+                            console.log(`Investigate cluster: ${name} (method=${method})`)
+                          }
+                          className="cyber-btn-amber mt-3 text-xs flex items-center gap-1"
+                        >
+                          <Target size={11} />
+                          Investigate Cluster
+                          <ChevronRight size={11} />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* ── 4. FORENSIC LINK CHAIN ── */}
+              <div
+                className="glass-card p-5"
+                style={{ border: '1px solid #1e293b' }}
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <AlertTriangle size={18} className="neon-red" />
+                  <span className="section-title text-sm">FORENSIC LINK CHAIN</span>
+                  <span className="text-xs text-slate-500 ml-auto">
+                    Associate network — {selectedFIR.suspectDetails.name}
+                  </span>
+                </div>
+
+                {/* Chain visualization */}
+                <div className="overflow-x-auto pb-2">
+                  <div className="flex items-center gap-0 min-w-max">
+                    {/* Primary suspect bubble */}
+                    <div className="flex flex-col items-center">
+                      <div
+                        className="w-20 h-20 rounded-full flex flex-col items-center justify-center text-center"
+                        style={{
+                          background: 'linear-gradient(135deg, #ef444420, #ef444440)',
+                          border: '2px solid #ef4444',
+                          boxShadow: '0 0 20px #ef444430',
+                        }}
+                      >
+                        <Shield size={16} className="text-red-400 mb-1" />
+                        <span className="text-[9px] font-bold text-red-400 leading-tight px-1 text-center">
+                          {selectedFIR.suspectDetails.name.split(' ')[0]}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex flex-col items-center gap-1">
+                        <RiskBadge level={selectedFIR.suspectDetails.riskLevel} />
+                        <span className="text-[9px] text-slate-500">PRIMARY</span>
+                      </div>
+                    </div>
+
+                    {/* Chain links + associate bubbles */}
+                    {associateChain.map((assocName, idx) => {
+                      const assocProfile = CRIMINAL_PROFILES.find(
+                        (p) => p.name === assocName
+                      );
+                      return (
+                        <div key={idx} className="flex items-center">
+                          {/* Connector line */}
+                          <div className="flex items-center">
+                            <div
+                              className="h-0.5 w-8"
+                              style={{
+                                background:
+                                  'linear-gradient(90deg, #ef444440, #f59e0b40)',
+                              }}
+                            />
+                            <div
+                              className="w-4 h-4 rounded-full flex items-center justify-center"
+                              style={{
+                                background: '#f59e0b20',
+                                border: '1px solid #f59e0b60',
+                              }}
+                            >
+                              <Link2 size={8} className="text-amber-400" />
+                            </div>
+                            <div
+                              className="h-0.5 w-8"
+                              style={{
+                                background:
+                                  'linear-gradient(90deg, #f59e0b40, #8b5cf640)',
+                              }}
+                            />
+                          </div>
+                          {/* Associate bubble */}
+                          <div className="flex flex-col items-center">
+                            <div
+                              className="w-20 h-20 rounded-full flex flex-col items-center justify-center text-center"
+                              style={{
+                                background: assocProfile
+                                  ? 'linear-gradient(135deg, #f59e0b18, #f59e0b30)'
+                                  : 'linear-gradient(135deg, #8b5cf620, #8b5cf640)',
+                                border: assocProfile
+                                  ? '2px solid #f59e0b80'
+                                  : '2px dashed #8b5cf680',
+                                boxShadow: assocProfile
+                                  ? '0 0 16px #f59e0b25'
+                                  : '0 0 16px #8b5cf625',
+                              }}
+                            >
+                              <Eye
+                                size={14}
+                                style={{
+                                  color: assocProfile ? '#f59e0b' : '#a78bfa',
+                                  marginBottom: 4,
+                                }}
+                              />
+                              <span
+                                className="text-[9px] font-bold leading-tight px-1 text-center"
+                                style={{
+                                  color: assocProfile ? '#fcd34d' : '#c4b5fd',
+                                }}
+                              >
+                                {assocName.split(' ')[0]}
+                              </span>
+                            </div>
+                            <div className="mt-2 flex flex-col items-center gap-1">
+                              {assocProfile ? (
+                                <RiskBadge level={assocProfile.riskLevel} />
+                              ) : (
+                                <span className="badge badge-gray text-[10px]">KNOWN</span>
+                              )}
+                              <span className="text-[9px] text-slate-500">ASSOCIATE</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {/* Unknown final node */}
+                    <div className="flex items-center">
+                      <div
+                        className="h-0.5 w-8"
+                        style={{
+                          background: 'linear-gradient(90deg, #8b5cf640, #ef444440)',
+                        }}
+                      />
+                      <div
+                        className="w-4 h-4 rounded-full flex items-center justify-center"
+                        style={{
+                          background: '#ef444420',
+                          border: '1px solid #ef444460',
+                        }}
+                      >
+                        <AlertTriangle size={8} className="text-red-400" />
+                      </div>
+                      <div
+                        className="h-0.5 w-8"
+                        style={{
+                          background: 'linear-gradient(90deg, #ef444440, #ef4444)',
+                        }}
+                      />
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div
+                        className="w-20 h-20 rounded-full flex flex-col items-center justify-center text-center"
+                        style={{
+                          background: 'linear-gradient(135deg, #ef444415, #ef444435)',
+                          border: '2px dashed #ef4444',
+                          boxShadow: '0 0 20px #ef444440',
+                          animation: 'pulse 2s infinite',
+                        }}
+                      >
+                        <AlertTriangle size={14} className="text-red-400 mb-1" />
+                        <span className="text-[8px] font-bold text-red-400 leading-tight text-center px-1">
+                          UNKNOWN X
+                        </span>
+                      </div>
+                      <div className="mt-2 flex flex-col items-center gap-1">
+                        <span className="badge badge-red text-[10px]">UNIDENTIFIED</span>
+                        <span className="text-[9px] text-red-500">THREAT</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* View Full Case button */}
+                <div className="mt-4 pt-4 flex gap-3" style={{ borderTop: '1px solid #1e293b' }}>
+                  <button
+                    onClick={() =>
+                      console.log(`View full case: ${selectedFIR.firNumber}`)
+                    }
+                    className="cyber-btn flex items-center gap-2 text-xs"
+                  >
+                    <Eye size={13} />
+                    View Full Case
+                    <ChevronRight size={13} />
+                  </button>
+                  <button
+                    onClick={() =>
+                      console.log(`Download genome report for: ${selectedFIR.firNumber}`)
+                    }
+                    className="cyber-btn-cyan flex items-center gap-2 text-xs"
+                  >
+                    <Dna size={13} />
+                    Export Genome Report
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

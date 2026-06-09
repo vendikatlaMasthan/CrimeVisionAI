@@ -1,197 +1,514 @@
 'use client';
+// ─────────────────────────────────────────────────────────────────────────────
+// Save this file to: app/reports/page.tsx  (REPLACE existing file entirely)
+// CrimeVision AI — Intelligence Reports + Real PDF Download (jsPDF from CDN)
+// ─────────────────────────────────────────────────────────────────────────────
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { FileText, Download, AlertCircle, Shield, Network, Monitor, Target, CheckCircle, Loader } from 'lucide-react';
+import { useLanguage } from '@/components/LanguageToggle';
 import {
-  FileText, Download, Eye, X, CheckSquare, Square, FileSpreadsheet,
-  RefreshCw, Shield, Network, Brain, Monitor, Truck, BarChart2,
-  ChevronRight, AlertTriangle, MapPin, Loader,
-} from 'lucide-react';
-import { SUMMARY_METRICS, DISTRICT_RISK_SCORES, AI_ALERTS } from '@/lib/mockData';
+  DISTRICTS, CRIME_CATEGORIES, SUMMARY_METRICS,
+  RECENT_FIRS, TOP_SUSPECTS, ANOMALY_DISTRICTS,
+} from '@/lib/crimeData';
 
-interface ReportDef {
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface ReportCard {
   id: string;
-  icon: any;
-  iconColor: string;
   title: string;
+  titleKn: string;
   description: string;
-  lastGenerated: string;
-  fileSize: string;
-  formats: string[];
-  findings: string[];
-  riskSummary: string;
-  forecastText: string;
+  icon: React.ReactNode;
+  color: string;
+  pages: number;
+  category: string;
 }
 
-const REPORTS: ReportDef[] = [
-  {
-    id: 'state-crime',
-    icon: BarChart2,
-    iconColor: '#00f0ff',
-    title: 'State Crime Summary Report',
-    description: 'Monthly statewide crime overview with district-level analysis, trends, and clearance rates.',
-    lastGenerated: '30 May 2025, 06:00 AM',
-    fileSize: '4.2 MB',
-    formats: ['PDF', 'Excel'],
-    findings: [
-      'Total crimes rose 8.3% MoM in May 2025, led by cybercrime (+34%)',
-      'Bengaluru Urban accounts for 18% of all state crime incidents',
-      'Clearance rate remains strong at 82.6% across Karnataka',
-      'Northern corridor (Kalaburagi, Raichur) shows alarming 11–13% YoY surge',
-    ],
-    riskSummary: 'State overall: HIGH. 4 districts at CRITICAL level.',
-    forecastText: 'Q3 2025 projected to see 28% increase during festival season; cybercrime to remain primary threat vector.',
-  },
-  {
-    id: 'district-intel',
-    icon: MapPin,
-    iconColor: '#8b5cf6',
-    title: 'District Intelligence Report',
-    description: 'Per-district deep-dive analysis with crime category breakdown, resources, and risk scores.',
-    lastGenerated: '29 May 2025, 11:00 PM',
-    fileSize: '6.8 MB',
-    formats: ['PDF', 'Excel'],
-    findings: [
-      'Bengaluru Urban risk score: 94/100 — highest in Karnataka',
-      'Raichur crime rate increased +13.8% — fastest-growing threat district',
-      'Ballari organized crime cluster expanded by 3 new nodes this week',
-      'Southern coastal districts (Udupi, Kodagu) remain stable at LOW risk',
-    ],
-    riskSummary: '7 HIGH, 4 CRITICAL districts flagged for immediate attention.',
-    forecastText: 'District-level AI model projects 6 districts upgrading risk level by Dec 2025.',
-  },
-  {
-    id: 'network-analysis',
-    icon: Network,
-    iconColor: '#e879f9',
-    title: 'Criminal Network Analysis',
-    description: 'Suspect relationship mapping, cluster identification, and network disruption recommendations.',
-    lastGenerated: '30 May 2025, 02:00 AM',
-    fileSize: '3.1 MB',
-    formats: ['PDF'],
-    findings: [
-      '14 active criminal network clusters identified across Karnataka',
-      'Imran Sheikh (Risk: 96) confirmed as highest-priority target in Kalaburagi',
-      'Cross-border narcotics network links Karnataka to Andhra Pradesh and Goa',
-      '3 new clusters emerged in northern districts this week',
-    ],
-    riskSummary: '2 Tier-1 networks (Red Corner Notice level) actively operating.',
-    forecastText: 'Without intervention, network growth projected at +22% in next quarter.',
-  },
-  {
-    id: 'ai-prediction',
-    icon: Brain,
-    iconColor: '#f59e0b',
-    title: 'AI Prediction Report',
-    description: 'Machine learning crime forecasts for the next quarter with confidence intervals.',
-    lastGenerated: '30 May 2025, 05:30 AM',
-    fileSize: '2.7 MB',
-    formats: ['PDF', 'Excel'],
-    findings: [
-      'Jul 2025 forecast: 10,800 crimes (78% model confidence)',
-      'Dec 2025 predicted peak: 13,600 crimes (+52% vs Jan 2024 baseline)',
-      'Festival season Oct–Dec projects 28% spike — Dasara primary driver',
-      'Cybercrime AI model accuracy validated at 91.2% for Q1 2025',
-    ],
-    riskSummary: 'AI overall confidence: HIGH. All 6 forecast months computed.',
-    forecastText: 'Model recommends 3,400 additional deployment days across critical districts for Q3.',
-  },
-  {
-    id: 'cyber-threat',
-    icon: Monitor,
-    iconColor: '#ef4444',
-    title: 'Cybercrime Threat Assessment',
-    description: 'Cyber-focused threat intelligence: phishing, financial fraud, dark web activity.',
-    lastGenerated: '30 May 2025, 07:45 AM',
-    fileSize: '5.3 MB',
-    formats: ['PDF', 'Excel'],
-    findings: [
-      '18,234 cybercrime incidents reported YTD — 22% of all Karnataka crime',
-      '412 OTP phishing complaints in 48 hours — active coordinated campaign',
-      '23 ksp.gov.in credentials exposed on dark web forum',
-      '₹1.8 Crore financial exposure from current Bengaluru Urban campaign',
-    ],
-    riskSummary: 'Cyber threat level: CRITICAL. Immediate task force deployment warranted.',
-    forecastText: 'Cybercrime projected to exceed 25,000 incidents by Dec 2025 without intervention.',
-  },
-  {
-    id: 'resource-deployment',
-    icon: Truck,
-    iconColor: '#10b981',
-    title: 'Resource Deployment Report',
-    description: 'Force allocation status, coverage gaps, and AI-recommended deployment adjustments.',
-    lastGenerated: '30 May 2025, 04:00 AM',
-    fileSize: '1.9 MB',
-    formats: ['PDF', 'Excel'],
-    findings: [
-      '28,450 personnel deployed across Karnataka — 6 districts under-resourced',
-      'Kalaburagi cyber unit has only 34 officers for 2.56M population',
-      'Raichur coverage at 48% — lowest in the state relative to crime rate',
-      'AI recommends 1,200 officer redeployment from low-risk southern districts',
-    ],
-    riskSummary: 'Resource adequacy: POOR in 4 northern districts. Rebalancing critical.',
-    forecastText: 'Optimal deployment model projects 23% improvement in response times if rebalanced.',
-  },
-];
+// ─── jsPDF Loader ─────────────────────────────────────────────────────────────
 
-const heatmapDistricts = [
-  { name: 'BLR Urban', score: 94 },
-  { name: 'Kalaburagi', score: 87 },
-  { name: 'Raichur', score: 84 },
-  { name: 'Ballari', score: 81 },
-  { name: 'Belagavi', score: 76 },
-  { name: 'Mangaluru', score: 72 },
-  { name: 'Hubballi', score: 69 },
-  { name: 'Vijayapura', score: 64 },
-  { name: 'Mysuru', score: 55 },
-  { name: 'Davangere', score: 49 },
-];
-
-function getHeatColor(score: number): string {
-  if (score >= 85) return 'rgba(239,68,68,0.85)';
-  if (score >= 70) return 'rgba(245,158,11,0.80)';
-  if (score >= 55) return 'rgba(234,179,8,0.70)';
-  return 'rgba(0,240,255,0.35)';
+async function loadJsPDF(): Promise<{
+  jsPDF: new (opts?: { orientation?: string; unit?: string; format?: string }) => JsPDFDoc;
+}> {
+  if ((window as unknown as Record<string, unknown>).jspdf) {
+    return (window as unknown as Record<string, unknown>).jspdf as { jsPDF: new () => JsPDFDoc };
+  }
+  await new Promise<void>((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('Failed to load jsPDF'));
+    document.head.appendChild(s);
+  });
+  return (window as unknown as Record<string, unknown>).jspdf as { jsPDF: new () => JsPDFDoc };
 }
 
-const CHECKBOXES = [
-  { id: 'district', label: 'District Selection' },
-  { id: 'period', label: 'Time Period' },
-  { id: 'categories', label: 'Crime Categories' },
-  { id: 'predictions', label: 'Include AI Predictions' },
-  { id: 'network', label: 'Include Network Analysis' },
-  { id: 'resources', label: 'Include Resource Data' },
-];
+// Minimal jsPDF doc type
+interface JsPDFDoc {
+  setFontSize: (n: number) => JsPDFDoc;
+  setTextColor: (r: number, g: number, b: number) => JsPDFDoc;
+  setFillColor: (r: number, g: number, b: number) => JsPDFDoc;
+  setDrawColor: (r: number, g: number, b: number) => JsPDFDoc;
+  setFont: (face: string, style?: string) => JsPDFDoc;
+  text: (t: string | string[], x: number, y: number, opts?: Record<string, unknown>) => JsPDFDoc;
+  rect: (x: number, y: number, w: number, h: number, style?: string) => JsPDFDoc;
+  line: (x1: number, y1: number, x2: number, y2: number) => JsPDFDoc;
+  addPage: () => JsPDFDoc;
+  splitTextToSize: (text: string, maxW: number) => string[];
+  save: (name: string) => void;
+  internal: { pageSize: { getWidth: () => number; getHeight: () => number } };
+}
 
-export default function ReportsPage() {
-  const [previewReport, setPreviewReport] = useState<ReportDef | null>(null);
-  const [downloading, setDownloading] = useState<string | null>(null);
-  const [exporting, setExporting] = useState<string | null>(null);
-  const [generating, setGenerating] = useState(false);
-  const [generated, setGenerated] = useState(false);
-  const [checked, setChecked] = useState<Record<string, boolean>>({
-    district: true, period: true, categories: false, predictions: true, network: false, resources: false,
+// ─── PDF Builder Helpers ──────────────────────────────────────────────────────
+
+function buildHeader(doc: JsPDFDoc, title: string, lang: 'en' | 'kn') {
+  const pw = doc.internal.pageSize.getWidth();
+  // Dark header bar
+  doc.setFillColor(2, 6, 23).rect(0, 0, pw, 32, 'F');
+  doc.setTextColor(255, 255, 255).setFontSize(13).setFont('helvetica', 'bold');
+  doc.text('KARNATAKA STATE POLICE', pw / 2, 12, { align: 'center' });
+  doc.setFontSize(8).setTextColor(180, 180, 180);
+  doc.text('RESTRICTED — FOR OFFICIAL USE ONLY', pw / 2, 19, { align: 'center' });
+  doc.setFontSize(9).setTextColor(0, 200, 220);
+  doc.text('CrimeVision AI v5.0 | KSP Datathon 2026', pw / 2, 26, { align: 'center' });
+
+  // Title section
+  doc.setTextColor(30, 30, 30).setFontSize(14).setFont('helvetica', 'bold');
+  doc.text(title, pw / 2, 44, { align: 'center' });
+  doc.setFontSize(9).setTextColor(100, 100, 100).setFont('helvetica', 'normal');
+  doc.text(`Generated: ${new Date().toLocaleString('en-IN')} IST`, pw / 2, 52, { align: 'center' });
+  doc.setDrawColor(0, 200, 220).line(15, 56, pw - 15, 56);
+}
+
+function buildFooter(doc: JsPDFDoc, y: number) {
+  const pw = doc.internal.pageSize.getWidth();
+  if (y > 260) { doc.addPage(); y = 20; }
+  doc.setDrawColor(200, 200, 200).line(15, y, pw - 15, y);
+  doc.setFontSize(7).setTextColor(150, 150, 150).setFont('helvetica', 'normal');
+  doc.text('CrimeVision AI v5.0 | KSP Datathon 2026 | Karnataka State Police | RESTRICTED — FOR OFFICIAL USE ONLY', pw / 2, y + 6, { align: 'center' });
+}
+
+function sectionHeader(doc: JsPDFDoc, text: string, y: number): number {
+  const pw = doc.internal.pageSize.getWidth();
+  if (y > 250) { doc.addPage(); y = 20; }
+  doc.setFillColor(0, 50, 80).rect(15, y, pw - 30, 8, 'F');
+  doc.setTextColor(255, 255, 255).setFontSize(9).setFont('helvetica', 'bold');
+  doc.text(text.toUpperCase(), 18, y + 5.5);
+  return y + 14;
+}
+
+function row(doc: JsPDFDoc, cells: [string, string, string, string, string], y: number, even: boolean): number {
+  const pw = doc.internal.pageSize.getWidth();
+  if (y > 265) { doc.addPage(); y = 20; }
+  if (even) doc.setFillColor(245, 248, 255).rect(15, y - 3, pw - 30, 7, 'F');
+  doc.setTextColor(40, 40, 40).setFontSize(8).setFont('helvetica', 'normal');
+  const cols = [15, 58, 100, 130, 165];
+  cells.forEach((c, i) => doc.text(c, cols[i], y));
+  return y + 8;
+}
+
+// ─── Report Builders ──────────────────────────────────────────────────────────
+
+async function buildDistrictReport(lang: 'en' | 'kn') {
+  const lib = await loadJsPDF();
+  const doc = new lib.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const pw = doc.internal.pageSize.getWidth();
+
+  buildHeader(doc, lang === 'kn' ? 'ಜಿಲ್ಲಾ ಗುಪ್ತಚರ ವರದಿ' : 'District Intelligence Report', lang);
+
+  let y = 64;
+
+  // Summary stats
+  y = sectionHeader(doc, 'State Overview', y);
+  const stats = [
+    ['Total Crimes', SUMMARY_METRICS.totalCrimes.toLocaleString()],
+    ['Active Cases', SUMMARY_METRICS.activeCases.toLocaleString()],
+    ['Clearance Rate', `${SUMMARY_METRICS.clearanceRate}%`],
+    ['Total Officers', SUMMARY_METRICS.totalOfficers.toLocaleString()],
+    ['Police Stations', SUMMARY_METRICS.totalStations.toString()],
+    ['High Risk Districts', SUMMARY_METRICS.highRiskDistricts.toString()],
+  ];
+  let sx = 15;
+  stats.forEach(([label, val]) => {
+    doc.setFont('helvetica', 'bold').setTextColor(0, 100, 150).setFontSize(16);
+    doc.text(val, sx, y + 4);
+    doc.setFont('helvetica', 'normal').setTextColor(100, 100, 100).setFontSize(8);
+    doc.text(label, sx, y + 10);
+    sx += 32;
+  });
+  y += 20;
+  doc.setDrawColor(220, 220, 220).line(15, y, pw - 15, y);
+  y += 8;
+
+  // District table
+  y = sectionHeader(doc, 'All 31 Karnataka Districts — Crime Intelligence', y);
+  // Table header
+  doc.setFillColor(0, 30, 60).rect(15, y - 3, pw - 30, 7, 'F');
+  doc.setTextColor(255, 255, 255).setFontSize(8).setFont('helvetica', 'bold');
+  ['District', 'Crimes', 'Risk Score', 'Top Crime', 'Trend'].forEach((h, i) => {
+    doc.text(h, [15, 58, 100, 130, 165][i], y + 1);
+  });
+  y += 8;
+
+  DISTRICTS.forEach((d, idx) => {
+    y = row(doc,
+      [d.name, d.crimeCount.toLocaleString(), `${d.riskScore}/100`, d.topCrimeType, `${d.trend === 'up' ? '▲' : d.trend === 'down' ? '▼' : '→'} ${Math.abs(d.trendPercent)}%`],
+      y, idx % 2 === 0
+    );
   });
 
-  const handleDownload = (id: string) => {
-    setDownloading(id);
-    setTimeout(() => setDownloading(null), 2000);
-  };
+  y += 6;
+  buildFooter(doc, y);
+  doc.save(`KSP_District_Intelligence_${Date.now()}.pdf`);
+}
 
-  const handleExport = (id: string) => {
-    setExporting(id);
-    setTimeout(() => setExporting(null), 1800);
-  };
+async function buildCriminalNetworkReport(lang: 'en' | 'kn') {
+  const lib = await loadJsPDF();
+  const doc = new lib.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const pw = doc.internal.pageSize.getWidth();
 
-  const handleGenerate = () => {
-    setGenerating(true);
-    setTimeout(() => { setGenerating(false); setGenerated(true); }, 2500);
-  };
+  buildHeader(doc, lang === 'kn' ? 'ಅಪರಾಧಿ ಜಾಲ ವಿಶ್ಲೇಷಣೆ' : 'Criminal Network Analysis Report', lang);
+  let y = 64;
+
+  y = sectionHeader(doc, 'Top 15 Priority Suspects', y);
+  doc.setFillColor(0, 30, 60).rect(15, y - 3, pw - 30, 7, 'F');
+  doc.setTextColor(255, 255, 255).setFontSize(8).setFont('helvetica', 'bold');
+  ['Suspect', 'District', 'Crime Type', 'FIRs', 'Risk'].forEach((h, i) => {
+    doc.text(h, [15, 58, 100, 155, 172][i], y + 1);
+  });
+  y += 8;
+  TOP_SUSPECTS.forEach((s, idx) => {
+    if (y > 265) { doc.addPage(); y = 20; }
+    const even = idx % 2 === 0;
+    if (even) doc.setFillColor(245, 248, 255).rect(15, y - 3, pw - 30, 7, 'F');
+    doc.setTextColor(40, 40, 40).setFontSize(8).setFont('helvetica', 'normal');
+    doc.text(s.name, 15, y);
+    doc.text(s.district, 58, y);
+    doc.text(s.crimeType.slice(0, 28), 100, y);
+    doc.text(s.firCount.toString(), 155, y);
+    doc.setTextColor(s.riskLevel === 'Critical' ? 200 : s.riskLevel === 'High' ? 180 : 100, 0, 0);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${s.riskScore}/100`, 172, y);
+    doc.setTextColor(40, 40, 40).setFont('helvetica', 'normal');
+    y += 8;
+  });
+
+  y += 6;
+  y = sectionHeader(doc, 'Suspect Status Summary', y);
+  const statusCounts = TOP_SUSPECTS.reduce((acc, s) => {
+    acc[s.status] = (acc[s.status] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  Object.entries(statusCounts).forEach(([status, count]) => {
+    if (y > 265) { doc.addPage(); y = 20; }
+    doc.setFontSize(10).setFont('helvetica', 'normal').setTextColor(40, 40, 40);
+    doc.text(`• ${status}: ${count} suspects`, 20, y);
+    y += 7;
+  });
+
+  buildFooter(doc, y + 6);
+  doc.save(`KSP_Criminal_Network_${Date.now()}.pdf`);
+}
+
+async function buildCybercrimeReport(lang: 'en' | 'kn') {
+  const lib = await loadJsPDF();
+  const doc = new lib.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const pw = doc.internal.pageSize.getWidth();
+
+  buildHeader(doc, lang === 'kn' ? 'ಸೈಬರ್ ಅಪರಾಧ ವಿಶ್ಲೇಷಣೆ ವರದಿ' : 'Cybercrime Analysis Report', lang);
+  let y = 64;
+
+  y = sectionHeader(doc, 'Cybercrime Statistics — Karnataka 2024–2025', y);
+  const cyberData = [
+    ['Total Cybercrime Cases', '18,234', '+34% YoY'],
+    ['Primary Vector', 'OTP Phishing / UPI Fraud', 'High'],
+    ['Worst Affected District', 'Bengaluru Urban', '4,231 cases'],
+    ['Financial Exposure', '₹142+ Crores', 'FY 2024–25'],
+    ['Arrests Made', '1,847', '10.1% arrest rate'],
+    ['SIT Cases', '23 active SITs', 'Multi-district'],
+  ];
+  cyberData.forEach(([k, v, note], idx) => {
+    if (y > 265) { doc.addPage(); y = 20; }
+    if (idx % 2 === 0) doc.setFillColor(248, 252, 255).rect(15, y - 3, pw - 30, 7, 'F');
+    doc.setFont('helvetica', 'bold').setTextColor(0, 80, 140).setFontSize(9).text(k, 18, y);
+    doc.setFont('helvetica', 'normal').setTextColor(40, 40, 40).text(v, 90, y);
+    doc.setTextColor(120, 120, 120).text(note, 155, y);
+    y += 8;
+  });
+
+  y += 6;
+  y = sectionHeader(doc, 'Cybercrime by District (Top 8)', y);
+  const topCyber = DISTRICTS.sort((a, b) => b.cybercrime - a.cybercrime).slice(0, 8);
+  doc.setFillColor(0, 30, 60).rect(15, y - 3, pw - 30, 7, 'F');
+  doc.setTextColor(255, 255, 255).setFontSize(8).setFont('helvetica', 'bold');
+  ['District', 'Cyber Cases', '% of Total', 'Risk Score', 'Trend'].forEach((h, i) => {
+    doc.text(h, [15, 58, 95, 130, 165][i], y + 1);
+  });
+  y += 8;
+  topCyber.forEach((d, idx) => {
+    y = row(doc,
+      [d.name, d.cybercrime.toLocaleString(), `${((d.cybercrime / 18234) * 100).toFixed(1)}%`, `${d.riskScore}/100`, `${d.trend === 'up' ? '▲' : '▼'} ${d.trendPercent}%`],
+      y, idx % 2 === 0
+    );
+  });
+
+  y += 6;
+  y = sectionHeader(doc, 'Recent Cybercrime FIRs', y);
+  RECENT_FIRS.filter(f => f.crimeType.toLowerCase().includes('cyber') || f.crimeType.toLowerCase().includes('financial')).slice(0, 5).forEach((fir, idx) => {
+    if (y > 265) { doc.addPage(); y = 20; }
+    if (idx % 2 === 0) doc.setFillColor(248, 252, 255).rect(15, y - 3, pw - 30, 7, 'F');
+    doc.setFont('helvetica', 'bold').setTextColor(0, 100, 150).setFontSize(8).text(fir.firNumber, 15, y);
+    doc.setFont('helvetica', 'normal').setTextColor(40, 40, 40).text(fir.district, 65, y);
+    doc.text(fir.status, 120, y);
+    doc.text(fir.date, 155, y);
+    y += 8;
+  });
+
+  buildFooter(doc, y + 6);
+  doc.save(`KSP_Cybercrime_Analysis_${Date.now()}.pdf`);
+}
+
+async function buildThreatAssessmentReport(lang: 'en' | 'kn') {
+  const lib = await loadJsPDF();
+  const doc = new lib.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const pw = doc.internal.pageSize.getWidth();
+
+  buildHeader(doc, lang === 'kn' ? 'ಬೆದರಿಕೆ ಮೌಲ್ಯಮಾಪನ ವರದಿ' : 'Threat Assessment Report — Karnataka State', lang);
+  let y = 64;
+
+  // Overall threat
+  doc.setFillColor(200, 0, 0).rect(15, y, pw - 30, 18, 'F');
+  doc.setTextColor(255, 255, 255).setFont('helvetica', 'bold').setFontSize(16);
+  doc.text('OVERALL THREAT LEVEL: HIGH', pw / 2, y + 8, { align: 'center' });
+  doc.setFontSize(9);
+  doc.text('82,089 crimes recorded | 23 AI alerts active | 6 critical anomalies detected', pw / 2, y + 14, { align: 'center' });
+  y += 26;
+
+  // Current Anomalies
+  y = sectionHeader(doc, 'Critical Anomaly Spikes (Last 24 Hours)', y);
+  doc.setFillColor(0, 30, 60).rect(15, y - 3, pw - 30, 7, 'F');
+  doc.setTextColor(255, 255, 255).setFontSize(8).setFont('helvetica', 'bold');
+  ['District', 'Crime Type', 'Spike %', 'Severity', 'Status'].forEach((h, i) => {
+    doc.text(h, [15, 55, 100, 135, 162][i], y + 1);
+  });
+  y += 8;
+  ANOMALY_DISTRICTS.forEach((a, idx) => {
+    if (y > 265) { doc.addPage(); y = 20; }
+    if (idx % 2 === 0) doc.setFillColor(255, 248, 245).rect(15, y - 3, pw - 30, 7, 'F');
+    doc.setFont('helvetica', 'normal').setTextColor(40, 40, 40).setFontSize(8);
+    doc.text(a.district, 15, y);
+    doc.text(a.crimeType.slice(0, 20), 55, y);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(a.severity === 'Critical' ? 200 : 160, 0, 0);
+    doc.text(`+${a.spikePercent}%`, 100, y);
+    doc.setTextColor(40, 40, 40).setFont('helvetica', 'normal');
+    doc.text(a.severity, 135, y);
+    doc.text(a.status, 162, y);
+    y += 8;
+  });
+
+  y += 6;
+  y = sectionHeader(doc, 'Crime Category Risk Summary', y);
+  CRIME_CATEGORIES.forEach((cat, idx) => {
+    if (y > 265) { doc.addPage(); y = 20; }
+    if (idx % 2 === 0) doc.setFillColor(248, 248, 255).rect(15, y - 3, pw - 30, 7, 'F');
+    doc.setFont('helvetica', 'bold').setTextColor(40, 40, 40).setFontSize(9).text(cat.name, 18, y);
+    doc.setFont('helvetica', 'normal').text(cat.count.toLocaleString(), 95, y);
+    doc.text(`${cat.percentage}%`, 130, y);
+    doc.setTextColor(cat.trend.startsWith('+') ? 160 : 0, cat.trend.startsWith('+') ? 0 : 100, 0);
+    doc.setFont('helvetica', 'bold').text(cat.trend, 160, y);
+    doc.setTextColor(40, 40, 40);
+    y += 8;
+  });
+
+  y += 6;
+  y = sectionHeader(doc, 'Strategic Recommendations', y);
+  const recs = [
+    '1. Immediately reinforce Cyber Crime Cell in Bengaluru Urban (+80 specialists)',
+    '2. Establish joint narcotics task force between Kalaburagi, Bidar & Yadgir districts',
+    '3. Deploy river police patrols on Tungabhadra belt (Raichur, Koppal, Ballari)',
+    '4. Issue Red Corner Notice for Suresh Nayak (Risk Score: 97)',
+    '5. Activate SIT for organized crime networks in Ballari–Vijayanagara corridor',
+    '6. Strengthen border checkposts on NH-48 (Belagavi) and Andhra Pradesh crossings',
+  ];
+  recs.forEach(rec => {
+    if (y > 265) { doc.addPage(); y = 20; }
+    doc.setFont('helvetica', 'normal').setTextColor(40, 40, 40).setFontSize(9);
+    doc.text(rec, 18, y);
+    y += 7;
+  });
+
+  buildFooter(doc, y + 6);
+  doc.save(`KSP_Threat_Assessment_${Date.now()}.pdf`);
+}
+
+async function buildAllReports(lang: 'en' | 'kn') {
+  const lib = await loadJsPDF();
+  const doc = new lib.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const pw = doc.internal.pageSize.getWidth();
+
+  // Cover page
+  doc.setFillColor(2, 6, 23).rect(0, 0, pw, 297, 'F');
+  doc.setTextColor(0, 200, 220).setFont('helvetica', 'bold').setFontSize(10);
+  doc.text('KARNATAKA STATE POLICE', pw / 2, 100, { align: 'center' });
+  doc.setFontSize(20).setTextColor(240, 240, 240);
+  doc.text('CrimeVision AI v5.0', pw / 2, 120, { align: 'center' });
+  doc.setFontSize(12).setTextColor(100, 150, 200);
+  doc.text('COMPREHENSIVE INTELLIGENCE REPORT', pw / 2, 132, { align: 'center' });
+  doc.setFontSize(9).setTextColor(120, 120, 120);
+  doc.text(`Generated: ${new Date().toLocaleString('en-IN')} IST`, pw / 2, 145, { align: 'center' });
+  doc.text('KSP DATATHON 2026 | RESTRICTED — OFFICIAL USE ONLY', pw / 2, 285, { align: 'center' });
+
+  // Add each report on new pages
+  const titles = [
+    'DISTRICT INTELLIGENCE REPORT',
+    'CRIMINAL NETWORK ANALYSIS',
+    'CYBERCRIME ANALYSIS',
+    'THREAT ASSESSMENT',
+  ];
+
+  for (let rpt = 0; rpt < 4; rpt++) {
+    doc.addPage();
+    buildHeader(doc, titles[rpt], lang);
+    let y = 64;
+
+    if (rpt === 0) {
+      // District summary
+      y = sectionHeader(doc, 'Top 10 Districts by Crime Count', y);
+      DISTRICTS.sort((a, b) => b.crimeCount - a.crimeCount).slice(0, 10).forEach((d, idx) => {
+        y = row(doc, [d.name, d.crimeCount.toLocaleString(), `${d.riskScore}/100`, d.topCrimeType, `${d.trend === 'up' ? '▲' : '▼'}${d.trendPercent}%`], y, idx % 2 === 0);
+      });
+    } else if (rpt === 1) {
+      y = sectionHeader(doc, 'Priority Suspects', y);
+      TOP_SUSPECTS.slice(0, 10).forEach((s, idx) => {
+        if (y > 265) { doc.addPage(); y = 20; }
+        const even = idx % 2 === 0;
+        if (even) doc.setFillColor(245, 248, 255).rect(15, y - 3, pw - 30, 7, 'F');
+        doc.setFont('helvetica', 'normal').setTextColor(40, 40, 40).setFontSize(8);
+        doc.text(`${s.name} (${s.alias})`, 15, y);
+        doc.text(s.district, 80, y);
+        doc.text(`${s.firCount} FIRs`, 125, y);
+        doc.setFont('helvetica', 'bold').setTextColor(s.riskLevel === 'Critical' ? 200 : 100, 0, 0);
+        doc.text(`Risk ${s.riskScore}`, 160, y);
+        doc.setTextColor(40, 40, 40);
+        y += 8;
+      });
+    } else if (rpt === 2) {
+      y = sectionHeader(doc, 'Cybercrime Breakdown', y);
+      CRIME_CATEGORIES.forEach((cat, idx) => {
+        if (y > 265) { doc.addPage(); y = 20; }
+        if (idx % 2 === 0) doc.setFillColor(248, 252, 255).rect(15, y - 3, pw - 30, 7, 'F');
+        doc.setFontSize(9).setFont('helvetica', 'bold').setTextColor(40, 40, 40).text(cat.name, 18, y);
+        doc.setFont('helvetica', 'normal').text(cat.count.toLocaleString(), 90, y);
+        doc.text(`${cat.percentage}%`, 130, y);
+        doc.text(cat.trend, 160, y);
+        y += 8;
+      });
+    } else {
+      y = sectionHeader(doc, 'Current Anomalies', y);
+      ANOMALY_DISTRICTS.forEach((a, idx) => {
+        if (y > 265) { doc.addPage(); y = 20; }
+        if (idx % 2 === 0) doc.setFillColor(255, 248, 245).rect(15, y - 3, pw - 30, 7, 'F');
+        doc.setFontSize(9).setFont('helvetica', 'bold').setTextColor(200, 0, 0).text(a.district, 15, y);
+        doc.setFont('helvetica', 'normal').setTextColor(40, 40, 40).text(a.crimeType, 70, y);
+        doc.setFont('helvetica', 'bold').setTextColor(200, 0, 0).text(`+${a.spikePercent}%`, 145, y);
+        doc.setFont('helvetica', 'normal').setTextColor(40, 40, 40).text(a.severity, 170, y);
+        y += 8;
+      });
+    }
+
+    buildFooter(doc, 275);
+  }
+
+  doc.save(`KSP_Complete_Intelligence_${Date.now()}.pdf`);
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+
+export default function ReportsPage() {
+  const { t, lang } = useLanguage();
+  const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const [generatingAll, setGeneratingAll] = useState(false);
+  const [completed, setCompleted] = useState<Set<string>>(new Set());
+
+  const REPORT_CARDS: ReportCard[] = [
+    {
+      id: 'district',
+      title: t.report_district_intel,
+      titleKn: 'ಜಿಲ್ಲಾ ಗುಪ್ತಚರ ವರದಿ',
+      description: 'Complete intelligence analysis for all 31 Karnataka districts including crime counts, risk scores, trend analysis, officer deployment, and top crime categories.',
+      icon: <Shield size={22} color="#00f0ff" />,
+      color: '#00f0ff',
+      pages: 4,
+      category: 'INTELLIGENCE',
+    },
+    {
+      id: 'criminal',
+      title: t.report_criminal_network,
+      titleKn: 'ಅಪರಾಧಿ ಜಾಲ ವಿಶ್ಲೇಷಣೆ',
+      description: 'Top 15 suspect profiles with risk scores, FIR links, aliases, associated networks, and current status (Wanted/Arrested/Absconding).',
+      icon: <Network size={22} color="#8b5cf6" />,
+      color: '#8b5cf6',
+      pages: 3,
+      category: 'SUSPECTS',
+    },
+    {
+      id: 'cybercrime',
+      title: t.report_cybercrime,
+      titleKn: 'ಸೈಬರ್ ಅಪರಾಧ ವಿಶ್ಲೇಷಣೆ ವರದಿ',
+      description: 'Deep-dive into 18,234 cybercrime cases: phishing vectors, financial exposure (₹142+ Cr), district breakdown, and active SIT investigations.',
+      icon: <Monitor size={22} color="#f59e0b" />,
+      color: '#f59e0b',
+      pages: 4,
+      category: 'CYBERCRIME',
+    },
+    {
+      id: 'threat',
+      title: t.report_threat_assessment,
+      titleKn: 'ಬೆದರಿಕೆ ಮೌಲ್ಯಮಾಪನ ವರದಿ',
+      description: 'State-level threat assessment covering current anomaly spikes, crime category risks, and 6 strategic recommendations for immediate action.',
+      icon: <Target size={22} color="#ef4444" />,
+      color: '#ef4444',
+      pages: 5,
+      category: 'THREAT',
+    },
+  ];
+
+  const handleDownload = useCallback(async (id: string) => {
+    setGeneratingId(id);
+    try {
+      if (id === 'district') await buildDistrictReport(lang);
+      else if (id === 'criminal') await buildCriminalNetworkReport(lang);
+      else if (id === 'cybercrime') await buildCybercrimeReport(lang);
+      else if (id === 'threat') await buildThreatAssessmentReport(lang);
+      setCompleted(prev => new Set(prev).add(id));
+      setTimeout(() => setCompleted(prev => { const next = new Set(prev); next.delete(id); return next; }), 3000);
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      alert('PDF generation failed. Check console for details.');
+    } finally {
+      setGeneratingId(null);
+    }
+  }, [lang]);
+
+  const handleDownloadAll = useCallback(async () => {
+    setGeneratingAll(true);
+    try {
+      await buildAllReports(lang);
+    } catch (err) {
+      console.error('All reports PDF failed:', err);
+      alert('Combined PDF generation failed.');
+    } finally {
+      setGeneratingAll(false);
+    }
+  }, [lang]);
 
   return (
-    <div className="page-content" style={{ padding: '28px' }}>
-      {/* PAGE HEADER */}
-      <div style={{ marginBottom: 28 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 8 }}>
+    <div style={{ padding: 24, minHeight: '100vh' }}>
+
+      {/* ── Page Header ───────────────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={{
             width: 44, height: 44, borderRadius: 12,
             background: 'rgba(0,240,255,0.1)', border: '1px solid rgba(0,240,255,0.3)',
@@ -200,269 +517,184 @@ export default function ReportsPage() {
             <FileText size={22} color="#00f0ff" />
           </div>
           <div>
-            <h1 className="page-title">Intelligence Reports Center</h1>
-            <p className="page-subtitle">Generate, preview and export comprehensive intelligence reports</p>
-          </div>
-          <div style={{ marginLeft: 'auto' }}>
-            <span className="badge badge-cyan">{REPORTS.length} Report Templates</span>
+            <h1 style={{ fontSize: 20, fontWeight: 900, color: '#f1f5f9', margin: 0 }}>
+              {t.page_reports}
+            </h1>
+            <p style={{ fontSize: 12, color: '#64748b', margin: '2px 0 0' }}>
+              {t.sub_reports}
+            </p>
           </div>
         </div>
+
+        {/* Download All Button */}
+        <button
+          id="download-all-reports-btn"
+          onClick={handleDownloadAll}
+          disabled={generatingAll || generatingId !== null}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px',
+            background: generatingAll ? 'rgba(0,240,255,0.05)' : 'linear-gradient(135deg, rgba(0,240,255,0.15), rgba(139,92,246,0.15))',
+            border: '1px solid rgba(0,240,255,0.35)', borderRadius: 10,
+            color: generatingAll ? '#64748b' : '#00f0ff',
+            fontSize: 13, fontWeight: 800, cursor: generatingAll ? 'not-allowed' : 'pointer',
+            fontFamily: 'inherit', letterSpacing: '0.04em', transition: 'all 0.2s',
+          }}
+        >
+          {generatingAll ? (
+            <><Loader size={16} style={{ animation: 'spin 0.8s linear infinite' }} /> Generating...</>
+          ) : (
+            <><Download size={16} /> {t.btn_download_all}</>
+          )}
+        </button>
       </div>
 
-      {/* REPORT CARDS GRID */}
-      <div className="responsive-grid-3" style={{ marginBottom: 28 }}>
-        {REPORTS.map((report) => {
-          const Icon = report.icon;
-          const isDL = downloading === report.id;
-          const isEX = exporting === report.id;
+      {/* ── Stats Strip ──────────────────────────────────────────────── */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 28,
+      }}>
+        {[
+          { label: 'Total Crimes', value: SUMMARY_METRICS.totalCrimes.toLocaleString(), color: '#ef4444' },
+          { label: 'Districts Covered', value: '31', color: '#00f0ff' },
+          { label: 'Clearance Rate', value: `${SUMMARY_METRICS.clearanceRate}%`, color: '#10b981' },
+          { label: 'Active Cases', value: SUMMARY_METRICS.activeCases.toLocaleString(), color: '#f59e0b' },
+        ].map(s => (
+          <div key={s.label} style={{
+            background: 'rgba(2,6,23,0.85)', border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: 12, padding: '14px 18px', textAlign: 'center',
+          }}>
+            <div style={{ fontSize: 22, fontWeight: 900, color: s.color }}>{s.value}</div>
+            <div style={{ fontSize: 11, color: '#64748b', marginTop: 3, fontWeight: 600 }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Report Cards ─────────────────────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
+        {REPORT_CARDS.map(card => {
+          const isGen = generatingId === card.id;
+          const isDone = completed.has(card.id);
           return (
-            <div key={report.id} className="glass-card" style={{ padding: 22, display: 'flex', flexDirection: 'column', gap: 0 }}>
-              {/* HEADER */}
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
+            <div
+              key={card.id}
+              style={{
+                background: 'rgba(2,6,23,0.9)',
+                border: `1px solid rgba(${card.color === '#00f0ff' ? '0,240,255' : card.color === '#8b5cf6' ? '139,92,246' : card.color === '#f59e0b' ? '245,158,11' : '239,68,68'},0.2)`,
+                borderRadius: 16, padding: 24,
+                transition: 'all 0.2s',
+              }}
+            >
+              {/* Card Header */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
                 <div style={{
-                  width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-                  background: `${report.iconColor}18`, border: `1px solid ${report.iconColor}30`,
+                  width: 48, height: 48, borderRadius: 12,
+                  background: `rgba(${card.color === '#00f0ff' ? '0,240,255' : card.color === '#8b5cf6' ? '139,92,246' : card.color === '#f59e0b' ? '245,158,11' : '239,68,68'},0.1)`,
+                  border: `1px solid rgba(${card.color === '#00f0ff' ? '0,240,255' : card.color === '#8b5cf6' ? '139,92,246' : card.color === '#f59e0b' ? '245,158,11' : '239,68,68'},0.3)`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                  <Icon size={18} color={report.iconColor} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#f1f5f9', marginBottom: 4, lineHeight: 1.4 }}>
-                    {report.title}
-                  </div>
-                  <p style={{ fontSize: 11, color: '#94a3b8', lineHeight: 1.5 }}>{report.description}</p>
-                </div>
-              </div>
-
-              {/* META */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <div style={{ fontSize: 11, color: '#64748b' }}>
-                  <span style={{ color: '#94a3b8' }}>Last generated:</span><br />
-                  <span style={{ color: '#cbd5e1', fontWeight: 600 }}>{report.lastGenerated}</span>
+                  {card.icon}
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: 11, color: '#64748b' }}>Size</div>
-                  <div style={{ fontSize: 13, color: '#f1f5f9', fontWeight: 700 }}>{report.fileSize}</div>
+                  <div style={{
+                    fontSize: 9, fontWeight: 800, padding: '3px 8px', borderRadius: 6,
+                    background: `rgba(${card.color === '#00f0ff' ? '0,240,255' : card.color === '#8b5cf6' ? '139,92,246' : card.color === '#f59e0b' ? '245,158,11' : '239,68,68'},0.1)`,
+                    color: card.color, border: `1px solid rgba(${card.color === '#00f0ff' ? '0,240,255' : card.color === '#8b5cf6' ? '139,92,246' : card.color === '#f59e0b' ? '245,158,11' : '239,68,68'},0.3)`,
+                    letterSpacing: '0.1em',
+                  }}>
+                    {card.category}
+                  </div>
+                  <div style={{ fontSize: 10, color: '#475569', marginTop: 4 }}>{card.pages} pages</div>
                 </div>
               </div>
 
-              {/* FORMAT BADGES */}
-              <div style={{ display: 'flex', gap: 6, marginBottom: 16 }}>
-                {report.formats.map(f => (
-                  <span key={f} className={f === 'PDF' ? 'badge badge-red' : 'badge badge-green'} style={{ fontSize: 10 }}>
-                    {f}
-                  </span>
-                ))}
+              {/* Title */}
+              <h3 style={{ fontSize: 15, fontWeight: 800, color: '#f1f5f9', margin: '0 0 4px', lineHeight: 1.3 }}>
+                {lang === 'kn' ? card.titleKn : card.title}
+              </h3>
+              <p style={{ fontSize: 12, color: '#64748b', lineHeight: 1.6, margin: '0 0 20px' }}>
+                {card.description}
+              </p>
+
+              {/* PDF Info */}
+              <div style={{
+                padding: '10px 14px', borderRadius: 8, marginBottom: 16,
+                background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)',
+              }}>
+                <div style={{ fontSize: 10, color: '#475569', marginBottom: 4 }}>PDF includes:</div>
+                <div style={{ fontSize: 11, color: '#64748b', lineHeight: 1.6 }}>
+                  ✓ KSP RESTRICTED header · ✓ Generated timestamp<br />
+                  ✓ Data tables with all 31 districts · ✓ Official footer
+                </div>
               </div>
 
-              {/* ACTION BUTTONS */}
-              <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
-                <button
-                  className="cyber-btn cyber-btn-cyan"
-                  style={{ flex: 1, fontSize: 11, padding: '8px 10px', justifyContent: 'center' }}
-                  onClick={() => setPreviewReport(report)}
-                >
-                  <Eye size={12} /> Preview
-                </button>
-                <button
-                  className="cyber-btn cyber-btn-red"
-                  style={{ flex: 1, fontSize: 11, padding: '8px 10px', justifyContent: 'center' }}
-                  onClick={() => handleDownload(report.id)}
-                >
-                  {isDL ? <Loader size={12} style={{ animation: 'spin-slow 1s linear infinite' }} /> : <Download size={12} />}
-                  {isDL ? 'Downloading...' : 'PDF'}
-                </button>
-                <button
-                  className="cyber-btn cyber-btn-green"
-                  style={{ flex: 1, fontSize: 11, padding: '8px 10px', justifyContent: 'center' }}
-                  onClick={() => handleExport(report.id)}
-                >
-                  {isEX ? <Loader size={12} style={{ animation: 'spin-slow 1s linear infinite' }} /> : <FileSpreadsheet size={12} />}
-                  {isEX ? 'Exporting...' : 'Excel'}
-                </button>
-              </div>
+              {/* Download Button */}
+              <button
+                id={`download-${card.id}-btn`}
+                onClick={() => handleDownload(card.id)}
+                disabled={isGen || generatingAll}
+                style={{
+                  width: '100%', padding: '11px',
+                  background: isDone
+                    ? 'rgba(16,185,129,0.1)'
+                    : isGen
+                      ? 'rgba(255,255,255,0.03)'
+                      : `rgba(${card.color === '#00f0ff' ? '0,240,255' : card.color === '#8b5cf6' ? '139,92,246' : card.color === '#f59e0b' ? '245,158,11' : '239,68,68'},0.1)`,
+                  border: `1px solid ${isDone ? 'rgba(16,185,129,0.3)' : `rgba(${card.color === '#00f0ff' ? '0,240,255' : card.color === '#8b5cf6' ? '139,92,246' : card.color === '#f59e0b' ? '245,158,11' : '239,68,68'},0.3)`}`,
+                  borderRadius: 10, fontFamily: 'inherit',
+                  color: isDone ? '#10b981' : isGen ? '#64748b' : card.color,
+                  fontSize: 12, fontWeight: 800, cursor: isGen || generatingAll ? 'not-allowed' : 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  transition: 'all 0.2s', letterSpacing: '0.04em',
+                }}
+              >
+                {isDone ? (
+                  <><CheckCircle size={15} /> Downloaded!</>
+                ) : isGen ? (
+                  <><Loader size={15} style={{ animation: 'spin 0.8s linear infinite' }} /> Generating PDF...</>
+                ) : (
+                  <><Download size={15} /> {t.btn_download_pdf}</>
+                )}
+              </button>
+
+              {/* Generation indicator */}
+              {isGen && (
+                <div style={{
+                  marginTop: 10, background: 'rgba(0,0,0,0.2)', borderRadius: 4,
+                  height: 3, overflow: 'hidden',
+                }}>
+                  <div style={{
+                    height: '100%', background: card.color,
+                    animation: 'progress 2s linear infinite',
+                  }} />
+                </div>
+              )}
             </div>
           );
         })}
       </div>
 
-      {/* CUSTOM REPORT GENERATOR */}
-      <div className="glass-card" style={{ padding: 24 }}>
-        <div className="section-header" style={{ marginBottom: 20 }}>
-          <div className="section-header-line" />
-          <span className="section-title">Generate Custom Report</span>
-          {generated && (
-            <span className="badge badge-green" style={{ marginLeft: 8 }}>✓ Generated Successfully</span>
-          )}
+      {/* Info Note */}
+      <div style={{
+        marginTop: 24, padding: '14px 18px', borderRadius: 12,
+        background: 'rgba(0,240,255,0.03)', border: '1px solid rgba(0,240,255,0.1)',
+        display: 'flex', alignItems: 'flex-start', gap: 10,
+      }}>
+        <AlertCircle size={15} color="#00f0ff" style={{ flexShrink: 0, marginTop: 2 }} />
+        <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.6 }}>
+          <strong style={{ color: '#94a3b8' }}>PDF Generation Note:</strong>{' '}
+          Reports are generated client-side using jsPDF loaded from CDN. An internet connection is required for the first download.
+          All data comes from the KSP crime intelligence database (82,089 records). Reports are marked{' '}
+          <strong style={{ color: '#ef4444' }}>RESTRICTED</strong> and intended for official use only.
         </div>
-        <div className="responsive-grid-3" style={{ marginBottom: 20 }}>
-          {CHECKBOXES.map((cb) => (
-            <label
-              key={cb.id}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer',
-                padding: '12px 14px', borderRadius: 10,
-                background: checked[cb.id] ? 'rgba(0,240,255,0.06)' : 'rgba(255,255,255,0.02)',
-                border: `1px solid ${checked[cb.id] ? 'rgba(0,240,255,0.25)' : 'rgba(255,255,255,0.06)'}`,
-                transition: 'all 0.2s ease',
-              }}
-              onClick={() => setChecked(p => ({ ...p, [cb.id]: !p[cb.id] }))}
-            >
-              {checked[cb.id]
-                ? <CheckSquare size={16} color="#00f0ff" />
-                : <Square size={16} color="#64748b" />}
-              <span style={{ fontSize: 13, color: checked[cb.id] ? '#f1f5f9' : '#94a3b8', fontWeight: checked[cb.id] ? 600 : 400 }}>
-                {cb.label}
-              </span>
-            </label>
-          ))}
-        </div>
-        <button
-          className="cyber-btn cyber-btn-cyan"
-          style={{ padding: '12px 28px', fontSize: 13 }}
-          onClick={handleGenerate}
-          disabled={generating}
-        >
-          {generating
-            ? <><RefreshCw size={14} style={{ animation: 'spin-slow 1s linear infinite' }} /> Generating Report...</>
-            : <><ChevronRight size={14} /> Generate Custom Report</>}
-        </button>
       </div>
 
-      {/* PREVIEW MODAL */}
-      {previewReport && (
-        <div
-          style={{
-            position: 'fixed', inset: 0, zIndex: 1000,
-            background: 'rgba(2,6,23,0.88)', backdropFilter: 'blur(12px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: 24,
-          }}
-          onClick={() => setPreviewReport(null)}
-        >
-          <div
-            className="glass-card"
-            style={{ width: '100%', maxWidth: 780, maxHeight: '88vh', overflowY: 'auto', padding: 32 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* MODAL HEADER */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 24, paddingBottom: 18, borderBottom: '1px solid rgba(0,240,255,0.1)' }}>
-              <div style={{
-                width: 42, height: 42, borderRadius: 10, flexShrink: 0,
-                background: `${previewReport.iconColor}18`, border: `1px solid ${previewReport.iconColor}30`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <previewReport.icon size={19} color={previewReport.iconColor} />
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 16, fontWeight: 700, color: '#f1f5f9', marginBottom: 4 }}>{previewReport.title}</div>
-                <div style={{ fontSize: 12, color: '#64748b' }}>
-                  Generated: {previewReport.lastGenerated} · Size: {previewReport.fileSize}
-                </div>
-              </div>
-              <button
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', padding: 4 }}
-                onClick={() => setPreviewReport(null)}
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {/* KEY FINDINGS */}
-            <div style={{ marginBottom: 22 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#00f0ff', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>
-                Key Findings
-              </div>
-              {previewReport.findings.map((f, i) => (
-                <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 8, alignItems: 'flex-start' }}>
-                  <ChevronRight size={13} color="#00f0ff" style={{ marginTop: 3, flexShrink: 0 }} />
-                  <span style={{ fontSize: 13, color: '#cbd5e1', lineHeight: 1.55 }}>{f}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* RISK ASSESSMENT */}
-            <div style={{ marginBottom: 22 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#f59e0b', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>
-                Risk Assessment Summary
-              </div>
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
-                {DISTRICT_RISK_SCORES.slice(0, 5).map((d) => (
-                  <div key={d.name} style={{
-                    padding: '6px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600,
-                    background: d.score >= 85 ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.12)',
-                    border: `1px solid ${d.score >= 85 ? 'rgba(239,68,68,0.3)' : 'rgba(245,158,11,0.25)'}`,
-                    color: d.score >= 85 ? '#f87171' : '#fbbf24',
-                  }}>
-                    {d.name}: {d.score}
-                  </div>
-                ))}
-              </div>
-              <p style={{ fontSize: 13, color: '#94a3b8', background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.15)', borderRadius: 8, padding: '10px 14px' }}>
-                {previewReport.riskSummary}
-              </p>
-            </div>
-
-            {/* CRIME FORECAST */}
-            <div style={{ marginBottom: 22 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#8b5cf6', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
-                Crime Forecast Summary
-              </div>
-              <p style={{ fontSize: 13, color: '#cbd5e1', lineHeight: 1.6, background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.15)', borderRadius: 8, padding: '10px 14px' }}>
-                {previewReport.forecastText}
-              </p>
-            </div>
-
-            {/* HEATMAP PREVIEW */}
-            <div style={{ marginBottom: 24 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>
-                District Risk Heatmap Preview
-              </div>
-              <div className="responsive-grid-5">
-                {heatmapDistricts.map((d) => (
-                  <div key={d.name} style={{
-                    background: getHeatColor(d.score),
-                    borderRadius: 8, padding: '10px 8px', textAlign: 'center',
-                    boxShadow: d.score >= 85 ? '0 0 12px rgba(239,68,68,0.3)' : 'none',
-                  }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: '#f1f5f9', marginBottom: 2 }}>{d.name}</div>
-                    <div style={{ fontSize: 14, fontWeight: 800, color: '#fff' }}>{d.score}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* MODAL ACTIONS */}
-            <div style={{ display: 'flex', gap: 10, paddingTop: 16, borderTop: '1px solid rgba(0,240,255,0.08)' }}>
-              <button
-                className="cyber-btn cyber-btn-red"
-                style={{ flex: 1, justifyContent: 'center' }}
-                onClick={() => handleDownload(previewReport.id)}
-              >
-                <Download size={13} /> Download PDF
-              </button>
-              <button
-                className="cyber-btn cyber-btn-green"
-                style={{ flex: 1, justifyContent: 'center' }}
-                onClick={() => handleExport(previewReport.id)}
-              >
-                <FileSpreadsheet size={13} /> Export Excel
-              </button>
-              <button
-                className="cyber-btn"
-                style={{
-                  flex: 1, justifyContent: 'center',
-                  background: 'rgba(100,116,139,0.12)', color: '#94a3b8',
-                  border: '1px solid rgba(100,116,139,0.25)',
-                }}
-                onClick={() => setPreviewReport(null)}
-              >
-                <X size={13} /> Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes progress {
+          0% { width: 0%; transform: translateX(-100%); }
+          50% { width: 60%; }
+          100% { width: 0%; transform: translateX(200%); }
+        }
+      `}</style>
     </div>
   );
 }

@@ -35,7 +35,7 @@ html, body {
   color: var(--text-primary);
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   overflow-x: hidden;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.6;
 }
 
@@ -960,6 +960,40 @@ html, body {
     grid-template-columns: 1fr;
   }
 }
+
+/* ─────────────────────────────────────────────
+   GLOBAL TYPOGRAPHY UPGRADES (PHASE 2)
+   Body: 16px, Labels: 15px, Cards: 20px, Sections: 24px, Titles: 32px
+───────────────────────────────────────────── */
+body, p, span, td, th, input, select, textarea, button {
+  font-size: 16px; /* Body text */
+}
+
+/* Card titles */
+.card-title, .glass-card h3, .glass-card .section-title {
+  font-size: 20px !important;
+}
+
+/* Section titles */
+.section-title, .section-header .section-title {
+  font-size: 24px !important;
+}
+
+/* Dashboard & Page titles */
+.page-title {
+  font-size: 32px !important;
+}
+
+/* Labels */
+label, .label, .cyber-label, .metric-label, .sidebar-section-label {
+  font-size: 15px !important;
+}
+
+/* Card content */
+.glass-card, .card-content, .card {
+  font-size: 16px !important;
+}
+
 
 
 
