@@ -1,316 +1,547 @@
 'use client';
+// ─────────────────────────────────────────────────────────────────────────────
+// app/fir/page.tsx — FIR Details Page with AI Case Summary Generator
+// ─────────────────────────────────────────────────────────────────────────────
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
-  ShieldCheck, Calendar, MapPin, User, ShieldAlert,
-  ArrowLeft, CheckCircle2, Clock, Eye, AlertTriangle,
-  FileText, Briefcase, Zap, Shield, HelpCircle
+  FileText, Brain, Download, Search, X, ChevronRight,
+  AlertTriangle, Clock, MapPin, User, Shield, Zap,
+  CheckCircle, Activity, Loader, Copy, Check
 } from 'lucide-react';
-import Link from 'next/link';
-import { FIR_RECORDS, FIRRecord } from '@/lib/mockData';
+import { useLanguage } from '@/components/LanguageToggle';
+import { RECENT_FIRS, TOP_SUSPECTS, DISTRICTS, type FIRRecord } from '@/lib/crimeData';
+import { getAnthropicApiKey } from '@/lib/apiKey';
 
-export default function FIRDetailsPage() {
-  const [selectedFir, setSelectedFir] = useState<FIRRecord | null>(null);
+// ─── AI Case Summary ──────────────────────────────────────────────────────────
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const id = new URLSearchParams(window.location.search).get('id');
-      const record = FIR_RECORDS.find(f => f.id === id) || FIR_RECORDS[0] || null;
-      setSelectedFir(record);
-    }
-  }, []);
+async function generateAICaseSummary(fir: FIRRecord, apiKey: string): Promise<string> {
+  const suspect = TOP_SUSPECTS.find(s => s.name === fir.suspectName);
+  const district = DISTRICTS.find(d => d.name === fir.district);
 
-  if (!selectedFir) {
-    return (
-      <div className="page-content flex items-center justify-center min-h-[80vh]">
-        <div className="glass-card p-8 text-center max-w-md">
-          <AlertTriangle size={36} className="text-[#ef4444] mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-2">FIR Record Not Found</h2>
-          <p className="text-slate-400 text-sm mb-6">The requested FIR identifier does not match any records in the centralized police database.</p>
-          <Link href="/" className="cyber-btn cyber-btn-cyan text-xs py-2 px-4 justify-center">
-            <ArrowLeft size={14} /> Back to Dashboard
-          </Link>
-        </div>
-      </div>
-    );
+  const prompt = `You are the Karnataka State Police Intelligence AI. Generate a concise professional case summary for this FIR:
+
+FIR Number: ${fir.firNumber}
+Crime Type: ${fir.crimeType}
+District: ${fir.district} (Risk Score: ${district?.riskScore ?? 'N/A'}/100)
+Date Filed: ${fir.date}
+Status: ${fir.status}
+Priority: ${fir.priority}
+Suspect: ${fir.suspectName}${suspect ? ` (alias: ${suspect.alias}, Risk: ${suspect.riskScore}/100, ${suspect.firCount} prior FIRs, Status: ${suspect.status})` : ''}
+Assigned Officer: ${fir.assignedOfficer}
+Description: ${fir.description}
+
+Write a 3-4 paragraph professional intelligence summary covering:
+1. Case Overview & Severity Assessment
+2. Suspect Intelligence (if suspect is known)
+3. Investigation Recommendations
+4. Risk to Public / Priority Classification
+
+Use formal KSP intelligence report style. Be specific and actionable.`;
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  });
+
+  if (!response.ok) throw new Error(`API Error ${response.status}`);
+  const data = await response.json() as { content: { type: string; text: string }[] };
+  return data.content?.[0]?.text ?? 'No summary generated.';
+}
+
+// ─── jsPDF loader ─────────────────────────────────────────────────────────────
+
+async function loadJsPDF() {
+  if ((window as unknown as Record<string, unknown>).jspdf) {
+    return (window as unknown as Record<string, unknown>).jspdf as { jsPDF: new (o?: Record<string, unknown>) => JsPDF };
   }
+  await new Promise<void>((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s.onload = () => resolve(); s.onerror = () => reject(new Error('jsPDF failed'));
+    document.head.appendChild(s);
+  });
+  return (window as unknown as Record<string, unknown>).jspdf as { jsPDF: new (o?: Record<string, unknown>) => JsPDF };
+}
 
-  // Calculate timeline stepper steps based on status
-  // 1: FIR Filed, 2: Investigation Started, 3: Evidence Collected, 4: Suspect Identified, 5: Arrest Made, 6: Charges Filed, 7: Case Closed
-  const getStepStatus = (stepIndex: number) => {
-    const status = selectedFir.investigationStatus;
-    
-    // Steps 1, 2, 3 are always completed
-    if (stepIndex <= 3) return 'completed';
-    
-    if (status === 'monitoring') {
-      if (stepIndex === 4) return 'completed';
-      if (stepIndex === 5) return 'active';
-      return 'pending';
+interface JsPDF {
+  setFontSize: (n: number) => void;
+  setTextColor: (r: number, g: number, b: number) => void;
+  setFillColor: (r: number, g: number, b: number) => void;
+  setDrawColor: (r: number, g: number, b: number) => void;
+  setFont: (f: string, style?: string) => void;
+  text: (t: string, x: number, y: number, opts?: Record<string, unknown>) => void;
+  rect: (x: number, y: number, w: number, h: number, s?: string) => void;
+  line: (x1: number, y1: number, x2: number, y2: number) => void;
+  addPage: () => void;
+  splitTextToSize: (t: string, w: number) => string[];
+  save: (name: string) => void;
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+const priorityColors: Record<string, { text: string; bg: string; border: string }> = {
+  Critical: { text: '#ef4444', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.3)' },
+  High:     { text: '#f59e0b', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.3)' },
+  Medium:   { text: '#00f0ff', bg: 'rgba(0,240,255,0.06)', border: 'rgba(0,240,255,0.2)' },
+  Low:      { text: '#10b981', bg: 'rgba(16,185,129,0.06)', border: 'rgba(16,185,129,0.2)' },
+};
+
+const statusColors: Record<string, string> = {
+  'Under Investigation': '#f59e0b',
+  'Arrested': '#10b981',
+  'Closed': '#64748b',
+  'Pending': '#ef4444',
+  'Absconding': '#ef4444',
+};
+
+// ─── FIR Card ─────────────────────────────────────────────────────────────────
+
+function FIRCard({ fir, onClick, isSelected }: { fir: FIRRecord; onClick: () => void; isSelected: boolean }) {
+  const pc = priorityColors[fir.priority] ?? priorityColors.Low;
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        width: '100%', textAlign: 'left', padding: 14, borderRadius: 12, cursor: 'pointer',
+        background: isSelected ? 'rgba(0,240,255,0.06)' : 'rgba(2,6,23,0.9)',
+        border: `1px solid ${isSelected ? 'rgba(0,240,255,0.35)' : 'rgba(255,255,255,0.06)'}`,
+        transition: 'all 0.15s', fontFamily: 'inherit',
+      }}
+      onMouseEnter={e => { if (!isSelected) { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,240,255,0.2)'; }}}
+      onMouseLeave={e => { if (!isSelected) { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.06)'; }}}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+        <span style={{ fontSize: 12, fontFamily: 'monospace', fontWeight: 700, color: '#00f0ff' }}>{fir.firNumber}</span>
+        <span style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 4,
+          background: pc.bg, color: pc.text, border: `1px solid ${pc.border}`, textTransform: 'uppercase' }}>
+          {fir.priority}
+        </span>
+      </div>
+      <div style={{ fontSize: 12, fontWeight: 600, color: '#e2e8f0', marginBottom: 4 }}>{fir.crimeType}</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#64748b' }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={9} />{fir.district}</span>
+        <span style={{ color: statusColors[fir.status] ?? '#64748b' }}>{fir.status}</span>
+      </div>
+    </button>
+  );
+}
+
+// ─── FIR Detail Panel ─────────────────────────────────────────────────────────
+
+function FIRDetailPanel({ fir }: { fir: FIRRecord }) {
+  const [aiSummary, setAiSummary] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const suspect = TOP_SUSPECTS.find(s => s.name === fir.suspectName);
+  const district = DISTRICTS.find(d => d.name === fir.district);
+  const pc = priorityColors[fir.priority] ?? priorityColors.Low;
+
+  const handleGenerateSummary = useCallback(async () => {
+    const activeKey = getAnthropicApiKey();
+    if (!activeKey) { setAiSummary('⚠️ API key not configured. Please enter your API key in the Investigator page first.'); return; }
+    setIsGenerating(true);
+    setAiSummary('');
+    try {
+      const summary = await generateAICaseSummary(fir, activeKey);
+      setAiSummary(summary);
+    } catch (err) {
+      setAiSummary(`⚠️ Error: ${(err as Error).message}`);
+    } finally {
+      setIsGenerating(false);
     }
-    
-    if (status === 'arrested') {
-      if (stepIndex <= 5) return 'completed';
-      if (stepIndex === 6) return 'active';
-      return 'pending';
+  }, [fir]);
+
+  const handleDownloadPDF = async () => {
+    setIsDownloading(true);
+    try {
+      const lib = await loadJsPDF();
+      const doc = new lib.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pw = 210;
+
+      // Header
+      doc.setFillColor(2, 6, 23); doc.rect(0, 0, pw, 30, 'F');
+      doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
+      doc.text('KARNATAKA STATE POLICE — RESTRICTED', pw / 2, 12, { align: 'center' });
+      doc.setFontSize(9); doc.setTextColor(0, 200, 220);
+      doc.text('CrimeVision AI v5.0 | FIR Intelligence Report', pw / 2, 20, { align: 'center' });
+      doc.setFontSize(7); doc.setTextColor(150, 150, 150);
+      doc.text(`Generated: ${new Date().toLocaleString('en-IN')} IST`, pw / 2, 27, { align: 'center' });
+
+      let y = 40;
+      // FIR Number
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(0, 150, 200);
+      doc.text(fir.firNumber, pw / 2, y, { align: 'center' }); y += 8;
+      doc.setFontSize(10); doc.setTextColor(80, 80, 80); doc.setFont('helvetica', 'normal');
+      doc.text(`${fir.crimeType} | ${fir.district} | ${fir.date}`, pw / 2, y, { align: 'center' }); y += 10;
+
+      // Status badge
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+      doc.setTextColor(fir.priority === 'Critical' ? 200 : fir.priority === 'High' ? 180 : 0, 0, 0);
+      doc.text(`Priority: ${fir.priority} | Status: ${fir.status}`, pw / 2, y, { align: 'center' }); y += 8;
+      doc.setDrawColor(0, 200, 220); doc.line(15, y, pw - 15, y); y += 8;
+
+      // Case Details
+      doc.setFillColor(240, 248, 255); doc.rect(15, y - 3, pw - 30, 8, 'F');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(0, 80, 140);
+      doc.text('CASE DETAILS', 18, y + 2); y += 12;
+
+      const details = [
+        ['FIR Number', fir.firNumber],
+        ['Crime Category', fir.crimeType],
+        ['District', fir.district],
+        ['Date Filed', fir.date],
+        ['Priority Level', fir.priority],
+        ['Case Status', fir.status],
+        ['Suspect', fir.suspectName],
+        ['Assigned Officer', fir.assignedOfficer],
+        ...(district ? [['District Risk Score', `${district.riskScore}/100`]] : []),
+        ...(suspect ? [['Suspect Risk Score', `${suspect.riskScore}/100`], ['Suspect Status', suspect.status], ['Total FIRs', `${suspect.firCount}`]] : []),
+      ];
+
+      details.forEach(([k, v], idx) => {
+        if (y > 265) { doc.addPage(); y = 20; }
+        if (idx % 2 === 0) doc.setFillColor(248, 252, 255);
+        else doc.setFillColor(255, 255, 255);
+        doc.rect(15, y - 3, pw - 30, 7, 'F');
+        doc.setFont('helvetica', 'bold'); doc.setTextColor(60, 60, 60); doc.setFontSize(8);
+        doc.text(k, 18, y);
+        doc.setFont('helvetica', 'normal'); doc.text(v, 90, y);
+        y += 8;
+      });
+
+      // Description
+      y += 4;
+      if (y > 250) { doc.addPage(); y = 20; }
+      doc.setFillColor(240, 248, 255); doc.rect(15, y - 3, pw - 30, 8, 'F');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(0, 80, 140);
+      doc.text('CASE DESCRIPTION', 18, y + 2); y += 12;
+      doc.setFont('helvetica', 'normal'); doc.setTextColor(40, 40, 40); doc.setFontSize(8);
+      const descLines = doc.splitTextToSize(fir.description, pw - 30);
+      for (const line of descLines) {
+        if (y > 270) { doc.addPage(); y = 20; }
+        doc.text(line, 15, y); y += 5;
+      }
+
+      // AI Summary
+      if (aiSummary) {
+        y += 6;
+        if (y > 245) { doc.addPage(); y = 20; }
+        doc.setFillColor(230, 245, 255); doc.rect(15, y - 3, pw - 30, 8, 'F');
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(0, 100, 60);
+        doc.text('AI INTELLIGENCE SUMMARY (CrimeNet AI)', 18, y + 2); y += 12;
+        doc.setFont('helvetica', 'normal'); doc.setTextColor(40, 40, 40); doc.setFontSize(8);
+        const summaryLines = doc.splitTextToSize(aiSummary.replace(/\*\*/g, ''), pw - 30);
+        for (const line of summaryLines) {
+          if (y > 270) { doc.addPage(); y = 20; }
+          doc.text(line, 15, y); y += 5;
+        }
+      }
+
+      // Footer
+      if (y > 270) { doc.addPage(); y = 20; }
+      y = Math.max(y + 6, 280);
+      doc.setDrawColor(200, 200, 200); doc.line(15, y, pw - 15, y); y += 6;
+      doc.setFontSize(7); doc.setTextColor(150, 150, 150);
+      doc.text('CrimeVision AI v5.0 | Karnataka State Police | RESTRICTED — FOR OFFICIAL USE ONLY', pw / 2, y, { align: 'center' });
+
+      doc.save(`FIR_${fir.firNumber.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}.pdf`);
+    } catch (err) {
+      alert(`PDF failed: ${(err as Error).message}`);
+    } finally {
+      setIsDownloading(false);
     }
-    
-    if (status === 'resolved') {
-      return 'completed';
-    }
-    
-    // Status is 'investigating'
-    if (stepIndex === 4) return 'active';
-    return 'pending';
   };
 
-  const steps = [
-    { label: 'FIR Filed', desc: 'Official case registration logged in central police registry.' },
-    { label: 'Investigation Started', desc: 'Case assigned to officer. Preliminary site inquiry initiated.' },
-    { label: 'Evidence Collected', desc: `${selectedFir.evidenceCount} forensic exhibits recovered and logged.` },
-    { label: 'Suspect Identified', desc: `AI suspect risk score assessed at ${selectedFir.suspectDetails.profileScore}% confidence.` },
-    { label: 'Arrest Made', desc: `Suspect apprehended and taken into custody for questioning.` },
-    { label: 'Charges Filed', desc: 'Official charge sheet prepared and filed before court.' },
-    { label: 'Case Closed', desc: 'Legal hearings finalized. Case marked closed in database.' }
-  ];
-
   return (
-    <div className="page-content" style={{ padding: '28px' }}>
-      
-      {/* HEADER ROW */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <Link href="/" className="p-2 bg-slate-900 border border-white/5 text-slate-400 hover:text-white rounded-lg hover:border-[#00f0ff]/30 transition-all">
-            <ArrowLeft size={16} />
-          </Link>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+      {/* FIR Header */}
+      <div style={{
+        padding: 20, borderRadius: 14, background: 'rgba(2,6,23,0.95)',
+        border: `1px solid ${pc.border}`,
+        boxShadow: `0 0 24px ${pc.bg}`,
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-mono tracking-widest text-[#00f0ff] font-black">{selectedFir.id}</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-              <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{selectedFir.date}</span>
+            <div style={{ fontSize: 11, color: '#64748b', marginBottom: 4 }}>FIR NUMBER</div>
+            <div style={{ fontSize: 22, fontFamily: 'monospace', fontWeight: 900, color: '#00f0ff' }}>{fir.firNumber}</div>
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 800,
+              background: pc.bg, color: pc.text, border: `1px solid ${pc.border}`, textTransform: 'uppercase' }}>
+              {fir.priority}
             </div>
-            <h1 className="page-title">{selectedFir.firNumber}</h1>
+            <div style={{ padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+              background: 'rgba(255,255,255,0.04)', color: statusColors[fir.status] ?? '#64748b',
+              border: '1px solid rgba(255,255,255,0.08)' }}>
+              {fir.status}
+            </div>
           </div>
         </div>
 
-        {/* State Badges */}
-        <div className="flex items-center gap-3">
-          <div className={`badge ${
-            selectedFir.investigationStatus === 'resolved' ? 'badge-green' :
-            selectedFir.investigationStatus === 'arrested' ? 'badge-cyan' :
-            selectedFir.investigationStatus === 'monitoring' ? 'badge-purple' : 'badge-amber'
-          } uppercase tracking-wider text-xs px-3 py-1 font-bold`}>
-            {selectedFir.investigationStatus}
-          </div>
-          <div className="badge badge-red font-mono font-black text-xs py-1">
-            Risk: {selectedFir.riskScore}/100
-          </div>
+        <div style={{ fontSize: 16, fontWeight: 700, color: '#e2e8f0', marginBottom: 8 }}>{fir.crimeType}</div>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 12, color: '#64748b' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={12} />{fir.district}</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} />{fir.date}</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Shield size={12} />{fir.assignedOfficer}</span>
         </div>
       </div>
 
-      {/* CORE DETAILS GRID */}
-      <div className="responsive-grid-3-2">
-        
-        {/* LEFT COLUMN: INFORMATION SHEET */}
-        <div className="space-y-6">
-          
-          {/* CASE OVERVIEW */}
-          <div className="glass-card p-5">
-            <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-2">
-              <Briefcase size={14} color="#00f0ff" />
-              <span className="text-xs font-bold uppercase tracking-widest text-slate-200">Incident Details</span>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4 text-xs">
-              <div>
-                <span className="text-slate-500 block uppercase font-bold tracking-wide text-[10px]">Crime Category</span>
-                <span className="text-slate-200 font-bold block mt-1">{selectedFir.crimeCategory}</span>
-              </div>
-              <div>
-                <span className="text-slate-500 block uppercase font-bold tracking-wide text-[10px]">District Jurisdiction</span>
-                <span className="text-slate-200 font-bold block mt-1">{selectedFir.district} Command</span>
-              </div>
-              <div>
-                <span className="text-slate-500 block uppercase font-bold tracking-wide text-[10px]">Assigned Officer</span>
-                <span className="text-slate-200 font-bold block mt-1">{selectedFir.assignedOfficer}</span>
-              </div>
-              <div>
-                <span className="text-slate-500 block uppercase font-bold tracking-wide text-[10px]">Registered Date</span>
-                <span className="text-slate-200 font-bold block mt-1">{selectedFir.date}</span>
-              </div>
-            </div>
+      {/* Case Details Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        {[
+          { label: 'Crime Type', value: fir.crimeType, color: '#00f0ff' },
+          { label: 'District', value: fir.district, color: '#e2e8f0' },
+          { label: 'Filing Date', value: fir.date, color: '#e2e8f0' },
+          { label: 'District Risk', value: district ? `${district.riskScore}/100` : 'N/A', color: district && district.riskScore > 80 ? '#ef4444' : '#f59e0b' },
+        ].map(item => (
+          <div key={item.label} style={{
+            padding: 12, borderRadius: 10, background: 'rgba(2,6,23,0.85)',
+            border: '1px solid rgba(255,255,255,0.06)',
+          }}>
+            <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>{item.label}</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: item.color }}>{item.value}</div>
           </div>
+        ))}
+      </div>
 
-          {/* VICTIM DETAILS */}
-          <div className="glass-card p-5">
-            <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-2">
-              <User size={14} color="#10b981" />
-              <span className="text-xs font-bold uppercase tracking-widest text-slate-200">Victim Dossier</span>
-            </div>
-            
-            <div className="flex gap-4 items-center mb-3">
-              <div className="w-10 h-10 rounded-lg bg-[rgba(16,185,129,0.08)] border border-[rgba(16,185,129,0.2)] flex items-center justify-center text-lg">
-                👤
-              </div>
-              <div>
-                <div className="text-sm font-bold text-slate-100">{selectedFir.victimDetails.name}</div>
-                <div className="text-xs text-slate-400 mt-0.5">
-                  Gender: {selectedFir.victimDetails.gender} · Age: {selectedFir.victimDetails.age}
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-black/25 rounded-lg p-2.5 border border-white/5 text-[11px] text-slate-400">
-              <strong className="text-slate-500 uppercase tracking-wider text-[9px] block mb-0.5">Legal Status</strong>
-              Victim is marked as <span className="text-[#10b981] font-bold">"{selectedFir.victimDetails.status}"</span> under central witness protection directives.
-            </div>
+      {/* Suspect Panel */}
+      {suspect && (
+        <div style={{
+          padding: 16, borderRadius: 12, background: 'rgba(239,68,68,0.05)',
+          border: '1px solid rgba(239,68,68,0.2)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <User size={14} color="#ef4444" />
+            <span style={{ fontSize: 11, fontWeight: 800, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Linked Suspect
+            </span>
           </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            {[
+              { k: 'Name', v: suspect.name },
+              { k: 'Alias', v: `"${suspect.alias}"` },
+              { k: 'Risk Score', v: `${suspect.riskScore}/100` },
+              { k: 'Total FIRs', v: `${suspect.firCount} cases` },
+              { k: 'Risk Level', v: suspect.riskLevel },
+              { k: 'Status', v: suspect.status },
+            ].map(({ k, v }) => (
+              <div key={k}>
+                <div style={{ fontSize: 9, color: '#64748b', marginBottom: 2 }}>{k}</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: k === 'Status' ? (statusColors[v] ?? '#94a3b8') : '#e2e8f0' }}>{v}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-          {/* SUSPECT PROFILE */}
-          <div className="glass-card p-5">
-            <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-2">
-              <ShieldAlert size={14} color="#ef4444" />
-              <span className="text-xs font-bold uppercase tracking-widest text-slate-200">Accused Suspect Profile</span>
-              <span className={`ml-auto badge ${selectedFir.suspectDetails.riskLevel === 'Critical' ? 'badge-red' : 'badge-amber'} text-[9px]`}>
-                {selectedFir.suspectDetails.riskLevel} RISK
-              </span>
-            </div>
+      {/* Description */}
+      <div style={{ padding: 16, borderRadius: 12, background: 'rgba(2,6,23,0.85)', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Activity size={11} /> Case Description
+        </div>
+        <p style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.7, margin: 0 }}>{fir.description}</p>
+      </div>
 
-            <div className="flex gap-4 items-start mb-4">
-              <div className="w-14 h-14 bg-red-950/20 border border-red-500/20 rounded-xl flex flex-col items-center justify-center flex-shrink-0 relative overflow-hidden">
-                <span className="text-2xl opacity-60">👤</span>
-                <div className="absolute bottom-0 inset-x-0 bg-red-500/20 text-[9px] font-black text-red-400 text-center py-0.5 uppercase">
-                  Accused
-                </div>
-              </div>
-              <div>
-                <h3 className="text-sm font-black text-slate-100">{selectedFir.suspectDetails.name}</h3>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  {selectedFir.suspectDetails.gender} · Age {selectedFir.suspectDetails.age} · District: {selectedFir.suspectDetails.district}
-                </p>
-                <p className="text-[11px] text-slate-500 mt-1">
-                  Prior offenses: <strong className="text-red-400">{selectedFir.suspectDetails.arrestCount} arrests</strong>
-                </p>
-              </div>
-            </div>
-
-            {/* Suspect Asset Dossier */}
-            <div className="space-y-3 text-xs border-t border-white/5 pt-3">
-              <div>
-                <strong className="text-slate-500 uppercase tracking-wider text-[9px] block mb-1">Known Associates:</strong>
-                <div className="flex flex-wrap gap-1">
-                  {selectedFir.suspectDetails.knownAssociates.map(a => (
-                    <span key={a} className="badge badge-gray text-[9px]">{a}</span>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <strong className="text-slate-500 uppercase tracking-wider text-[9px] block mb-1">Mobiles Used:</strong>
-                <div className="flex flex-wrap gap-1">
-                  {selectedFir.suspectDetails.mobileNumbers.map(m => (
-                    <span key={m} className="badge badge-cyan text-[9px]">{m}</span>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <strong className="text-slate-500 uppercase tracking-wider text-[9px] block mb-1">Vehicles Flagged:</strong>
-                <div className="flex flex-wrap gap-1">
-                  {selectedFir.suspectDetails.vehiclesUsed.map(v => (
-                    <span key={v} className="badge badge-purple text-[9px]">{v}</span>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <strong className="text-slate-500 uppercase tracking-wider text-[9px] block mb-1">Bank Accounts:</strong>
-                <div className="flex flex-wrap gap-1">
-                  {selectedFir.suspectDetails.bankAccounts.map(b => (
-                    <span key={b} className="badge badge-green text-[9px]">{b}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
+      {/* AI Case Summary */}
+      <div style={{ padding: 16, borderRadius: 12, background: 'rgba(139,92,246,0.04)', border: '1px solid rgba(139,92,246,0.2)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: aiSummary ? 12 : 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Brain size={14} color="#a78bfa" />
+            <span style={{ fontSize: 11, fontWeight: 800, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              AI Case Summary
+            </span>
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {aiSummary && (
+              <button onClick={() => { navigator.clipboard.writeText(aiSummary); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+                style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 6,
+                  border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: copied ? '#10b981' : '#64748b',
+                  fontSize: 11, cursor: 'pointer', fontFamily: 'inherit' }}>
+                {copied ? <Check size={10} /> : <Copy size={10} />}
+                {copied ? 'Copied' : 'Copy'}
+              </button>
+            )}
+            <button
+              onClick={handleGenerateSummary}
+              disabled={isGenerating}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 8,
+                background: isGenerating ? 'rgba(139,92,246,0.04)' : 'rgba(139,92,246,0.12)',
+                border: '1px solid rgba(139,92,246,0.35)', color: isGenerating ? '#64748b' : '#a78bfa',
+                fontSize: 11, fontWeight: 700, cursor: isGenerating ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+              }}
+            >
+              {isGenerating ? <><Loader size={12} style={{ animation: 'spin 0.8s linear infinite' }} /> Analyzing...</> : <><Zap size={12} /> Generate AI Summary</>}
+            </button>
           </div>
         </div>
 
-        {/* RIGHT COLUMN: INVESTIGATION TRACKER */}
-        <div className="space-y-6">
-          
-          {/* STEPPER PROGRESS */}
-          <div className="glass-card p-5">
-            <div className="flex items-center gap-2 mb-6 border-b border-white/5 pb-2">
-              <Clock size={14} color="#00f0ff" />
-              <span className="text-xs font-bold uppercase tracking-widest text-slate-200">Investigation Progress Stepper</span>
-            </div>
-
-            <div className="relative pl-8 border-l-2 border-white/5 space-y-6 ml-3">
-              {steps.map((step, idx) => {
-                const stepIndex = idx + 1;
-                const status = getStepStatus(stepIndex);
-                
-                return (
-                  <div key={idx} className="relative">
-                    
-                    {/* Stepper Node Indicator */}
-                    {status === 'completed' && (
-                      <span className="absolute -left-[43px] top-0 w-6 h-6 rounded-full border-2 border-[#020617] bg-[#10b981] shadow-[0_0_10px_rgba(16,185,129,0.5)] flex items-center justify-center z-10">
-                        <CheckCircle2 size={12} color="#fff" />
-                      </span>
-                    )}
-
-                    {status === 'active' && (
-                      <span className="absolute -left-[43px] top-0 w-6 h-6 rounded-full border-2 border-[#020617] bg-[#f59e0b] shadow-[0_0_12px_rgba(245,158,11,0.6)] flex items-center justify-center z-10 animate-pulse">
-                        <Clock size={12} color="#fff" />
-                      </span>
-                    )}
-
-                    {status === 'pending' && (
-                      <span className="absolute -left-[43px] top-0 w-6 h-6 rounded-full border-2 border-[#020617] bg-slate-900 border-white/10 flex items-center justify-center z-10">
-                        <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
-                      </span>
-                    )}
-
-                    {/* Step Content */}
-                    <div className={status === 'pending' ? 'opacity-35' : ''}>
-                      <div className="flex items-center gap-2">
-                        <span className={`text-sm font-black ${
-                          status === 'completed' ? 'text-slate-100' :
-                          status === 'active' ? 'text-[#f59e0b]' : 'text-slate-500'
-                        }`}>
-                          {step.label}
-                        </span>
-                        {status === 'active' && (
-                          <span className="text-[9px] bg-amber-500/10 text-amber-500 border border-amber-500/20 px-1 rounded uppercase tracking-wider font-extrabold">
-                            Active Stage
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-slate-400 mt-1 leading-relaxed">{step.desc}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+        {aiSummary && (
+          <div style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.75, whiteSpace: 'pre-wrap' }}>
+            {aiSummary}
           </div>
+        )}
 
-          {/* EVIDENCE EXHIBITS */}
-          <div className="glass-card p-5">
-            <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-2">
-              <ShieldCheck size={14} color="#00f0ff" />
-              <span className="text-xs font-bold uppercase tracking-widest text-slate-200">Forensic Exhibits Log</span>
+        {!aiSummary && !isGenerating && (
+          <div style={{ fontSize: 12, color: '#475569', marginTop: 8 }}>
+            Click "Generate AI Summary" to get an instant intelligence assessment powered by Claude AI.
+          </div>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div style={{ display: 'flex', gap: 10 }}>
+        <button
+          onClick={handleDownloadPDF}
+          disabled={isDownloading}
+          style={{
+            flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            padding: '10px', borderRadius: 10, border: '1px solid rgba(0,240,255,0.3)',
+            background: 'rgba(0,240,255,0.08)', color: '#00f0ff',
+            fontSize: 12, fontWeight: 700, cursor: isDownloading ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+          }}
+        >
+          {isDownloading ? <><Loader size={14} style={{ animation: 'spin 0.8s linear infinite' }} /> Generating PDF...</> : <><Download size={14} /> Download FIR PDF</>}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Page Content (needs Suspense for useSearchParams) ──────────────────
+
+function FIRPageContent() {
+  const searchParams = useSearchParams();
+  const { t } = useLanguage();
+  const [selectedFIR, setSelectedFIR] = useState<FIRRecord | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterPriority, setFilterPriority] = useState('All');
+  const [filterStatus, setFilterStatus] = useState('All');
+
+  // Auto-select FIR from URL ?id=
+  useEffect(() => {
+    const id = searchParams.get('id');
+    if (id) {
+      const found = RECENT_FIRS.find(f => f.id === id || f.firNumber === id);
+      if (found) setSelectedFIR(found);
+    } else if (RECENT_FIRS.length > 0) {
+      setSelectedFIR(RECENT_FIRS[0]);
+    }
+  }, [searchParams]);
+
+  const q = searchQuery.trim().toLowerCase();
+  const filteredFIRs = RECENT_FIRS.filter(f => {
+    const matchQ = !q || f.firNumber.toLowerCase().includes(q) || f.crimeType.toLowerCase().includes(q)
+      || f.district.toLowerCase().includes(q) || f.suspectName.toLowerCase().includes(q);
+    const matchP = filterPriority === 'All' || f.priority === filterPriority;
+    const matchS = filterStatus === 'All' || f.status === filterStatus;
+    return matchQ && matchP && matchS;
+  });
+
+  return (
+    <div style={{ padding: 24, minHeight: '100vh' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24 }}>
+        <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(0,240,255,0.1)',
+          border: '1px solid rgba(0,240,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <FileText size={22} color="#00f0ff" />
+        </div>
+        <div>
+          <h1 style={{ fontSize: 20, fontWeight: 900, color: '#f1f5f9', margin: 0 }}>{t.page_fir ?? 'FIR Intelligence'}</h1>
+          <p style={{ fontSize: 12, color: '#64748b', margin: '2px 0 0' }}>
+            {RECENT_FIRS.length} FIRs · Click any FIR for full details + AI Case Summary
+          </p>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
+        {/* Left: FIR List */}
+        <div style={{ width: 320, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {/* Search + Filters */}
+          <div style={{ padding: 14, borderRadius: 12, background: 'rgba(2,6,23,0.9)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div style={{ position: 'relative', marginBottom: 10 }}>
+              <Search size={12} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#475569', pointerEvents: 'none' }} />
+              <input
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Search FIR, crime, district..."
+                style={{ width: '100%', paddingLeft: 30, paddingRight: searchQuery ? 28 : 10, paddingTop: 7, paddingBottom: 7,
+                  background: 'rgba(10,22,40,0.8)', border: '1px solid rgba(0,240,255,0.2)', borderRadius: 8,
+                  color: '#f1f5f9', fontSize: 12, outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')}
+                  style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', padding: 0 }}>
+                  <X size={11} />
+                </button>
+              )}
             </div>
-
-            <div className="space-y-2">
-              {Array.from({ length: selectedFir.evidenceCount }).map((_, i) => (
-                <div key={i} className="flex justify-between items-center bg-black/35 border border-white/5 p-3 rounded-lg text-xs">
-                  <span className="font-mono text-slate-400">EXHIBIT-KSP-0{i+1}</span>
-                  <span className="text-slate-500 font-bold">Forensic Tag Secured</span>
-                </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              {['All', 'Critical', 'High', 'Medium'].map(p => (
+                <button key={p} onClick={() => setFilterPriority(p)}
+                  style={{ flex: 1, padding: '4px 0', borderRadius: 6, fontSize: 9, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                    border: `1px solid ${filterPriority === p ? 'rgba(0,240,255,0.4)' : 'rgba(255,255,255,0.06)'}`,
+                    background: filterPriority === p ? 'rgba(0,240,255,0.1)' : 'transparent',
+                    color: filterPriority === p ? '#00f0ff' : '#64748b' }}>
+                  {p}
+                </button>
               ))}
             </div>
           </div>
+
+          <div style={{ fontSize: 10, color: '#475569', padding: '0 4px' }}>
+            {filteredFIRs.length} of {RECENT_FIRS.length} FIRs
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 'calc(100vh - 240px)', overflowY: 'auto' }}>
+            {filteredFIRs.map(fir => (
+              <FIRCard key={fir.id} fir={fir} onClick={() => setSelectedFIR(fir)} isSelected={selectedFIR?.id === fir.id} />
+            ))}
+            {filteredFIRs.length === 0 && (
+              <div style={{ textAlign: 'center', padding: 32, color: '#475569', fontSize: 12 }}>No FIRs match your search.</div>
+            )}
+          </div>
         </div>
 
+        {/* Right: FIR Detail */}
+        <div style={{ flex: 1, overflowY: 'auto', maxHeight: 'calc(100vh - 112px)' }}>
+          {selectedFIR ? (
+            <FIRDetailPanel key={selectedFIR.id} fir={selectedFIR} />
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 400, textAlign: 'center' }}>
+              <div>
+                <FileText size={36} color="#334155" style={{ marginBottom: 12 }} />
+                <p style={{ color: '#475569', fontSize: 14 }}>Select a FIR from the list to view full details</p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
+  );
+}
+
+export default function FIRPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: 24, color: '#64748b', fontSize: 14 }}>Loading FIR data...</div>}>
+      <FIRPageContent />
+    </Suspense>
   );
 }

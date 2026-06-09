@@ -57,6 +57,8 @@ export interface TranslationSet {
   page_login: string;
   page_alerts: string;
   page_anomaly: string;
+  page_heatmap: string;
+  page_fir: string;
 
   // ── Page Subtitles ────────────────────────────────────────────────────────────
   sub_dashboard: string;
@@ -249,6 +251,8 @@ export const translations: Record<Language, TranslationSet> = {
     page_login: 'KARNATAKA STATE POLICE — SECURE SYSTEM',
     page_alerts: 'Live Intelligence Alerts',
     page_anomaly: 'Anomaly Detection',
+    page_heatmap: 'District Risk Heatmap',
+    page_fir: 'FIR Intelligence',
 
     sub_dashboard: 'Karnataka State Police — Real-Time Intelligence Overview',
     sub_investigator: 'CrimeNet AI — Powered by Claude Intelligence Engine',
@@ -427,6 +431,8 @@ export const translations: Record<Language, TranslationSet> = {
     page_login: 'ಕರ್ನಾಟಕ ರಾಜ್ಯ ಪೊಲೀಸ್ — ಸುರಕ್ಷಿತ ವ್ಯವಸ್ಥೆ',
     page_alerts: 'ನೇರ ಗುಪ್ತಚರ ಎಚ್ಚರಿಕೆಗಳು',
     page_anomaly: 'ಅಸಂಗತ ಪತ್ತೆ',
+    page_heatmap: 'ಜಿಲ್ಲಾ ಅಪಾಯ ಶಾಖ ನಕ್ಷೆ',
+    page_fir: 'FIR ಗುಪ್ತಚರ',
 
     sub_dashboard: 'ಕರ್ನಾಟಕ ರಾಜ್ಯ ಪೊಲೀಸ್ — ನೈಜ-ಸಮಯ ಗುಪ್ತಚರ ಅವಲೋಕನ',
     sub_investigator: 'CrimeNet AI — Claude ಗುಪ್ತಚರ ಇಂಜಿನ್‌ನಿಂದ ಚಾಲಿತ',

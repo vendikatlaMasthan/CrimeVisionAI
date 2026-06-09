@@ -10,10 +10,11 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   MessageSquare, Send, Sparkles, Brain, ChevronRight,
   AlertTriangle, FileDown, Mic, MicOff, X, Clock,
-  Copy, Check, Download, Trash2, Radio, Activity,
+  Copy, Check, Download, Trash2, Radio, Activity, Settings,
 } from 'lucide-react';
 import { useLanguage } from '@/components/LanguageToggle';
 import { SUMMARY_METRICS, TOP_SUSPECTS, RECENT_FIRS, DISTRICTS } from '@/lib/crimeData';
+import { getAnthropicApiKey, setAnthropicApiKey, hasAnthropicApiKey, clearAnthropicApiKey } from '@/lib/apiKey';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -150,6 +151,8 @@ export default function InvestigatorPage() {
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [voiceSupported, setVoiceSupported] = useState(false);
   const [apiKeyMissing, setApiKeyMissing] = useState(false);
+  const [showKeyManager, setShowKeyManager] = useState(false);
+  const [customApiKey, setCustomApiKey] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [history, setHistory] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -159,12 +162,14 @@ export default function InvestigatorPage() {
   const abortRef = useRef<AbortController | null>(null);
   const recognitionRef = useRef<{ stop: () => void } | null>(null);
 
-  const apiKey = process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY;
-
   // Check API key on mount
   useEffect(() => {
-    setApiKeyMissing(!apiKey);
-  }, [apiKey]);
+    const hasKey = hasAnthropicApiKey();
+    setApiKeyMissing(!hasKey);
+    if (typeof window !== 'undefined') {
+      setCustomApiKey(localStorage.getItem('ksp_anthropic_api_key') || '');
+    }
+  }, []);
 
   // Voice support check
   useEffect(() => {
@@ -193,7 +198,8 @@ export default function InvestigatorPage() {
   const handleSend = useCallback(async (textToSend: string) => {
     const text = textToSend.trim();
     if (!text || isLoading) return;
-    if (apiKeyMissing) { setApiKeyMissing(true); return; }
+    const activeKey = getAnthropicApiKey();
+    if (!activeKey) { setApiKeyMissing(true); return; }
 
     const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const userMsg: Message = { id: `u-${Date.now()}`, role: 'user', content: text, timestamp };
@@ -217,7 +223,7 @@ export default function InvestigatorPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': apiKey!,
+          'x-api-key': activeKey,
           'anthropic-version': '2023-06-01',
           'anthropic-dangerous-direct-browser-access': 'true',
         },
@@ -280,7 +286,7 @@ export default function InvestigatorPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, apiKey, apiKeyMissing, messages]);
+  }, [isLoading, apiKeyMissing, messages]);
 
   // ── Voice input ───────────────────────────────────────────────────────────
 
@@ -447,11 +453,14 @@ export default function InvestigatorPage() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           {/* API status */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px',
-            borderRadius: 8, border: `1px solid ${apiKeyMissing ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'}`,
-            background: apiKeyMissing ? 'rgba(239,68,68,0.06)' : 'rgba(16,185,129,0.06)',
-          }}>
+          <button onClick={() => setShowKeyManager(prev => !prev)}
+            title="Configure Anthropic API Key"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px',
+              borderRadius: 8, border: `1px solid ${apiKeyMissing ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'}`,
+              background: apiKeyMissing ? 'rgba(239,68,68,0.06)' : 'rgba(16,185,129,0.06)',
+              cursor: 'pointer', fontFamily: 'inherit',
+            }}>
             <div style={{
               width: 6, height: 6, borderRadius: '50%',
               background: apiKeyMissing ? '#ef4444' : '#10b981',
@@ -461,7 +470,8 @@ export default function InvestigatorPage() {
             <span style={{ fontSize: 10, fontWeight: 700, color: apiKeyMissing ? '#ef4444' : '#10b981', letterSpacing: '0.08em' }}>
               {apiKeyMissing ? 'CLAUDE OFFLINE' : 'CLAUDE ONLINE'}
             </span>
-          </div>
+            <Settings size={10} style={{ color: apiKeyMissing ? '#ef4444' : '#10b981', marginLeft: 2 }} />
+          </button>
 
           <button onClick={handleDownloadPDF}
             style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 14px',
@@ -479,29 +489,83 @@ export default function InvestigatorPage() {
         </div>
       </div>
 
-      {/* ── API Key Warning ────────────────────────────────────────────── */}
-      {apiKeyMissing && (
+      {/* ── API Key Configuration/Warning ──────────────────────────────── */}
+      {(apiKeyMissing || showKeyManager) && (
         <div style={{
-          padding: '14px 18px', borderRadius: 12, display: 'flex', alignItems: 'flex-start', gap: 12,
-          background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.25)',
+          padding: '16px 20px', borderRadius: 12, display: 'flex', flexDirection: 'column', gap: 12,
+          background: 'rgba(139,92,246,0.04)', border: '1px solid rgba(139,92,246,0.2)',
         }}>
-          <AlertTriangle size={18} color="#ef4444" style={{ flexShrink: 0, marginTop: 2 }} />
-          <div>
-            <p style={{ color: '#ef4444', fontSize: 13, fontWeight: 700, margin: '0 0 4px' }}>
-              {t.error_api_key_missing}
-            </p>
-            <p style={{ color: '#94a3b8', fontSize: 12, margin: 0, lineHeight: 1.6 }}>
-              Create a <code style={{ color: '#00f0ff', background: 'rgba(0,240,255,0.08)', padding: '1px 5px', borderRadius: 4 }}>.env.local</code> file in your project root and add:<br />
-              <code style={{ color: '#10b981', background: 'rgba(16,185,129,0.08)', padding: '2px 8px', borderRadius: 4, display: 'inline-block', marginTop: 4 }}>
-                NEXT_PUBLIC_ANTHROPIC_API_KEY=your_api_key_here
-              </code>
-              <br /><br />
-              Get your API key at{' '}
-              <a href="https://console.anthropic.com/" target="_blank" rel="noreferrer" style={{ color: '#00f0ff', textDecoration: 'underline' }}>
-                console.anthropic.com
-              </a>
-              {' '}(claude-sonnet-4-6 access required)
-            </p>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+            {apiKeyMissing ? (
+              <AlertTriangle size={18} color="#ef4444" style={{ flexShrink: 0, marginTop: 2 }} />
+            ) : (
+              <Settings size={18} color="#00f0ff" style={{ flexShrink: 0, marginTop: 2 }} />
+            )}
+            <div>
+              <p style={{ color: apiKeyMissing ? '#ef4444' : '#00f0ff', fontSize: 13, fontWeight: 700, margin: '0 0 4px' }}>
+                {apiKeyMissing ? 'Anthropic API Key Required' : 'Anthropic API Key Settings'}
+              </p>
+              <p style={{ color: '#94a3b8', fontSize: 12, margin: 0, lineHeight: 1.6 }}>
+                CrimeNet AI runs entirely in your browser using direct API calls.
+                Since this is a static build (deployed on GitHub Pages), the API key must be supplied.
+                Paste your key below. It is saved securely in your local browser storage and never sent anywhere else.
+              </p>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 10, maxWidth: 600, alignItems: 'center', marginLeft: 30 }}>
+            <input
+              type="password"
+              placeholder="sk-ant-api03-..."
+              value={customApiKey}
+              onChange={e => setCustomApiKey(e.target.value)}
+              style={{
+                flex: 1, padding: '8px 12px', background: 'rgba(10,22,40,0.8)',
+                border: '1px solid rgba(0,240,255,0.2)', borderRadius: 8,
+                color: '#f1f5f9', fontSize: 12, outline: 'none',
+              }}
+            />
+            <button
+              onClick={() => {
+                if (customApiKey.trim()) {
+                  setAnthropicApiKey(customApiKey);
+                  setApiKeyMissing(false);
+                  setShowKeyManager(false);
+                } else {
+                  clearAnthropicApiKey();
+                  setApiKeyMissing(true);
+                }
+              }}
+              style={{
+                padding: '8px 16px', background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)',
+                borderRadius: 8, color: '#10b981', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit'
+              }}
+            >
+              Save Key
+            </button>
+            {!apiKeyMissing && (
+              <button
+                onClick={() => {
+                  clearAnthropicApiKey();
+                  setCustomApiKey('');
+                  setApiKeyMissing(true);
+                }}
+                style={{
+                  padding: '8px 16px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)',
+                  borderRadius: 8, color: '#ef4444', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit'
+                }}
+              >
+                Clear Key
+              </button>
+            )}
+            <button
+              onClick={() => setShowKeyManager(false)}
+              style={{
+                padding: '8px 16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 8, color: '#94a3b8', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit'
+              }}
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}

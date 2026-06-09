@@ -4,12 +4,13 @@
 // CrimeVision AI — AI Risk Prediction (Real Claude API call → JSON output)
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   TrendingUp, Brain, RefreshCw, AlertTriangle, CheckCircle,
   Shield, Zap, Clock, Activity, MapPin, ChevronUp,
 } from 'lucide-react';
 import { useLanguage } from '@/components/LanguageToggle';
+import { getAnthropicApiKey, hasAnthropicApiKey } from '@/lib/apiKey';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -126,12 +127,16 @@ export default function PredictionsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [apiKeyMissing, setApiKeyMissing] = useState(!process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY);
+  const [apiKeyMissing, setApiKeyMissing] = useState(false);
 
-  const apiKey = process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY;
+  // Check API key on mount
+  useEffect(() => {
+    setApiKeyMissing(!hasAnthropicApiKey());
+  }, []);
 
   const generatePrediction = useCallback(async () => {
-    if (!apiKey) { setApiKeyMissing(true); return; }
+    const activeKey = getAnthropicApiKey();
+    if (!activeKey) { setApiKeyMissing(true); return; }
     setIsLoading(true);
     setError(null);
 
@@ -140,7 +145,7 @@ export default function PredictionsPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': apiKey,
+          'x-api-key': activeKey,
           'anthropic-version': '2023-06-01',
           'anthropic-dangerous-direct-browser-access': 'true',
         },
@@ -171,7 +176,7 @@ export default function PredictionsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [apiKey]);
+  }, []);
 
   // ── Helpers ───────────────────────────────────────────────────────────────
 
