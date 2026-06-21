@@ -1,15 +1,17 @@
 'use client';
 // ─────────────────────────────────────────────────────────────────────────────
-// Save this file to: components/AuthGuard.tsx
-// CrimeVision AI — Client-side Auth Guard
+// components/AuthGuard.tsx
+// CrimeVision AI — Client-side Auth Guard with Animated Intro + Audit Trail
 // Redirects to /login if user is not authenticated via sessionStorage.
 // On the login page, renders without Sidebar/Topbar (full screen).
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
+import AuthenticatingIntro from './AuthenticatingIntro';
+import AuditTrail from './AuditTrail';
 import { DemoAccount } from '@/lib/crimeData';
 
 function getStoredUser(): DemoAccount | null {
@@ -29,6 +31,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [checked, setChecked] = useState(false);
   const [user, setUser] = useState<DemoAccount | null>(null);
+  const [showIntro, setShowIntro] = useState(false);
 
   const isLoginPage = PUBLIC_PATHS.some(p => pathname === p || pathname.startsWith('/login'));
 
@@ -40,10 +43,22 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       // Not logged in and not on login page → redirect
       router.replace('/login');
     } else {
+      // Show intro once per session (only for authenticated users on protected pages)
+      if (stored && !isLoginPage) {
+        const seen = sessionStorage.getItem('ksp_intro_seen');
+        if (!seen) {
+          setShowIntro(true);
+        }
+      }
       setChecked(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
+
+  const handleIntroComplete = useCallback(() => {
+    sessionStorage.setItem('ksp_intro_seen', '1');
+    setShowIntro(false);
+  }, []);
 
   // Don't render until check is done (prevents flash)
   if (!checked) {
@@ -75,7 +90,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
 
-  // Authenticated pages: sidebar + topbar layout
+  // Authenticated pages: sidebar + topbar layout + intro + audit trail
   const closeSidebar = () => {
     if (typeof document !== 'undefined') {
       document.body.classList.remove('sidebar-open');
@@ -83,15 +98,23 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="flex min-h-screen w-full overflow-hidden">
-      <Sidebar user={user} />
-      <div className="mobile-sidebar-overlay" onClick={closeSidebar} />
-      <main className="flex-1 min-h-screen min-w-0" style={{ paddingLeft: '280px' }}>
-        <Topbar user={user} />
-        <div style={{ paddingTop: '64px' }}>
-          {children}
-        </div>
-      </main>
-    </div>
+    <>
+      {/* Animated boot-up intro — shown once per session */}
+      {showIntro && <AuthenticatingIntro onComplete={handleIntroComplete} />}
+
+      <div className="flex min-h-screen w-full overflow-hidden">
+        <Sidebar user={user} />
+        <div className="mobile-sidebar-overlay" onClick={closeSidebar} />
+        <main className="flex-1 min-h-screen min-w-0" style={{ paddingLeft: '280px' }}>
+          <Topbar user={user} />
+          <div style={{ paddingTop: '64px' }}>
+            {children}
+          </div>
+        </main>
+      </div>
+
+      {/* Floating audit trail button — always visible on authenticated pages */}
+      <AuditTrail />
+    </>
   );
 }

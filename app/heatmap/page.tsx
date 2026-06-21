@@ -1,701 +1,378 @@
 'use client';
-// ─────────────────────────────────────────────────────────────────────────────
-// app/heatmap/page.tsx — Karnataka District Heatmap with Risk Levels
-// Red/Yellow/Green color-coded, AI Deployment Recommendations
-// ─────────────────────────────────────────────────────────────────────────────
+import { useState, useEffect, useRef } from 'react';
+import { MapPin, AlertTriangle, Shield, Activity, Eye, Filter, Layers, Clock, X, Users } from 'lucide-react';
+import { KARNATAKA_DISTRICTS } from '@/lib/mockData';
 
-import { useState, useCallback, Suspense, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import {
-  MapPin, Brain, Download, Zap, Shield, AlertTriangle, Loader,
-  RefreshCw, ChevronRight, Activity, Users, Building
-} from 'lucide-react';
-import { useLanguage } from '@/components/LanguageToggle';
-import { DISTRICTS, RESOURCE_ALLOCATION, SUMMARY_METRICS, type District } from '@/lib/crimeData';
-import { hasAnyApiKey } from '@/lib/apiKey';
-import { generateText } from '@/lib/aiService';
+type FilterType = 'all' | 'cybercrime' | 'theft' | 'assault' | 'fraud' | 'narcotics' | 'organized';
+type ViewMode = 'map' | 'grid';
 
-// ─── Risk color mapping ───────────────────────────────────────────────────────
+type District = typeof KARNATAKA_DISTRICTS[0];
 
-function getRiskColor(score: number): { fill: string; text: string; label: string; glow: string } {
-  if (score >= 80) return { fill: 'rgba(239,68,68,0.85)', text: '#ef4444', label: 'CRITICAL', glow: 'rgba(239,68,68,0.4)' };
-  if (score >= 60) return { fill: 'rgba(245,158,11,0.8)',  text: '#f59e0b', label: 'HIGH',     glow: 'rgba(245,158,11,0.35)' };
-  if (score >= 40) return { fill: 'rgba(234,179,8,0.65)',  text: '#eab308', label: 'MEDIUM',   glow: 'rgba(234,179,8,0.25)' };
-  return               { fill: 'rgba(16,185,129,0.7)',    text: '#10b981', label: 'LOW',      glow: 'rgba(16,185,129,0.25)' };
-}
+const RISK_COLORS: Record<string, { bg: string; border: string; text: string; leaflet: string }> = {
+  critical: { bg: 'rgba(239,68,68,0.15)', border: '#ef4444', text: '#f87171', leaflet: '#ef4444' },
+  high:     { bg: 'rgba(245,158,11,0.12)', border: '#f59e0b', text: '#fbbf24', leaflet: '#f59e0b' },
+  medium:   { bg: 'rgba(234,179,8,0.1)',  border: '#eab308', text: '#facc15', leaflet: '#eab308' },
+  low:      { bg: 'rgba(16,185,129,0.1)', border: '#10b981', text: '#34d399', leaflet: '#10b981' },
+};
 
-// ─── jsPDF loader ─────────────────────────────────────────────────────────────
+const FILTER_KEYS: Record<FilterType, keyof District> = {
+  all: 'crimeCount',
+  cybercrime: 'cyberCrimes',
+  theft: 'theft',
+  assault: 'assault',
+  fraud: 'fraud',
+  narcotics: 'narcotics',
+  organized: 'organized',
+};
 
-async function loadJsPDF() {
-  if ((window as unknown as Record<string, unknown>).jspdf) {
-    return (window as unknown as Record<string, unknown>).jspdf as { jsPDF: new (o?: Record<string, unknown>) => JPDF };
-  }
-  await new Promise<void>((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-    s.onload = () => resolve(); s.onerror = () => reject(new Error('jsPDF failed'));
-    document.head.appendChild(s);
-  });
-  return (window as unknown as Record<string, unknown>).jspdf as { jsPDF: new (o?: Record<string, unknown>) => JPDF };
-}
+const FILTER_LABELS: Record<FilterType, string> = {
+  all: 'All Crimes',
+  cybercrime: 'Cybercrime',
+  theft: 'Theft',
+  assault: 'Assault',
+  fraud: 'Fraud',
+  narcotics: 'Narcotics',
+  organized: 'Organized Crime',
+};
 
-interface JPDF {
-  setFontSize: (n: number) => void;
-  setTextColor: (r: number, g: number, b: number) => void;
-  setFillColor: (r: number, g: number, b: number) => void;
-  setDrawColor: (r: number, g: number, b: number) => void;
-  setFont: (f: string, style?: string) => void;
-  text: (t: string, x: number, y: number, opts?: Record<string, unknown>) => void;
-  rect: (x: number, y: number, w: number, h: number, s?: string) => void;
-  line: (x1: number, y1: number, x2: number, y2: number) => void;
-  addPage: () => void;
-  splitTextToSize: (t: string, w: number) => string[];
-  save: (name: string) => void;
-}
+export default function HeatmapPage() {
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+  const [viewMode, setViewMode] = useState<ViewMode>('map');
+  const [selectedDistrict, setSelectedDistrict] = useState<District | null>(null);
+  const [timeSlider, setTimeSlider] = useState(12);
+  const [leafletLoaded, setLeafletLoaded] = useState(false);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<unknown>(null);
 
-// ─── AI Deployment Generator ──────────────────────────────────────────────────
-
-async function generateDeployment(district: District): Promise<string> {
-  const rc = RESOURCE_ALLOCATION.find(r => r.district === district.name);
-  const riskColor = getRiskColor(district.riskScore);
-
-  const prompt = `You are the Karnataka State Police AI Resource Optimization Engine. Generate a specific police deployment recommendation for:
-
-District: ${district.name}
-Risk Level: ${riskColor.label} (Score: ${district.riskScore}/100)
-Crime Count: ${district.crimeCount.toLocaleString()} (Jan 2024–Jun 2025)
-Top Crime: ${district.topCrimeType} | Trend: ${district.trend === 'up' ? '↑' : district.trend === 'down' ? '↓' : '→'} ${district.trendPercent}%
-Crime Breakdown: Cybercrime ${district.cybercrime} | Theft ${district.theft} | Assault ${district.assault} | Narcotics ${district.narcotics} | Sand Mining ${district.sandMining} | Organized Crime ${district.organizedCrime}
-Active Cases: ${district.activeCases} | Population: ${(district.population / 100000).toFixed(1)}L
-Current Officers: ${district.officerCount} | Police Stations: ${district.stationCount}
-Current Adequacy: ${rc ? `${rc.adequacyScore}/100` : 'Not assessed'}
-Current Recommendation: ${rc?.recommendation ?? 'N/A'}
-
-Write a 3-paragraph actionable deployment recommendation:
-1. **Immediate Actions** (next 48 hours): Specific officer numbers, checkpoint locations, unit types
-2. **Tactical Deployment** (next 30 days): Patrol schedules, special units, surveillance tech
-3. **Strategic Recommendation** (3-6 months): Capacity building, inter-agency coordination
-
-Be precise with numbers and specific Karnataka geography. Format as plain text paragraphs with section headers.`;
-
-  return generateText({
-    messages: [{ role: 'user', content: prompt }]
-  });
-}
-
-// ─── District Grid Cell ───────────────────────────────────────────────────────
-
-function DistrictCell({ d, isSelected, onClick }: { d: District; isSelected: boolean; onClick: () => void }) {
-  const rc = getRiskColor(d.riskScore);
-  return (
-    <button
-      onClick={onClick}
-      title={`${d.name} — Risk: ${d.riskScore}/100`}
-      style={{
-        padding: '10px 8px', borderRadius: 10, cursor: 'pointer',
-        background: isSelected ? rc.fill : `rgba(${d.riskScore > 80 ? '239,68,68' : d.riskScore > 60 ? '245,158,11' : d.riskScore > 40 ? '234,179,8' : '16,185,129'},${isSelected ? '0.85' : '0.15'})`,
-        border: `1.5px solid ${isSelected ? rc.text : `rgba(${d.riskScore > 80 ? '239,68,68' : d.riskScore > 60 ? '245,158,11' : d.riskScore > 40 ? '234,179,8' : '16,185,129'},0.4)`}`,
-        textAlign: 'center', transition: 'all 0.2s', fontFamily: 'inherit',
-        boxShadow: isSelected ? `0 0 16px ${rc.glow}` : 'none',
-        transform: isSelected ? 'scale(1.04)' : 'scale(1)',
-      }}
-      onMouseEnter={e => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.02)'; }}
-      onMouseLeave={e => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)'; }}
-    >
-      <div style={{ fontSize: 9, fontWeight: 900, color: isSelected ? '#fff' : rc.text, lineHeight: 1.2, marginBottom: 3 }}>
-        {d.name.replace('Bengaluru Urban', 'BLR Urban').replace('Bengaluru Rural', 'BLR Rural')
-          .replace('Hubballi-Dharwad', 'Hubballi').replace('Chamarajanagar', 'Chamaraja')
-          .replace('Chikkamagaluru', 'Chikkamagal.').replace('Chikkaballapur', 'Chikkaballa.')}
-      </div>
-      <div style={{ fontSize: 14, fontWeight: 900, color: isSelected ? '#fff' : rc.text }}>{d.riskScore}</div>
-      <div style={{ fontSize: 7, color: isSelected ? 'rgba(255,255,255,0.8)' : '#64748b', fontWeight: 700 }}>RISK</div>
-    </button>
-  );
-}
-
-// ─── Main page content ────────────────────────────────────────────────────────
-
-function HeatmapContent() {
-  const { t } = useLanguage();
-  const searchParams = useSearchParams();
-  const initName = searchParams.get('district');
-  const initDistrict = initName ? DISTRICTS.find(d => d.name === initName) : DISTRICTS[0];
-
-  const [selectedDistrict, setSelectedDistrict] = useState<District>(initDistrict ?? DISTRICTS[0]);
-  const [deploymentRec, setDeploymentRec] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [filterRisk, setFilterRisk] = useState('All');
-  const [mapTab, setMapTab] = useState<'visual' | 'list'>('visual');
-  const [isDownloading, setIsDownloading] = useState(false);
-
-  const [apiKeyMissing, setApiKeyMissing] = useState(false);
-  const rc = getRiskColor(selectedDistrict.riskScore);
-  const resource = RESOURCE_ALLOCATION.find(r => r.district === selectedDistrict.name);
-
-  // Check key on mount
+  // Load Leaflet CSS + JS via CDN
   useEffect(() => {
-    setApiKeyMissing(!hasAnyApiKey());
+    if (document.getElementById('leaflet-css')) {
+      setLeafletLoaded(true);
+      return;
+    }
+    const link = document.createElement('link');
+    link.id = 'leaflet-css';
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(link);
+
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.onload = () => setLeafletLoaded(true);
+    document.head.appendChild(script);
   }, []);
 
-  const filteredDistricts = filterRisk === 'All' ? DISTRICTS :
-    filterRisk === 'Critical' ? DISTRICTS.filter(d => d.riskScore >= 80) :
-    filterRisk === 'High' ? DISTRICTS.filter(d => d.riskScore >= 60 && d.riskScore < 80) :
-    DISTRICTS.filter(d => d.riskScore < 60);
+  // Initialize Leaflet map
+  useEffect(() => {
+    if (!leafletLoaded || !mapRef.current || viewMode !== 'map') return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const L = (window as any).L;
+    if (!L) return;
 
-  const sortedDistricts = [...DISTRICTS].sort((a, b) => b.riskScore - a.riskScore);
-
-  const handleGenerateDeployment = useCallback(async () => {
-    if (!hasAnyApiKey()) { setDeploymentRec('⚠️ API key not configured. Please enter your API key in the Investigator page first.'); return; }
-    setIsGenerating(true);
-    setDeploymentRec('');
-    try {
-      const rec = await generateDeployment(selectedDistrict);
-      setDeploymentRec(rec);
-    } catch (err) {
-      setDeploymentRec(`⚠️ Error: ${(err as Error).message}`);
-    } finally {
-      setIsGenerating(false);
+    if (mapInstanceRef.current) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (mapInstanceRef.current as any).remove();
+      mapInstanceRef.current = null;
     }
-  }, [selectedDistrict]);
 
-  const handleDownloadPDF = async () => {
-    setIsDownloading(true);
-    try {
-      const lib = await loadJsPDF();
-      const doc = new lib.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      const pw = 210;
+    const map = L.map(mapRef.current, { zoomControl: true, scrollWheelZoom: true }).setView([15.0, 75.5], 7);
+    mapInstanceRef.current = map;
 
-      // Header
-      doc.setFillColor(2, 6, 23); doc.rect(0, 0, pw, 30, 'F');
-      doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
-      doc.text('KARNATAKA STATE POLICE — DISTRICT HEATMAP REPORT', pw / 2, 12, { align: 'center' });
-      doc.setFontSize(8); doc.setTextColor(0, 200, 220);
-      doc.text('CrimeVision AI v6.0 | Risk Intelligence', pw / 2, 20, { align: 'center' });
-      doc.setFontSize(7); doc.setTextColor(150, 150, 150);
-      doc.text(`Generated: ${new Date().toLocaleString('en-IN')} IST`, pw / 2, 27, { align: 'center' });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 18,
+    }).addTo(map);
 
-      let y = 40;
-      // Title
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(14);
-      doc.setTextColor(selectedDistrict.riskScore > 80 ? 200 : selectedDistrict.riskScore > 60 ? 180 : 0, 0, 0);
-      doc.text(`${selectedDistrict.name.toUpperCase()} DISTRICT`, pw / 2, y, { align: 'center' }); y += 7;
-      doc.setFontSize(10); doc.setTextColor(100, 100, 100);
-      doc.text(`Risk Score: ${selectedDistrict.riskScore}/100 | ${rc.label}`, pw / 2, y, { align: 'center' }); y += 10;
-      doc.setDrawColor(0, 200, 220); doc.line(15, y, pw - 15, y); y += 8;
+    KARNATAKA_DISTRICTS.forEach((d) => {
+      const colors = RISK_COLORS[d.riskLevel] || RISK_COLORS.low;
+      const filterKey = FILTER_KEYS[activeFilter];
+      const count = d[filterKey] as number;
+      const radius = Math.max(8, Math.min(30, count / 200));
 
-      // Stats
-      doc.setFillColor(240, 248, 255); doc.rect(15, y - 3, pw - 30, 8, 'F');
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(0, 80, 140);
-      doc.text('DISTRICT CRIME INTELLIGENCE', 18, y + 2); y += 12;
+      const circle = L.circle([d.lat, d.lng], {
+        radius: radius * 2000,
+        color: colors.leaflet,
+        fillColor: colors.leaflet,
+        fillOpacity: 0.35,
+        weight: 2,
+      }).addTo(map);
 
-      const stats = [
-        ['Total Crimes', selectedDistrict.crimeCount.toLocaleString()],
-        ['Active Cases', selectedDistrict.activeCases.toLocaleString()],
-        ['Top Crime', selectedDistrict.topCrimeType],
-        ['Trend', `${selectedDistrict.trend === 'up' ? '▲' : selectedDistrict.trend === 'down' ? '▼' : '→'} ${selectedDistrict.trendPercent}%`],
-        ['Officer Count', selectedDistrict.officerCount.toLocaleString()],
-        ['Police Stations', selectedDistrict.stationCount.toString()],
-        ['Population', `${(selectedDistrict.population / 100000).toFixed(1)}L`],
-        ...(resource ? [['Adequacy Score', `${resource.adequacyScore}/100`]] : []),
-      ];
-      stats.forEach(([k, v], idx) => {
-        if (y > 265) { doc.addPage(); y = 20; }
-        if (idx % 2 === 0) doc.setFillColor(248, 252, 255);
-        else doc.setFillColor(255, 255, 255);
-        doc.rect(15, y - 3, pw - 30, 7, 'F');
-        doc.setFont('helvetica', 'bold'); doc.setTextColor(60, 60, 60); doc.setFontSize(8);
-        doc.text(k, 18, y);
-        doc.setFont('helvetica', 'normal'); doc.text(v, 90, y);
-        y += 8;
-      });
-
-      // Crime breakdown
-      y += 4;
-      if (y > 250) { doc.addPage(); y = 20; }
-      doc.setFillColor(240, 248, 255); doc.rect(15, y - 3, pw - 30, 8, 'F');
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(0, 80, 140);
-      doc.text('CRIME CATEGORY BREAKDOWN', 18, y + 2); y += 12;
-      const breakdown = [
-        ['Cybercrime', selectedDistrict.cybercrime],
-        ['Theft', selectedDistrict.theft],
-        ['Assault', selectedDistrict.assault],
-        ['Narcotics', selectedDistrict.narcotics],
-        ['Sand Mining', selectedDistrict.sandMining],
-        ['Organized Crime', selectedDistrict.organizedCrime],
-      ];
-      breakdown.forEach(([k, v], idx) => {
-        if (y > 265) { doc.addPage(); y = 20; }
-        if (idx % 2 === 0) doc.setFillColor(248, 248, 255);
-        else doc.setFillColor(255, 255, 255);
-        doc.rect(15, y - 3, pw - 30, 7, 'F');
-        doc.setFont('helvetica', 'bold'); doc.setTextColor(60, 60, 60); doc.setFontSize(8);
-        doc.text(k as string, 18, y);
-        doc.setFont('helvetica', 'normal'); doc.text((v as number).toLocaleString(), 90, y);
-        doc.text(`${(((v as number) / selectedDistrict.crimeCount) * 100).toFixed(1)}%`, 130, y);
-        y += 8;
-      });
-
-      // AI Deployment
-      if (deploymentRec) {
-        y += 4;
-        if (y > 245) { doc.addPage(); y = 20; }
-        doc.setFillColor(230, 245, 255); doc.rect(15, y - 3, pw - 30, 8, 'F');
-        doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(0, 100, 60);
-        doc.text('AI POLICE DEPLOYMENT RECOMMENDATION (CrimeNet AI)', 18, y + 2); y += 12;
-        doc.setFont('helvetica', 'normal'); doc.setTextColor(40, 40, 40); doc.setFontSize(8);
-        const lines = doc.splitTextToSize(deploymentRec.replace(/\*\*/g, ''), pw - 30);
-        for (const line of lines) {
-          if (y > 270) { doc.addPage(); y = 20; }
-          doc.text(line, 15, y); y += 5;
-        }
-      }
-
-      // All districts ranking
-      doc.addPage(); y = 20;
-      doc.setFillColor(240, 248, 255); doc.rect(15, y - 3, pw - 30, 8, 'F');
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(0, 80, 140);
-      doc.text('ALL 31 KARNATAKA DISTRICTS — RISK RANKING', 18, y + 2); y += 10;
-      doc.setFillColor(0, 30, 60); doc.rect(15, y - 3, pw - 30, 7, 'F');
-      doc.setTextColor(255, 255, 255); doc.setFontSize(8);
-      ['Rank', 'District', 'Risk Score', 'Level', 'Top Crime'].forEach((h, i) => {
-        doc.text(h, [15, 30, 80, 110, 135][i], y + 1);
-      });
-      y += 8;
-      sortedDistricts.forEach((d, idx) => {
-        if (y > 265) { doc.addPage(); y = 20; }
-        const cr = getRiskColor(d.riskScore);
-        if (idx % 2 === 0) doc.setFillColor(248, 252, 255);
-        else doc.setFillColor(255, 255, 255);
-        doc.rect(15, y - 3, pw - 30, 7, 'F');
-        doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
-        doc.setTextColor(80, 80, 80); doc.text(`#${idx + 1}`, 15, y);
-        doc.text(d.name, 30, y);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(d.riskScore > 80 ? 200 : d.riskScore > 60 ? 180 : 0, 0, 0);
-        doc.text(`${d.riskScore}/100`, 80, y);
-        doc.setFont('helvetica', 'normal'); doc.setTextColor(80, 80, 80);
-        doc.text(cr.label, 110, y);
-        doc.text(d.topCrimeType, 135, y);
-        y += 8;
-      });
-
-      // Footer
-      doc.setDrawColor(200, 200, 200); doc.line(15, 283, pw - 15, 283);
-      doc.setFontSize(7); doc.setTextColor(150, 150, 150);
-      doc.text('CrimeVision AI v6.0 | KSP Datathon 2026 | Karnataka State Police | RESTRICTED', pw / 2, 289, { align: 'center' });
-
-      doc.save(`KSP_Heatmap_${selectedDistrict.name.replace(/ /g, '_')}_${Date.now()}.pdf`);
-    } catch (err) {
-      alert(`PDF failed: ${(err as Error).message}`);
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
-  return (
-    <div style={{ padding: 24, minHeight: '100vh', display: 'flex', flexDirection: 'column', gap: 20 }}>
-
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(239,68,68,0.1)',
-            border: '1px solid rgba(239,68,68,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <MapPin size={22} color="#ef4444" />
-          </div>
-          <div>
-            <h1 style={{ fontSize: 20, fontWeight: 900, color: '#f1f5f9', margin: 0 }}>
-              {t.page_heatmap ?? 'District Risk Heatmap'}
-            </h1>
-            <p style={{ fontSize: 12, color: '#64748b', margin: '2px 0 0' }}>
-              31 Karnataka districts · Click any district for AI deployment recommendation
-            </p>
+      const popup = L.popup().setContent(`
+        <div style="background:#0a1628;color:#f1f5f9;padding:12px;border-radius:8px;min-width:200px;font-family:Inter,sans-serif">
+          <div style="font-weight:700;font-size:15px;margin-bottom:6px;color:#00f0ff">${d.name}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:12px">
+            <span style="color:#94a3b8">Risk Level:</span><span style="color:${colors.leaflet};font-weight:700">${d.riskLevel.toUpperCase()}</span>
+            <span style="color:#94a3b8">Total Crimes:</span><span style="font-weight:600">${d.crimeCount.toLocaleString()}</span>
+            <span style="color:#94a3b8">Active Cases:</span><span style="font-weight:600">${d.activeCases.toLocaleString()}</span>
+            <span style="color:#94a3b8">Crime Rate:</span><span style="font-weight:600">${d.crimeRate}/1000</span>
           </div>
         </div>
-        <button onClick={handleDownloadPDF} disabled={isDownloading}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 10,
-            background: 'rgba(0,240,255,0.08)', border: '1px solid rgba(0,240,255,0.3)',
-            color: '#00f0ff', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
-          {isDownloading ? <><Loader size={13} style={{ animation: 'spin 0.8s linear infinite' }} /> Generating...</> : <><Download size={13} /> Download Heatmap PDF</>}
-        </button>
+      `);
+      circle.bindPopup(popup);
+      circle.on('click', () => setSelectedDistrict(d));
+    });
+
+    return () => {
+      if (mapInstanceRef.current) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (mapInstanceRef.current as any).remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [leafletLoaded, viewMode, activeFilter]);
+
+  const getFilteredCount = (d: District): number => {
+    const key = FILTER_KEYS[activeFilter];
+    return d[key] as number;
+  };
+
+  const getTimeAdjusted = (count: number): number => {
+    const factor = 1 - timeSlider / 100;
+    return Math.round(count * factor);
+  };
+
+  const sortedDistricts = [...KARNATAKA_DISTRICTS].sort((a, b) => getFilteredCount(b) - getFilteredCount(a));
+
+  return (
+    <div style={{ padding: '24px', minHeight: '100vh' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+        <div>
+          <h1 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: 10, margin: 0 }}>
+            <MapPin size={22} style={{ color: '#00f0ff' }} />
+            KARNATAKA CRIME INTELLIGENCE MAP
+          </h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 4 }}>
+            Real-time district risk visualization · {KARNATAKA_DISTRICTS.length} districts monitored · Live OpenStreetMap
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            onClick={() => setViewMode('map')}
+            className={viewMode === 'map' ? 'btn-primary' : 'cyber-btn'}
+            style={{ padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', border: 'none' }}
+          >
+            <Layers size={14} style={{ marginRight: 6, verticalAlign: 'middle' }} />Map View
+          </button>
+          <button
+            onClick={() => setViewMode('grid')}
+            className={viewMode === 'grid' ? 'btn-primary' : 'cyber-btn'}
+            style={{ padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', border: 'none' }}
+          >
+            <Eye size={14} style={{ marginRight: 6, verticalAlign: 'middle' }} />Grid View
+          </button>
+        </div>
+      </div>
+
+      {/* Filter Bar */}
+      <div className="glass-card" style={{ padding: '12px 16px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+        <Filter size={15} style={{ color: '#00f0ff' }} />
+        <span style={{ color: 'var(--text-muted)', fontSize: 12, fontWeight: 600 }}>FILTER:</span>
+        {(Object.keys(FILTER_LABELS) as FilterType[]).map((f) => (
+          <button
+            key={f}
+            onClick={() => setActiveFilter(f)}
+            style={{
+              padding: '5px 12px', borderRadius: 20, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+              background: activeFilter === f ? '#00f0ff' : 'rgba(0,240,255,0.08)',
+              color: activeFilter === f ? '#020617' : '#00f0ff',
+              border: `1px solid ${activeFilter === f ? '#00f0ff' : 'rgba(0,240,255,0.25)'}`,
+              transition: 'all 0.2s',
+            }}
+          >{FILTER_LABELS[f]}</button>
+        ))}
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Clock size={13} style={{ color: '#94a3b8' }} />
+          <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>Time Filter: </span>
+          <input
+            type="range" min={0} max={50} value={timeSlider}
+            onChange={(e) => setTimeSlider(Number(e.target.value))}
+            style={{ width: 120, accentColor: '#00f0ff' }}
+          />
+          <span style={{ color: '#00f0ff', fontSize: 12, fontWeight: 600, minWidth: 60 }}>
+            {timeSlider === 0 ? 'Current' : `-${timeSlider}% data`}
+          </span>
+        </div>
       </div>
 
       {/* Legend */}
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        {[
-          { label: 'Critical (80–100)', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.3)' },
-          { label: 'High (60–79)', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)' },
-          { label: 'Medium (40–59)', color: '#eab308', bg: 'rgba(234,179,8,0.1)', border: 'rgba(234,179,8,0.3)' },
-          { label: 'Low (0–39)', color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.3)' },
-        ].map(item => (
-          <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 12px',
-            borderRadius: 20, background: item.bg, border: `1px solid ${item.border}` }}>
-            <div style={{ width: 10, height: 10, borderRadius: 2, background: item.color }} />
-            <span style={{ fontSize: 11, fontWeight: 700, color: item.color }}>{item.label}</span>
+      <div className="glass-card" style={{ padding: '10px 16px', marginBottom: 16, display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
+        <span style={{ color: 'var(--text-muted)', fontSize: 12, fontWeight: 700 }}>RISK LEVEL:</span>
+        {Object.entries(RISK_COLORS).map(([level, c]) => (
+          <div key={level} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ width: 12, height: 12, borderRadius: '50%', background: c.leaflet }} />
+            <span style={{ fontSize: 12, color: c.text, fontWeight: 600, textTransform: 'uppercase' }}>{level}</span>
           </div>
         ))}
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
-          {['All', 'Critical', 'High', 'Low'].map(f => (
-            <button key={f} onClick={() => setFilterRisk(f)}
-              style={{ padding: '4px 12px', borderRadius: 6, fontSize: 10, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
-                border: `1px solid ${filterRisk === f ? 'rgba(0,240,255,0.4)' : 'rgba(255,255,255,0.08)'}`,
-                background: filterRisk === f ? 'rgba(0,240,255,0.1)' : 'transparent',
-                color: filterRisk === f ? '#00f0ff' : '#64748b' }}>
-              {f}
-            </button>
-          ))}
-        </div>
+        <span style={{ color: 'var(--text-muted)', fontSize: 12, marginLeft: 'auto' }}>
+          Showing: <span style={{ color: '#00f0ff', fontWeight: 700 }}>{FILTER_LABELS[activeFilter]}</span>
+        </span>
       </div>
 
-      {/* Main content */}
-      <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-
-        {/* Heatmap Grid / Map */}
-        <div style={{ flex: 1, minWidth: 320 }}>
-          <div style={{
-            padding: 20, borderRadius: 16, background: 'rgba(2,6,23,0.9)',
-            border: '1px solid rgba(255,255,255,0.07)',
-          }}>
-            {/* Tab Toggles */}
-            <div style={{ display: 'flex', gap: 8, marginBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: 10 }}>
-              <button onClick={() => setMapTab('visual')}
-                style={{
-                  padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
-                  background: mapTab === 'visual' ? 'rgba(0,240,255,0.1)' : 'transparent',
-                  border: `1px solid ${mapTab === 'visual' ? 'rgba(0,240,255,0.35)' : 'transparent'}`,
-                  color: mapTab === 'visual' ? '#00f0ff' : '#64748b', transition: 'all 0.15s'
-                }}>
-                🗺️ Visual Command Map
-              </button>
-              <button onClick={() => setMapTab('list')}
-                style={{
-                  padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
-                  background: mapTab === 'list' ? 'rgba(0,240,255,0.1)' : 'transparent',
-                  border: `1px solid ${mapTab === 'list' ? 'rgba(0,240,255,0.35)' : 'transparent'}`,
-                  color: mapTab === 'list' ? '#00f0ff' : '#64748b', transition: 'all 0.15s'
-                }}>
-                📋 District Registry List
-              </button>
-            </div>
-
-            {mapTab === 'visual' ? (
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase',
-                  letterSpacing: '0.1em', marginBottom: 12 }}>
-                  Karnataka State Police Command Grid Heatmap (Interactive Nodes)
-                </div>
-                
+      {/* Main Content */}
+      <div style={{ display: 'grid', gridTemplateColumns: selectedDistrict ? '1fr 340px' : '1fr', gap: 16 }}>
+        {/* Map or Grid */}
+        <div>
+          {viewMode === 'map' ? (
+            <div className="glass-card" style={{ padding: 0, overflow: 'hidden', borderRadius: 12, height: 560, position: 'relative' }}>
+              {!leafletLoaded && (
                 <div style={{
-                  position: 'relative', width: '100%', aspectRatio: '1/1', background: 'rgba(5, 12, 28, 0.95)',
-                  borderRadius: 12, border: '1px solid rgba(0, 240, 255, 0.15)', overflow: 'hidden', padding: 8
+                  position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', zIndex: 10, background: 'rgba(2,6,23,0.8)', borderRadius: 12,
                 }}>
-                  <svg width="100%" height="100%" viewBox="0 0 400 400" style={{ display: 'block' }}>
-                    <defs>
-                      <pattern id="map-grid-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
-                        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0, 240, 255, 0.035)" strokeWidth="1" />
-                      </pattern>
-                    </defs>
-                    
-                    {/* Background Grid */}
-                    <rect width="100%" height="100%" fill="url(#map-grid-pattern)" />
-
-                    {/* Georelational mesh lines between districts (Distance threshold connection) */}
-                    {(() => {
-                      const lines: React.ReactNode[] = [];
-                      for (let i = 0; i < DISTRICTS.length; i++) {
-                        for (let j = i + 1; j < DISTRICTS.length; j++) {
-                          const d1 = DISTRICTS[i];
-                          const d2 = DISTRICTS[j];
-                          const dist = Math.sqrt(Math.pow(d1.lat - d2.lat, 2) + Math.pow(d1.lng - d2.lng, 2));
-                          // Connect if adjacent geographically
-                          if (dist < 1.15) {
-                            const x1 = ((d1.lng - 74.0) / 4.5) * 360 + 20;
-                            const y1 = 380 - ((d1.lat - 11.5) / 6.5) * 360;
-                            const x2 = ((d2.lng - 74.0) / 4.5) * 360 + 20;
-                            const y2 = 380 - ((d2.lat - 11.5) / 6.5) * 360;
-                            lines.push(
-                              <line
-                                key={`line-${d1.id}-${d2.id}`}
-                                x1={x1}
-                                y1={y1}
-                                x2={x2}
-                                y2={y2}
-                                stroke="rgba(0, 240, 255, 0.09)"
-                                strokeWidth={0.75}
-                                strokeDasharray="2,2"
-                              />
-                            );
-                          }
-                        }
-                      }
-                      return lines;
-                    })()}
-
-                    {/* Interactive District Nodes */}
-                    {sortedDistricts.map(d => {
-                      const x = ((d.lng - 74.0) / 4.5) * 360 + 20;
-                      const y = 380 - ((d.lat - 11.5) / 6.5) * 360;
-                      const rc = getRiskColor(d.riskScore);
-                      const isSelected = selectedDistrict.id === d.id;
-
-                      return (
-                        <g
-                          key={`node-${d.id}`}
-                          style={{ cursor: 'pointer' }}
-                          onClick={() => { setSelectedDistrict(d); setDeploymentRec(''); }}
-                        >
-                          {/* Selection Target Ring */}
-                          {isSelected && (
-                            <circle
-                              cx={x}
-                              cy={y}
-                              r={16}
-                              fill="none"
-                              stroke="#00f0ff"
-                              strokeWidth={1.5}
-                              strokeDasharray="3,3"
-                              style={{ transformOrigin: `${x}px ${y}px`, animation: 'spin 6s linear infinite' }}
-                            />
-                          )}
-
-                          {/* Glowing Sonar Signal Ring */}
-                          <circle
-                            cx={x}
-                            cy={y}
-                            r={isSelected ? 10 : 8}
-                            fill="none"
-                            stroke={rc.text}
-                            strokeWidth={1.5}
-                            opacity={isSelected ? 0.8 : 0.4}
-                            style={{
-                              transformOrigin: `${x}px ${y}px`,
-                              animation: isSelected ? 'radar-sweep 1.8s infinite' : 'pulse 2.2s infinite'
-                            }}
-                          />
-
-                          {/* Core Node Dot */}
-                          <circle
-                            cx={x}
-                            cy={y}
-                            r={isSelected ? 6 : 4.5}
-                            fill={rc.text}
-                            style={{
-                              filter: `drop-shadow(0 0 6px ${rc.text})`,
-                            }}
-                          />
-
-                          {/* District Abbreviation Text */}
-                          <text
-                            x={x}
-                            y={y - 8}
-                            fill={isSelected ? '#00f0ff' : '#94a3b8'}
-                            fontSize={8}
-                            fontWeight={isSelected ? 'bold' : 'normal'}
-                            textAnchor="middle"
-                            style={{
-                              fontFamily: 'monospace',
-                              pointerEvents: 'none',
-                              textShadow: '0 1px 2px rgba(0,0,0,0.95)'
-                            }}
-                          >
-                            {d.code}
-                          </text>
-                        </g>
-                      );
-                    })}
-                  </svg>
-                </div>
-              </div>
-            ) : (
-              <div>
-                <div style={{ fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase',
-                  letterSpacing: '0.1em', marginBottom: 16 }}>
-                  Karnataka — 31 Districts by Risk Score (click to select)
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(88px, 1fr))', gap: 6 }}>
-                  {(filterRisk === 'All' ? sortedDistricts : filteredDistricts.sort((a, b) => b.riskScore - a.riskScore)).map(d => (
-                    <DistrictCell key={d.id} d={d} isSelected={selectedDistrict.id === d.id} onClick={() => { setSelectedDistrict(d); setDeploymentRec(''); }} />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Color bar at bottom */}
-            <div style={{ marginTop: 20, height: 6, borderRadius: 3, background: 'linear-gradient(to right, #10b981, #eab308, #f59e0b, #ef4444)' }} />
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontSize: 9, color: '#475569' }}>
-              <span>Low Risk (0)</span>
-              <span style={{ color: '#eab308' }}>Medium (40)</span>
-              <span style={{ color: '#f59e0b' }}>High (60)</span>
-              <span style={{ color: '#ef4444' }}>Critical (80–100)</span>
-            </div>
-          </div>
-        </div>
-
-        {/* District Detail Panel */}
-        <div style={{ width: 340, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
-
-          {/* Selected District Header */}
-          <div style={{
-            padding: 18, borderRadius: 14,
-            background: 'rgba(2,6,23,0.95)', border: `1px solid ${rc.text}40`,
-            boxShadow: `0 0 24px ${rc.glow}`,
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
-              <div>
-                <div style={{ fontSize: 10, color: '#64748b', marginBottom: 4 }}>SELECTED DISTRICT</div>
-                <div style={{ fontSize: 18, fontWeight: 900, color: '#f1f5f9' }}>{selectedDistrict.name}</div>
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: 28, fontWeight: 900, color: rc.text }}>{selectedDistrict.riskScore}</div>
-                <div style={{ fontSize: 9, fontWeight: 800, color: rc.text, letterSpacing: '0.1em' }}>{rc.label}</div>
-              </div>
-            </div>
-            <div style={{ height: 5, background: 'rgba(255,255,255,0.06)', borderRadius: 3, overflow: 'hidden', marginBottom: 12 }}>
-              <div style={{ height: '100%', width: `${selectedDistrict.riskScore}%`, background: rc.text, transition: 'width 0.5s ease' }} />
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-              {[
-                { icon: <Activity size={11} />, label: 'Total Crimes', value: selectedDistrict.crimeCount.toLocaleString() },
-                { icon: <AlertTriangle size={11} />, label: 'Active Cases', value: selectedDistrict.activeCases.toLocaleString() },
-                { icon: <Users size={11} />, label: 'Officers', value: selectedDistrict.officerCount.toLocaleString() },
-                { icon: <Building size={11} />, label: 'Stations', value: selectedDistrict.stationCount.toString() },
-              ].map(item => (
-                <div key={item.label} style={{ padding: '8px 10px', borderRadius: 8, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#64748b', marginBottom: 3 }}>
-                    {item.icon}
-                    <span style={{ fontSize: 9 }}>{item.label}</span>
-                  </div>
-                  <div style={{ fontSize: 14, fontWeight: 800, color: '#e2e8f0' }}>{item.value}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Crime Breakdown */}
-          <div style={{ padding: 14, borderRadius: 12, background: 'rgba(2,6,23,0.9)', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <div style={{ fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>
-              Crime Breakdown
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {[
-                { label: 'Cybercrime', val: selectedDistrict.cybercrime, color: '#00f0ff' },
-                { label: 'Theft', val: selectedDistrict.theft, color: '#8b5cf6' },
-                { label: 'Assault', val: selectedDistrict.assault, color: '#ef4444' },
-                { label: 'Narcotics', val: selectedDistrict.narcotics, color: '#e879f9' },
-                { label: 'Sand Mining', val: selectedDistrict.sandMining, color: '#f97316' },
-                { label: 'Org. Crime', val: selectedDistrict.organizedCrime, color: '#f59e0b' },
-              ].map(item => (
-                <div key={item.label}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3, fontSize: 11 }}>
-                    <span style={{ color: '#94a3b8' }}>{item.label}</span>
-                    <span style={{ fontWeight: 700, color: item.color }}>{item.val.toLocaleString()}</span>
-                  </div>
-                  <div style={{ height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: `${(item.val / selectedDistrict.crimeCount) * 100}%`,
-                      background: item.color, borderRadius: 2 }} />
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ color: '#00f0ff', fontSize: 24, marginBottom: 8 }}>⌛</div>
+                    <div style={{ color: '#94a3b8', fontSize: 14 }}>Loading OpenStreetMap...</div>
                   </div>
                 </div>
-              ))}
+              )}
+              <div
+                ref={mapRef}
+                style={{ width: '100%', height: '100%', filter: 'hue-rotate(180deg) invert(90%) saturate(0.5)' }}
+              />
             </div>
-          </div>
-
-          {/* Current Recommendation */}
-          {resource && (
-            <div style={{ padding: 14, borderRadius: 12, background: 'rgba(2,6,23,0.9)', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <div style={{ fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
-                Current Resource Assessment
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                <span style={{ fontSize: 11, color: '#64748b' }}>Adequacy Score</span>
-                <span style={{ fontSize: 14, fontWeight: 900, color: resource.adequacyScore < 55 ? '#ef4444' : resource.adequacyScore < 70 ? '#f59e0b' : '#10b981' }}>
-                  {resource.adequacyScore}/100
-                </span>
-              </div>
-              <p style={{ fontSize: 11, color: '#94a3b8', lineHeight: 1.6, margin: 0, padding: '8px 10px',
-                background: 'rgba(255,255,255,0.02)', borderRadius: 6, border: '1px solid rgba(255,255,255,0.05)' }}>
-                {resource.recommendation}
-              </p>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 10 }}>
+              {sortedDistricts.map((d) => {
+                const colors = RISK_COLORS[d.riskLevel] || RISK_COLORS.low;
+                const count = getFilteredCount(d);
+                const adjCount = getTimeAdjusted(count);
+                const isSelected = selectedDistrict?.id === d.id;
+                return (
+                  <div
+                    key={d.id}
+                    onClick={() => setSelectedDistrict(isSelected ? null : d)}
+                    style={{
+                      background: isSelected ? colors.bg : 'var(--cyber-card)',
+                      border: `1px solid ${isSelected ? colors.border : 'var(--cyber-border)'}`,
+                      borderRadius: 10, padding: '12px 10px', cursor: 'pointer',
+                      boxShadow: isSelected ? `0 0 12px ${colors.border}40` : 'none',
+                      transition: 'all 0.2s', transform: isSelected ? 'scale(1.03)' : 'scale(1)',
+                    }}
+                  >
+                    <div style={{ fontSize: 11, fontWeight: 700, color: colors.text, marginBottom: 4, textTransform: 'uppercase' }}>{d.riskLevel}</div>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6, lineHeight: 1.3 }}>{d.name}</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: colors.text, fontFamily: 'JetBrains Mono, monospace' }}>{adjCount.toLocaleString()}</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 2 }}>{FILTER_LABELS[activeFilter]}</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>
+                      🏢 {d.policeStations} stations
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
-
-          {/* AI Deployment */}
-          <div style={{ padding: 14, borderRadius: 12, background: 'rgba(139,92,246,0.04)', border: '1px solid rgba(139,92,246,0.2)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: deploymentRec ? 12 : 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Brain size={13} color="#a78bfa" />
-                <span style={{ fontSize: 10, fontWeight: 800, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                  AI Deployment Plan
-                </span>
-              </div>
-              <button onClick={handleGenerateDeployment} disabled={isGenerating}
-                style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '5px 12px', borderRadius: 7,
-                  background: isGenerating ? 'rgba(139,92,246,0.04)' : 'rgba(139,92,246,0.12)',
-                  border: '1px solid rgba(139,92,246,0.35)', color: isGenerating ? '#64748b' : '#a78bfa',
-                  fontSize: 10, fontWeight: 700, cursor: isGenerating ? 'not-allowed' : 'pointer', fontFamily: 'inherit' }}>
-                {isGenerating ? <><Loader size={10} style={{ animation: 'spin 0.8s linear infinite' }} /> Analyzing...</> : <><Zap size={10} /> Generate</>}
-              </button>
-            </div>
-
-            {deploymentRec ? (
-              <div style={{ fontSize: 11, color: '#94a3b8', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{deploymentRec}</div>
-            ) : !isGenerating && (
-              <div style={{ fontSize: 11, color: '#475569', marginTop: 8 }}>
-                Generate AI-powered deployment recommendations specific to {selectedDistrict.name} district.
-              </div>
-            )}
-          </div>
-
-          {/* Trend comparison */}
-          <div style={{ padding: 14, borderRadius: 12, background: 'rgba(2,6,23,0.9)', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <div style={{ fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>
-              State Context
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11 }}>
-                <span style={{ color: '#64748b' }}>Rank (by risk)</span>
-                <span style={{ fontWeight: 700, color: '#e2e8f0' }}>
-                  #{sortedDistricts.findIndex(d => d.id === selectedDistrict.id) + 1} of 31
-                </span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11 }}>
-                <span style={{ color: '#64748b' }}>Trend</span>
-                <span style={{ fontWeight: 700, color: selectedDistrict.trend === 'up' ? '#ef4444' : selectedDistrict.trend === 'down' ? '#10b981' : '#64748b' }}>
-                  {selectedDistrict.trend === 'up' ? '↑' : selectedDistrict.trend === 'down' ? '↓' : '→'} {selectedDistrict.trendPercent}% YoY
-                </span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11 }}>
-                <span style={{ color: '#64748b' }}>Top Crime</span>
-                <span style={{ fontWeight: 700, color: '#e2e8f0' }}>{selectedDistrict.topCrimeType}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11 }}>
-                <span style={{ color: '#64748b' }}>% of State Total</span>
-                <span style={{ fontWeight: 700, color: '#00f0ff' }}>
-                  {((selectedDistrict.crimeCount / SUMMARY_METRICS.totalCrimes) * 100).toFixed(1)}%
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
+
+        {/* District Intelligence Panel */}
+        {selectedDistrict && (() => {
+          const d = selectedDistrict;
+          const colors = RISK_COLORS[d.riskLevel] || RISK_COLORS.low;
+          return (
+            <div
+              className="glass-card"
+              style={{
+                padding: 20, borderRadius: 12, border: `1px solid ${colors.border}`,
+                position: 'sticky', top: 80, height: 'fit-content', maxHeight: '80vh', overflowY: 'auto',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                <div>
+                  <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{d.name}</div>
+                  <span
+                    className={`badge badge-${d.riskLevel === 'critical' ? 'red' : d.riskLevel === 'low' ? 'green' : 'amber'}`}
+                  >{d.riskLevel.toUpperCase()} RISK</span>
+                </div>
+                <button
+                  onClick={() => setSelectedDistrict(null)}
+                  style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 4 }}
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Stats Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
+                {[
+                  { label: 'Total Crimes', value: d.crimeCount.toLocaleString(), color: '#ef4444' },
+                  { label: 'Active Cases', value: d.activeCases.toLocaleString(), color: '#f59e0b' },
+                  { label: 'Crime Rate', value: `${d.crimeRate}/1k`, color: '#00f0ff' },
+                  { label: 'YoY Change', value: `${d.change > 0 ? '+' : ''}${d.change}%`, color: d.change > 0 ? '#ef4444' : '#10b981' },
+                ].map((stat) => (
+                  <div key={stat.label} style={{ background: 'var(--cyber-surface)', borderRadius: 8, padding: '10px 12px', border: '1px solid var(--cyber-border)' }}>
+                    <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 4 }}>{stat.label}</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: stat.color, fontFamily: 'JetBrains Mono, monospace' }}>{stat.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Crime Breakdown Bars */}
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Crime Breakdown</div>
+                {[
+                  { label: 'Cybercrime', value: d.cyberCrimes, max: 5000, color: '#00f0ff' },
+                  { label: 'Theft', value: d.theft, max: 4000, color: '#8b5cf6' },
+                  { label: 'Assault', value: d.assault, max: 2000, color: '#ef4444' },
+                  { label: 'Fraud', value: d.fraud, max: 2500, color: '#f59e0b' },
+                  { label: 'Narcotics', value: d.narcotics, max: 1500, color: '#e879f9' },
+                  { label: 'Organized', value: d.organized, max: 1200, color: '#f97316' },
+                ].map((item) => (
+                  <div key={item.label} style={{ marginBottom: 8 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.label}</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: item.color, fontFamily: 'JetBrains Mono, monospace' }}>{item.value.toLocaleString()}</span>
+                    </div>
+                    <div style={{ height: 5, borderRadius: 4, background: 'var(--cyber-surface)', overflow: 'hidden' }}>
+                      <div style={{ height: '100%', width: `${Math.min(100, (item.value / item.max) * 100)}%`, background: item.color, borderRadius: 4, transition: 'width 0.6s ease' }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* AI Summary */}
+              <div style={{ background: 'rgba(0,240,255,0.06)', border: '1px solid rgba(0,240,255,0.2)', borderRadius: 8, padding: 12, marginBottom: 12 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#00f0ff', marginBottom: 6 }}>🤖 AI ANALYSIS</div>
+                <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                  {d.name} shows <strong style={{ color: colors.text }}>{d.riskLevel.toUpperCase()}</strong> risk with {d.crimeCount.toLocaleString()} total crimes.
+                  {d.change > 0
+                    ? ` Crime rate is rising +${d.change}% YoY — requires immediate resource reinforcement.`
+                    : ` Crime rate is declining ${d.change}% YoY — maintain current strategy.`}
+                  {d.cyberCrimes > 500
+                    ? ' Cybercrime is the primary threat vector — specialized cyber unit deployment recommended.'
+                    : ' Violence and narcotics are key concerns requiring targeted intervention.'}
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button className="btn-primary" style={{ flex: 1, padding: '8px', fontSize: 12, fontWeight: 600, border: 'none', borderRadius: 8, cursor: 'pointer' }}>
+                  📋 View Report
+                </button>
+                <button style={{ flex: 1, padding: '8px', fontSize: 12, fontWeight: 600, background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, cursor: 'pointer' }}>
+                  🚨 Deploy Resources
+                </button>
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
-      <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes radar-sweep {
-          0% { r: 5; opacity: 1; }
-          100% { r: 24; opacity: 0; }
-        }
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); opacity: 0.35; }
-          50% { transform: scale(1.15); opacity: 0.7; }
-        }
-      `}</style>
+      {/* Bottom Stats Strip */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginTop: 20 }}>
+        {[
+          { label: 'Critical Districts', value: KARNATAKA_DISTRICTS.filter((d) => d.riskLevel === 'critical').length, color: '#ef4444', icon: AlertTriangle },
+          { label: 'High Risk Districts', value: KARNATAKA_DISTRICTS.filter((d) => d.riskLevel === 'high').length, color: '#f59e0b', icon: Shield },
+          { label: 'Police Stations', value: KARNATAKA_DISTRICTS.reduce((s, d) => s + d.policeStations, 0), color: '#00f0ff', icon: Users },
+          { label: 'Total Active Cases', value: KARNATAKA_DISTRICTS.reduce((s, d) => s + d.activeCases, 0).toLocaleString(), color: '#8b5cf6', icon: Activity },
+        ].map((stat) => (
+          <div key={stat.label} className="glass-card" style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <stat.icon size={20} style={{ color: stat.color, flexShrink: 0 }} />
+            <div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>{stat.label}</div>
+              <div style={{ fontSize: 20, fontWeight: 700, color: stat.color, fontFamily: 'JetBrains Mono, monospace' }}>{stat.value}</div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
-  );
-}
-
-export default function HeatmapPage() {
-  return (
-    <Suspense fallback={<div style={{ padding: 24, color: '#64748b', fontSize: 14 }}>Loading heatmap...</div>}>
-      <HeatmapContent />
-    </Suspense>
   );
 }

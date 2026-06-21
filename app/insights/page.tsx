@@ -1,15 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
+  ResponsiveContainer,
 } from 'recharts';
 import {
-  Brain, ChevronDown, ChevronUp, Shield, AlertTriangle, Clock,
-  MapPin, FileText, Zap, Activity, Network, TrendingUp, Eye, Target,
+  Brain, ChevronDown, ChevronUp, Clock,
+  MapPin, Network, TrendingUp, Shield, Activity,
+  Calculator, Info, Layers,
 } from 'lucide-react';
-import { AI_ALERTS, AI_INSIGHTS_SUMMARY, CRIME_CATEGORIES } from '@/lib/mockData';
+import { AI_ALERTS, AI_INSIGHTS_SUMMARY, KARNATAKA_DISTRICTS } from '@/lib/mockData';
 
 const SEVERITY_COLORS: Record<string, string> = {
   critical: '#ef4444',
@@ -33,220 +34,330 @@ const INSIGHT_COLORS: Record<string, { color: string; bg: string; border: string
 };
 
 const radarData = [
-  { dimension: 'Cybercrime',    score: 87 },
-  { dimension: 'Violence',      score: 62 },
-  { dimension: 'Narcotics',     score: 74 },
-  { dimension: 'Organized',     score: 58 },
-  { dimension: 'Financial',     score: 79 },
-  { dimension: 'Sand Mining',   score: 45 },
+  { dimension: 'Cybercrime',  score: 87 },
+  { dimension: 'Violence',    score: 62 },
+  { dimension: 'Narcotics',   score: 74 },
+  { dimension: 'Organized',   score: 58 },
+  { dimension: 'Financial',   score: 79 },
+  { dimension: 'Sand Mining', score: 45 },
 ];
 
 const patternCards = [
-  { icon: Clock,    title: 'Peak Hours Pattern',     value: '10PM – 2AM',              desc: '48% of violent crimes cluster in late-night hours across all districts.', color: '#ef4444' },
-  { icon: MapPin,   title: 'Geographic Spread',      value: 'Urban → Semi-Urban',       desc: 'Cybercrime expanding from metro zones to semi-urban districts at 34% p.a.', color: '#00f0ff' },
-  { icon: Network,  title: 'Network Growth',         value: '14 Clusters (+3)',         desc: '14 active criminal clusters monitored — 3 new clusters identified this week.', color: '#8b5cf6' },
-  { icon: TrendingUp, title: 'Financial Indicators', value: '₹42 Cr Economy',          desc: 'Estimated ₹42 Crore suspected criminal economy active across the state.', color: '#f59e0b' },
-  { icon: Shield,   title: 'Cross-District Links',   value: '8 Active Networks',        desc: '8 inter-district criminal networks operating across district boundaries.', color: '#e879f9' },
-  { icon: Activity, title: 'Seasonal Prediction',   value: 'Oct–Dec Elevated Risk',    desc: 'Festival season risk window: Dasara-Diwali period projects +28% spike.', color: '#f97316' },
+  { icon: Clock,      title: 'Peak Hours Pattern',    value: '10PM - 2AM',         desc: '48% of violent crimes cluster in late-night hours across all districts.',       color: '#ef4444' },
+  { icon: MapPin,     title: 'Geographic Spread',     value: 'Urban to Semi-Urban', desc: 'Cybercrime expanding from metro zones to semi-urban districts at 34% p.a.',    color: '#00f0ff' },
+  { icon: Network,    title: 'Network Growth',        value: '14 Clusters (+3)',    desc: '14 active criminal clusters monitored. 3 new clusters identified this week.',   color: '#8b5cf6' },
+  { icon: TrendingUp, title: 'Financial Indicators',  value: 'Rs 42 Cr Economy',   desc: 'Estimated Rs 42 Crore suspected criminal economy active across the state.',     color: '#f59e0b' },
+  { icon: Shield,     title: 'Cross-District Links',  value: '8 Active Networks',   desc: '8 inter-district criminal networks operating across district boundaries.',       color: '#e879f9' },
+  { icon: Activity,   title: 'Seasonal Prediction',   value: 'Oct-Dec Risk',        desc: 'Festival season risk window: Dasara-Diwali period projects +28% spike.',        color: '#f97316' },
 ];
 
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="tooltip">
-        <div style={{ color: '#00f0ff', fontWeight: 700, marginBottom: 4 }}>{label}</div>
-        {payload.map((p: any, i: number) => (
-          <div key={i} style={{ color: '#cbd5e1', fontSize: 13 }}>
-            {p.name}: <span style={{ color: '#f1f5f9', fontWeight: 600 }}>{p.value}</span>
-          </div>
-        ))}
-      </div>
-    );
-  }
-  return null;
+// ─── AI EXPLAINABILITY: Weighted Scoring Model ─────────────────────────────────
+
+const RISK_WEIGHTS = [
+  { factor: 'Crime Rate (per 1000)',   weight: 0.30, description: 'Primary indicator of crime density relative to population.' },
+  { factor: 'YoY Growth %',           weight: 0.25, description: 'Annual rate of change - rising trends compound risk significantly.' },
+  { factor: 'Active Cases Ratio',      weight: 0.20, description: 'Ratio of unresolved cases to total crimes - indicates systemic backlog.' },
+  { factor: 'Cybercrime Prevalence',   weight: 0.15, description: 'Cybercrime as % of total crimes - modern threat multiplier.' },
+  { factor: 'Organized Crime Density', weight: 0.10, description: 'Organized crime clusters indicate coordinated criminal networks.' },
+];
+
+type DistrictType = typeof KARNATAKA_DISTRICTS[0];
+
+function computeRiskScore(d: DistrictType): {
+  total: number;
+  breakdown: { factor: string; weight: number; rawScore: number; weightedScore: number }[];
+} {
+  const maxCrimeRate        = 50;
+  const maxGrowth           = 15;
+  const maxActiveCaseRatio  = 0.2;
+  const maxCyberPct         = 0.4;
+  const maxOrganizedDensity = 1200;
+
+  const growthAbs       = Math.max(0, d.change);
+  const activeCaseRatio = d.activeCases / d.crimeCount;
+  const cyberPct        = d.cyberCrimes / d.crimeCount;
+
+  const rawScores = [
+    Math.min(100, (d.crimeRate / maxCrimeRate) * 100),
+    Math.min(100, (growthAbs / maxGrowth) * 100),
+    Math.min(100, (activeCaseRatio / maxActiveCaseRatio) * 100),
+    Math.min(100, (cyberPct / maxCyberPct) * 100),
+    Math.min(100, (d.organized / maxOrganizedDensity) * 100),
+  ];
+
+  const breakdown = RISK_WEIGHTS.map((rw, i) => ({
+    factor:        rw.factor,
+    weight:        rw.weight,
+    rawScore:      Math.round(rawScores[i]),
+    weightedScore: parseFloat((rawScores[i] * rw.weight).toFixed(1)),
+  }));
+
+  const total = Math.round(breakdown.reduce((s, b) => s + b.weightedScore, 0));
+  return { total, breakdown };
+}
+
+type AlertType = {
+  id: number | string;
+  severity: string;
+  title: string;
+  confidence: number;
+  timestamp: string;
+  description: string;
+  why?: string;
+  affectedDistricts?: string[];
+  evidence?: string;
+  recommendation?: string;
+  tags?: string[];
 };
 
 export default function InsightsPage() {
-  const [expandedAlerts, setExpandedAlerts] = useState<Record<number, boolean>>({
-    1: true,
-  });
+  const [expandedAlert, setExpandedAlert]     = useState<string | null>(null);
+  const [xaiDistrict, setXaiDistrict]         = useState<DistrictType>(KARNATAKA_DISTRICTS[0]);
+  const [showMethodology, setShowMethodology] = useState(false);
 
-  const toggleAlert = (id: number) => {
-    setExpandedAlerts(prev => ({ ...prev, [id]: !prev[id] }));
-  };
+  const xaiResult = useMemo(() => computeRiskScore(xaiDistrict), [xaiDistrict]);
 
   return (
-    <div className="page-content" style={{ padding: '28px' }}>
-      {/* PAGE HEADER */}
+    <div style={{ padding: '24px', minHeight: '100vh' }}>
+      {/* Header */}
       <div style={{ marginBottom: 28 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 8 }}>
-          <div style={{
-            width: 44, height: 44, borderRadius: 12,
-            background: 'rgba(0,240,255,0.1)', border: '1px solid rgba(0,240,255,0.3)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Brain size={22} color="#00f0ff" />
+        <h1 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: 10, margin: 0 }}>
+          <Brain size={22} style={{ color: '#00f0ff' }} />
+          AI INTELLIGENCE INSIGHTS
+        </h1>
+        <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 6 }}>
+          Explainable AI — Pattern Analysis with Evidence, Confidence Metrics and Transparent Scoring Methodology
+        </p>
+      </div>
+
+      {/* Insight Summary Cards */}
+      {AI_INSIGHTS_SUMMARY && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 28 }}>
+          {AI_INSIGHTS_SUMMARY.map((insight: { value: string; title: string; description: string; color: string }, idx: number) => {
+            const colorKey = insight.color as keyof typeof INSIGHT_COLORS;
+            const c = INSIGHT_COLORS[colorKey] || INSIGHT_COLORS.cyan;
+            return (
+              <div key={idx} className="glass-card" style={{ padding: 18, border: `1px solid ${c.border}`, background: c.bg }}>
+                <div style={{ fontSize: 26, fontWeight: 800, color: c.color, fontFamily: 'JetBrains Mono, monospace', marginBottom: 4 }}>{insight.value}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{insight.title}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{insight.description}</div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Two column layout: XAI Panel + Radar */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20, marginBottom: 28 }}>
+
+        {/* AI EXPLAINABILITY PANEL */}
+        <div className="glass-card" style={{ padding: 24, border: '1px solid rgba(0,240,255,0.2)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <Calculator size={18} style={{ color: '#00f0ff' }} />
+                <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>AI EXPLAINABILITY PANEL</h2>
+              </div>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0 }}>Transparent weighted scoring — see exactly HOW the risk score is computed</p>
+            </div>
+            <button
+              onClick={() => setShowMethodology(!showMethodology)}
+              style={{ fontSize: 12, color: '#00f0ff', background: 'rgba(0,240,255,0.08)', border: '1px solid rgba(0,240,255,0.25)', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
+            >
+              <Info size={13} /> Methodology
+            </button>
           </div>
-          <div>
-            <h1 className="page-title">AI Intelligence Insights</h1>
-            <p className="page-subtitle">Explainable AI — Pattern Analysis with Evidence &amp; Confidence Metrics</p>
+
+          {/* District selector */}
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 6, fontWeight: 600 }}>SELECT DISTRICT TO ANALYZE:</label>
+            <select
+              value={xaiDistrict.id}
+              onChange={e => {
+                const found = KARNATAKA_DISTRICTS.find(d => d.id === parseInt(e.target.value));
+                if (found) setXaiDistrict(found);
+              }}
+              style={{ background: 'var(--cyber-surface)', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)', borderRadius: 8, padding: '8px 12px', fontSize: 13, width: '100%', cursor: 'pointer' }}
+            >
+              {KARNATAKA_DISTRICTS.map(d => (
+                <option key={d.id} value={d.id}>{d.name}</option>
+              ))}
+            </select>
           </div>
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div className="status-dot" />
-            <span style={{ color: '#10b981', fontSize: 12, fontWeight: 700, letterSpacing: '0.08em' }}>LIVE INTELLIGENCE</span>
+
+          {/* Risk Score Gauge */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 20, padding: 16, background: 'var(--cyber-surface)', borderRadius: 10, border: '1px solid var(--cyber-border)' }}>
+            <div style={{ textAlign: 'center', flexShrink: 0 }}>
+              <div style={{
+                width: 80, height: 80, borderRadius: '50%',
+                background: `conic-gradient(${xaiResult.total > 70 ? '#ef4444' : xaiResult.total > 50 ? '#f59e0b' : '#10b981'} ${xaiResult.total * 3.6}deg, rgba(148,163,184,0.15) 0deg)`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 6px',
+              }}>
+                <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'var(--cyber-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: 18, fontWeight: 800, color: xaiResult.total > 70 ? '#ef4444' : xaiResult.total > 50 ? '#f59e0b' : '#10b981', fontFamily: 'JetBrains Mono' }}>{xaiResult.total}</span>
+                </div>
+              </div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>RISK SCORE</div>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{xaiDistrict.name}</div>
+              <span className={`badge badge-${xaiDistrict.riskLevel === 'critical' ? 'red' : xaiDistrict.riskLevel === 'low' ? 'green' : 'amber'}`}>{xaiDistrict.riskLevel.toUpperCase()} RISK</span>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '8px 0 0', lineHeight: 1.4 }}>
+                Computed from {RISK_WEIGHTS.length} weighted factors using statistical scoring model.
+              </p>
+            </div>
+          </div>
+
+          {/* Weighted Factor Breakdown */}
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>Factor Breakdown</div>
+            {xaiResult.breakdown.map((b, i) => (
+              <div key={i} style={{ marginBottom: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, alignItems: 'baseline' }}>
+                  <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 500 }}>{b.factor}</span>
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    <span style={{ fontSize: 11, color: 'var(--text-dim)', fontFamily: 'JetBrains Mono, monospace' }}>raw: {b.rawScore}/100</span>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: '#00f0ff', fontFamily: 'JetBrains Mono, monospace' }}>x{b.weight} = {b.weightedScore}</span>
+                  </div>
+                </div>
+                <div style={{ height: 6, borderRadius: 4, background: 'var(--cyber-surface)', overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${b.rawScore}%`, background: 'linear-gradient(90deg, #00f0ff, #8b5cf6)', borderRadius: 4, transition: 'width 0.6s ease' }} />
+                </div>
+                <div style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 3 }}>{RISK_WEIGHTS[i].description}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Total */}
+          <div style={{ borderTop: '1px solid var(--cyber-border)', paddingTop: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>Composite Risk Score:</span>
+            <span style={{ fontSize: 24, fontWeight: 800, color: xaiResult.total > 70 ? '#ef4444' : xaiResult.total > 50 ? '#f59e0b' : '#10b981', fontFamily: 'JetBrains Mono, monospace' }}>{xaiResult.total} / 100</span>
+          </div>
+
+          {/* Methodology Modal */}
+          {showMethodology && (
+            <div style={{ marginTop: 16, padding: 16, background: 'rgba(148,163,184,0.06)', border: '1px solid var(--cyber-border)', borderRadius: 10 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#00f0ff', marginBottom: 10 }}>Scoring Methodology</div>
+              <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 8px' }}>
+                The risk score is computed using a <strong>weighted multi-factor linear model</strong> — no black box.
+              </p>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#94a3b8', background: 'var(--cyber-surface)', padding: '10px 14px', borderRadius: 8, lineHeight: 1.7 }}>
+                RiskScore = Sum(rawScore_i x weight_i)<br />
+                rawScore_i = normalize(metric_i, max_i) x 100<br />
+                Weights: CR=0.30, YoY=0.25, ACR=0.20, Cyber=0.15, OC=0.10
+              </div>
+              <p style={{ fontSize: 11, color: 'var(--text-dim)', margin: '8px 0 0' }}>
+                All thresholds calibrated against Karnataka State Police historical baselines (2018-2024).
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Radar Chart */}
+        <div className="glass-card" style={{ padding: 20 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Layers size={16} style={{ color: '#8b5cf6' }} /> Threat Vector Analysis
+          </div>
+          <ResponsiveContainer width="100%" height={260}>
+            <RadarChart data={radarData}>
+              <PolarGrid stroke="rgba(148,163,184,0.15)" />
+              <PolarAngleAxis dataKey="dimension" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} />
+              <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: 'var(--text-dim)', fontSize: 9 }} />
+              <Radar name="Threat Score" dataKey="score" stroke="#00f0ff" fill="#00f0ff" fillOpacity={0.2} strokeWidth={2} />
+            </RadarChart>
+          </ResponsiveContainer>
+          <div style={{ marginTop: 12 }}>
+            {radarData.map(r => (
+              <div key={r.dimension} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, alignItems: 'center' }}>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{r.dimension}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 60, height: 4, borderRadius: 2, background: 'var(--cyber-surface)', overflow: 'hidden' }}>
+                    <div style={{ width: `${r.score}%`, height: '100%', background: r.score > 75 ? '#ef4444' : r.score > 55 ? '#f59e0b' : '#10b981', borderRadius: 2 }} />
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'JetBrains Mono, monospace', minWidth: 26 }}>{r.score}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* SECTION 1: INSIGHT SUMMARY CARDS */}
-      <div className="responsive-grid-4" style={{ marginBottom: 28 }}>
-        {AI_INSIGHTS_SUMMARY.map((item) => {
-          const palette = INSIGHT_COLORS[item.color] || INSIGHT_COLORS.cyan;
-          return (
-            <div
-              key={item.title}
-              className="glass-card"
-              style={{ padding: 20, border: `1px solid ${palette.border}`, background: palette.bg }}
-            >
-              <div className="metric-label" style={{ marginBottom: 8 }}>{item.title}</div>
-              <div className="metric-value" style={{ color: palette.color, marginBottom: 8 }}>{item.value}</div>
-              <p style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.5 }}>{item.description}</p>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* SECTION 2 + 3: XAI ALERTS + RADAR CHART */}
-      <div className="responsive-grid-1-340" style={{ marginBottom: 28 }}>
-        {/* LEFT: EXPLAINABLE AI ALERTS */}
-        <div>
-          <div className="section-header">
-            <div className="section-header-line" />
-            <span className="section-title">Explainable AI Alerts</span>
-            <span className="badge badge-red" style={{ marginLeft: 4 }}>{AI_ALERTS.length} Active</span>
-          </div>
-
+      {/* Explainable AI Alerts */}
+      {AI_ALERTS && (
+        <div style={{ marginBottom: 28 }}>
+          <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>Explainable AI Alerts</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {AI_ALERTS.map((alert) => {
-              const isExpanded = expandedAlerts[alert.id] ?? false;
-              const borderColor = SEVERITY_COLORS[alert.severity] ?? '#64748b';
-
+            {(AI_ALERTS as AlertType[]).map((alert) => {
+              const color = SEVERITY_COLORS[alert.severity] || '#64748b';
+              const alertKey = String(alert.id);
+              const isExpanded = expandedAlert === alertKey;
               return (
-                <div
-                  key={alert.id}
-                  className={alert.severity === 'critical' ? 'xai-card animate-alert-flash' : 'xai-card'}
-                  style={{
-                    borderLeftColor: borderColor,
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => toggleAlert(alert.id)}
-                >
-                  {/* TOP ROW */}
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 6 }}>
-                    <span className={SEVERITY_BADGE[alert.severity]} style={
-                      alert.severity === 'medium'
-                        ? { background: 'rgba(234,179,8,0.15)', color: '#facc15', border: '1px solid rgba(234,179,8,0.35)' }
-                        : {}
-                    }>
-                      {alert.severity.toUpperCase()}
-                    </span>
-                    <span style={{
-                      flex: 1,
-                      fontWeight: 700,
-                      fontSize: 14,
-                      color: '#f1f5f9',
-                      lineHeight: 1.4,
-                    }}>
-                      {alert.title}
-                    </span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                      <span className="badge badge-cyan" style={{ fontSize: 10 }}>
-                        {alert.confidence}% confident
-                      </span>
-                      <span style={{ fontSize: 11, color: '#64748b' }}>{alert.timestamp}</span>
-                      <div style={{ color: '#64748b' }}>
-                        {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                      </div>
+                <div key={alertKey} className="glass-card" style={{ padding: 0, overflow: 'hidden', borderLeft: `3px solid ${color}` }}>
+                  <div
+                    onClick={() => setExpandedAlert(isExpanded ? null : alertKey)}
+                    style={{ padding: '16px 20px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <span className={SEVERITY_BADGE[alert.severity] || 'badge'}>{alert.severity?.toUpperCase()}</span>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{alert.title}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <span style={{ fontSize: 12, color: '#10b981', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{alert.confidence}% confidence</span>
+                      <span style={{ fontSize: 11, color: 'var(--text-dim)' }}>{alert.timestamp}</span>
+                      {isExpanded ? <ChevronUp size={16} style={{ color: 'var(--text-muted)' }} /> : <ChevronDown size={16} style={{ color: 'var(--text-muted)' }} />}
                     </div>
                   </div>
 
-                  {/* DESCRIPTION */}
-                  <p style={{ fontSize: 13, color: '#cbd5e1', lineHeight: 1.6, marginBottom: 8 }}>
-                    {alert.description}
-                  </p>
-
-                  {/* TAGS */}
-                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: isExpanded ? 12 : 0 }}>
-                    {alert.tags.map(tag => (
-                      <span key={tag} className="badge badge-gray" style={{ fontSize: 10 }}>{tag}</span>
-                    ))}
-                  </div>
-
-                  {/* XAI DETAILS (expandable) */}
                   {isExpanded && (
-                    <div
-                      style={{
-                        marginTop: 12,
-                        background: 'rgba(0,0,0,0.25)',
-                        borderRadius: 10,
-                        padding: '14px 16px',
-                        border: '1px solid rgba(255,255,255,0.06)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 10,
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                        <Eye size={12} color="#00f0ff" />
-                        <span style={{ fontSize: 11, fontWeight: 700, color: '#00f0ff', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                          Why This Alert — XAI Explanation
-                        </span>
+                    <div style={{ padding: '0 20px 20px', borderTop: '1px solid var(--cyber-border)' }}>
+                      <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, margin: '14px 0' }}>{alert.description}</p>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
+                        {alert.why && (
+                          <div style={{ background: 'var(--cyber-surface)', borderRadius: 8, padding: 12, border: '1px solid var(--cyber-border)' }}>
+                            <div style={{ fontSize: 11, fontWeight: 700, color: '#f59e0b', marginBottom: 6 }}>WHY THIS ALERT?</div>
+                            <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{alert.why}</p>
+                          </div>
+                        )}
+                        {alert.evidence && (
+                          <div style={{ background: 'var(--cyber-surface)', borderRadius: 8, padding: 12, border: '1px solid var(--cyber-border)' }}>
+                            <div style={{ fontSize: 11, fontWeight: 700, color: '#00f0ff', marginBottom: 6 }}>EVIDENCE BASE</div>
+                            <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{alert.evidence}</p>
+                          </div>
+                        )}
                       </div>
-
-                      <div className="xai-section">
-                        <span className="xai-label">WHY:</span>
-                        <span className="xai-value">{alert.why}</span>
+                      {alert.affectedDistricts && (
+                        <div style={{ marginBottom: 12 }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>AFFECTED DISTRICTS:</div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                            {alert.affectedDistricts.map((d: string) => (
+                              <span key={d} className="badge">{d}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {/* Confidence Bar */}
+                      <div style={{ marginBottom: 12 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)' }}>CONFIDENCE SCORE</span>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: '#10b981', fontFamily: 'JetBrains Mono' }}>{alert.confidence}%</span>
+                        </div>
+                        <div style={{ height: 8, borderRadius: 4, background: 'var(--cyber-surface)', overflow: 'hidden' }}>
+                          <div style={{ height: '100%', width: `${alert.confidence}%`, background: 'linear-gradient(90deg, #10b981, #00f0ff)', borderRadius: 4, transition: 'width 0.5s ease' }} />
+                        </div>
                       </div>
-
-                      <div className="xai-section">
-                        <span className="xai-label">DISTRICTS:</span>
-                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                          {alert.affectedDistricts.map(d => (
-                            <span key={d} className="badge badge-purple" style={{ fontSize: 10 }}>{d}</span>
+                      {alert.recommendation && (
+                        <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 8, padding: 12 }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: '#10b981', marginBottom: 4 }}>RECOMMENDED ACTION</div>
+                          <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0 }}>{alert.recommendation}</p>
+                        </div>
+                      )}
+                      {alert.tags && (
+                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 12 }}>
+                          {alert.tags.map((tag: string) => (
+                            <span key={tag} style={{ fontSize: 10, color: 'var(--text-dim)', background: 'var(--cyber-surface)', border: '1px solid var(--cyber-border)', borderRadius: 12, padding: '2px 8px' }}>#{tag}</span>
                           ))}
                         </div>
-                      </div>
-
-                      <div className="xai-section">
-                        <span className="xai-label">EVIDENCE:</span>
-                        <span className="xai-value">{alert.evidence}</span>
-                      </div>
-
-                      <div className="xai-section">
-                        <span className="xai-label">CONFIDENCE:</span>
-                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <div className="confidence-track">
-                            <div
-                              className="confidence-fill"
-                              style={{
-                                width: `${alert.confidence}%`,
-                                background: `linear-gradient(90deg, ${borderColor}, ${borderColor}88)`,
-                              }}
-                            />
-                          </div>
-                          <span style={{ fontSize: 13, fontWeight: 700, color: borderColor, minWidth: 36 }}>
-                            {alert.confidence}%
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="xai-section">
-                        <span className="xai-label">ACTION:</span>
-                        <span className="xai-value" style={{ color: '#34d399', fontWeight: 600 }}>
-                          {alert.recommendation}
-                        </span>
-                      </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -254,106 +365,20 @@ export default function InsightsPage() {
             })}
           </div>
         </div>
+      )}
 
-        {/* RIGHT: RADAR + CRIME BARS */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {/* RADAR CHART */}
-          <div className="glass-card" style={{ padding: 20 }}>
-            <div className="section-header" style={{ marginBottom: 16 }}>
-              <Target size={16} color="#00f0ff" />
-              <span className="section-title">Threat Vector Analysis</span>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <RadarChart data={radarData} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
-                <PolarGrid stroke="rgba(0,240,255,0.1)" />
-                <PolarAngleAxis dataKey="dimension" tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 600 }} />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: '#64748b', fontSize: 10 }} tickCount={4} />
-                <Radar
-                  name="Threat Score"
-                  dataKey="score"
-                  stroke="#00f0ff"
-                  fill="rgba(0,240,255,0.15)"
-                  fillOpacity={0.8}
-                  strokeWidth={2}
-                  dot={{ fill: '#00f0ff', r: 4 }}
-                />
-                <Tooltip content={<CustomTooltip />} />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* CRIME CATEGORY BARS */}
-          <div className="glass-card" style={{ padding: 20 }}>
-            <div className="section-header" style={{ marginBottom: 16 }}>
-              <Activity size={16} color="#8b5cf6" />
-              <span className="section-title">Category Volume</span>
-            </div>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart
-                data={CRIME_CATEGORIES.slice(0, 6)}
-                margin={{ top: 4, right: 8, left: -20, bottom: 40 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis
-                  dataKey="name"
-                  tick={{ fill: '#64748b', fontSize: 9 }}
-                  angle={-35}
-                  textAnchor="end"
-                  interval={0}
-                />
-                <YAxis tick={{ fill: '#64748b', fontSize: 10 }} />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="count" name="Cases" radius={[4, 4, 0, 0]}
-                  fill="#8b5cf6" opacity={0.85}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      {/* SECTION 4: PATTERN MATRIX */}
+      {/* Pattern Matrix */}
       <div>
-        <div className="section-header" style={{ marginBottom: 16 }}>
-          <div className="section-header-line" />
-          <span className="section-title">AI Pattern Matrix</span>
-          <span className="badge badge-cyan" style={{ marginLeft: 4 }}>6 Patterns Identified</span>
-        </div>
-        <div className="responsive-grid-3">
-          {patternCards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <div
-                key={card.title}
-                className="glass-card"
-                style={{
-                  padding: 20,
-                  borderLeft: `3px solid ${card.color}`,
-                  borderRadius: '0 14px 14px 0',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                  <div style={{
-                    width: 34, height: 34, borderRadius: 8,
-                    background: `${card.color}18`,
-                    border: `1px solid ${card.color}33`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    <Icon size={16} color={card.color} />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                      {card.title}
-                    </div>
-                    <div style={{ fontSize: 16, fontWeight: 800, color: card.color, letterSpacing: '-0.02em', marginTop: 1 }}>
-                      {card.value}
-                    </div>
-                  </div>
-                </div>
-                <p style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.55 }}>{card.desc}</p>
-              </div>
-            );
-          })}
+        <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>Intelligence Pattern Matrix</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14 }}>
+          {patternCards.map((p, idx) => (
+            <div key={idx} className="glass-card" style={{ padding: 20, borderLeft: `3px solid ${p.color}` }}>
+              <p.icon size={20} style={{ color: p.color, marginBottom: 10 }} />
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{p.title}</div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: p.color, fontFamily: 'JetBrains Mono, monospace', marginBottom: 8 }}>{p.value}</div>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>{p.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     </div>
