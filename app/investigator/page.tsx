@@ -151,6 +151,7 @@ export default function InvestigatorPage() {
   const [customGeminiKey, setCustomGeminiKey] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [processedQuery, setProcessedQuery] = useState(false);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -234,6 +235,8 @@ export default function InvestigatorPage() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [currentMessages]);
+
+
 
   // Grouping Sessions for history
   const getGroupedSessions = () => {
@@ -332,6 +335,22 @@ export default function InvestigatorPage() {
       setIsLoading(false);
     }
   }, [isLoading, currentMessages, updateSessionMessages]);
+
+  // Handle queries passed in URL parameters
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !processedQuery && sessions.length > 0 && activeSessionId) {
+      const params = new URLSearchParams(window.location.search);
+      const qParam = params.get('q') || params.get('query');
+      if (qParam) {
+        setProcessedQuery(true);
+        // Clear query from URL so refreshing doesn't keep resending
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+        // Execute the send
+        handleSend(qParam);
+      }
+    }
+  }, [sessions, activeSessionId, handleSend, processedQuery]);
 
   // Handle retry query on failure
   const handleRetry = useCallback(() => {
