@@ -4,42 +4,50 @@
    DESIGN TOKENS
    ───────────────────────────────────────────── */
 :root {
-  /* DARK THEME (default — night operations mode) */
-  --bg-app: #0A0E1A;
-  --bg-sidebar: #0A1628;
-  --bg-header: #0D1B2E;
-  --bg-card: #0F1A2E;
-  --bg-card-hover: #12213A;
-  --bg-input: #0A1628;
+  /* Brand Tokens */
+  --brand-teal-900: #0B3D3A;   /* deepest — login hero gradient start */
+  --brand-teal-700: #0F4C4C;   /* login hero gradient end, dark surfaces */
+  --brand-teal-600: #0F6B5C;   /* primary buttons, active states, links */
+  --brand-teal-100: #E6F4F1;   /* selected/hover fill, soft badges */
+  --brand-gold:     #D4AF37;   /* emblem border, quotes, premium accents */
+  --brand-cyan:     #2DD4BF;   /* live/network/map glow accents */
 
-  --border-default: #1A3A5C;
-  --border-subtle: rgba(255,255,255,0.06);
+  /* DEFAULT LIGHT MODE (post-login application interior) */
+  --bg-app: #F5F7FA;          /* --surface-bg */
+  --bg-sidebar: #FFFFFF;      /* --surface-card */
+  --bg-header: #FFFFFF;       /* --surface-card */
+  --bg-card: #FFFFFF;         /* --surface-card */
+  --bg-card-hover: #E6F4F1;   /* --brand-teal-100 */
+  --bg-input: #F8FAFC;
 
-  --accent-cyan: #00D4FF;
-  --accent-cyan-dim: rgba(0,212,255,0.08);
-  --accent-cyan-border: rgba(0,212,255,0.2);
-  --accent-cyan-text-on-fill: #0A1628;
+  --border-default: #E4EAF2;  /* --surface-border */
+  --border-subtle: rgba(11, 61, 58, 0.05);
 
-  --priority-critical: #FF3B3B;
-  --priority-high: #FFB300;
-  --priority-medium: #A855F7;
-  --priority-low: #00C851;
+  --accent-cyan: #0F6B5C;      /* --brand-teal-600 */
+  --accent-cyan-dim: #E6F4F1;  /* --brand-teal-100 */
+  --accent-cyan-border: rgba(15, 107, 92, 0.2);
+  --accent-cyan-text-on-fill: #FFFFFF;
 
-  --status-approved: #00C851;
-  --status-pending: #FFB300;
-  --status-deployed: #00D4FF;
-  --status-progress: #A855F7;
+  --priority-critical: #DC2626; /* --status-critical */
+  --priority-high: #F4A100;     /* --status-warning */
+  --priority-medium: #1976D2;   /* --status-info */
+  --priority-low: #2E8B57;      /* --status-success */
 
-  --text-primary: #F0F8FF;
-  --text-secondary: #C8D8E8;
-  --text-muted: #6B8CAE;
-  --text-faint: #4A6A8A;
+  --status-approved: #2E8B57;
+  --status-pending: #F4A100;
+  --status-deployed: #0F6B5C;
+  --status-progress: #1976D2;
 
-  --threat-high: #FF3B3B;
-  --threat-medium: #FFB300;
-  --threat-low: #00C851;
+  --text-primary: #1B263B;
+  --text-secondary: #475569;
+  --text-muted: #6B7280;
+  --text-faint: #94A3B8;
 
-  --shadow-card: 0 4px 16px rgba(0,0,0,0.35);
+  --threat-high: #DC2626;
+  --threat-medium: #F4A100;
+  --threat-low: #2E8B57;
+
+  --shadow-card: 0 4px 12px rgba(27, 38, 59, 0.03);
 
   /* Font scale defaults */
   --font-base: 16px;
@@ -70,43 +78,43 @@
   --glass-card-shadow-hover: var(--accent-cyan-dim);
 }
 
-.light, html.light {
-  /* LIGHT THEME (daytime command-center mode) */
-  --bg-app: #F3F6FA;
-  --bg-sidebar: #FFFFFF;
-  --bg-header: #FFFFFF;
-  --bg-card: #FFFFFF;
-  --bg-card-hover: #F1F5F9;
-  --bg-input: #F8FAFC;
+.dark, html.dark {
+  /* DARK THEME (night operations mode) */
+  --bg-app: #0A0E1A;
+  --bg-sidebar: #0A1628;
+  --bg-header: #0D1B2E;
+  --bg-card: #0F1A2E;
+  --bg-card-hover: #12213A;
+  --bg-input: #0A1628;
 
-  --border-default: #D8E1EC;
-  --border-subtle: rgba(10,22,40,0.07);
+  --border-default: #1A3A5C;
+  --border-subtle: rgba(255, 255, 255, 0.06);
 
-  --accent-cyan: #0096C7;
-  --accent-cyan-dim: rgba(0,150,199,0.08);
-  --accent-cyan-border: rgba(0,150,199,0.28);
-  --accent-cyan-text-on-fill: #FFFFFF;
+  --accent-cyan: #2DD4BF;      /* --brand-cyan */
+  --accent-cyan-dim: rgba(45, 212, 191, 0.08);
+  --accent-cyan-border: rgba(45, 212, 191, 0.2);
+  --accent-cyan-text-on-fill: #0A1628;
 
-  --priority-critical: #E11D2E;
-  --priority-high: #D97706;
-  --priority-medium: #9333EA;
-  --priority-low: #16A34A;
+  --priority-critical: #FF3B3B;
+  --priority-high: #FFB300;
+  --priority-medium: #A855F7;
+  --priority-low: #00C851;
 
-  --status-approved: #16A34A;
-  --status-pending: #D97706;
-  --status-deployed: #0096C7;
-  --status-progress: #9333EA;
+  --status-approved: #00C851;
+  --status-pending: #FFB300;
+  --status-deployed: #2DD4BF;
+  --status-progress: #A855F7;
 
-  --text-primary: #0A1628;
-  --text-secondary: #33475B;
-  --text-muted: #64748B;
-  --text-faint: #94A3B8;
+  --text-primary: #F0F8FF;
+  --text-secondary: #C8D8E8;
+  --text-muted: #6B8CAE;
+  --text-faint: #4A6A8A;
 
-  --threat-high: #DC2626;
-  --threat-medium: #D97706;
-  --threat-low: #16A34A;
+  --threat-high: #FF3B3B;
+  --threat-medium: #FFB300;
+  --threat-low: #00C851;
 
-  --shadow-card: 0 2px 10px rgba(15,35,65,0.08);
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.35);
 
   /* Legacy variables aliased to semantic tokens for compatibility */
   --cyber-bg: var(--bg-app);

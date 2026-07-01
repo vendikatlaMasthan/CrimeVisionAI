@@ -1,15 +1,17 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Shield, Lock, Eye, EyeOff, AlertTriangle, CheckCircle, Fingerprint, CreditCard, Loader } from 'lucide-react';
+import { Shield, Lock, Eye, EyeOff, Fingerprint, CreditCard, Loader, FileText, Target, ShieldAlert } from 'lucide-react';
 import { DEMO_ACCOUNTS, DemoAccount } from '@/lib/crimeData';
 
-const quotes = [
-  "Protecting Karnataka through Intelligence and Technology",
-  "Real-time crime intelligence for a safer state",
-  "AI-powered investigations for Karnataka State Police",
-  "Data-driven policing. Precision. Speed. Justice."
+const LOADING_STEPS = [
+  'Checking Credentials…',
+  'Connecting to Intelligence Server…',
+  'Loading AI Modules…',
+  'Loading Crime Database…',
+  'Authorizing Officer…',
+  'Access Granted'
 ];
 
 export default function LoginPage() {
@@ -17,27 +19,26 @@ export default function LoginPage() {
   const [mounted, setMounted] = useState(false);
 
   // Form states
-  const [selectedRole, setSelectedRole] = useState<'Officer' | 'Commissioner'>('Officer');
-  const [badgeId, setBadgeId] = useState('inspector');
-  const [accessCode, setAccessCode] = useState('KSP@2025');
+  const [selectedRole, setSelectedRole] = useState<'Officer' | 'Admin'>('Officer');
+  const [badgeId, setBadgeId] = useState('PI2026001');
+  const [password, setPassword] = useState('officer@123');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
-  // UI state
+  // UI status
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [shake, setShake] = useState(false);
-  const [bioActive, setBioActive] = useState(false);
   const [bioScanning, setBioScanning] = useState(false);
-
-  // Quote rotation
-  const [quoteIdx, setQuoteIdx] = useState(0);
-  const [quoteFade, setQuoteFade] = useState(true);
+  
+  // Transition steps
+  const [stepIdx, setStepIdx] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     setMounted(true);
-
+    
     // Auto-login check
     const existing = sessionStorage.getItem('ksp_user');
     if (existing) {
@@ -45,35 +46,49 @@ export default function LoginPage() {
     }
   }, [router]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setQuoteFade(false);
-      setTimeout(() => {
-        setQuoteIdx((prev) => (prev + 1) % quotes.length);
-        setQuoteFade(true);
-      }, 300);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Update credentials based on role selector
-  const handleRoleChange = (role: 'Officer' | 'Commissioner') => {
+  // Handle role pre-fills
+  const handleRoleChange = (role: 'Officer' | 'Admin') => {
     setSelectedRole(role);
     setError('');
     if (role === 'Officer') {
-      setBadgeId('inspector');
-      setAccessCode('KSP@2025');
+      setBadgeId('PI2026001');
+      setPassword('officer@123');
     } else {
-      setBadgeId('commissioner');
-      setAccessCode('KSP@2025');
+      setBadgeId('DGP2026001');
+      setPassword('admin@123');
     }
   };
 
-  const executeSuccessFlow = async (matchedAccount: DemoAccount) => {
+  // Success flow
+  const executeSuccessFlow = (matchedAccount: DemoAccount) => {
     sessionStorage.setItem('ksp_user', JSON.stringify(matchedAccount));
     setIsSuccess(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    router.replace('/');
+
+    // Cycle steps
+    let step = 0;
+    const stepInterval = setInterval(() => {
+      if (step < LOADING_STEPS.length - 1) {
+        step++;
+        setStepIdx(step);
+      } else {
+        clearInterval(stepInterval);
+      }
+    }, 600);
+
+    // Progress bar
+    let prog = 0;
+    const progressInterval = setInterval(() => {
+      if (prog < 100) {
+        prog += 2.5;
+        setProgress(prog);
+      } else {
+        clearInterval(progressInterval);
+        const targetRoute = matchedAccount.role === 'DGP' || matchedAccount.role === 'Commissioner' 
+          ? '/commissioner-dashboard' 
+          : '/dashboard';
+        router.replace(targetRoute);
+      }
+    }, 90);
   };
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -81,18 +96,19 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
 
-    // Simulated network delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    // Simulated verification delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const matched = DEMO_ACCOUNTS.find(
-      (a) => a.username.toLowerCase() === badgeId.trim().toLowerCase() && a.password === accessCode
+      (a) => a.username.toLowerCase() === badgeId.trim().toLowerCase() && a.password === password
     );
 
     if (matched) {
-      await executeSuccessFlow(matched);
+      setLoading(false);
+      executeSuccessFlow(matched);
     } else {
       setLoading(false);
-      setError('⚠ Invalid credentials. 2 attempts remaining.');
+      setError('⚠ Invalid credentials. Access denied.');
       setShake(true);
       setTimeout(() => setShake(false), 500);
     }
@@ -101,20 +117,19 @@ export default function LoginPage() {
   const triggerBiometricScan = async () => {
     setBioScanning(true);
     setError('');
-    // Simulate fingerprint scanning
-    await new Promise((resolve) => setTimeout(resolve, 1800));
+    
+    // Simulate biometric scan
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    // Authenticate based on role selector
-    const matched = DEMO_ACCOUNTS.find(
-      (a) => a.role.toLowerCase() === (selectedRole === 'Officer' ? 'inspector' : 'commissioner')
-    );
+    const targetUsername = selectedRole === 'Officer' ? 'pi2026001' : 'dgp2026001';
+    const matched = DEMO_ACCOUNTS.find((a) => a.username === targetUsername);
 
     if (matched) {
       setBioScanning(false);
-      await executeSuccessFlow(matched);
+      executeSuccessFlow(matched);
     } else {
       setBioScanning(false);
-      setError('⚠ Biometric verification failed. User not enrolled.');
+      setError('⚠ Biometric verification failed. Enrolled prints not found.');
       setShake(true);
       setTimeout(() => setShake(false), 500);
     }
@@ -125,303 +140,298 @@ export default function LoginPage() {
   return (
     <div className="login-wrapper">
       
-      {/* ──────────────────────────────────────────────────────────────────────── */}
-      {/* SUCCESS TRANSITION SCREEN                                                */}
-      {/* ──────────────────────────────────────────────────────────────────────── */}
+      {/* ── SUCCESS LOADING SCREEN OVERLAY ──────────────────────── */}
       {isSuccess && (
         <div className="success-overlay">
           <div className="success-content">
-            <svg className="shield-success-svg" viewBox="0 0 100 120" width="80" height="96">
-              <path
-                d="M 50,5 L 85,25 L 85,65 C 85,85 70,105 50,115 C 30,105 15,85 15,65 L 15,25 Z"
-                fill="none"
-                stroke="#00D4FF"
-                strokeWidth="4"
-              />
-              <path
-                d="M 50,15 L 75,32 L 75,62 C 75,77 64,92 50,100 C 36,92 25,77 25,62 L 25,32 Z"
-                fill="rgba(0, 212, 255, 0.1)"
-                stroke="#00D4FF"
-                strokeWidth="1"
-              />
-              <polygon points="50,35 53,45 64,45 55,52 58,62 50,55 42,62 45,52 36,45 47,45" fill="#00D4FF" />
-            </svg>
-            <h2 className="success-title">IDENTITY VERIFIED</h2>
-            <p className="success-subtitle">Initializing Secure Intelligence Module...</p>
-            <div className="progress-track">
-              <div className="progress-fill" />
+            <div className="success-shield-box">
+              <Shield size={38} className="text-teal-400" />
             </div>
+            <h2 className="success-title">{LOADING_STEPS[stepIdx].toUpperCase()}</h2>
+            <p className="success-subtitle">CrimeVision Secure Authorization Protocol</p>
+            <div className="progress-track">
+              <div className="progress-fill" style={{ width: `${progress}%` }} />
+            </div>
+            <div className="progress-percentage">{Math.min(Math.round(progress), 100)}%</div>
           </div>
         </div>
       )}
 
-      {/* ──────────────────────────────────────────────────────────────────────── */}
-      {/* TWO PANEL SPLIT LAYOUT                                                   */}
-      {/* ──────────────────────────────────────────────────────────────────────── */}
-      <div className={`login-container ${isSuccess ? 'fade-out-all' : ''}`}>
+      {/* ── TWO-PANEL SPLIT CONTAINER ────────────────────────── */}
+      <div className={`login-container ${isSuccess ? 'fade-out' : ''}`}>
         
-        {/* LEFT PANEL: BRANDING + ILLUSTRATION */}
+        {/* LEFT PANEL: HERO + BRANDING */}
         <div className="left-panel">
           
-          {/* Top-left branding */}
+          {/* Logo Block (circular gold-bordered shield emblem) */}
           <div className="brand-header">
-            <svg viewBox="0 0 100 120" width="40" height="48" style={{ marginRight: '14px' }}>
-              <path
-                d="M 50,5 L 85,25 L 85,65 C 85,85 70,105 50,115 C 30,105 15,85 15,65 L 15,25 Z"
-                fill="none"
-                stroke="#00D4FF"
-                strokeWidth="5"
-              />
-              <polygon points="50,30 54,42 66,42 56,50 60,62 50,54 40,62 44,50 34,42 46,42" fill="#00D4FF" />
-            </svg>
+            <div className="emblem-container">
+              <Shield size={24} className="text-[#FFFFFF]" />
+            </div>
             <div>
               <h1 className="brand-title">CRIMEVISION AI</h1>
               <p className="brand-tagline">AI INTELLIGENCE PLATFORM</p>
-              <p className="brand-governance">KARNATAKA STATE POLICE · GOVERNMENT OF KARNATAKA</p>
+              <p className="brand-governance">KARNATAKA STATE POLICE</p>
             </div>
           </div>
 
-          {/* Custom Animated Map SVG Area */}
-          <div className="map-illustration">
-            <svg viewBox="0 0 300 400" className="karnataka-map-svg">
-              {/* Karnataka Outlines */}
+          {/* Karnataka Map Outline & Pulsing City Nodes */}
+          <div className="map-wrapper">
+            <svg viewBox="0 0 300 360" className="map-svg">
               <path
                 d="M 170,40 L 195,65 L 180,95 L 215,115 L 205,150 L 190,170 L 225,230 L 210,270 L 230,305 L 220,325 L 210,320 L 200,345 L 175,375 L 155,365 L 165,340 L 130,335 L 115,345 L 90,320 L 85,270 L 75,235 L 68,190 L 80,140 L 75,120 L 105,115 L 125,80 Z"
                 fill="none"
-                stroke="rgba(0, 212, 255, 0.18)"
-                strokeWidth="2"
+                stroke="rgba(45, 212, 191, 0.2)"
+                strokeWidth="1.5"
                 strokeDasharray="4 2"
               />
+              {/* Network Connection Lines */}
+              <line x1="205" y1="280" x2="150" y2="310" stroke="rgba(45, 212, 191, 0.15)" strokeWidth="1" className="animated-line" />
+              <line x1="205" y1="280" x2="205" y2="125" stroke="rgba(45, 212, 191, 0.15)" strokeWidth="1" className="animated-line" />
+              <line x1="180" y1="80" x2="205" y2="125" stroke="rgba(45, 212, 191, 0.15)" strokeWidth="1" className="animated-line" />
+              <line x1="85" y1="135" x2="180" y2="80" stroke="rgba(45, 212, 191, 0.15)" strokeWidth="1" className="animated-line" />
+              <line x1="85" y1="135" x2="150" y2="310" stroke="rgba(45, 212, 191, 0.15)" strokeWidth="1" className="animated-line" />
+              <line x1="205" y1="125" x2="85" y2="135" stroke="rgba(45, 212, 191, 0.15)" strokeWidth="1" className="animated-line" />
               
-              {/* Network Connections */}
-              <line x1="205" y1="320" x2="150" y2="350" stroke="rgba(0, 212, 255, 0.15)" strokeWidth="1" />
-              <line x1="205" y1="320" x2="205" y2="125" stroke="rgba(0, 212, 255, 0.15)" strokeWidth="1" />
-              <line x1="180" y1="80" x2="205" y2="125" stroke="rgba(0, 212, 255, 0.15)" strokeWidth="1" />
-              <line x1="85" y1="135" x2="180" y2="80" stroke="rgba(0, 212, 255, 0.15)" strokeWidth="1" />
-              <line x1="85" y1="135" x2="150" y2="350" stroke="rgba(0, 212, 255, 0.15)" strokeWidth="1" />
-              <line x1="205" y1="125" x2="85" y2="135" stroke="rgba(0, 212, 255, 0.15)" strokeWidth="1" />
-
-              {/* Major Cities Dots with staggered pulses */}
+              {/* 6 nodes: Belagavi, Kalaburagi, Raichur, Bengaluru, Mysuru, Dharwad (connector) */}
               {/* Bengaluru */}
-              <g transform="translate(205, 320)">
-                <circle r="10" className="pulse-ring ring-1" fill="none" stroke="#00D4FF" strokeWidth="1.5" />
-                <circle r="4" fill="#00D4FF" />
+              <g transform="translate(205, 280)">
+                <circle r="8" className="pulse-ring ring-1" fill="none" stroke="var(--brand-cyan)" strokeWidth="1.5" />
+                <circle r="3.5" fill="var(--brand-cyan)" />
               </g>
               {/* Kalaburagi */}
               <g transform="translate(180, 80)">
-                <circle r="10" className="pulse-ring ring-2" fill="none" stroke="#00D4FF" strokeWidth="1.5" />
-                <circle r="4" fill="#00D4FF" />
+                <circle r="8" className="pulse-ring ring-2" fill="none" stroke="var(--brand-cyan)" strokeWidth="1.5" />
+                <circle r="3.5" fill="var(--brand-cyan)" />
               </g>
               {/* Mysuru */}
-              <g transform="translate(150, 350)">
-                <circle r="10" className="pulse-ring ring-3" fill="none" stroke="#00D4FF" strokeWidth="1.5" />
-                <circle r="4" fill="#00D4FF" />
+              <g transform="translate(150, 310)">
+                <circle r="8" className="pulse-ring ring-3" fill="none" stroke="var(--brand-cyan)" strokeWidth="1.5" />
+                <circle r="3.5" fill="var(--brand-cyan)" />
               </g>
               {/* Raichur */}
               <g transform="translate(205, 125)">
-                <circle r="10" className="pulse-ring ring-4" fill="none" stroke="#00D4FF" strokeWidth="1.5" />
-                <circle r="4" fill="#00D4FF" />
+                <circle r="8" className="pulse-ring ring-4" fill="none" stroke="var(--brand-cyan)" strokeWidth="1.5" />
+                <circle r="3.5" fill="var(--brand-cyan)" />
               </g>
               {/* Belagavi */}
               <g transform="translate(85, 135)">
-                <circle r="10" className="pulse-ring ring-5" fill="none" stroke="#00D4FF" strokeWidth="1.5" />
-                <circle r="4" fill="#00D4FF" />
+                <circle r="8" className="pulse-ring ring-5" fill="none" stroke="var(--brand-cyan)" strokeWidth="1.5" />
+                <circle r="3.5" fill="var(--brand-cyan)" />
+              </g>
+              {/* Dharwad */}
+              <g transform="translate(115, 180)">
+                <circle r="8" className="pulse-ring ring-6" fill="none" stroke="var(--brand-cyan)" strokeWidth="1.5" />
+                <circle r="3.5" fill="var(--brand-cyan)" />
               </g>
             </svg>
 
-            {/* Stats pills */}
-            <div className="stats-row">
-              <span className="stats-pill"><span className="bullet bullet-blue">🔵</span> 82,089 CASES</span>
-              <span className="stats-pill"><span className="bullet bullet-green">🟢</span> 94.7% ACCURACY</span>
-              <span className="stats-pill"><span className="bullet bullet-red">🔴</span> HIGH ALERT</span>
+            {/* Stat Row */}
+            <div className="stats-container">
+              <div className="glass-stat-card">
+                <FileText size={14} className="text-[#FFFFFF]/70" />
+                <span>82,089 CASES</span>
+              </div>
+              <div className="glass-stat-card">
+                <Target size={14} className="text-[#FFFFFF]/70" />
+                <span>94.7% ACCURACY</span>
+              </div>
+              <div className="glass-stat-card">
+                <ShieldAlert size={14} className="text-[#FFFFFF]/70" />
+                <span>HIGH ALERT LEVEL</span>
+              </div>
             </div>
           </div>
 
-          {/* Quote Rotation Area */}
-          <div className="quotes-area">
-            <p className={`quote-text ${quoteFade ? 'quote-in' : 'quote-out'}`}>
-              "{quotes[quoteIdx]}"
-            </p>
-            <p className="quote-attribution">
-              Karnataka State Police  ·  Government of Karnataka  ·  Est. 1963
-            </p>
+          {/* Mission Quote & gold accent */}
+          <div className="quote-box">
+            <span style={{ color: 'var(--brand-gold)', fontSize: '14px', fontWeight: 600, fontStyle: 'italic', letterSpacing: '0.02em', display: 'block', marginBottom: '8px' }}>
+              &ldquo;Protecting Karnataka through Intelligence and Technology&rdquo;
+            </span>
+            <div className="quote-divider" />
+            <span className="quote-tagline">
+              Data Driven. AI Powered. Safer Karnataka.
+            </span>
           </div>
 
-          {/* Simulation Badge */}
-          <div className="sim-mode-badge">
-            ⚠️ SIMULATION MODE  |  Synthetic Demonstration Data
+          {/* Persistent Government Watermark (Vidhana Soudha Outline bottom left) */}
+          <div className="government-watermark">
+            <svg viewBox="0 0 160 80" width="160" height="80">
+              <path d="M10,75 L150,75 M20,75 L20,60 L140,60 L140,75 M30,60 L30,45 L130,45 L130,60 M50,45 L50,20 L110,20 L110,45 M80,20 A15,15 0 0 1 80,5 Z" fill="none" stroke="currentColor" strokeWidth="1" />
+              <line x1="80" y1="5" x2="80" y2="0" stroke="currentColor" strokeWidth="1" />
+            </svg>
+          </div>
+
+          {/* Simulation mode disclosure bottom-left */}
+          <div className="left-panel-footer">
+            <div className="simulation-pill">
+              ⚠️ SIMULATION MODE | Synthetic Demonstration Data
+            </div>
           </div>
 
         </div>
 
-        {/* RIGHT PANEL: SECURE LOGIN FORM */}
+        {/* RIGHT PANEL: SECURE FORM CARD */}
         <div className="right-panel">
           
-          {/* Logo block for mobile screen sizes (hidden on desktop) */}
-          <div className="mobile-only-logo">
-            <svg viewBox="0 0 100 120" width="36" height="44" style={{ marginBottom: '8px' }}>
-              <path
-                d="M 50,5 L 85,25 L 85,65 C 85,85 70,105 50,115 C 30,105 15,85 15,65 L 15,25 Z"
-                fill="none"
-                stroke="#00D4FF"
-                strokeWidth="5"
-              />
-              <polygon points="50,30 54,42 66,42 56,50 60,62 50,54 40,62 44,50 34,42 46,42" fill="#00D4FF" />
-            </svg>
-            <h1 style={{ fontSize: '15px', fontWeight: 800, color: '#F0F8FF', margin: 0, letterSpacing: '1px' }}>CRIMEVISION AI</h1>
-            <p style={{ fontSize: '9px', fontWeight: 500, color: '#6B8CAE', margin: 0, letterSpacing: '1.5px' }}>KARNATAKA STATE POLICE</p>
+          {/* Mobile-only logo */}
+          <div className="mobile-header">
+            <div className="emblem-container" style={{ width: '36px', height: '36px', border: '1px solid var(--brand-gold)' }}>
+              <Shield size={16} style={{ color: 'var(--brand-gold)' }} />
+            </div>
+            <div style={{ textAlign: 'left' }}>
+              <h2 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--brand-teal-900)', margin: 0 }}>CRIMEVISION AI</h2>
+              <p style={{ fontSize: '9px', fontWeight: 600, color: 'var(--text-muted)', margin: 0 }}>KARNATAKA STATE POLICE</p>
+            </div>
           </div>
 
-          <div className="login-card">
+          <div className="form-card">
             
-            {/* Header */}
-            <div className="portal-header">
-              <h2 className="portal-title">SECURE ACCESS PORTAL</h2>
-              <p className="portal-subtitle">Officer Authentication Required</p>
-              <div className="title-bar-accent" />
+            {/* Header Lock Icon Badge */}
+            <div className="form-portal-header">
+              <div className="lock-icon-badge">
+                <Lock size={16} className="text-[var(--brand-teal-600)]" />
+              </div>
+              <h2 className="portal-title">Secure Access Portal</h2>
+              <p className="portal-subtitle">Please login to continue</p>
             </div>
 
             {/* Role Selectors */}
-            <div className="role-grid">
+            <div className="role-selector-container">
               <button
                 type="button"
                 onClick={() => handleRoleChange('Officer')}
-                className={`role-btn ${selectedRole === 'Officer' ? 'selected' : ''}`}
+                className={`role-tab-btn ${selectedRole === 'Officer' ? 'active' : ''}`}
               >
-                <div style={{ fontSize: '22px', marginBottom: '4px' }}>👮</div>
-                <div className="role-btn-title">Officer</div>
-                <div className="role-btn-sub">Field Units</div>
+                Officer Login
+                <span className="role-tab-sub">Field Operations</span>
               </button>
               <button
                 type="button"
-                onClick={() => handleRoleChange('Commissioner')}
-                className={`role-btn ${selectedRole === 'Commissioner' ? 'selected' : ''}`}
+                onClick={() => handleRoleChange('Admin')}
+                className={`role-tab-btn ${selectedRole === 'Admin' ? 'active' : ''}`}
               >
-                <div style={{ fontSize: '22px', marginBottom: '4px' }}>🎖️</div>
-                <div className="role-btn-title">Commissioner</div>
-                <div className="role-btn-sub">Senior Command</div>
+                Admin / Commissioner
+                <span className="role-tab-sub">Command Access</span>
               </button>
             </div>
 
-            {/* Input Form */}
-            <form onSubmit={handleLoginSubmit} className={`form-fields ${shake ? 'shake-anim' : ''}`}>
+            {/* Inputs Form */}
+            <form onSubmit={handleLoginSubmit} className={`login-form ${shake ? 'shake-anim' : ''}`}>
               
               {/* Badge ID Input */}
-              <div className="field-group">
-                <label className="field-label">BADGE / SERVICE ID</label>
-                <div className="input-icon-wrapper">
-                  <CreditCard className="input-icon-left" size={16} />
+              <div className="input-group">
+                <label className="input-label">BADGE / SERVICE ID</label>
+                <div className="input-field-wrapper">
+                  <CreditCard className="input-field-icon" size={15} />
                   <input
                     type="text"
                     value={badgeId}
                     onChange={(e) => { setBadgeId(e.target.value); setError(''); }}
-                    placeholder="Enter your badge number..."
-                    className={`form-input ${error ? 'input-error' : ''}`}
+                    placeholder="Enter badge number..."
+                    className="input-field"
                     disabled={loading || bioScanning}
                     required
                   />
                 </div>
               </div>
 
-              {/* Access Code Input */}
-              <div className="field-group">
-                <label className="field-label">ACCESS CODE</label>
-                <div className="input-icon-wrapper">
-                  <Lock className="input-icon-left" size={16} />
+              {/* Password Input */}
+              <div className="input-group">
+                <label className="input-label">PASSWORD</label>
+                <div className="input-field-wrapper">
+                  <Lock className="input-field-icon" size={15} />
                   <input
                     type={showPassword ? 'text' : 'password'}
-                    value={accessCode}
-                    onChange={(e) => { setAccessCode(e.target.value); setError(''); }}
-                    placeholder="Enter your access code..."
-                    className={`form-input ${error ? 'input-error' : ''}`}
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value); setError(''); }}
+                    placeholder="Enter secure password..."
+                    className="input-field"
                     disabled={loading || bioScanning}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="password-toggle-btn"
+                    className="input-password-toggle"
                   >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
               </div>
 
               {/* Error messages */}
-              {error && <div className="error-message">{error}</div>}
+              {error && <div className="form-error-msg">{error}</div>}
 
-              {/* Remember + Forgot Row */}
-              <div className="utility-row">
-                <label className="remember-label">
+              {/* Remember + Forgot row */}
+              <div className="form-utility-row">
+                <label className="remember-checkbox-label">
                   <input
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="remember-checkbox"
+                    className="remember-checkbox-input"
                   />
-                  <span>Remember this device</span>
+                  <span>Remember me</span>
                 </label>
                 <button
                   type="button"
-                  onClick={() => alert("Please contact the KSP Admin Desk to reset your access credentials.")}
-                  className="forgot-btn"
+                  onClick={() => alert("Please contact the KSP IT Command Desk to request credential assistance.")}
+                  className="forgot-pass-btn"
                 >
-                  Forgot Access Code?
+                  Forgot Password?
                 </button>
               </div>
 
-              {/* Submit Button */}
+              {/* Primary button */}
               <button
                 type="submit"
-                className="authenticate-btn"
+                className="login-submit-btn"
                 disabled={loading || bioScanning}
               >
                 {loading ? (
                   <>
-                    <Loader size={18} className="spinner" />
+                    <Loader size={16} className="spinner" />
                     <span>AUTHENTICATING...</span>
                   </>
                 ) : (
-                  <>
-                    <span>🔐 AUTHENTICATE & ACCESS</span>
-                  </>
+                  <span>LOGIN</span>
                 )}
               </button>
 
-              {/* Divider */}
-              <div className="or-divider">
+              {/* OR Divider */}
+              <div className="form-or-divider">
                 <div className="or-line" />
-                <span className="or-text">OR ACCESS VIA</span>
+                <span className="or-text">OR</span>
                 <div className="or-line" />
               </div>
 
-              {/* Biometric trigger button */}
+              {/* Biometric Button */}
               <button
                 type="button"
                 onClick={triggerBiometricScan}
-                className="biometric-btn"
+                className="biometric-login-btn"
                 disabled={loading || bioScanning}
               >
                 {bioScanning ? (
                   <>
-                    <Loader size={16} className="spinner" style={{ color: '#00D4FF' }} />
-                    <span style={{ color: '#00D4FF' }}>SCANNING FINGERPRINT...</span>
+                    <Loader size={15} className="spinner" style={{ color: 'var(--brand-teal-600)' }} />
+                    <span>VERIFYING ENROLLMENT...</span>
                   </>
                 ) : (
                   <>
-                    <Fingerprint size={16} />
-                    <span>Biometric Authentication</span>
+                    <Fingerprint size={15} />
+                    <span>Login with Biometric</span>
                   </>
                 )}
               </button>
 
             </form>
 
-            {/* Security Footer */}
-            <div className="security-info">
-              <div className="info-title">🔒 256-bit Encrypted · Government Secured · Session Monitored</div>
-              <div className="info-sub">Karnataka State Police · CrimeVision AI v2.0</div>
-              <div className="info-sub text-[#FF3B3B]/70 font-semibold" style={{ marginTop: '2px' }}>Authorized Personnel Only</div>
+            {/* Portal Footer */}
+            <div className="form-portal-footer">
+              <Shield size={12} className="text-teal-800" />
+              <span>Karnataka State Police · Government of Karnataka · Est. 1963</span>
             </div>
 
           </div>
@@ -430,18 +440,16 @@ export default function LoginPage() {
 
       </div>
 
-      {/* ──────────────────────────────────────────────────────────────────────── */}
-      {/* DESIGN SYSTEM CSS                                                        */}
-      {/* ──────────────────────────────────────────────────────────────────────── */}
       <style>{`
         .login-wrapper {
           min-height: 100vh;
-          background: #0A1628;
+          width: 100%;
           display: flex;
           align-items: center;
           justify-content: center;
           font-family: 'Inter', sans-serif;
           overflow: hidden;
+          background: #F5F7FA;
           position: relative;
         }
 
@@ -449,604 +457,593 @@ export default function LoginPage() {
           width: 100%;
           min-height: 100vh;
           display: flex;
-          transition: opacity 0.4s ease;
+          flex-direction: row;
+          transition: opacity 0.3s ease;
         }
 
-        .fade-out-all {
-          opacity: 0.1;
+        .fade-out {
+          opacity: 0.15;
           pointer-events: none;
         }
 
-        /* LEFT PANEL styling */
+        /* LEFT PANEL: HERO SECTION */
         .left-panel {
-          width: 60%;
-          background: #0A1628;
+          width: 45%;
+          background: linear-gradient(135deg, var(--brand-teal-900), var(--brand-teal-700));
           height: 100vh;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          padding: 40px;
-          border-right: 1px solid #1A3A5C;
+          padding: 48px;
           box-sizing: border-box;
           position: relative;
-          opacity: 0;
-          animation: leftPanelIn 0.6s ease-out 0.2s forwards;
+          color: #FFFFFF;
         }
 
         .brand-header {
           display: flex;
           align-items: center;
+          gap: 16px;
+        }
+
+        .emblem-container {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          border: 2px solid var(--brand-gold);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255, 255, 255, 0.05);
         }
 
         .brand-title {
-          font-size: 22px;
+          font-size: 20px;
           font-weight: 800;
-          color: #F0F8FF;
+          letter-spacing: 0.05em;
           margin: 0;
-          letter-spacing: 1px;
+          color: #FFFFFF;
+          line-height: 1;
         }
 
         .brand-tagline {
-          font-size: 11px;
-          font-weight: 500;
-          color: #6B8CAE;
-          margin: 2px 0 0;
-          letter-spacing: 2px;
+          font-size: 9px;
+          font-weight: 700;
+          color: var(--brand-gold);
+          margin: 4px 0 0;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
         }
 
         .brand-governance {
           font-size: 9px;
-          font-weight: 400;
-          color: #4A6A8A;
-          margin: 4px 0 0;
-          letter-spacing: 0.5px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.7);
+          margin: 2px 0 0;
+          letter-spacing: 0.05em;
         }
 
-        /* SVG Map illustration */
-        .map-illustration {
+        .map-wrapper {
           flex: 1;
           display: flex;
           flex-direction: column;
-          align-items: center;
           justify-content: center;
-          max-height: 50%;
-        }
-
-        .karnataka-map-svg {
+          align-items: center;
+          margin: 24px 0;
+          position: relative;
           width: 100%;
-          max-width: 250px;
-          height: auto;
-          filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.1));
         }
 
-        /* Pulsing dot animations */
+        .map-svg {
+          max-width: 280px;
+          max-height: 280px;
+          width: 100%;
+          opacity: 0.95;
+        }
+
+        /* Animated connection lines */
+        .animated-line {
+          stroke-dasharray: 6 3;
+          animation: march 15s linear infinite;
+        }
+
+        @keyframes march {
+          to {
+            stroke-dashoffset: -60;
+          }
+        }
+
+        /* Pulse Nodes Rings */
         .pulse-ring {
+          animation: ringPulse 2.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
           transform-origin: center;
         }
-        
-        .ring-1 { animation: mapPulse 2s infinite; }
-        .ring-2 { animation: mapPulse 2s infinite 0.3s; }
-        .ring-3 { animation: mapPulse 2s infinite 0.6s; }
-        .ring-4 { animation: mapPulse 2s infinite 0.9s; }
-        .ring-5 { animation: mapPulse 2s infinite 1.2s; }
 
-        @keyframes mapPulse {
+        .ring-1 { animation-delay: 0s; }
+        .ring-2 { animation-delay: 0.4s; }
+        .ring-3 { animation-delay: 0.8s; }
+        .ring-4 { animation-delay: 1.2s; }
+        .ring-5 { animation-delay: 1.6s; }
+        .ring-6 { animation-delay: 2.0s; }
+
+        @keyframes ringPulse {
           0% { transform: scale(0.6); opacity: 1; }
-          50% { transform: scale(1.6); opacity: 0; }
-          100% { transform: scale(0.6); opacity: 0; }
+          100% { transform: scale(2.2); opacity: 0; }
         }
 
-        /* Stats pills */
-        .stats-row {
+        /* Stats Row */
+        .stats-container {
           display: flex;
           gap: 10px;
+          width: 100%;
+          justify-content: center;
           margin-top: 24px;
         }
 
-        .stats-pill {
-          background: rgba(0, 212, 255, 0.08);
-          border: 1px solid rgba(0, 212, 255, 0.2);
-          color: #00D4FF;
-          font-size: 11px;
-          font-weight: 600;
-          border-radius: 20px;
-          padding: 6px 14px;
+        .glass-stat-card {
+          background: rgba(15, 76, 76, 0.45);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border-radius: 999px;
+          padding: 8px 16px;
           display: flex;
           align-items: center;
-          gap: 6px;
-        }
-
-        .bullet {
-          font-size: 9px;
-        }
-
-        /* Rotating quotes area */
-        .quotes-area {
-          text-align: center;
-          margin: 0 auto;
-          max-width: 440px;
-        }
-
-        .quote-text {
-          font-size: 16px;
-          font-weight: 300;
-          color: #8899AA;
-          font-style: italic;
-          margin: 0 0 12px;
-          line-height: 1.5;
-          min-height: 48px;
-          transition: opacity 0.3s ease;
-        }
-
-        .quote-in { opacity: 1; }
-        .quote-out { opacity: 0; }
-
-        .quote-attribution {
+          gap: 8px;
           font-size: 10px;
-          color: #4A6A8A;
-          margin: 0;
-          letter-spacing: 1px;
-          text-transform: uppercase;
+          font-weight: 700;
+          color: #FFFFFF;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          transition: all 0.2s ease;
+          cursor: pointer;
         }
 
-        .sim-mode-badge {
+        .glass-stat-card:hover {
+          transform: translateY(-2px);
+          background: rgba(15, 76, 76, 0.65);
+          border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Quote Box */
+        .quote-box {
+          border-left: 2px solid var(--brand-gold);
+          padding-left: 16px;
+          margin-bottom: 24px;
+          max-width: 420px;
+        }
+
+        .quote-divider {
+          width: 40px;
+          height: 1px;
+          background: rgba(255, 255, 255, 0.25);
+          margin: 8px 0;
+        }
+
+        .quote-tagline {
+          font-size: 11px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.65);
+          letter-spacing: 0.05em;
+        }
+
+        /* Government building watermark */
+        .government-watermark {
           position: absolute;
-          bottom: 24px;
-          left: 40px;
-          font-size: 10px;
-          color: #FFB300;
-          background: rgba(255, 179, 0, 0.08);
-          border: 1px solid rgba(255, 179, 0, 0.15);
-          border-radius: 4px;
-          padding: 4px 10px;
-          letter-spacing: 0.5px;
+          bottom: 20px;
+          left: 48px;
+          opacity: 0.04;
+          color: #FFFFFF;
+          pointer-events: none;
         }
 
-        /* RIGHT PANEL styling */
-        .right-panel {
-          width: 40%;
-          background: #0D1B2E;
-          height: 100vh;
+        .left-panel-footer {
           display: flex;
-          flex-direction: column;
+          justify-content: flex-end;
+          width: 100%;
+        }
+
+        .simulation-pill {
+          background: rgba(244, 161, 0, 0.15);
+          border: 1px solid rgba(244, 161, 0, 0.35);
+          color: var(--status-warning);
+          border-radius: 999px;
+          padding: 6px 14px;
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.02em;
+        }
+
+        /* RIGHT PANEL: SECURE FORM CARD */
+        .right-panel {
+          width: 55%;
+          display: flex;
           align-items: center;
           justify-content: center;
-          padding: 40px;
+          background: var(--surface-bg);
           box-sizing: border-box;
-          transform: translateX(40px);
-          opacity: 0;
-          animation: rightPanelIn 0.5s ease-out forwards;
+          padding: 32px;
+          position: relative;
         }
 
-        .mobile-only-logo {
+        .mobile-header {
           display: none;
+          position: absolute;
+          top: 24px;
+          left: 24px;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .form-card {
+          background: #FFFFFF;
+          border-radius: 16px;
+          box-shadow: 0 10px 30px rgba(27, 38, 59, 0.04);
+          border: 1px solid var(--surface-border);
+          width: 100%;
+          max-width: 480px;
+          padding: 48px;
+          box-sizing: border-box;
+        }
+
+        .form-portal-header {
+          display: flex;
           flex-direction: column;
           align-items: center;
           margin-bottom: 24px;
-        }
-
-        .login-card {
-          width: 100%;
-          max-width: 360px;
-        }
-
-        .portal-header {
           text-align: center;
-          margin-bottom: 32px;
+        }
+
+        .lock-icon-badge {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          background: var(--brand-teal-100);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 12px;
         }
 
         .portal-title {
-          font-size: 18px;
+          font-size: 20px;
           font-weight: 700;
-          color: #F0F8FF;
+          color: var(--text-primary);
           margin: 0;
-          letter-spacing: 1.5px;
         }
 
         .portal-subtitle {
           font-size: 13px;
-          font-weight: 400;
-          color: #6B8CAE;
-          margin: 6px 0 0;
-        }
-
-        .title-bar-accent {
-          width: 40px;
-          height: 2px;
-          background: #00D4FF;
-          margin: 12px auto 0;
+          color: var(--text-muted);
+          margin: 4px 0 0;
         }
 
         /* Role Selector */
-        .role-grid {
+        .role-selector-container {
           display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 12px;
-          margin-bottom: 24px;
+          grid-template-cols: 1fr 1fr;
+          gap: 8px;
+          background: #F1F5F9;
+          padding: 4px;
+          border-radius: 10px;
+          margin-bottom: 20px;
         }
 
-        .role-btn {
-          background: #0A1628;
-          border: 1px solid #1A3A5C;
+        .role-tab-btn {
+          background: transparent;
+          border: 1px solid transparent;
           border-radius: 8px;
-          padding: 16px;
+          padding: 8px 12px;
           cursor: pointer;
-          transition: all 0.2s ease;
-          text-align: center;
-          outline: none;
+          transition: all 150ms ease;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          font-size: 12px;
+          font-weight: 700;
+          color: var(--text-muted);
         }
 
-        .role-btn:hover {
-          border-color: rgba(0, 212, 255, 0.4);
+        .role-tab-btn.active {
+          background: #FFFFFF;
+          border-color: var(--brand-teal-600);
+          color: var(--brand-teal-600);
+          box-shadow: 0 4px 10px rgba(15, 107, 92, 0.05);
         }
 
-        .role-btn.selected {
-          border-color: #00D4FF;
-          background: rgba(0, 212, 255, 0.06);
-        }
-
-        .role-btn-title {
-          font-size: 13px;
-          font-weight: 600;
-          color: #F0F8FF;
-        }
-
-        .role-btn-sub {
-          font-size: 11px;
-          color: #6B8CAE;
+        .role-tab-sub {
+          font-size: 9px;
+          font-weight: 500;
+          color: var(--text-muted);
           margin-top: 2px;
         }
 
-        /* Input styling */
-        .form-fields {
+        /* Inputs form */
+        .login-form {
           display: flex;
           flex-direction: column;
           gap: 16px;
         }
 
-        .field-group {
+        .input-group {
           display: flex;
           flex-direction: column;
+          gap: 6px;
         }
 
-        .field-label {
-          font-size: 11px;
-          font-weight: 600;
-          color: #6B8CAE;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          margin-bottom: 6px;
+        .input-label {
+          font-size: 10px;
+          font-weight: 700;
+          color: var(--text-muted);
+          letter-spacing: 0.08em;
         }
 
-        .input-icon-wrapper {
+        .input-field-wrapper {
           position: relative;
+          display: flex;
+          align-items: center;
+          width: 100%;
         }
 
-        .input-icon-left {
+        .input-field-icon {
           position: absolute;
           left: 14px;
-          top: 50%;
-          transform: translateY(-50%);
-          color: #6B8CAE;
+          color: var(--text-muted);
         }
 
-        .form-input {
+        .input-field {
           width: 100%;
-          background: #0A1628;
-          border: 1px solid #1A3A5C;
-          border-radius: 8px;
-          height: 48px;
-          padding: 0 16px 0 44px;
-          color: #F0F8FF;
-          font-size: 14px;
+          height: 42px;
+          border-radius: 10px;
+          border: 1px solid var(--surface-border);
+          background: #F8FAFC;
+          padding: 0 14px 0 42px;
+          font-size: 13px;
+          color: var(--text-primary);
           outline: none;
-          box-sizing: border-box;
-          transition: all 0.2s ease;
+          transition: all 150ms ease;
         }
 
-        .form-input:focus {
-          border-color: #00D4FF;
-          box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        .input-field:focus {
+          border-color: var(--brand-teal-600);
+          background: #FFFFFF;
+          box-shadow: 0 0 0 3px rgba(15, 107, 92, 0.08);
         }
 
-        .form-input.input-error {
-          border-color: #FF3B3B;
-          box-shadow: 0 0 0 3px rgba(255, 59, 59, 0.1);
-        }
-
-        .password-toggle-btn {
+        .input-password-toggle {
           position: absolute;
           right: 14px;
-          top: 50%;
-          transform: translateY(-50%);
-          background: none;
+          background: transparent;
           border: none;
-          cursor: pointer;
-          color: #6B8CAE;
-          padding: 4px;
-        }
-
-        .password-toggle-btn:hover {
-          color: #F0F8FF;
-        }
-
-        .error-message {
-          font-size: 12px;
-          color: #FF3B3B;
-          margin-top: -8px;
-          font-weight: 600;
-        }
-
-        /* Checkbox & Forgot */
-        .utility-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 8px;
-        }
-
-        .remember-label {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 12px;
-          color: #8899AA;
-          cursor: pointer;
-        }
-
-        .remember-checkbox {
-          accent-color: #00D4FF;
-          cursor: pointer;
-        }
-
-        .forgot-btn {
-          background: none;
-          border: none;
-          font-size: 12px;
-          color: #00D4FF;
-          cursor: pointer;
-          padding: 2px;
-        }
-
-        .forgot-btn:hover {
-          text-decoration: underline;
-        }
-
-        /* Authenticate Button */
-        .authenticate-btn {
-          width: 100%;
-          height: 52px;
-          background: #00D4FF;
-          color: #0A1628;
-          font-size: 14px;
-          font-weight: 700;
-          letter-spacing: 1.5px;
-          border-radius: 8px;
-          border: none;
+          color: var(--text-muted);
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 10px;
-          transition: all 0.2s ease;
-          text-transform: uppercase;
         }
 
-        .authenticate-btn:hover {
-          background: #00B8D9;
+        .input-password-toggle:hover {
+          color: var(--text-primary);
+        }
+
+        .form-error-msg {
+          font-size: 12px;
+          font-weight: 600;
+          color: var(--status-danger);
+          margin-top: -4px;
+        }
+
+        .form-utility-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 12px;
+        }
+
+        .remember-checkbox-label {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          color: var(--text-muted);
+          font-weight: 500;
+          cursor: pointer;
+        }
+
+        .remember-checkbox-input {
+          accent-color: var(--brand-teal-600);
+        }
+
+        .forgot-pass-btn {
+          background: transparent;
+          border: none;
+          color: var(--brand-teal-600);
+          font-weight: 600;
+          cursor: pointer;
+        }
+
+        .forgot-pass-btn:hover {
+          text-decoration: underline;
+        }
+
+        .login-submit-btn {
+          background: var(--brand-teal-600);
+          color: #FFFFFF;
+          border: none;
+          border-radius: 10px;
+          height: 42px;
+          font-size: 13px;
+          font-weight: 700;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          transition: all 200ms ease;
+          width: 100%;
+        }
+
+        .login-submit-btn:hover {
+          background: #0D594C;
           transform: translateY(-1px);
         }
 
-        .authenticate-btn:active {
-          transform: translateY(0);
-        }
-
-        .spinner {
-          animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-
-        /* OR Divider */
-        .or-divider {
+        .form-or-divider {
           display: flex;
           align-items: center;
-          margin-top: 8px;
+          width: 100%;
+          gap: 12px;
+          margin: 4px 0;
         }
 
         .or-line {
           flex: 1;
           height: 1px;
-          background: rgba(26, 58, 92, 0.6);
+          background: var(--surface-border);
         }
 
         .or-text {
-          font-size: 11px;
-          color: #4A6A8A;
-          padding: 0 12px;
-          letter-spacing: 1px;
+          font-size: 10px;
+          font-weight: 700;
+          color: var(--text-muted);
         }
 
-        /* Biometric Button */
-        .biometric-btn {
-          width: 100%;
-          height: 44px;
+        .biometric-login-btn {
           background: transparent;
-          border: 1px solid #1A3A5C;
-          color: #8899AA;
+          border: 1px solid var(--surface-border);
+          border-radius: 10px;
+          height: 42px;
           font-size: 13px;
-          font-weight: 600;
-          border-radius: 8px;
+          font-weight: 700;
+          color: var(--text-primary);
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 8px;
-          transition: all 0.2s ease;
+          transition: all 200ms ease;
+          width: 100%;
         }
 
-        .biometric-btn:hover {
-          border-color: #00D4FF;
-          color: #00D4FF;
+        .biometric-login-btn:hover {
+          border-color: var(--brand-teal-600);
+          color: var(--brand-teal-600);
         }
 
-        /* Security Info Panel */
-        .security-info {
+        .form-portal-footer {
+          margin-top: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          font-size: 9px;
+          font-weight: 500;
+          color: var(--text-muted);
           text-align: center;
-          margin-top: 32px;
-        }
-
-        .info-title {
-          font-size: 10px;
-          color: #4A6A8A;
-          letter-spacing: 0.5px;
-          margin-bottom: 6px;
-        }
-
-        .info-sub {
-          font-size: 10px;
-          color: #3A5A7A;
-          letter-spacing: 0.2px;
-          line-height: 1.4;
         }
 
         /* SUCCESS OVERLAY */
         .success-overlay {
           position: fixed;
           inset: 0;
-          background: #0A1628;
-          z-index: 9999;
+          background: #0B3D3A;
+          z-index: 100;
           display: flex;
           align-items: center;
           justify-content: center;
-          animation: successBgIn 0.3s ease-out;
+          animation: overlayFadeIn 0.3s ease forwards;
         }
 
         .success-content {
-          text-align: center;
           display: flex;
           flex-direction: column;
           align-items: center;
+          text-align: center;
+          max-width: 320px;
+          width: 100%;
         }
 
-        .shield-success-svg {
-          filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.4));
-          margin-bottom: 24px;
-          animation: shieldSuccessPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .success-shield-box {
+          width: 64px;
+          height: 64px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.05);
+          border: 2px solid var(--brand-cyan);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 20px;
+          box-shadow: 0 0 20px rgba(45, 212, 191, 0.2);
         }
 
         .success-title {
-          font-size: 24px;
-          font-weight: 900;
-          color: #F0F8FF;
-          letter-spacing: 2px;
-          margin: 0 0 8px;
-          animation: fadeInUp 0.4s ease-out 0.2s forwards;
-          opacity: 0;
+          font-size: 16px;
+          font-weight: 800;
+          letter-spacing: 0.1em;
+          color: #FFFFFF;
+          margin: 0;
         }
 
         .success-subtitle {
-          font-size: 14px;
-          color: #6B8CAE;
-          margin: 0 0 32px;
-          animation: fadeInUp 0.4s ease-out 0.3s forwards;
-          opacity: 0;
+          font-size: 11px;
+          color: rgba(255, 255, 255, 0.6);
+          margin: 6px 0 16px;
         }
 
         .progress-track {
-          width: 240px;
+          width: 100%;
           height: 4px;
-          background: rgba(255, 255, 255, 0.05);
+          background: rgba(255, 255, 255, 0.08);
           border-radius: 2px;
           overflow: hidden;
-          animation: fadeInUp 0.4s ease-out 0.4s forwards;
-          opacity: 0;
         }
 
         .progress-fill {
           height: 100%;
-          background: #00D4FF;
-          width: 0%;
-          animation: fillProgress 1.6s ease-in-out 0.5s forwards;
-          box-shadow: 0 0 8px #00D4FF;
+          background: var(--brand-cyan);
+          transition: width 0.1s linear;
         }
 
-        /* Animations declarations */
-        @keyframes leftPanelIn {
+        .progress-percentage {
+          font-size: 10px;
+          font-weight: 700;
+          font-family: monospace;
+          color: var(--brand-cyan);
+          margin-top: 8px;
+        }
+
+        /* Animations */
+        @keyframes overlayFadeIn {
+          from { opacity: 0; }
           to { opacity: 1; }
         }
 
-        @keyframes rightPanelIn {
-          to { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes successBgIn {
-          from { background: transparent; }
-          to { background: #0A1628; }
-        }
-
-        @keyframes shieldSuccessPop {
-          from { transform: scale(0.5); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
-
-        @keyframes fillProgress {
-          to { width: 100%; }
-        }
-
-        @keyframes fadeInUp {
-          from { transform: translateY(15px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-
-        /* Shake animation for errors */
         .shake-anim {
-          animation: shake 0.3s ease-in-out;
+          animation: shake 0.4s ease;
         }
 
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
-          20%, 60% { transform: translateX(-8px); }
-          40%, 80% { transform: translateX(8px); }
+          20%, 60% { transform: translateX(-6px); }
+          40%, 80% { transform: translateX(6px); }
         }
 
-        /* RESPONSIVE MEDIA QUERIES */
+        .spinner {
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+
+        /* RESPONSIVE LAYOUT */
         @media (max-width: 1024px) {
           .left-panel {
-            width: 45%;
-            padding: 30px;
-          }
-          .right-panel {
-            width: 55%;
-            padding: 30px;
-          }
-          .karnataka-map-svg {
-            max-width: 200px;
-          }
-          .stats-row {
-            flex-wrap: wrap;
-            justify-content: center;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .left-panel {
-            display: none !important;
+            display: none;
           }
           .right-panel {
             width: 100%;
-            padding: 40px 24px;
           }
-          .mobile-only-logo {
+          .mobile-header {
             display: flex;
-          }
-          .portal-header {
-            margin-bottom: 24px;
-          }
-          .role-grid {
-            margin-bottom: 20px;
           }
         }
       `}</style>

@@ -13,7 +13,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('dark');
+  const [theme, setThemeState] = useState<Theme>('light');
 
   // Load theme on mount
   useEffect(() => {
@@ -27,9 +27,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           document.documentElement.classList.remove('light');
         }
       } else {
-        // Default is dark mode
-        setThemeState('dark');
-        document.documentElement.classList.remove('light');
+        // Default is light mode in v5.0
+        setThemeState('light');
+        document.documentElement.classList.add('light');
       }
     } catch {
       // localStorage is not available

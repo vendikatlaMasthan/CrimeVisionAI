@@ -610,6 +610,24 @@ export const SUMMARY_METRICS = {
 
 export const DEMO_ACCOUNTS = [
   {
+    username: 'dgp2026001',
+    password: 'admin@123',
+    role: 'DGP',
+    name: 'DGP Rajesh Kumar',
+    badgeNumber: 'KSP-001',
+    designation: 'Director General of Police',
+    accessLevel: 'FULL',
+  },
+  {
+    username: 'pi2026001',
+    password: 'officer@123',
+    role: 'Inspector',
+    name: 'PI Ravi Shankar',
+    badgeNumber: 'KSP-3847',
+    designation: 'Police Inspector, Kalaburagi',
+    accessLevel: 'INSPECTOR',
+  },
+  {
     username: 'dgp_admin',
     password: 'KSP@2025',
     role: 'DGP',
