@@ -2,32 +2,44 @@
 
 /* ─────────────────────────────────────────────
    DESIGN TOKENS
-───────────────────────────────────────────── */
+   ───────────────────────────────────────────── */
 :root {
-  --cyber-bg: #020617;
-  --cyber-surface: #0a1628;
-  --cyber-card: rgba(10, 22, 40, 0.92);
-  --cyber-card-hover: rgba(12, 28, 52, 0.96);
-  --cyber-border: rgba(0, 240, 255, 0.18);
-  --cyber-border-hover: rgba(0, 240, 255, 0.4);
-  --cyber-cyan: #00f0ff;
-  --cyber-blue: #0ea5e9;
-  --cyber-purple: #8b5cf6;
-  --cyber-magenta: #e879f9;
-  --cyber-amber: #f59e0b;
-  --cyber-red: #ef4444;
-  --cyber-green: #10b981;
-  --cyber-orange: #f97316;
-  --text-primary: #f1f5f9;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --text-dim: #64748b;
-  --grid-line: rgba(0, 240, 255, 0.025);
-  --sidebar-bg: rgba(2, 6, 23, 0.98);
-  --topbar-bg: rgba(2, 6, 23, 0.95);
-  --glass-card-border: rgba(0, 240, 255, 0.14);
-  --glass-card-border-hover: rgba(0, 240, 255, 0.35);
-  --glass-card-shadow-hover: rgba(0, 240, 255, 0.08);
+  /* DARK THEME (default — night operations mode) */
+  --bg-app: #0A0E1A;
+  --bg-sidebar: #0A1628;
+  --bg-header: #0D1B2E;
+  --bg-card: #0F1A2E;
+  --bg-card-hover: #12213A;
+  --bg-input: #0A1628;
+
+  --border-default: #1A3A5C;
+  --border-subtle: rgba(255,255,255,0.06);
+
+  --accent-cyan: #00D4FF;
+  --accent-cyan-dim: rgba(0,212,255,0.08);
+  --accent-cyan-border: rgba(0,212,255,0.2);
+  --accent-cyan-text-on-fill: #0A1628;
+
+  --priority-critical: #FF3B3B;
+  --priority-high: #FFB300;
+  --priority-medium: #A855F7;
+  --priority-low: #00C851;
+
+  --status-approved: #00C851;
+  --status-pending: #FFB300;
+  --status-deployed: #00D4FF;
+  --status-progress: #A855F7;
+
+  --text-primary: #F0F8FF;
+  --text-secondary: #C8D8E8;
+  --text-muted: #6B8CAE;
+  --text-faint: #4A6A8A;
+
+  --threat-high: #FF3B3B;
+  --threat-medium: #FFB300;
+  --threat-low: #00C851;
+
+  --shadow-card: 0 4px 16px rgba(0,0,0,0.35);
 
   /* Font scale defaults */
   --font-base: 16px;
@@ -35,33 +47,91 @@
   --font-section-title: 24px;
   --font-page-title: 32px;
   --font-label: 15px;
+
+  /* Legacy variables aliased to semantic tokens for compatibility */
+  --cyber-bg: var(--bg-app);
+  --cyber-surface: var(--bg-sidebar);
+  --cyber-card: var(--bg-card);
+  --cyber-card-hover: var(--bg-card-hover);
+  --cyber-border: var(--border-default);
+  --cyber-cyan: var(--accent-cyan);
+  --cyber-blue: var(--status-deployed);
+  --cyber-purple: var(--priority-medium);
+  --cyber-magenta: #e879f9;
+  --cyber-amber: var(--priority-high);
+  --cyber-red: var(--priority-critical);
+  --cyber-green: var(--priority-low);
+  --cyber-orange: #f97316;
+  --text-dim: var(--text-muted);
+  --sidebar-bg: var(--bg-sidebar);
+  --topbar-bg: var(--bg-header);
+  --glass-card-border: var(--border-default);
+  --glass-card-border-hover: var(--accent-cyan-border);
+  --glass-card-shadow-hover: var(--accent-cyan-dim);
 }
 
-html.light {
-  --cyber-bg: #F8FAFC;
-  --cyber-surface: #FFFFFF;
-  --cyber-card: #FFFFFF;
-  --cyber-card-hover: #F1F5F9;
-  --cyber-border: #E2E8F0;
-  --cyber-border-hover: #CBD5E1;
-  --cyber-cyan: #0284C7; /* Sky Blue primary */
-  --cyber-blue: #0284C7;
-  --cyber-purple: #7C3AED;
+.light, html.light {
+  /* LIGHT THEME (daytime command-center mode) */
+  --bg-app: #F3F6FA;
+  --bg-sidebar: #FFFFFF;
+  --bg-header: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F1F5F9;
+  --bg-input: #F8FAFC;
+
+  --border-default: #D8E1EC;
+  --border-subtle: rgba(10,22,40,0.07);
+
+  --accent-cyan: #0096C7;
+  --accent-cyan-dim: rgba(0,150,199,0.08);
+  --accent-cyan-border: rgba(0,150,199,0.28);
+  --accent-cyan-text-on-fill: #FFFFFF;
+
+  --priority-critical: #E11D2E;
+  --priority-high: #D97706;
+  --priority-medium: #9333EA;
+  --priority-low: #16A34A;
+
+  --status-approved: #16A34A;
+  --status-pending: #D97706;
+  --status-deployed: #0096C7;
+  --status-progress: #9333EA;
+
+  --text-primary: #0A1628;
+  --text-secondary: #33475B;
+  --text-muted: #64748B;
+  --text-faint: #94A3B8;
+
+  --threat-high: #DC2626;
+  --threat-medium: #D97706;
+  --threat-low: #16A34A;
+
+  --shadow-card: 0 2px 10px rgba(15,35,65,0.08);
+
+  /* Legacy variables aliased to semantic tokens for compatibility */
+  --cyber-bg: var(--bg-app);
+  --cyber-surface: var(--bg-sidebar);
+  --cyber-card: var(--bg-card);
+  --cyber-card-hover: var(--bg-card-hover);
+  --cyber-border: var(--border-default);
+  --cyber-cyan: var(--accent-cyan);
+  --cyber-blue: var(--status-deployed);
+  --cyber-purple: var(--priority-medium);
   --cyber-magenta: #DB2777;
-  --cyber-amber: #D97706;
-  --cyber-red: #EF4444;
-  --cyber-green: #10B981;
+  --cyber-amber: var(--priority-high);
+  --cyber-red: var(--priority-critical);
+  --cyber-green: var(--priority-low);
   --cyber-orange: #EA580C;
-  --text-primary: #0F172A;
-  --text-secondary: #334155;
-  --text-muted: #475569;
-  --text-dim: #64748b;
-  --grid-line: rgba(2, 132, 199, 0.03);
-  --sidebar-bg: #FFFFFF;
-  --topbar-bg: #FFFFFF;
-  --glass-card-border: #E2E8F0;
-  --glass-card-border-hover: #CBD5E1;
-  --glass-card-shadow-hover: rgba(2, 132, 199, 0.04);
+  --text-dim: var(--text-muted);
+  --sidebar-bg: var(--bg-sidebar);
+  --topbar-bg: var(--bg-header);
+  --glass-card-border: var(--border-default);
+  --glass-card-border-hover: var(--accent-cyan-border);
+  --glass-card-shadow-hover: var(--accent-cyan-dim);
+}
+
+*, *::before, *::after {
+  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease, box-shadow 200ms ease;
 }
 
 body.presentation-mode {
@@ -1077,7 +1147,7 @@ body {
 @media (max-width: 1023px) {
   /* Hide sidebar offscreen by default on mobile/tablet */
   aside.fixed.left-0.top-0 {
-    left: -280px !important;
+    left: -260px !important;
     transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: none;
   }

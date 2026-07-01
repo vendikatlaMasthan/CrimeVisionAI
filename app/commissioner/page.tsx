@@ -441,6 +441,37 @@ export default function CommissionerPage() {
         </div>
       </div>
 
+      {/* ── PLANNED FUTURE INTEGRATIONS ── */}
+      <div className="glass-card" style={{ padding: 22 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+          <div className="section-header-line" style={{ background: '#f59e0b' }} />
+          <h2 className="section-title">PLANNED FUTURE INTEGRATIONS</h2>
+          <span className="badge badge-amber" style={{ marginLeft: 'auto' }}>PENDING AUTHORIZATION</span>
+        </div>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 14 }}>
+          {[
+            '📹 CCTV Network', '🚁 Drone Feed', '🚦 Traffic Cameras',
+            '📞 Emergency 112', '🗄 CCTNS Database', '📊 NCRB Portal',
+            '👤 Face Recognition', '🚗 Vehicle ANPR', '📡 IoT Sensors'
+          ].map((item, idx) => (
+            <div key={idx} style={{
+              background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255, 255, 255, 0.04)',
+              padding: '12px 16px', borderRadius: 8, textAlign: 'center',
+              fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)'
+            }}>
+              {item}
+            </div>
+          ))}
+        </div>
+        <div style={{
+          textAlign: 'center', fontSize: 11, color: 'var(--text-dim)', fontStyle: 'italic',
+          borderTop: '1px dashed var(--cyber-border)', paddingTop: 12
+        }}>
+          Pending Government API Authorization
+        </div>
+      </div>
+
     </div>
   );
 }

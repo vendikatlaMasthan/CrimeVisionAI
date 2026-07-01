@@ -325,15 +325,15 @@ export default function Topbar({ user }: TopbarProps) {
       <header
         className="fixed top-0 right-0 flex items-center justify-between px-6 z-40"
         style={{
-          left: '280px',
-          background: 'var(--topbar-bg)',
-          borderBottom: '1px solid var(--cyber-border)',
+          left: '260px',
+          background: 'var(--bg-header)',
+          borderBottom: '1px solid var(--border-subtle)',
           backdropFilter: 'blur(24px)',
           height: '64px',
         }}
       >
-        {/* Left: Premium KSP Logo & Status */}
-        <div className="flex items-center gap-3 min-w-[200px]">
+        {/* Left: Context Label & Mobile Hamburg Toggle */}
+        <div className="flex items-center gap-3">
           {/* Hamburger Menu Toggle (Mobile Only) */}
           <button
             onClick={() => {
@@ -341,9 +341,9 @@ export default function Topbar({ user }: TopbarProps) {
                 document.body.classList.toggle('sidebar-open');
               }
             }}
-            className="hamburger-btn p-1.5 rounded-lg border mr-1 cursor-pointer transition-colors"
+            className="hamburger-btn lg:hidden p-1.5 rounded-lg border cursor-pointer transition-colors"
             style={{
-              borderColor: 'var(--cyber-border)',
+              borderColor: 'var(--border-default)',
               background: 'rgba(10,22,40,0.1)',
               color: 'var(--text-muted)',
               display: 'flex',
@@ -354,111 +354,84 @@ export default function Topbar({ user }: TopbarProps) {
           >
             <Menu size={16} />
           </button>
-
-          <div className="relative">
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{
-                background: 'linear-gradient(135deg, rgba(0,240,255,0.08), rgba(139,92,246,0.08))',
-                border: '1px solid var(--cyber-border)',
-              }}
-            >
-              <Shield size={20} className="text-[var(--cyber-cyan)]" />
-            </div>
-            {/* Small Green Dot near Logo */}
-            <div
-              className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 border-2"
-              style={{
-                borderColor: 'var(--topbar-bg)',
-                boxShadow: '0 0 6px #10b981',
-                animation: 'pulse-glow 2s infinite',
-              }}
-            />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-black tracking-wider text-[var(--text-primary)] uppercase leading-none">
-              CrimeVision AI
-            </span>
-            <span className="text-[9px] font-extrabold text-[var(--text-dim)] tracking-widest mt-1 uppercase leading-none">
-              AI Intelligence Platform
-            </span>
-          </div>
+          
+          <span className="hidden md:inline text-xs font-semibold text-[var(--text-muted)] tracking-widest uppercase">
+            AI INTELLIGENCE PLATFORM
+          </span>
         </div>
 
-        {/* Center: Completely Redesigned Search Bar */}
-        <div className="relative flex-1 max-w-2xl mx-6" ref={dropdownRef}>
-          <div 
-            className="relative flex items-center w-full transition-all duration-300"
-            style={{ height: '48px' }}
-          >
+        {/* Center: Global Search */}
+        <div className="relative mx-6" ref={dropdownRef} style={{ width: '420px', height: '40px' }}>
+          <div className="relative flex items-center w-full h-full">
             <Search 
-              size={18} 
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none" 
-              style={{ color: 'var(--text-dim)', transition: 'color 0.2s' }} 
+              size={15} 
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-10 pointer-events-none" 
+              style={{ color: 'var(--text-muted)' }} 
             />
-            
             <input
               ref={inputRef}
               id="global-search-input"
               type="text"
               placeholder={lang === 'kn' 
-                ? "ಎಫ್‌ಐಆರ್, ಶಂಕಿತರು, ಜಿಲ್ಲೆಗಳು, ಅಪರಾಧ ಪ್ರಕಾರಗಳನ್ನು ಹುಡುಕಿ... (Press /)"
-                : "Search FIRs, Suspects, Districts, Crime Types... (Press /)"
+                ? "ಹುಡುಕಿ FIRಗಳು, ಶಂಕಿತರು... (Press /)"
+                : "Search FIRs, Suspects, Districts, Crime IDs... (Press /)"
               }
               value={searchQuery}
               onChange={e => { setSearchQuery(e.target.value); setShowDropdown(true); setActiveIdx(-1); }}
               onFocus={() => setShowDropdown(true)}
               onKeyDown={handleKeyDown}
-              className="w-full h-full pl-12 pr-20 border text-sm transition-all duration-300 text-[var(--text-primary)] outline-none"
+              className="w-full h-full pl-9 pr-16 text-xs transition-all duration-200 text-[var(--text-primary)] outline-none"
               style={{
-                background: 'var(--cyber-bg)',
-                borderColor: 'var(--cyber-border)',
-                borderRadius: '24px',
-                fontFamily: 'Inter, Manrope, sans-serif',
-                letterSpacing: '0.01em',
-                boxShadow: showDropdown ? '0 0 15px rgba(0,240,255,0.08)' : 'none',
+                background: 'var(--bg-input)',
+                border: '1px solid var(--border-default)',
+                borderRadius: '8px',
+                color: 'var(--text-primary)',
               }}
               onFocusCapture={e => { 
-                e.currentTarget.style.borderColor = 'var(--cyber-cyan)';
-                e.currentTarget.style.boxShadow = '0 0 15px rgba(0,240,255,0.15)';
+                e.currentTarget.style.borderColor = 'var(--accent-cyan)';
+                e.currentTarget.style.boxShadow = '0 0 0 3px var(--accent-cyan-dim)';
               }}
               onBlurCapture={e => { 
-                e.currentTarget.style.borderColor = 'var(--cyber-border)';
+                e.currentTarget.style.borderColor = 'var(--border-default)';
                 e.currentTarget.style.boxShadow = 'none';
               }}
             />
 
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+              {searchQuery && (
+                <button 
+                  onClick={handleClearSearch}
+                  type="button"
+                  className="p-1 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+                >
+                  <X size={13} />
+                </button>
+              )}
               {voiceSupported && (
                 <button
                   onClick={handleVoiceSearch}
                   type="button"
                   title={isVoiceActive ? "Listening... Click to stop" : "Voice Search (EN/KN)"}
-                  className="p-1.5 rounded-full cursor-pointer transition-colors duration-200 flex items-center justify-center"
+                  className="p-1 rounded-full cursor-pointer transition-colors duration-200 flex items-center justify-center"
                   style={{
                     background: isVoiceActive ? 'rgba(239,68,68,0.15)' : 'transparent',
-                    color: isVoiceActive ? '#ef4444' : 'var(--text-dim)',
+                    color: isVoiceActive ? '#ef4444' : 'var(--text-muted)',
                   }}
                 >
                   {isVoiceActive ? (
                     <div className="relative">
                       <span className="absolute -inset-1 rounded-full bg-red-500/20 animate-ping" />
-                      <MicOff size={16} className="relative text-red-500 animate-pulse" />
+                      <MicOff size={13} className="relative text-red-500 animate-pulse" />
                     </div>
                   ) : (
-                    <Mic size={16} className="hover:text-[var(--text-primary)]" />
+                    <Mic size={13} className="hover:text-[var(--text-primary)]" />
                   )}
                 </button>
               )}
-
-              {searchQuery && (
-                <button 
-                  onClick={handleClearSearch}
-                  type="button"
-                  className="p-1 cursor-pointer text-[var(--text-dim)] hover:text-[var(--text-primary)] transition-colors"
-                >
-                  <X size={15} />
-                </button>
+              {!searchQuery && !isVoiceActive && (
+                <div className="pointer-events-none text-[10px] font-semibold text-[var(--text-faint)] font-mono px-1">
+                  ⌘K
+                </div>
               )}
             </div>
           </div>
@@ -895,22 +868,21 @@ export default function Topbar({ user }: TopbarProps) {
         </div>
 
         {/* Right: Spaced Actions Row */}
-        <div className="flex items-center gap-4 min-w-[280px] justify-end">
+        <div className="flex items-center gap-3 justify-end">
           {/* Presentation Mode Toggle */}
           <button
             onClick={togglePresentationMode}
             title={isPresentationMode ? "Exit Projector View" : "Presentation Mode (Projector)"}
-            className="w-9 h-9 rounded-lg border flex items-center justify-center cursor-pointer transition-colors"
+            className="w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition-colors"
             style={{
-              background: 'rgba(10, 22, 40, 0.2)',
-              borderColor: isPresentationMode ? 'var(--cyber-cyan)' : 'var(--cyber-border)',
-              color: isPresentationMode ? 'var(--cyber-cyan)' : 'var(--text-muted)',
+              background: isPresentationMode ? 'var(--accent-cyan-dim)' : 'transparent',
+              color: isPresentationMode ? 'var(--accent-cyan)' : 'var(--text-muted)',
             }}
             onMouseEnter={e => {
-              if (!isPresentationMode) e.currentTarget.style.borderColor = 'var(--cyber-border-hover)';
+              e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
             }}
             onMouseLeave={e => {
-              if (!isPresentationMode) e.currentTarget.style.borderColor = 'var(--cyber-border)';
+              e.currentTarget.style.background = isPresentationMode ? 'var(--accent-cyan-dim)' : 'transparent';
             }}
           >
             <Monitor size={15} />
@@ -920,17 +892,16 @@ export default function Topbar({ user }: TopbarProps) {
           <button
             onClick={toggleTheme}
             title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
-            className="w-9 h-9 rounded-lg border flex items-center justify-center cursor-pointer transition-colors"
+            className="w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition-colors"
             style={{
-              background: 'rgba(10, 22, 40, 0.2)',
-              borderColor: 'var(--cyber-border)',
+              background: 'transparent',
               color: 'var(--text-muted)',
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.borderColor = 'var(--cyber-border-hover)';
+              e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.borderColor = 'var(--cyber-border)';
+              e.currentTarget.style.background = 'transparent';
             }}
           >
             {theme === 'light' ? (
@@ -941,21 +912,25 @@ export default function Topbar({ user }: TopbarProps) {
           </button>
 
           {/* Language Toggle Link */}
-          <div className="flex items-center gap-1 border border-[var(--cyber-border)] rounded-lg p-0.5 px-2 bg-slate-900/10 h-9">
+          <div className="flex items-center gap-1 border border-[var(--border-default)] rounded-lg p-0.5 px-1.5 h-9">
             <button
               onClick={() => setLang('en')}
-              className={`text-[10px] font-bold px-1.5 py-1 rounded cursor-pointer transition-colors ${
-                lang === 'en' ? 'bg-[var(--cyber-cyan)]/25 text-[var(--cyber-cyan)]' : 'text-[var(--text-dim)]'
-              }`}
+              style={{
+                background: lang === 'en' ? 'var(--accent-cyan)' : 'transparent',
+                color: lang === 'en' ? 'var(--accent-cyan-text-on-fill)' : 'var(--text-muted)',
+              }}
+              className="text-[10px] font-bold px-2 py-1 rounded cursor-pointer transition-colors"
             >
               EN
             </button>
-            <span className="text-[10px] text-[var(--text-dim)]">|</span>
+            <span className="text-[10px] text-[var(--border-default)]">|</span>
             <button
               onClick={() => setLang('kn')}
-              className={`text-[10px] font-bold px-1.5 py-1 rounded cursor-pointer transition-colors ${
-                lang === 'kn' ? 'bg-[var(--cyber-cyan)]/25 text-[var(--cyber-cyan)]' : 'text-[var(--text-dim)]'
-              }`}
+              style={{
+                background: lang === 'kn' ? 'var(--accent-cyan)' : 'transparent',
+                color: lang === 'kn' ? 'var(--accent-cyan-text-on-fill)' : 'var(--text-muted)',
+              }}
+              className="text-[10px] font-bold px-2 py-1 rounded cursor-pointer transition-colors"
             >
               ಕನ್ನಡ
             </button>
@@ -965,30 +940,31 @@ export default function Topbar({ user }: TopbarProps) {
           <div className="relative">
             <button
               onClick={() => setIsAlertOpen(true)}
-              className="w-9 h-9 rounded-lg border flex items-center justify-center cursor-pointer transition-colors relative"
+              className="w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition-colors relative"
               style={{
-                background: 'rgba(10, 22, 40, 0.2)',
-                borderColor: 'var(--cyber-border)',
+                background: 'transparent',
                 color: 'var(--text-muted)',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.borderColor = 'var(--cyber-border-hover)';
+                e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'var(--cyber-border)';
+                e.currentTarget.style.background = 'transparent';
               }}
             >
               <Bell size={15} />
               {unreadAlertsCount > 0 && (
                 <span
-                  className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-[8px] font-black text-white flex items-center justify-center"
-                  style={{ boxShadow: '0 0 6px #ef4444' }}
+                  className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[var(--priority-critical)] text-[8px] font-black text-white flex items-center justify-center animate-pulse"
                 >
                   {unreadAlertsCount}
                 </span>
               )}
             </button>
           </div>
+
+          {/* Vertical Divider */}
+          <div style={{ width: '1px', height: '24px', background: 'var(--border-default)', margin: '0 4px' }} />
 
           {/* User Profile Dropdown */}
           <UserMenu user={user} />

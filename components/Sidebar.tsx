@@ -84,44 +84,27 @@ export default function Sidebar({ user }: SidebarProps) {
       }}
     >
       {/* ── Logo ──────────────────────────────────────────────────────── */}
-      <div className="p-5 border-b flex items-center justify-between" style={{ borderColor: 'var(--cyber-border)' }}>
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <div
-              className="w-11 h-11 rounded-xl flex items-center justify-center animate-pulse-glow"
-              style={{
-                background: 'linear-gradient(135deg, rgba(0,240,255,0.08), rgba(139,92,246,0.08))',
-                border: '1px solid var(--cyber-border)',
-              }}
-            >
-              <Shield size={22} className="text-[var(--cyber-cyan)]" />
-            </div>
-          </div>
+      <div className="p-4 border-b flex items-center justify-between" style={{ borderColor: 'var(--border-subtle)', height: '56px' }}>
+        <div className="flex items-center gap-2">
+          <Shield size={18} className="text-[var(--accent-cyan)]" />
           <div>
-            <div className="text-sm font-black tracking-widest text-[var(--cyber-cyan)]" style={{ letterSpacing: '0.15em' }}>
-              CRIMEVISION
+            <div className="text-xs font-black tracking-widest text-[var(--accent-cyan)]" style={{ letterSpacing: '0.15em', lineHeight: 1 }}>
+              CRIMEVISION AI
             </div>
-            <div className="text-[9px] font-bold tracking-wider text-[var(--text-dim)] uppercase mt-0.5">
-              Karnataka Police Intel
+            <div className="text-[8px] font-bold tracking-wider text-[var(--text-faint)] uppercase mt-0.5">
+              AI INTELLIGENCE PLATFORM
             </div>
           </div>
         </div>
       </div>
-
 
       {/* ── Navigation Groups ─────────────────────────────────────────── */}
       <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-3">
         {NAV_GROUPS.map((group) => (
           <div key={group.label}>
             <div
-              className="px-3 py-1.5 text-[10px] font-black tracking-widest uppercase"
-              style={group.label.includes('AI TOOLS') || group.label.includes('ಪರಿಕರಗಳು') ? {
-                color: 'var(--cyber-cyan)',
-                textShadow: '0 0 8px rgba(0,240,255,0.4)',
-                borderLeft: '2px solid var(--cyber-cyan)',
-                paddingLeft: '10px',
-                marginBottom: '4px',
-              } : { color: 'var(--text-dim)' }}
+              className="px-3 py-1.5 text-[10px] font-semibold tracking-widest uppercase"
+              style={{ color: 'var(--text-faint)' }}
             >
               {group.label}
             </div>
@@ -139,41 +122,46 @@ export default function Sidebar({ user }: SidebarProps) {
                     }}
                     className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all duration-150"
                     style={{
-                      background: isActive ? 'rgba(0,240,255,0.06)' : 'transparent',
-                      border: `1px solid ${isActive ? 'var(--cyber-cyan)' : 'transparent'}`,
-                      color: isActive ? 'var(--cyber-cyan)' : 'var(--text-muted)',
+                      background: isActive ? 'var(--accent-cyan-dim)' : 'transparent',
+                      borderLeft: isActive ? '2px solid var(--accent-cyan)' : 'none',
+                      borderRadius: isActive ? '0 8px 8px 0' : '8px',
+                      color: isActive ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+                      paddingLeft: isActive ? '10px' : '12px',
                       textDecoration: 'none',
                     }}
                     onMouseEnter={e => {
                       if (!isActive) {
-                        e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
+                        e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
                         e.currentTarget.style.color = 'var(--text-primary)';
                       }
                     }}
                     onMouseLeave={e => {
                       if (!isActive) {
                         e.currentTarget.style.background = 'transparent';
-                        e.currentTarget.style.color = 'var(--text-muted)';
+                        e.currentTarget.style.color = 'var(--text-secondary)';
                       }
                     }}
                   >
-                    <item.icon size={15} />
-                    <span className="flex-1 text-[13px] font-bold">{item.label}</span>
+                    <item.icon size={15} style={isActive ? { color: 'var(--accent-cyan)' } : {}} />
+                    <span className="flex-1 text-[13px] font-medium">{item.label}</span>
                     {item.badge && (
                       <span
-                        className="text-[9px] font-black px-1.5 py-0.5 rounded-full"
                         style={{
-                          background: 'rgba(239, 68, 68, 0.15)',
-                          color: '#ef4444',
-                          border: '1px solid rgba(239,68,68,0.25)',
+                          width: '18px',
+                          height: '18px',
+                          borderRadius: '50%',
+                          background: 'var(--priority-critical)',
+                          color: '#FFFFFF',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '10px',
+                          fontWeight: 700,
+                          flexShrink: 0
                         }}
                       >
                         {item.badge}
                       </span>
-                    )}
-                    {isActive && (
-                      <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-[var(--cyber-cyan)]"
-                        style={{ boxShadow: '0 0 6px var(--cyber-cyan)' }} />
                     )}
                   </Link>
                 );
@@ -184,29 +172,24 @@ export default function Sidebar({ user }: SidebarProps) {
       </nav>
 
       {/* ── Threat Level + Officer Info ───────────────────────────────── */}
-      <div className="p-4 border-t" style={{ borderColor: 'var(--cyber-border)', background: 'rgba(0,0,0,0.05)' }}>
+      <div className="p-4 border-t" style={{ borderColor: 'var(--border-subtle)', background: 'rgba(0,0,0,0.05)' }}>
         {/* State threat bar */}
         <div className="p-3 rounded-xl mb-3" style={{
-          background: 'rgba(239,68,68,0.03)', border: '1px solid rgba(239,68,68,0.15)',
+          background: 'rgba(255,59,59,0.03)', border: '1px solid rgba(255,59,59,0.15)',
         }}>
           <div className="flex items-center justify-between mb-1.5">
             <div className="flex items-center gap-1.5">
-              <Zap size={11} className="text-red-500" />
-              <span className="text-[10px] font-black text-red-400 tracking-wider uppercase">
+              <Zap size={11} className="text-[var(--threat-high)]" />
+              <span className="text-[10px] font-bold text-[var(--text-secondary)] tracking-wider uppercase">
                 {t.state_threat}
               </span>
             </div>
-            <span className="text-[10px] font-black text-red-500">HIGH</span>
+            <span className="text-[10px] font-black text-[var(--threat-high)]">HIGH</span>
           </div>
-          <div className="flex gap-1">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="flex-1 h-1 rounded-sm"
-                style={{
-                  background: i <= 4 ? '#ef4444' : 'rgba(255,255,255,0.08)',
-                  boxShadow: i <= 4 ? '0 0 4px rgba(239,68,68,0.4)' : 'none',
-                }}
-              />
-            ))}
+          <div className="flex gap-1.5">
+            <div className="flex-1 h-1.5 rounded-sm" style={{ background: 'var(--threat-low)', boxShadow: '0 0 4px var(--threat-low)' }} />
+            <div className="flex-1 h-1.5 rounded-sm" style={{ background: 'var(--threat-medium)', boxShadow: '0 0 4px var(--threat-medium)' }} />
+            <div className="flex-1 h-1.5 rounded-sm" style={{ background: 'var(--threat-high)', boxShadow: '0 0 4px var(--threat-high)' }} />
           </div>
         </div>
 
@@ -226,10 +209,18 @@ export default function Sidebar({ user }: SidebarProps) {
             <div className="text-xs font-bold truncate text-[var(--text-primary)]">
               {user?.name ?? 'KSP Officer'}
             </div>
-            <div className="text-[10px] font-semibold truncate text-[var(--text-dim)] mt-0.5">
+            <div className="text-[10px] font-semibold truncate text-[var(--text-muted)] mt-0.5">
               {user?.designation ?? 'Karnataka Police'}
             </div>
           </div>
+        </div>
+        {/* Simulation mode disclosure */}
+        <div style={{
+          textAlign: 'center', fontSize: '9px', fontWeight: 600, color: 'var(--text-faint)',
+          borderTop: '1px solid var(--border-subtle)', paddingTop: '10px', marginTop: '10px',
+          letterSpacing: '0.05em'
+        }}>
+          ⚠️ SIMULATION MODE · Synthetic Demo Data
         </div>
       </div>
     </aside>

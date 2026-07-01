@@ -1,552 +1,680 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  BarChart, Bar, AreaChart, Area, LineChart, Line,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  Legend, ReferenceLine,
-} from 'recharts';
-import { Clock, Calendar, Star, Monitor, TrendingUp, AlertTriangle } from 'lucide-react';
-import {
-  HOURLY_CRIMES,
-  DAILY_CRIMES,
-  SEASONAL_CRIMES,
-  TIMELINE_INSIGHTS,
-} from '@/lib/mockData';
+import { 
+  Clock, FileText, Share2, Calendar, Filter, ChevronDown, ChevronUp, MapPin, CheckCircle, Sparkles, UserCheck, ShieldAlert
+} from 'lucide-react';
+import { useLanguage } from '@/components/LanguageToggle';
+import CountUp from '@/components/CountUp';
+import SimulationBanner from '@/components/SimulationBanner';
+import AIRecommendationCard from '@/components/AIRecommendationCard';
 
-const TABS = ['Hourly', 'Daily', 'Weekly', 'Monthly', 'Seasonal'] as const;
-type Tab = typeof TABS[number];
+// ─── Case Datasets with Timeline Events ──────────────────────────────────────
 
-// Static weekly data (52 weeks)
-const WEEKLY_DATA = Array.from({ length: 52 }, (_, i) => ({
-  week: `W${i + 1}`,
-  crimes: Math.floor(6800 + Math.sin(i * 0.3) * 1200 + Math.random() * 600 + i * 55),
-}));
-
-const INSIGHT_ICONS: Record<string, React.ReactNode> = {
-  'Peak Crime Hours': <Clock size={20} />,
-  'Weekend Spike': <Calendar size={20} />,
-  'Festival Impact': <Star size={20} />,
-  'Cyber Crime Peak': <Monitor size={20} />,
-};
-
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div style={{
-        background: 'rgba(10,22,40,0.98)',
-        border: '1px solid rgba(0,240,255,0.25)',
-        borderRadius: 8,
-        padding: '10px 14px',
-        fontSize: 13,
-        color: '#f1f5f9',
-      }}>
-        <div style={{ fontWeight: 700, marginBottom: 4, color: '#00f0ff' }}>{label}</div>
-        {payload.map((p: any) => (
-          <div key={p.name} style={{ color: p.color || '#f1f5f9' }}>
-            {p.name}: <strong>{typeof p.value === 'number' ? p.value.toLocaleString() : p.value}</strong>
-          </div>
-        ))}
-      </div>
-    );
+const CASES = [
+  {
+    id: "KA-2026-08821",
+    title: "Sand Mafia Operations",
+    category: "Sand Mafia",
+    district: "Kalaburagi",
+    progress: 72,
+    severity: "CRITICAL",
+    color: "#ef4444",
+    statusBadge: "badge-red",
+    events: [
+      {
+        time: "09:15 AM",
+        title: "Crime Reported",
+        subtitle: "Tungabhadra riverbank, Kalaburagi North",
+        desc: "Reported by: Civilian tip-off. Large-scale illegal extraction spotted.",
+        extra: "An anonymous caller reported multiple commercial trucks loading sand at the riverbed. Command center dispatched patrol unit to verify.",
+        type: "fir",
+        bulletColor: "#00D4FF", // Blue/Cyan
+      },
+      {
+        time: "09:30 AM",
+        title: "FIR Registered",
+        subtitle: "FIR #KA-2026-08821",
+        desc: "Officer: SI Mahesh Kumar, Kalaburagi North PS",
+        extra: "Official FIR generated under IPC 379 and Section 21 of Mines & Minerals Act. Case assigned to Circle Inspector Mahesh.",
+        type: "fir",
+        bulletColor: "#f59e0b", // Amber
+      },
+      {
+        time: "10:45 AM",
+        title: "Evidence Uploaded",
+        subtitle: "Tungabhadra sector logs",
+        desc: "4 photographs, 2 witness statements, 1 forensic sample. Uploaded by: HC Ramu Patil.",
+        extra: "Soil samples gathered from suspect trucks matched the riverbank soil profile. CCTV footage confirmed truck registration KA-32-Y-8821.",
+        type: "officer",
+        bulletColor: "#f59e0b", // Amber
+      },
+      {
+        time: "12:10 PM",
+        title: "Suspect Identified",
+        subtitle: "AI match: 87% confidence",
+        desc: "Suspect: Linked to 3 prior Sand Mafia cases. Criminal network: 5 associated individuals.",
+        extra: "AI facial scan from checkpost cameras matched known offender Raju Naik. Social graphs link him to Raichur transportation hubs.",
+        type: "ai",
+        bulletColor: "#ef4444", // Red
+      },
+      {
+        time: "13:20 PM",
+        title: "AI Analysis Complete",
+        subtitle: "Pattern matched: Raichur Sand Syndicate",
+        desc: "Recommended action: Issue lookout + deploy patrol. Confidence: 92%.",
+        extra: "System predicted exit route via NH-50 corridor at 15:00-16:00. Advised roadblock setup at checkpoint.",
+        type: "ai",
+        bulletColor: "#00D4FF", // Blue/Cyan
+      },
+      {
+        time: "14:00 PM",
+        title: "Officer Assigned",
+        subtitle: "PI Ravi Shankar deployed",
+        desc: "ETA: 25 minutes. Resources: 2 vehicles, 6 officers.",
+        extra: "PI Ravi Shankar briefed and deployed to NH-50 checkpoint with spike strips and mobile interception unit.",
+        type: "officer",
+        bulletColor: "#10b981", // Green
+      },
+      {
+        time: "15:30 PM",
+        title: "Arrest Made",
+        subtitle: "Suspect in custody",
+        desc: "Location: NH-50 checkpoint, Kalaburagi.",
+        extra: "Raju Naik and two co-conspirators intercepted at the checkpoint. 3 trucks seized. Booking reports logged.",
+        type: "arrest",
+        bulletColor: "#10b981", // Green
+      }
+    ],
+    recommendation: {
+      action: "Issue Lookout Notice + Deploy Patrol",
+      rationale: "Historical pattern matches Raichur sand syndicate. Intercept vehicle route on NH-50 corridor immediately.",
+      urgency: "CRITICAL",
+      priority: 1
+    }
+  },
+  {
+    id: "KA-2026-08734",
+    title: "Cyber Fraud Campaign",
+    category: "Cyber Fraud",
+    district: "Bengaluru",
+    progress: 45,
+    severity: "HIGH",
+    color: "#f59e0b",
+    statusBadge: "badge-amber",
+    events: [
+      {
+        time: "10:05 AM",
+        title: "Crime Reported",
+        subtitle: "OTP phishing complaints, Bengaluru East",
+        desc: "Reported by: Citizen victims. Large-scale bank account siphoning detected.",
+        extra: "89 unique phishing complaints received within a 30-minute window in HSR Layout sector.",
+        type: "fir",
+        bulletColor: "#00D4FF",
+      },
+      {
+        time: "10:30 AM",
+        title: "FIR Registered",
+        subtitle: "FIR #KA-2026-08734",
+        desc: "Officer: Inspector Anil K, Cyber Crime PS, Bengaluru",
+        extra: "FIR logged under IT Act Section 66D. Bank transaction logs requested.",
+        type: "fir",
+        bulletColor: "#f59e0b",
+      },
+      {
+        time: "11:45 AM",
+        title: "Evidence Uploaded",
+        subtitle: "Gateway SMS logs and wallet headers",
+        desc: "23 SMS Headers, 3 IP Logs, 1 Wallet Address. Uploaded by: Cyber Inspector Anil.",
+        extra: "Phishing links traced back to virtual servers hosted in Delhi/NCR corridor. Intercept logs created.",
+        type: "officer",
+        bulletColor: "#f59e0b",
+      },
+      {
+        time: "12:15 PM",
+        title: "AI Analysis Initiated",
+        subtitle: "Scanning gateway transaction logs",
+        desc: "Traced transaction split patterns. Linked to known gateway emulator.",
+        extra: "AI engine correlated transfer records with active money-mule accounts at 4 branches in Bengaluru Rural.",
+        type: "ai",
+        bulletColor: "#ef4444",
+      },
+      {
+        time: "13:00 PM",
+        title: "Accounts Frozen",
+        subtitle: "AI Recommendation applied",
+        desc: "Escrow hold applied to 4 money-mule bank accounts. Total ₹67L secured.",
+        extra: "Directives dispatched to bank nodal officers. Suspect cash-out locations flagged in real-time.",
+        type: "arrest",
+        bulletColor: "#10b981",
+      }
+    ],
+    recommendation: {
+      action: "Freeze Target Bank Accounts",
+      rationale: "Correlate gateway transactions with active wallets to prevent siphoning of ₹1.8Cr funds.",
+      urgency: "HIGH",
+      priority: 2
+    }
+  },
+  {
+    id: "KA-2026-08612",
+    title: "SUV Relay Theft Ring",
+    category: "Vehicle Theft",
+    district: "Mysuru",
+    progress: 91,
+    severity: "LOW",
+    color: "#10b981",
+    statusBadge: "badge-green",
+    events: [
+      {
+        time: "02:15 AM",
+        title: "Crime Reported",
+        subtitle: "Gokulam, Mysuru",
+        desc: "Reported by: Owner. High-end SUV stolen from driveway.",
+        extra: "The theft occurred within a 90-second window. CCTV caught relay attack signature targeting keyless entry fob.",
+        type: "fir",
+        bulletColor: "#00D4FF",
+      },
+      {
+        time: "03:00 AM",
+        title: "FIR Registered",
+        subtitle: "FIR #KA-2026-08612",
+        desc: "Officer: SI Sunitha Patel, Mysuru Central PS",
+        extra: "FIR registered under IPC 379. Telemetry data broadcasted to highway checkposts.",
+        type: "fir",
+        bulletColor: "#f59e0b",
+      },
+      {
+        time: "04:30 AM",
+        title: "Evidence Uploaded",
+        subtitle: "CCTV footage and RF logs",
+        desc: "2 CCTV clips, 1 RF sniffer frequency log. Uploaded by: SI Sunitha.",
+        extra: "Fob emulator frequency matched Bengaluru theft gang MO. Suspect vehicle KA-09-M-1120 flagged.",
+        type: "officer",
+        bulletColor: "#f59e0b",
+      },
+      {
+        time: "06:15 AM",
+        title: "Suspect Identified",
+        subtitle: "AI match: 91% match Kiran Kumar",
+        desc: "Toll booth camera captures. Linked to 4 prior vehicle thefts.",
+        extra: "CCTV captures from NH-275 toll booth matched repeat offender Kiran Kumar driving the stolen SUV.",
+        type: "ai",
+        bulletColor: "#ef4444",
+      },
+      {
+        time: "07:00 AM",
+        title: "AI Route Forecast",
+        subtitle: "Target: Nelamangala warehouse corridor",
+        desc: "AI predicts route path with 96% confidence based on vehicle direction.",
+        extra: "Syndicate de-registration site predicted. Request sent to Nelamangala division for tactical intercept.",
+        type: "ai",
+        bulletColor: "#00D4FF",
+      },
+      {
+        time: "08:15 AM",
+        title: "Raid Plan Formulated",
+        subtitle: "Nelamangala warehouse coordinates mapped",
+        desc: "Surveillance feeds integrated. Escape paths blocked.",
+        extra: "Tactical maps prepared and shared with Mysuru and Bengaluru Rural dispatch networks.",
+        type: "ai",
+        bulletColor: "#ef4444",
+      },
+      {
+        time: "09:30 AM",
+        title: "Officers Assigned",
+        subtitle: "PI Mahesh Kumar + 2 patrol units",
+        desc: "Nelamangala division units deployed to surround scrapyard warehouse.",
+        extra: "Units positioned at exits. Warehouse entry initiated. Telemetry confirms vehicle remains inside.",
+        type: "officer",
+        bulletColor: "#10b981",
+      }
+    ],
+    recommendation: {
+      action: "Raid Nelamangala Scrapyard Warehouse",
+      rationale: "Vehicle telemetry and RF sniffer logs place vehicle inside the scrapyard. Intercept before dismantling.",
+      urgency: "HIGH",
+      priority: 1
+    }
+  },
+  {
+    id: "KA-2026-08590",
+    title: "Border Meth Shipments",
+    category: "Narcotics",
+    district: "Raichur",
+    progress: 28,
+    severity: "CRITICAL",
+    color: "#ef4444",
+    statusBadge: "badge-red",
+    events: [
+      {
+        time: "11:45 PM",
+        title: "Crime Reported",
+        subtitle: "Raichur Border Outpost",
+        desc: "Reported by: Border informant. 8.2kg meth shipment transit.",
+        extra: "Informant warned of interstate transport vehicle carrying illicit drugs crossing at midnight.",
+        type: "fir",
+        bulletColor: "#00D4FF",
+      },
+      {
+        time: "00:15 AM",
+        title: "FIR Registered",
+        subtitle: "FIR #KA-2026-08590",
+        desc: "Officer: SI Ramesh G, Raichur Rural PS",
+        extra: "FIR registered under NDPS Act Section 22. Mobilized emergency checkpoint squads.",
+        type: "fir",
+        bulletColor: "#f59e0b",
+      },
+      {
+        time: "01:00 AM",
+        title: "Intel Correlation",
+        subtitle: "AI maps suspect Venkat Reddy network",
+        desc: "Linked to Raichur syndicate. Intercept target vehicle locked.",
+        extra: "AI network model mapped Venkat Reddy and highlighted 3 potential border carrier plates. Sent blockades to NH-50 exit.",
+        type: "ai",
+        bulletColor: "#ef4444",
+      }
+    ],
+    recommendation: {
+      action: "Deploy Border Checkpoint Blockade",
+      rationale: "NDPS intelligence indicates 8.2kg meth consignment is in transit via unregistered SUV. Block NH-50 exit.",
+      urgency: "CRITICAL",
+      priority: 1
+    }
   }
-  return null;
-};
+];
 
-function HourlyBar() {
-  // Hours 22,23,0,1,2 are "danger zone"
-  const dangerHours = new Set(['10 PM', '11 PM', '12 AM', '1 AM', '2 AM']);
-  return (
-    <div>
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12,
-      }}>
-        <span style={{
-          background: 'rgba(239,68,68,0.15)', color: '#f87171',
-          border: '1px solid rgba(239,68,68,0.35)', borderRadius: 6,
-          padding: '3px 10px', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em',
-        }}>⚠ DANGER ZONE: 10 PM – 2 AM</span>
-        <span style={{ color: '#94a3b8', fontSize: 12 }}>48% of violent crimes occur in this window</span>
-      </div>
-      <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={HOURLY_CRIMES} margin={{ top: 10, right: 20, left: 0, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-          <XAxis dataKey="hour" tick={{ fill: '#94a3b8', fontSize: 10 }} interval={1} angle={-45} textAnchor="end" height={55} />
-          <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
-          <Tooltip content={<CustomTooltip />} />
-          <Bar dataKey="crimes" name="Crimes" radius={[4, 4, 0, 0]}>
-            {HOURLY_CRIMES.map((entry) => (
-              <rect key={entry.hour} fill={dangerHours.has(entry.hour) ? '#ef4444' : '#00f0ff'} fillOpacity={dangerHours.has(entry.hour) ? 0.85 : 0.6} />
-            ))}
-          </Bar>
-          <ReferenceLine x="10 PM" stroke="rgba(239,68,68,0.7)" strokeDasharray="4 2" label={{ value: '10 PM', fill: '#ef4444', fontSize: 10 }} />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
-
-function HourlyBarProper() {
-  // We render with two data sets: danger and safe
-  const data = HOURLY_CRIMES.map(d => {
-    const isDanger = ['10 PM', '11 PM', '12 AM', '1 AM', '2 AM'].includes(d.hour);
-    return { ...d, dangerCrimes: isDanger ? d.crimes : 0, safeCrimes: isDanger ? 0 : d.crimes };
-  });
-  return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-        <span className="badge badge-red">⚠ DANGER ZONE: 10 PM – 2 AM</span>
-        <span style={{ color: '#94a3b8', fontSize: 12 }}>48% of violent crimes occur in this window</span>
-        <div style={{ display: 'flex', gap: 16, marginLeft: 'auto' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 12, height: 12, borderRadius: 2, background: '#00f0ff', opacity: 0.7 }} />
-            <span style={{ color: '#94a3b8', fontSize: 12 }}>Normal</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 12, height: 12, borderRadius: 2, background: '#ef4444' }} />
-            <span style={{ color: '#94a3b8', fontSize: 12 }}>Danger Zone</span>
-          </div>
-        </div>
-      </div>
-      <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 50 }} stackOffset="none">
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-          <XAxis dataKey="hour" tick={{ fill: '#94a3b8', fontSize: 10 }} interval={0} angle={-45} textAnchor="end" height={55} />
-          <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
-          <Tooltip content={<CustomTooltip />} />
-          <Bar dataKey="safeCrimes" name="Crimes" fill="#00f0ff" fillOpacity={0.6} radius={[4, 4, 0, 0]} stackId="a" />
-          <Bar dataKey="dangerCrimes" name="Danger Zone" fill="#ef4444" fillOpacity={0.85} radius={[4, 4, 0, 0]} stackId="a" />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
-
-function DailyChart() {
-  return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-        <span className="badge badge-amber">📅 WEEKEND SPIKE: +34% vs Weekdays</span>
-        <span style={{ color: '#94a3b8', fontSize: 12 }}>Saturday & Sunday show highest crime volumes</span>
-      </div>
-      <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={DAILY_CRIMES} margin={{ top: 10, right: 20, left: 0, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-          <XAxis dataKey="day" tick={{ fill: '#94a3b8', fontSize: 12 }} />
-          <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend wrapperStyle={{ color: '#94a3b8', fontSize: 12 }} />
-          <Bar dataKey="cybercrime" name="Cybercrime" fill="#00f0ff" fillOpacity={0.7} stackId="a" />
-          <Bar dataKey="theft" name="Theft" fill="#8b5cf6" fillOpacity={0.7} stackId="a" />
-          <Bar dataKey="violence" name="Violence" fill="#ef4444" fillOpacity={0.7} stackId="a" />
-          <Bar dataKey="narcotics" name="Narcotics" fill="#e879f9" fillOpacity={0.7} stackId="a" />
-          <Bar dataKey="fraud" name="Fraud" fill="#f59e0b" fillOpacity={0.7} stackId="a" radius={[4, 4, 0, 0]} />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
-
-function WeeklyChart() {
-  const display = WEEKLY_DATA.filter((_, i) => i % 4 === 0 || i === 51);
-  return (
-    <div>
-      <div style={{ marginBottom: 12 }}>
-        <span className="badge badge-cyan">52-Week Crime Trend — 2024–2025</span>
-      </div>
-      <ResponsiveContainer width="100%" height={350}>
-        <LineChart data={WEEKLY_DATA} margin={{ top: 10, right: 20, left: 0, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-          <XAxis dataKey="week" tick={{ fill: '#94a3b8', fontSize: 10 }} interval={3} />
-          <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} domain={['auto', 'auto']} />
-          <Tooltip content={<CustomTooltip />} />
-          <Line type="monotone" dataKey="crimes" name="Crimes" stroke="#00f0ff" strokeWidth={2} dot={false} />
-          <ReferenceLine y={8000} stroke="rgba(245,158,11,0.5)" strokeDasharray="4 2" label={{ value: 'State Avg', fill: '#f59e0b', fontSize: 10 }} />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
-
-function MonthlyChart() {
-  return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-        <span className="badge badge-purple">🎭 FESTIVAL SPIKE MONTHS MARKED</span>
-        <span style={{ color: '#94a3b8', fontSize: 12 }}>Oct (Dasara-Diwali) & Dec (New Year) are peak months</span>
-      </div>
-      <ResponsiveContainer width="100%" height={350}>
-        <AreaChart data={SEASONAL_CRIMES} margin={{ top: 10, right: 20, left: 0, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-          <XAxis dataKey="season" tick={{ fill: '#94a3b8', fontSize: 12 }} />
-          <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
-          <Tooltip content={<CustomTooltip />} />
-          <defs>
-            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4} />
-              <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.02} />
-            </linearGradient>
-          </defs>
-          <Area type="monotone" dataKey="crimes" name="Monthly Crimes" stroke="#8b5cf6" fill="url(#areaGrad)" strokeWidth={2} />
-          {SEASONAL_CRIMES.filter(m => m.spike).map(m => (
-            <ReferenceLine key={m.season} x={m.season} stroke="rgba(239,68,68,0.6)" strokeDasharray="3 2" label={{ value: '🎉', fill: '#ef4444', fontSize: 14 }} />
-          ))}
-        </AreaChart>
-      </ResponsiveContainer>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
-        {SEASONAL_CRIMES.filter(m => m.spike).map(m => (
-          <span key={m.season} style={{
-            background: 'rgba(239,68,68,0.1)', color: '#f87171',
-            border: '1px solid rgba(239,68,68,0.3)', borderRadius: 6,
-            padding: '2px 8px', fontSize: 11, fontWeight: 600,
-          }}>{m.season}: {m.festivals}</span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function SeasonalGrid() {
-  const maxCrimes = Math.max(...SEASONAL_CRIMES.map(m => m.crimes));
-  const getColor = (crimes: number, spike: boolean) => {
-    const intensity = crimes / maxCrimes;
-    if (spike && intensity > 0.8) return { bg: 'rgba(239,68,68,0.55)', text: '#fff' };
-    if (spike) return { bg: 'rgba(239,68,68,0.35)', text: '#fca5a5' };
-    if (intensity > 0.7) return { bg: 'rgba(245,158,11,0.35)', text: '#fbbf24' };
-    if (intensity > 0.5) return { bg: 'rgba(0,240,255,0.15)', text: '#00f0ff' };
-    return { bg: 'rgba(16,185,129,0.15)', text: '#34d399' };
-  };
-  return (
-    <div>
-      <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span className="badge badge-purple">12-Month Crime Intensity Map</span>
-        <div style={{ display: 'flex', gap: 12, fontSize: 11, color: '#94a3b8', alignItems: 'center' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <span style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(16,185,129,0.4)', display: 'inline-block' }} /> Low
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <span style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(0,240,255,0.4)', display: 'inline-block' }} /> Medium
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <span style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(245,158,11,0.4)', display: 'inline-block' }} /> High
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <span style={{ width: 10, height: 10, borderRadius: 2, background: 'rgba(239,68,68,0.6)', display: 'inline-block' }} /> Festival Spike
-          </span>
-        </div>
-      </div>
-      <div className="responsive-grid-6">
-        {SEASONAL_CRIMES.map(m => {
-          const { bg, text } = getColor(m.crimes, m.spike);
-          return (
-            <div key={m.season} style={{
-              background: bg,
-              border: `1px solid ${m.spike ? 'rgba(239,68,68,0.4)' : 'rgba(255,255,255,0.08)'}`,
-              borderRadius: 12,
-              padding: '18px 12px',
-              textAlign: 'center',
-              position: 'relative',
-              transition: 'all 0.2s',
-            }}>
-              {m.spike && (
-                <div style={{
-                  position: 'absolute', top: -8, right: -6,
-                  background: '#ef4444', borderRadius: '50%',
-                  width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 9, color: '#fff', fontWeight: 700,
-                }}>🎉</div>
-              )}
-              <div style={{ fontSize: 18, fontWeight: 800, color: text, lineHeight: 1 }}>{m.season}</div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#f1f5f9', marginTop: 6 }}>{m.crimes.toLocaleString()}</div>
-              <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 4 }}>crimes</div>
-              {m.spike && (
-                <div style={{ fontSize: 9, color: '#fca5a5', marginTop: 6, fontWeight: 600, lineHeight: 1.3 }}>
-                  {m.festivals}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function HeatmapGrid() {
-  const hours = HOURLY_CRIMES;
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  // Simulated day-hour grid
-  const dayMultipliers = [1.0, 0.95, 1.05, 0.97, 1.18, 1.48, 1.57];
-  const maxVal = Math.max(...hours.map(h => h.crimes)) * 1.57;
-
-  const getHeatColor = (val: number) => {
-    const ratio = val / maxVal;
-    if (ratio > 0.75) return { bg: 'rgba(239,68,68,0.85)', text: '#fff' };
-    if (ratio > 0.5) return { bg: 'rgba(245,158,11,0.65)', text: '#fff' };
-    if (ratio > 0.3) return { bg: 'rgba(0,240,255,0.35)', text: '#e2e8f0' };
-    if (ratio > 0.15) return { bg: 'rgba(0,240,255,0.15)', text: '#94a3b8' };
-    return { bg: 'rgba(255,255,255,0.04)', text: '#64748b' };
-  };
-
-  return (
-    <div>
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ borderCollapse: 'collapse', width: '100%', minWidth: 700 }}>
-          <thead>
-            <tr>
-              <th style={{ width: 40, color: '#94a3b8', fontSize: 10, padding: '4px 6px', textAlign: 'left' }}>Day</th>
-              {hours.map(h => (
-                <th key={h.hour} style={{ fontSize: 8, color: '#64748b', padding: '4px 2px', fontWeight: 600, textAlign: 'center', minWidth: 36 }}>
-                  {h.label}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {days.map((day, di) => (
-              <tr key={day}>
-                <td style={{ fontSize: 11, color: '#94a3b8', fontWeight: 700, padding: '3px 6px' }}>{day}</td>
-                {hours.map((h) => {
-                  const val = Math.round(h.crimes * dayMultipliers[di] * (0.9 + Math.random() * 0.2));
-                  const { bg, text } = getHeatColor(val);
-                  return (
-                    <td key={h.hour} style={{
-                      background: bg,
-                      color: text,
-                      fontSize: 9,
-                      textAlign: 'center',
-                      padding: '6px 2px',
-                      borderRadius: 4,
-                      fontWeight: 600,
-                      margin: 1,
-                      border: '1px solid rgba(0,0,0,0.2)',
-                    }}>
-                      {val > 500 ? val : ''}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div style={{ display: 'flex', gap: 16, marginTop: 12, fontSize: 11, color: '#94a3b8', flexWrap: 'wrap' }}>
-        {[
-          { label: 'Very Low (<15%)', bg: 'rgba(255,255,255,0.04)' },
-          { label: 'Low (15–30%)', bg: 'rgba(0,240,255,0.15)' },
-          { label: 'Medium (30–50%)', bg: 'rgba(0,240,255,0.35)' },
-          { label: 'High (50–75%)', bg: 'rgba(245,158,11,0.65)' },
-          { label: 'Critical (>75%)', bg: 'rgba(239,68,68,0.85)' },
-        ].map(({ label, bg }) => (
-          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ width: 14, height: 14, borderRadius: 2, background: bg, display: 'inline-block' }} />
-            {label}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function TimelinePage() {
-  const [activeTab, setActiveTab] = useState<Tab>('Hourly');
+  const { t, lang } = useLanguage();
+  const [selectedCaseId, setSelectedCaseId] = useState(CASES[0].id);
+  const [filter, setFilter] = useState<'all' | 'fir' | 'ai' | 'officer' | 'arrest'>('all');
+  const [expandedEvents, setExpandedEvents] = useState<Record<number, boolean>>({ 0: true, 3: true }); // Default expanded first and suspect steps
+  const [isExporting, setIsExporting] = useState(false);
 
-  const weekdayAvg = Math.round(
-    DAILY_CRIMES.filter(d => !['Saturday', 'Sunday'].includes(d.day))
-      .reduce((s, d) => s + d.crimes, 0) / 5
-  );
-  const weekendAvg = Math.round(
-    DAILY_CRIMES.filter(d => ['Saturday', 'Sunday'].includes(d.day))
-      .reduce((s, d) => s + d.crimes, 0) / 2
-  );
+  const selectedCase = CASES.find(c => c.id === selectedCaseId) || CASES[0];
 
-  const compData = [
-    { label: 'Weekdays (Avg)', crimes: weekdayAvg, fill: '#00f0ff' },
-    { label: 'Weekends (Avg)', crimes: weekendAvg, fill: '#ef4444' },
-  ];
+  const filteredEvents = selectedCase.events.filter(e => {
+    if (filter === 'all') return true;
+    return e.type === filter;
+  });
 
-  const yoyData = [
-    { period: 'Q1', y2024: 15899, y2025: 25577 },
-    { period: 'Q2', y2024: 18470, y2025: 29692 },
-    { period: 'Q3', y2024: 22368, y2025: 27121 },
-    { period: 'Q4 (proj)', y2024: 25325, y2025: 30200 },
-  ];
+  const toggleEvent = (idx: number) => {
+    setExpandedEvents(prev => ({
+      ...prev,
+      [idx]: !prev[idx]
+    }));
+  };
+
+  const handleExportPDF = async () => {
+    setIsExporting(true);
+    try {
+      const { jsPDF } = await import('jspdf');
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const pageW = 210;
+      let y = 20;
+
+      // Restrictive Header
+      doc.setFontSize(14);
+      doc.setTextColor(239, 68, 68);
+      doc.setFont('helvetica', 'bold');
+      doc.text('CONFIDENTIAL — KSP INTEL DOSSIER', pageW / 2, y, { align: 'center' });
+      y += 8;
+
+      doc.setFontSize(15);
+      doc.setTextColor(10, 22, 40);
+      doc.text('CASE TIMELINE CHRONOLOGY LOG', pageW / 2, y, { align: 'center' });
+      y += 6;
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(80, 80, 80);
+      doc.text(`FIR: #${selectedCase.id} · Category: ${selectedCase.category} · District: ${selectedCase.district}`, pageW / 2, y, { align: 'center' });
+      y += 4;
+      doc.line(15, y, pageW - 15, y);
+      y += 8;
+
+      // Event Timeline
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(10, 22, 40);
+      doc.text('CHRONOLOGICAL EVENT REGISTRY:', 15, y);
+      y += 6;
+
+      filteredEvents.forEach((ev, idx) => {
+        if (y > 260) {
+          doc.addPage();
+          y = 20;
+        }
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(0, 80, 160);
+        doc.text(`🕐 ${ev.time} — ${ev.title}`, 15, y);
+        y += 4.5;
+
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(60, 60, 60);
+        doc.text(`Location: ${ev.subtitle}`, 20, y);
+        y += 4;
+        
+        doc.setTextColor(90, 90, 90);
+        const descText = doc.splitTextToSize(ev.desc.replace(/[^\x00-\x7F]/g, ""), pageW - 30);
+        doc.text(descText, 20, y);
+        y += descText.length * 4 + 1;
+
+        if (ev.extra) {
+          doc.setFont('helvetica', 'oblique');
+          doc.setTextColor(120, 120, 120);
+          const extraText = doc.splitTextToSize(`Audit Log: ${ev.extra.replace(/[^\x00-\x7F]/g, "")}`, pageW - 35);
+          doc.text(extraText, 20, y);
+          y += extraText.length * 4 + 2;
+        }
+        y += 3;
+      });
+
+      doc.line(15, y, pageW - 15, y);
+      y += 6;
+      doc.setFontSize(8);
+      doc.setTextColor(120, 120, 120);
+      doc.text('CrimeVision AI v6.0 Chronological Dossier · Generated on secure command terminal', pageW / 2, y, { align: 'center' });
+
+      doc.save(`CrimeVision_Timeline_${selectedCase.id}.pdf`);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to generate PDF. Make sure jsPDF is loaded.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
-    <div className="page-content" style={{ padding: 28 }}>
-      {/* PAGE HEADER */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{
-            width: 48, height: 48, borderRadius: 12,
-            background: 'rgba(0,240,255,0.1)',
-            border: '1px solid rgba(0,240,255,0.3)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Clock size={24} color="#00f0ff" />
-          </div>
-          <div>
-            <h1 className="page-title">Crime Timeline Intelligence</h1>
-            <p className="page-subtitle">Temporal crime pattern analysis across Karnataka — hourly to seasonal</p>
-          </div>
+    <div className="animate-page-fade" style={{ padding: '24px', minHeight: 'calc(100vh - 64px)' }}>
+      
+      {/* ── Page Header ── */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: 0 }}>
+            <Clock size={22} className="text-[#00D4FF]" />
+            {lang === 'en' ? 'CASE TIMELINE CHRONOLOGY' : 'ಪ್ರಕರಣದ ಕಾಲರೇಖೆ'}
+          </h1>
+          <p className="page-subtitle">
+            {lang === 'en' 
+              ? 'Chronological tracking database detailing incident logs, officer updates, and AI findings' 
+              : 'ಘಟನೆ ದಾಖಲೆಗಳು, ಅಧಿಕಾರಿ ನವೀಕರಣಗಳು ಮತ್ತು AI ಸಂಶೋಧನೆಗಳನ್ನು ವಿವರಿಸುವ ಕಾಲಾನುಕ್ರಮದ ಟ್ರ್ಯಾಕಿಂಗ್ ಡೇಟಾಬೇಸ್'}
+          </p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div className="status-dot" />
-          <span style={{ color: '#10b981', fontSize: 12, fontWeight: 700, letterSpacing: '0.08em' }}>LIVE DATA</span>
-        </div>
-      </div>
 
-      {/* TAB SWITCHER */}
-      <div style={{
-        display: 'flex', gap: 4, marginBottom: 24,
-        background: 'rgba(10,22,40,0.6)', borderRadius: 12,
-        padding: 6, border: '1px solid rgba(0,240,255,0.1)',
-        width: 'fit-content',
-      }}>
-        {TABS.map(tab => (
+        {/* Action buttons top right */}
+        <div style={{ display: 'flex', gap: '8px' }}>
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            style={{
-              padding: '8px 20px', borderRadius: 8, border: 'none', cursor: 'pointer',
-              fontWeight: 700, fontSize: 13, letterSpacing: '0.04em',
-              transition: 'all 0.2s',
-              background: activeTab === tab ? 'rgba(0,240,255,0.12)' : 'transparent',
-              color: activeTab === tab ? '#00f0ff' : '#94a3b8',
-              borderBottom: activeTab === tab ? '2px solid #00f0ff' : '2px solid transparent',
-            }}
+            onClick={handleExportPDF}
+            disabled={isExporting}
+            className="cyber-btn cyber-btn-cyan"
+            style={{ padding: '8px 16px', borderRadius: '8px', fontSize: '13px', textTransform: 'none', fontWeight: 600 }}
           >
-            {tab}
+            <FileText size={14} />
+            {isExporting ? 'Exporting...' : 'Export PDF'}
           </button>
-        ))}
-      </div>
-
-      {/* INSIGHT CARDS ROW */}
-      <div className="responsive-grid-4" style={{ marginBottom: 24 }}>
-        {TIMELINE_INSIGHTS.map(insight => (
-          <div key={insight.title} className="glass-card" style={{ padding: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-              <div style={{
-                width: 36, height: 36, borderRadius: 8,
-                background: `${insight.color}18`,
-                border: `1px solid ${insight.color}40`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: insight.color,
-              }}>
-                {INSIGHT_ICONS[insight.title]}
-              </div>
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                {insight.title}
-              </span>
-            </div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: insight.color, marginBottom: 6 }}>
-              {insight.value}
-            </div>
-            <div style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.5 }}>{insight.description}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* MAIN CHART */}
-      <div className="glass-card" style={{ padding: 24, marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-          <div style={{ width: 3, height: 22, background: '#00f0ff', borderRadius: 2 }} />
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#f1f5f9' }}>
-            {activeTab} Crime Analysis
-          </h2>
         </div>
-        {activeTab === 'Hourly' && <HourlyBarProper />}
-        {activeTab === 'Daily' && <DailyChart />}
-        {activeTab === 'Weekly' && <WeeklyChart />}
-        {activeTab === 'Monthly' && <MonthlyChart />}
-        {activeTab === 'Seasonal' && <SeasonalGrid />}
       </div>
 
-      {/* PEAK HOURS HEATMAP */}
-      <div className="glass-card" style={{ padding: 24, marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-          <div style={{ width: 3, height: 22, background: '#ef4444', borderRadius: 2 }} />
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#f1f5f9' }}>Crime Activity Heatmap — Day × Hour</h2>
-          <span className="badge badge-red" style={{ marginLeft: 'auto' }}>INTERACTIVE</span>
-        </div>
-        <HeatmapGrid />
-      </div>
+      {/* Simulation Banner */}
+      <SimulationBanner />
 
-      {/* COMPARATIVE ANALYSIS */}
-      <div className="responsive-grid-2">
-        {/* Weekday vs Weekend */}
-        <div className="glass-card" style={{ padding: 24 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-            <div style={{ width: 3, height: 22, background: '#f59e0b', borderRadius: 2 }} />
-            <h2 style={{ fontSize: 15, fontWeight: 700, color: '#f1f5f9' }}>Weekday vs Weekend</h2>
+      {/* ── Main Panel Grid ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '20px', alignItems: 'stretch' }}>
+        
+        {/* LEFT PANEL: Case Selector */}
+        <aside
+          className="glass-card"
+          style={{
+            padding: '20px 16px',
+            height: 'fit-content',
+            background: 'var(--cyber-surface)',
+          }}
+        >
+          <div style={{ fontSize: '10px', fontWeight: 900, color: 'var(--text-dim)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '16px', borderBottom: '1px solid var(--cyber-border)', paddingBottom: '8px' }}>
+            {lang === 'en' ? 'ACTIVE CASES' : 'ಸಕ್ರಿಯ ಪ್ರಕರಣಗಳು'}
           </div>
-          <div style={{ display: 'flex', gap: 16, marginBottom: 16 }}>
-            <div className="glass-card" style={{ flex: 1, padding: '16px', textAlign: 'center', background: 'rgba(0,240,255,0.06)' }}>
-              <div style={{ fontSize: 28, fontWeight: 800, color: '#00f0ff' }}>{weekdayAvg.toLocaleString()}</div>
-              <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Avg Weekday</div>
-            </div>
-            <div className="glass-card" style={{ flex: 1, padding: '16px', textAlign: 'center', background: 'rgba(239,68,68,0.06)' }}>
-              <div style={{ fontSize: 28, fontWeight: 800, color: '#ef4444' }}>{weekendAvg.toLocaleString()}</div>
-              <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Avg Weekend</div>
-            </div>
-          </div>
-          <div style={{
-            background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)',
-            borderRadius: 10, padding: '10px 14px', fontSize: 13, color: '#fbbf24',
-          }}>
-            📈 Weekend crimes are <strong>{Math.round(((weekendAvg - weekdayAvg) / weekdayAvg) * 100)}% higher</strong> than weekday average
-          </div>
-          <ResponsiveContainer width="100%" height={160} style={{ marginTop: 16 }}>
-            <BarChart data={DAILY_CRIMES} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="day" tick={{ fill: '#94a3b8', fontSize: 10 }} />
-              <YAxis tick={{ fill: '#94a3b8', fontSize: 10 }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="crimes" name="Total Crimes" radius={[4, 4, 0, 0]}>
-                {DAILY_CRIMES.map((entry) => (
-                  <rect
-                    key={entry.day}
-                    fill={['Saturday', 'Sunday'].includes(entry.day) ? '#ef4444' : '#00f0ff'}
-                    fillOpacity={['Saturday', 'Sunday'].includes(entry.day) ? 0.8 : 0.6}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
 
-        {/* Year over Year */}
-        <div className="glass-card" style={{ padding: 24 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-            <div style={{ width: 3, height: 22, background: '#8b5cf6', borderRadius: 2 }} />
-            <h2 style={{ fontSize: 15, fontWeight: 700, color: '#f1f5f9' }}>Year-over-Year Comparison</h2>
-            <div style={{ marginLeft: 'auto', display: 'flex', gap: 10 }}>
-              {[{ label: '2024', color: '#94a3b8' }, { label: '2025', color: '#00f0ff' }].map(({ label, color }) => (
-                <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: '#94a3b8' }}>
-                  <span style={{ width: 10, height: 10, borderRadius: '50%', background: color, display: 'inline-block' }} />
-                  {label}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {CASES.map((c) => {
+              const isSelected = selectedCaseId === c.id;
+              return (
+                <div
+                  key={c.id}
+                  onClick={() => {
+                    setSelectedCaseId(c.id);
+                    setExpandedEvents({ 0: true });
+                  }}
+                  style={{
+                    padding: '12px 14px',
+                    borderRadius: '10px',
+                    border: `1px solid ${isSelected ? 'var(--cyber-cyan)' : 'transparent'}`,
+                    background: isSelected ? 'rgba(0, 240, 255, 0.05)' : 'rgba(255,255,255,0.01)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseEnter={e => {
+                    if (!isSelected) e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                  }}
+                  onMouseLeave={e => {
+                    if (!isSelected) e.currentTarget.style.background = 'rgba(255,255,255,0.01)';
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: c.color, boxShadow: `0 0 6px ${c.color}` }} />
+                    <span style={{ fontSize: '12px', fontWeight: 800, color: isSelected ? 'var(--cyber-cyan)' : 'var(--text-primary)', fontFamily: 'JetBrains Mono, monospace' }}>
+                      FIR #{c.id}
+                    </span>
+                  </div>
+                  
+                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, paddingLeft: '16px' }}>
+                    {c.title}
+                  </div>
+                  
+                  <div style={{ fontSize: '10px', color: 'var(--text-dim)', marginTop: '2px', paddingLeft: '16px' }}>
+                    {c.category} · {c.district}
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)', marginTop: '8px', paddingLeft: '16px' }}>
+                    <span>Progress:</span>
+                    <span style={{ fontWeight: 800, color: isSelected ? 'var(--cyber-cyan)' : 'var(--text-primary)' }}>{c.progress}%</span>
+                  </div>
                 </div>
+              );
+            })}
+          </div>
+        </aside>
+
+        {/* RIGHT PANEL: Chronological Event Log */}
+        <main style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          
+          {/* Timeline Filter Bar */}
+          <div className="glass-card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+            <Filter size={15} style={{ color: 'var(--cyber-cyan)' }} />
+            <span style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: 700 }}>
+              {lang === 'en' ? 'FILTER EVENTS:' : 'ಘಟನೆಗಳ ಫಿಲ್ಟರ್:'}
+            </span>
+            
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              {[
+                { id: 'all', label: lang === 'en' ? 'All Events' : 'ಎಲ್ಲಾ ಘಟನೆಗಳು' },
+                { id: 'fir', label: lang === 'en' ? 'FIR Events' : 'FIR ಘಟನೆಗಳು' },
+                { id: 'ai', label: lang === 'en' ? 'AI Events' : 'AI ಘಟನೆಗಳು' },
+                { id: 'officer', label: lang === 'en' ? 'Officer Events' : 'ಅಧಿಕಾರಿ ಘಟನೆಗಳು' },
+                { id: 'arrest', label: lang === 'en' ? 'Arrests' : 'ಬಂಧನಗಳು' }
+              ].map((btn) => (
+                <button
+                  key={btn.id}
+                  onClick={() => setFilter(btn.id as any)}
+                  style={{
+                    padding: '5px 12px',
+                    borderRadius: '20px',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    background: filter === btn.id ? 'var(--cyber-cyan)' : 'rgba(0, 240, 255, 0.05)',
+                    color: filter === btn.id ? '#020617' : 'var(--cyber-cyan)',
+                    border: `1px solid ${filter === btn.id ? 'var(--cyber-cyan)' : 'rgba(0, 240, 255, 0.2)'}`,
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  {btn.label}
+                </button>
               ))}
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={yoyData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="period" tick={{ fill: '#94a3b8', fontSize: 12 }} />
-              <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend wrapperStyle={{ color: '#94a3b8', fontSize: 11 }} />
-              <Bar dataKey="y2024" name="2024" fill="#64748b" fillOpacity={0.7} radius={[3, 3, 0, 0]} />
-              <Bar dataKey="y2025" name="2025" fill="#00f0ff" fillOpacity={0.8} radius={[3, 3, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-          <div style={{
-            background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)',
-            borderRadius: 10, padding: '10px 14px', fontSize: 13, color: '#f87171', marginTop: 12,
-          }}>
-            ⚠ 2025 YTD shows <strong>+22.4% increase</strong> over same period in 2024
+
+          {/* Timeline Title Card */}
+          <div className="glass-card" style={{ padding: '20px' }}>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '4px' }}>
+              CHRONOLOGY LOG — FIR #{selectedCase.id}
+            </div>
+            <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+              {selectedCase.title} · {selectedCase.district} North
+            </h2>
           </div>
-        </div>
+
+          {/* Vertical Timeline Tree */}
+          <div style={{ position: 'relative', paddingLeft: '32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {/* Vertical timeline connector line */}
+            <div
+              style={{
+                position: 'absolute',
+                left: '11px',
+                top: '12px',
+                bottom: '12px',
+                width: '2px',
+                background: 'linear-gradient(180deg, var(--cyber-cyan), rgba(0,240,255,0.05))',
+              }}
+            />
+
+            {filteredEvents.length === 0 ? (
+              <div style={{ color: 'var(--text-muted)', fontSize: '13px', fontStyle: 'italic', padding: '10px 0' }}>
+                No events matched the selected filter.
+              </div>
+            ) : (
+              filteredEvents.map((ev, idx) => {
+                const isExpanded = !!expandedEvents[idx];
+                return (
+                  <div key={idx} style={{ position: 'relative' }}>
+                    {/* Circle Node */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        left: '-32px',
+                        top: '4px',
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '50%',
+                        background: '#020617',
+                        border: `2px solid ${ev.bulletColor}`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: `0 0 8px ${ev.bulletColor}`,
+                        zIndex: 10,
+                      }}
+                    >
+                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: ev.bulletColor }} />
+                    </div>
+
+                    {/* Timeline Event Card */}
+                    <div
+                      className="glass-card"
+                      style={{
+                        padding: '16px 20px',
+                        cursor: 'pointer',
+                        background: isExpanded ? 'rgba(255,255,255,0.02)' : 'var(--cyber-card)',
+                        borderColor: isExpanded ? 'rgba(0, 240, 255, 0.25)' : 'var(--glass-card-border)',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onClick={() => toggleEvent(idx)}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px', marginBottom: '8px' }}>
+                        <div>
+                          <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--cyber-cyan)', fontFamily: 'JetBrains Mono, monospace' }}>
+                            {ev.time}
+                          </span>
+                          <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', margin: '2px 0 0 0' }}>
+                            {ev.title}
+                          </h3>
+                          <div style={{ fontSize: '11px', color: 'var(--text-dim)', marginTop: '2px' }}>
+                            {ev.subtitle}
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span 
+                            className="badge"
+                            style={{
+                              fontSize: '8px',
+                              padding: '2px 8px',
+                              background: ev.type === 'fir' ? 'rgba(0, 240, 255, 0.1)' : ev.type === 'ai' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                              color: ev.type === 'fir' ? 'var(--cyber-cyan)' : ev.type === 'ai' ? '#ef4444' : '#10b981',
+                              border: `1px solid ${ev.type === 'fir' ? 'rgba(0, 240, 255, 0.25)' : ev.type === 'ai' ? 'rgba(239, 68, 68, 0.25)' : 'rgba(16, 185, 129, 0.25)'}`
+                            }}
+                          >
+                            {ev.type.toUpperCase()}
+                          </span>
+
+                          <div style={{ color: 'var(--text-dim)' }}>
+                            {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                          </div>
+                        </div>
+                      </div>
+
+                      <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                        {ev.desc}
+                      </p>
+
+                      {/* Expandable Audit Log */}
+                      {isExpanded && ev.extra && (
+                        <div
+                          className="animate-fadeInUp"
+                          style={{
+                            marginTop: '12px',
+                            paddingTop: '12px',
+                            borderTop: '1px dashed var(--cyber-border)',
+                            fontSize: '12px',
+                            color: 'var(--text-muted)',
+                            lineHeight: 1.6,
+                          }}
+                        >
+                          <div style={{ fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                            <Calendar size={12} className="text-[var(--cyber-cyan)]" />
+                            Official Case Log Record
+                          </div>
+                          <p style={{ margin: 0, paddingLeft: '18px' }}>
+                            {ev.extra}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* AI Recommendation Card */}
+          <div style={{ marginTop: '10px' }}>
+            <AIRecommendationCard
+              action={selectedCase.recommendation.action}
+              rationale={selectedCase.recommendation.rationale}
+              urgency={selectedCase.recommendation.urgency}
+              priority={selectedCase.recommendation.priority}
+            />
+          </div>
+        </main>
       </div>
     </div>
   );

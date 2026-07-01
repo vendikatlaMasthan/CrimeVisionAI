@@ -55,13 +55,13 @@ export default function UserMenu({ user }: UserMenuProps) {
         className="flex items-center gap-2 p-1.5 rounded-lg border transition-all cursor-pointer"
         style={{
           background: 'rgba(10, 22, 40, 0.2)',
-          borderColor: 'var(--cyber-border)',
+          borderColor: 'var(--border-default)',
         }}
         onMouseEnter={e => {
-          e.currentTarget.style.borderColor = 'var(--cyber-border-hover)';
+          e.currentTarget.style.borderColor = 'var(--accent-cyan)';
         }}
         onMouseLeave={e => {
-          if (!isOpen) e.currentTarget.style.borderColor = 'var(--cyber-border)';
+          if (!isOpen) e.currentTarget.style.borderColor = 'var(--border-default)';
         }}
       >
         <div
@@ -72,7 +72,7 @@ export default function UserMenu({ user }: UserMenuProps) {
             color: badge.textCol,
           }}
         >
-          <User size={14} />
+           <User size={14} />
         </div>
         <div className="hidden sm:flex flex-col items-start text-left">
           <span className="text-xs font-bold leading-none text-[var(--text-primary)]">
@@ -82,7 +82,7 @@ export default function UserMenu({ user }: UserMenuProps) {
             {user?.designation ?? 'Inspector'}
           </span>
         </div>
-        <ChevronDown size={12} className="text-[var(--text-dim)]" />
+        <ChevronDown size={12} className="text-[var(--text-muted)]" />
       </button>
 
       {/* Dropdown Menu */}
@@ -90,14 +90,14 @@ export default function UserMenu({ user }: UserMenuProps) {
         <div
           className="absolute right-0 mt-2 w-64 rounded-xl border shadow-2xl z-50 overflow-hidden backdrop-blur-md"
           style={{
-            background: 'var(--topbar-bg)',
-            borderColor: 'var(--cyber-border)',
+            background: 'var(--bg-header)',
+            borderColor: 'var(--border-default)',
           }}
         >
           {/* User Info Header */}
           <div
             className="p-4 border-b flex flex-col gap-1.5"
-            style={{ borderColor: 'var(--cyber-border)', background: 'rgba(0, 240, 255, 0.02)' }}
+            style={{ borderColor: 'var(--border-default)', background: 'rgba(0, 212, 255, 0.02)' }}
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-black text-[var(--text-primary)] tracking-wide">
@@ -111,7 +111,7 @@ export default function UserMenu({ user }: UserMenuProps) {
               </span>
             </div>
             {user?.badgeNumber && (
-              <span className="text-[10px] font-mono text-[var(--text-dim)]">
+              <span className="text-[10px] font-mono text-[var(--text-muted)]">
                 Badge: {user.badgeNumber}
               </span>
             )}
@@ -130,7 +130,7 @@ export default function UserMenu({ user }: UserMenuProps) {
               }}
               className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-slate-500/5 transition-colors cursor-pointer text-left"
             >
-              <User size={13} className="text-[var(--cyber-cyan)]" />
+              <User size={13} className="text-[var(--accent-cyan)]" />
               <span>Profile</span>
             </button>
 
@@ -142,11 +142,11 @@ export default function UserMenu({ user }: UserMenuProps) {
               }}
               className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-slate-500/5 transition-colors cursor-pointer text-left"
             >
-              <Settings size={13} className="text-[var(--cyber-cyan)]" />
+              <Settings size={13} className="text-[var(--accent-cyan)]" />
               <span>Settings</span>
             </button>
 
-            <hr className="my-1 opacity-10" style={{ borderColor: 'var(--cyber-border)' }} />
+            <hr className="my-1 opacity-10" style={{ borderColor: 'var(--border-default)' }} />
 
             {/* Theme */}
             <button
@@ -163,7 +163,7 @@ export default function UserMenu({ user }: UserMenuProps) {
                 )}
                 <span>Theme</span>
               </div>
-              <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-white/5 text-[var(--text-dim)]">
+              <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-white/5 text-[var(--text-muted)]">
                 {theme === 'dark' ? 'Dark' : 'Light'}
               </span>
             </button>
@@ -176,15 +176,15 @@ export default function UserMenu({ user }: UserMenuProps) {
               className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-slate-500/5 transition-colors cursor-pointer text-left"
             >
               <div className="flex items-center gap-2.5">
-                <Globe size={13} className="text-[var(--cyber-cyan)]" />
+                <Globe size={13} className="text-[var(--accent-cyan)]" />
                 <span>Language</span>
               </div>
-              <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-white/5 text-[var(--text-dim)]">
+              <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-white/5 text-[var(--text-muted)]">
                 {lang === 'en' ? 'English' : 'ಕನ್ನಡ'}
               </span>
             </button>
 
-            <hr className="my-1 opacity-10" style={{ borderColor: 'var(--cyber-border)' }} />
+            <hr className="my-1 opacity-10" style={{ borderColor: 'var(--border-default)' }} />
 
             {/* Logout */}
             <button

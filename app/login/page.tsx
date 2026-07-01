@@ -1,454 +1,1056 @@
 'use client';
-// ─────────────────────────────────────────────────────────────────────────────
-// Save this file to: app/login/page.tsx
-// CrimeVision AI — KSP Secure Login Page
-// 3 demo accounts, sessionStorage auth, role-based access
-// ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Shield, Lock, User, Eye, EyeOff, AlertTriangle, CheckCircle, Radio, Zap } from 'lucide-react';
+import { Shield, Lock, Eye, EyeOff, AlertTriangle, CheckCircle, Fingerprint, CreditCard, Loader } from 'lucide-react';
 import { DEMO_ACCOUNTS, DemoAccount } from '@/lib/crimeData';
-import { useLanguage } from '@/components/LanguageToggle';
 
-// ─── Auth helpers (call from any page) ────────────────────────────────────────
-
-export function getStoredUser(): DemoAccount | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const raw = sessionStorage.getItem('ksp_user');
-    return raw ? (JSON.parse(raw) as DemoAccount) : null;
-  } catch {
-    return null;
-  }
-}
-
-export function logoutUser() {
-  if (typeof window !== 'undefined') {
-    sessionStorage.removeItem('ksp_user');
-  }
-}
-
-// ─── Component ────────────────────────────────────────────────────────────────
+const quotes = [
+  "Protecting Karnataka through Intelligence and Technology",
+  "Real-time crime intelligence for a safer state",
+  "AI-powered investigations for Karnataka State Police",
+  "Data-driven policing. Precision. Speed. Justice."
+];
 
 export default function LoginPage() {
   const router = useRouter();
-  const { t } = useLanguage();
-
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [loginSuccess, setLoginSuccess] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Check if already logged in
+  // Form states
+  const [selectedRole, setSelectedRole] = useState<'Officer' | 'Commissioner'>('Officer');
+  const [badgeId, setBadgeId] = useState('inspector');
+  const [accessCode, setAccessCode] = useState('KSP@2025');
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
+
+  // UI state
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [shake, setShake] = useState(false);
+  const [bioActive, setBioActive] = useState(false);
+  const [bioScanning, setBioScanning] = useState(false);
+
+  // Quote rotation
+  const [quoteIdx, setQuoteIdx] = useState(0);
+  const [quoteFade, setQuoteFade] = useState(true);
+
   useEffect(() => {
     setMounted(true);
-    const user = getStoredUser();
-    if (user) {
+
+    // Auto-login check
+    const existing = sessionStorage.getItem('ksp_user');
+    if (existing) {
       router.replace('/');
     }
   }, [router]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setQuoteFade(false);
+      setTimeout(() => {
+        setQuoteIdx((prev) => (prev + 1) % quotes.length);
+        setQuoteFade(true);
+      }, 300);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Update credentials based on role selector
+  const handleRoleChange = (role: 'Officer' | 'Commissioner') => {
+    setSelectedRole(role);
+    setError('');
+    if (role === 'Officer') {
+      setBadgeId('inspector');
+      setAccessCode('KSP@2025');
+    } else {
+      setBadgeId('commissioner');
+      setAccessCode('KSP@2025');
+    }
+  };
+
+  const executeSuccessFlow = async (matchedAccount: DemoAccount) => {
+    sessionStorage.setItem('ksp_user', JSON.stringify(matchedAccount));
+    setIsSuccess(true);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    router.replace('/');
+  };
+
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    // Simulate a brief auth check
-    await new Promise(r => setTimeout(r, 800));
+    // Simulated network delay
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    const match = DEMO_ACCOUNTS.find(
-      a => a.username === username.trim() && a.password === password
+    const matched = DEMO_ACCOUNTS.find(
+      (a) => a.username.toLowerCase() === badgeId.trim().toLowerCase() && a.password === accessCode
     );
 
-    if (match) {
-      sessionStorage.setItem('ksp_user', JSON.stringify(match));
-      setLoginSuccess(true);
-      await new Promise(r => setTimeout(r, 1200));
-      router.replace('/');
+    if (matched) {
+      await executeSuccessFlow(matched);
     } else {
-      setError(t.login_error);
       setLoading(false);
+      setError('⚠ Invalid credentials. 2 attempts remaining.');
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
     }
   };
 
-  const fillDemo = (acc: typeof DEMO_ACCOUNTS[number]) => {
-    setUsername(acc.username);
-    setPassword(acc.password);
+  const triggerBiometricScan = async () => {
+    setBioScanning(true);
     setError('');
-  };
+    // Simulate fingerprint scanning
+    await new Promise((resolve) => setTimeout(resolve, 1800));
 
-  const roleColor = (role: string) => {
-    if (role === 'DGP') return '#ef4444';
-    if (role === 'Commissioner') return '#f59e0b';
-    return '#00f0ff';
-  };
+    // Authenticate based on role selector
+    const matched = DEMO_ACCOUNTS.find(
+      (a) => a.role.toLowerCase() === (selectedRole === 'Officer' ? 'inspector' : 'commissioner')
+    );
 
-  const accessLabel = (role: string) => {
-    if (role === 'DGP') return 'Full Access';
-    if (role === 'Commissioner') return 'Commissioner View';
-    return 'Inspector Access';
+    if (matched) {
+      setBioScanning(false);
+      await executeSuccessFlow(matched);
+    } else {
+      setBioScanning(false);
+      setError('⚠ Biometric verification failed. User not enrolled.');
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+    }
   };
 
   if (!mounted) return null;
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: 'radial-gradient(ellipse at 20% 50%, rgba(0,240,255,0.04) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.04) 0%, transparent 60%), #020617',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 24,
-        fontFamily: "'Inter', sans-serif",
-      }}
-    >
-      {/* Background grid */}
-      <div
-        style={{
-          position: 'fixed',
-          inset: 0,
-          backgroundImage: 'linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-          pointerEvents: 'none',
-        }}
-      />
-
-      <div style={{ width: '100%', maxWidth: 480, position: 'relative', zIndex: 1 }}>
-
-        {/* ── KSP Logo Header ─────────────────────────────────────────── */}
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-            <div
-              style={{
-                width: 80, height: 80, borderRadius: 20,
-                background: 'linear-gradient(135deg, rgba(0,240,255,0.15), rgba(139,92,246,0.15))',
-                border: '2px solid rgba(0,240,255,0.35)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 0 40px rgba(0,240,255,0.2), inset 0 0 40px rgba(0,240,255,0.05)',
-                position: 'relative',
-              }}
-            >
-              <Shield size={40} color="#00f0ff" />
-              <div style={{
-                position: 'absolute', top: -4, right: -4, width: 16, height: 16,
-                borderRadius: '50%', background: '#10b981',
-                boxShadow: '0 0 12px #10b981',
-                animation: 'pulse 2s infinite',
-              }} />
-            </div>
-          </div>
-
-          <div style={{
-            fontSize: 11, fontWeight: 800, letterSpacing: '0.25em',
-            color: '#64748b', marginBottom: 8, textTransform: 'uppercase',
-          }}>
-            Karnataka State Police
-          </div>
-          <div style={{
-            fontSize: 20, fontWeight: 900, letterSpacing: '0.12em',
-            color: '#f1f5f9', marginBottom: 6, textTransform: 'uppercase',
-          }}>
-            CrimeVision AI
-          </div>
-          <div style={{
-            fontSize: 10, fontWeight: 700, letterSpacing: '0.2em',
-            color: '#00f0ff', textTransform: 'uppercase',
-          }}>
-            ⚡ SECURE INTELLIGENCE COMMAND SYSTEM
-          </div>
-
-          {/* Live status bar */}
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            gap: 8, marginTop: 12,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5,
-              padding: '4px 12px', borderRadius: 20,
-              background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)' }}>
-              <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981',
-                boxShadow: '0 0 6px #10b981', animation: 'pulse 2s infinite' }} />
-              <span style={{ fontSize: 10, color: '#10b981', fontWeight: 700, letterSpacing: '0.1em' }}>
-                SYSTEM ONLINE
-              </span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5,
-              padding: '4px 12px', borderRadius: 20,
-              background: 'rgba(0,240,255,0.06)', border: '1px solid rgba(0,240,255,0.2)' }}>
-              <Radio size={9} color="#00f0ff" style={{ animation: 'pulse 1.5s infinite' }} />
-              <span style={{ fontSize: 10, color: '#00f0ff', fontWeight: 700, letterSpacing: '0.1em' }}>
-                v6.0 • 256-BIT SSL
-              </span>
+    <div className="login-wrapper">
+      
+      {/* ──────────────────────────────────────────────────────────────────────── */}
+      {/* SUCCESS TRANSITION SCREEN                                                */}
+      {/* ──────────────────────────────────────────────────────────────────────── */}
+      {isSuccess && (
+        <div className="success-overlay">
+          <div className="success-content">
+            <svg className="shield-success-svg" viewBox="0 0 100 120" width="80" height="96">
+              <path
+                d="M 50,5 L 85,25 L 85,65 C 85,85 70,105 50,115 C 30,105 15,85 15,65 L 15,25 Z"
+                fill="none"
+                stroke="#00D4FF"
+                strokeWidth="4"
+              />
+              <path
+                d="M 50,15 L 75,32 L 75,62 C 75,77 64,92 50,100 C 36,92 25,77 25,62 L 25,32 Z"
+                fill="rgba(0, 212, 255, 0.1)"
+                stroke="#00D4FF"
+                strokeWidth="1"
+              />
+              <polygon points="50,35 53,45 64,45 55,52 58,62 50,55 42,62 45,52 36,45 47,45" fill="#00D4FF" />
+            </svg>
+            <h2 className="success-title">IDENTITY VERIFIED</h2>
+            <p className="success-subtitle">Initializing Secure Intelligence Module...</p>
+            <div className="progress-track">
+              <div className="progress-fill" />
             </div>
           </div>
         </div>
+      )}
 
-        {/* ── Success Screen ───────────────────────────────────────────── */}
-        {loginSuccess && (
-          <div style={{
-            background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.35)',
-            borderRadius: 16, padding: 32, textAlign: 'center',
-          }}>
-            <CheckCircle size={48} color="#10b981" style={{ margin: '0 auto 16px' }} />
-            <div style={{ fontSize: 16, fontWeight: 800, color: '#10b981', marginBottom: 8 }}>
-              ACCESS GRANTED
-            </div>
-            <div style={{ fontSize: 13, color: '#94a3b8' }}>
-              Redirecting to Command Dashboard...
-            </div>
-            <div style={{
-              width: '100%', height: 3, background: 'rgba(16,185,129,0.15)',
-              borderRadius: 2, marginTop: 20, overflow: 'hidden',
-            }}>
-              <div style={{
-                height: '100%', background: '#10b981',
-                animation: 'loadBar 1.2s ease forwards',
-              }} />
+      {/* ──────────────────────────────────────────────────────────────────────── */}
+      {/* TWO PANEL SPLIT LAYOUT                                                   */}
+      {/* ──────────────────────────────────────────────────────────────────────── */}
+      <div className={`login-container ${isSuccess ? 'fade-out-all' : ''}`}>
+        
+        {/* LEFT PANEL: BRANDING + ILLUSTRATION */}
+        <div className="left-panel">
+          
+          {/* Top-left branding */}
+          <div className="brand-header">
+            <svg viewBox="0 0 100 120" width="40" height="48" style={{ marginRight: '14px' }}>
+              <path
+                d="M 50,5 L 85,25 L 85,65 C 85,85 70,105 50,115 C 30,105 15,85 15,65 L 15,25 Z"
+                fill="none"
+                stroke="#00D4FF"
+                strokeWidth="5"
+              />
+              <polygon points="50,30 54,42 66,42 56,50 60,62 50,54 40,62 44,50 34,42 46,42" fill="#00D4FF" />
+            </svg>
+            <div>
+              <h1 className="brand-title">CRIMEVISION AI</h1>
+              <p className="brand-tagline">AI INTELLIGENCE PLATFORM</p>
+              <p className="brand-governance">KARNATAKA STATE POLICE · GOVERNMENT OF KARNATAKA</p>
             </div>
           </div>
-        )}
 
-        {/* ── Login Form ───────────────────────────────────────────────── */}
-        {!loginSuccess && (
-          <>
-            <form
-              onSubmit={handleLogin}
-              style={{
-                background: 'rgba(2,6,23,0.9)',
-                border: '1px solid rgba(0,240,255,0.15)',
-                borderRadius: 16, padding: 28,
-                backdropFilter: 'blur(20px)',
-                boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
-              }}
-            >
-              <div style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b',
-                  textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 24,
-                  display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Lock size={12} color="#00f0ff" />
-                  Authorized Personnel Only
-                </div>
+          {/* Custom Animated Map SVG Area */}
+          <div className="map-illustration">
+            <svg viewBox="0 0 300 400" className="karnataka-map-svg">
+              {/* Karnataka Outlines */}
+              <path
+                d="M 170,40 L 195,65 L 180,95 L 215,115 L 205,150 L 190,170 L 225,230 L 210,270 L 230,305 L 220,325 L 210,320 L 200,345 L 175,375 L 155,365 L 165,340 L 130,335 L 115,345 L 90,320 L 85,270 L 75,235 L 68,190 L 80,140 L 75,120 L 105,115 L 125,80 Z"
+                fill="none"
+                stroke="rgba(0, 212, 255, 0.18)"
+                strokeWidth="2"
+                strokeDasharray="4 2"
+              />
+              
+              {/* Network Connections */}
+              <line x1="205" y1="320" x2="150" y2="350" stroke="rgba(0, 212, 255, 0.15)" strokeWidth="1" />
+              <line x1="205" y1="320" x2="205" y2="125" stroke="rgba(0, 212, 255, 0.15)" strokeWidth="1" />
+              <line x1="180" y1="80" x2="205" y2="125" stroke="rgba(0, 212, 255, 0.15)" strokeWidth="1" />
+              <line x1="85" y1="135" x2="180" y2="80" stroke="rgba(0, 212, 255, 0.15)" strokeWidth="1" />
+              <line x1="85" y1="135" x2="150" y2="350" stroke="rgba(0, 212, 255, 0.15)" strokeWidth="1" />
+              <line x1="205" y1="125" x2="85" y2="135" stroke="rgba(0, 212, 255, 0.15)" strokeWidth="1" />
 
-                {/* Username */}
-                <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 700,
-                    color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
-                    {t.login_username}
-                  </label>
-                  <div style={{ position: 'relative' }}>
-                    <User size={14} style={{ position: 'absolute', left: 14, top: '50%',
-                      transform: 'translateY(-50%)', color: '#475569' }} />
-                    <input
-                      id="login-username"
-                      type="text"
-                      value={username}
-                      onChange={e => { setUsername(e.target.value); setError(''); }}
-                      autoComplete="username"
-                      placeholder="Enter username or badge number"
-                      required
-                      style={{
-                        width: '100%', padding: '12px 14px 12px 40px',
-                        background: 'rgba(10,22,40,0.8)',
-                        border: `1px solid ${error ? 'rgba(239,68,68,0.4)' : 'rgba(0,240,255,0.2)'}`,
-                        borderRadius: 10, color: '#f1f5f9', fontSize: 14,
-                        outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box',
-                        transition: 'border-color 0.2s',
-                      }}
-                      onFocus={e => { e.currentTarget.style.borderColor = 'rgba(0,240,255,0.5)'; }}
-                      onBlur={e => { e.currentTarget.style.borderColor = error ? 'rgba(239,68,68,0.4)' : 'rgba(0,240,255,0.2)'; }}
-                    />
-                  </div>
-                </div>
+              {/* Major Cities Dots with staggered pulses */}
+              {/* Bengaluru */}
+              <g transform="translate(205, 320)">
+                <circle r="10" className="pulse-ring ring-1" fill="none" stroke="#00D4FF" strokeWidth="1.5" />
+                <circle r="4" fill="#00D4FF" />
+              </g>
+              {/* Kalaburagi */}
+              <g transform="translate(180, 80)">
+                <circle r="10" className="pulse-ring ring-2" fill="none" stroke="#00D4FF" strokeWidth="1.5" />
+                <circle r="4" fill="#00D4FF" />
+              </g>
+              {/* Mysuru */}
+              <g transform="translate(150, 350)">
+                <circle r="10" className="pulse-ring ring-3" fill="none" stroke="#00D4FF" strokeWidth="1.5" />
+                <circle r="4" fill="#00D4FF" />
+              </g>
+              {/* Raichur */}
+              <g transform="translate(205, 125)">
+                <circle r="10" className="pulse-ring ring-4" fill="none" stroke="#00D4FF" strokeWidth="1.5" />
+                <circle r="4" fill="#00D4FF" />
+              </g>
+              {/* Belagavi */}
+              <g transform="translate(85, 135)">
+                <circle r="10" className="pulse-ring ring-5" fill="none" stroke="#00D4FF" strokeWidth="1.5" />
+                <circle r="4" fill="#00D4FF" />
+              </g>
+            </svg>
 
-                {/* Password */}
-                <div style={{ marginBottom: 8 }}>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 700,
-                    color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
-                    {t.login_password}
-                  </label>
-                  <div style={{ position: 'relative' }}>
-                    <Lock size={14} style={{ position: 'absolute', left: 14, top: '50%',
-                      transform: 'translateY(-50%)', color: '#475569' }} />
-                    <input
-                      id="login-password"
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={e => { setPassword(e.target.value); setError(''); }}
-                      autoComplete="current-password"
-                      placeholder="Enter your secure password"
-                      required
-                      style={{
-                        width: '100%', padding: '12px 44px 12px 40px',
-                        background: 'rgba(10,22,40,0.8)',
-                        border: `1px solid ${error ? 'rgba(239,68,68,0.4)' : 'rgba(0,240,255,0.2)'}`,
-                        borderRadius: 10, color: '#f1f5f9', fontSize: 14,
-                        outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box',
-                        transition: 'border-color 0.2s',
-                      }}
-                      onFocus={e => { e.currentTarget.style.borderColor = 'rgba(0,240,255,0.5)'; }}
-                      onBlur={e => { e.currentTarget.style.borderColor = error ? 'rgba(239,68,68,0.4)' : 'rgba(0,240,255,0.2)'; }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(v => !v)}
-                      style={{ position: 'absolute', right: 12, top: '50%',
-                        transform: 'translateY(-50%)', background: 'none', border: 'none',
-                        cursor: 'pointer', color: '#475569', padding: 4 }}
-                    >
-                      {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                    </button>
-                  </div>
+            {/* Stats pills */}
+            <div className="stats-row">
+              <span className="stats-pill"><span className="bullet bullet-blue">🔵</span> 82,089 CASES</span>
+              <span className="stats-pill"><span className="bullet bullet-green">🟢</span> 94.7% ACCURACY</span>
+              <span className="stats-pill"><span className="bullet bullet-red">🔴</span> HIGH ALERT</span>
+            </div>
+          </div>
+
+          {/* Quote Rotation Area */}
+          <div className="quotes-area">
+            <p className={`quote-text ${quoteFade ? 'quote-in' : 'quote-out'}`}>
+              "{quotes[quoteIdx]}"
+            </p>
+            <p className="quote-attribution">
+              Karnataka State Police  ·  Government of Karnataka  ·  Est. 1963
+            </p>
+          </div>
+
+          {/* Simulation Badge */}
+          <div className="sim-mode-badge">
+            ⚠️ SIMULATION MODE  |  Synthetic Demonstration Data
+          </div>
+
+        </div>
+
+        {/* RIGHT PANEL: SECURE LOGIN FORM */}
+        <div className="right-panel">
+          
+          {/* Logo block for mobile screen sizes (hidden on desktop) */}
+          <div className="mobile-only-logo">
+            <svg viewBox="0 0 100 120" width="36" height="44" style={{ marginBottom: '8px' }}>
+              <path
+                d="M 50,5 L 85,25 L 85,65 C 85,85 70,105 50,115 C 30,105 15,85 15,65 L 15,25 Z"
+                fill="none"
+                stroke="#00D4FF"
+                strokeWidth="5"
+              />
+              <polygon points="50,30 54,42 66,42 56,50 60,62 50,54 40,62 44,50 34,42 46,42" fill="#00D4FF" />
+            </svg>
+            <h1 style={{ fontSize: '15px', fontWeight: 800, color: '#F0F8FF', margin: 0, letterSpacing: '1px' }}>CRIMEVISION AI</h1>
+            <p style={{ fontSize: '9px', fontWeight: 500, color: '#6B8CAE', margin: 0, letterSpacing: '1.5px' }}>KARNATAKA STATE POLICE</p>
+          </div>
+
+          <div className="login-card">
+            
+            {/* Header */}
+            <div className="portal-header">
+              <h2 className="portal-title">SECURE ACCESS PORTAL</h2>
+              <p className="portal-subtitle">Officer Authentication Required</p>
+              <div className="title-bar-accent" />
+            </div>
+
+            {/* Role Selectors */}
+            <div className="role-grid">
+              <button
+                type="button"
+                onClick={() => handleRoleChange('Officer')}
+                className={`role-btn ${selectedRole === 'Officer' ? 'selected' : ''}`}
+              >
+                <div style={{ fontSize: '22px', marginBottom: '4px' }}>👮</div>
+                <div className="role-btn-title">Officer</div>
+                <div className="role-btn-sub">Field Units</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleRoleChange('Commissioner')}
+                className={`role-btn ${selectedRole === 'Commissioner' ? 'selected' : ''}`}
+              >
+                <div style={{ fontSize: '22px', marginBottom: '4px' }}>🎖️</div>
+                <div className="role-btn-title">Commissioner</div>
+                <div className="role-btn-sub">Senior Command</div>
+              </button>
+            </div>
+
+            {/* Input Form */}
+            <form onSubmit={handleLoginSubmit} className={`form-fields ${shake ? 'shake-anim' : ''}`}>
+              
+              {/* Badge ID Input */}
+              <div className="field-group">
+                <label className="field-label">BADGE / SERVICE ID</label>
+                <div className="input-icon-wrapper">
+                  <CreditCard className="input-icon-left" size={16} />
+                  <input
+                    type="text"
+                    value={badgeId}
+                    onChange={(e) => { setBadgeId(e.target.value); setError(''); }}
+                    placeholder="Enter your badge number..."
+                    className={`form-input ${error ? 'input-error' : ''}`}
+                    disabled={loading || bioScanning}
+                    required
+                  />
                 </div>
               </div>
 
-              {/* Error */}
-              {error && (
-                <div style={{
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  padding: '10px 14px', borderRadius: 8, marginBottom: 16,
-                  background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)',
-                }}>
-                  <AlertTriangle size={14} color="#ef4444" />
-                  <span style={{ fontSize: 13, color: '#ef4444' }}>{error}</span>
+              {/* Access Code Input */}
+              <div className="field-group">
+                <label className="field-label">ACCESS CODE</label>
+                <div className="input-icon-wrapper">
+                  <Lock className="input-icon-left" size={16} />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={accessCode}
+                    onChange={(e) => { setAccessCode(e.target.value); setError(''); }}
+                    placeholder="Enter your access code..."
+                    className={`form-input ${error ? 'input-error' : ''}`}
+                    disabled={loading || bioScanning}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="password-toggle-btn"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
-              )}
+              </div>
 
-              {/* Submit */}
+              {/* Error messages */}
+              {error && <div className="error-message">{error}</div>}
+
+              {/* Remember + Forgot Row */}
+              <div className="utility-row">
+                <label className="remember-label">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="remember-checkbox"
+                  />
+                  <span>Remember this device</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => alert("Please contact the KSP Admin Desk to reset your access credentials.")}
+                  className="forgot-btn"
+                >
+                  Forgot Access Code?
+                </button>
+              </div>
+
+              {/* Submit Button */}
               <button
-                id="login-submit-btn"
                 type="submit"
-                disabled={loading}
-                style={{
-                  width: '100%', padding: '13px',
-                  background: loading
-                    ? 'rgba(0,240,255,0.05)'
-                    : 'linear-gradient(135deg, rgba(0,240,255,0.15), rgba(139,92,246,0.15))',
-                  border: '1px solid rgba(0,240,255,0.35)',
-                  borderRadius: 10, color: loading ? '#64748b' : '#00f0ff',
-                  fontSize: 13, fontWeight: 800, letterSpacing: '0.12em',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  textTransform: 'uppercase', fontFamily: 'inherit',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-                  transition: 'all 0.2s',
-                }}
+                className="authenticate-btn"
+                disabled={loading || bioScanning}
               >
                 {loading ? (
                   <>
-                    <div style={{
-                      width: 16, height: 16, borderRadius: '50%',
-                      border: '2px solid rgba(0,240,255,0.2)',
-                      borderTopColor: '#00f0ff',
-                      animation: 'spin 0.8s linear infinite',
-                    }} />
-                    Authenticating...
+                    <Loader size={18} className="spinner" />
+                    <span>AUTHENTICATING...</span>
                   </>
                 ) : (
                   <>
-                    <Zap size={16} />
-                    {t.btn_login}
+                    <span>🔐 AUTHENTICATE & ACCESS</span>
                   </>
                 )}
               </button>
+
+              {/* Divider */}
+              <div className="or-divider">
+                <div className="or-line" />
+                <span className="or-text">OR ACCESS VIA</span>
+                <div className="or-line" />
+              </div>
+
+              {/* Biometric trigger button */}
+              <button
+                type="button"
+                onClick={triggerBiometricScan}
+                className="biometric-btn"
+                disabled={loading || bioScanning}
+              >
+                {bioScanning ? (
+                  <>
+                    <Loader size={16} className="spinner" style={{ color: '#00D4FF' }} />
+                    <span style={{ color: '#00D4FF' }}>SCANNING FINGERPRINT...</span>
+                  </>
+                ) : (
+                  <>
+                    <Fingerprint size={16} />
+                    <span>Biometric Authentication</span>
+                  </>
+                )}
+              </button>
+
             </form>
 
-            {/* ── Demo Accounts ──────────────────────────────────────── */}
-            <div style={{
-              marginTop: 20,
-              background: 'rgba(2,6,23,0.7)',
-              border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: 16, padding: 20,
-            }}>
-              <div style={{
-                fontSize: 10, fontWeight: 800, color: '#64748b',
-                textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 14,
-                display: 'flex', alignItems: 'center', gap: 6,
-              }}>
-                <div style={{ width: 14, height: 1, background: 'rgba(100,116,139,0.4)' }} />
-                {t.login_demo_accounts} — Click to fill
-                <div style={{ flex: 1, height: 1, background: 'rgba(100,116,139,0.4)' }} />
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {DEMO_ACCOUNTS.map(acc => (
-                  <button
-                    key={acc.username}
-                    id={`demo-${acc.username}`}
-                    type="button"
-                    onClick={() => fillDemo(acc)}
-                    style={{
-                      padding: '12px 16px', borderRadius: 10,
-                      background: username === acc.username
-                        ? `rgba(${acc.role === 'DGP' ? '239,68,68' : acc.role === 'Commissioner' ? '245,158,11' : '0,240,255'},0.06)`
-                        : 'rgba(255,255,255,0.02)',
-                      border: `1px solid ${username === acc.username
-                        ? `rgba(${acc.role === 'DGP' ? '239,68,68' : acc.role === 'Commissioner' ? '245,158,11' : '0,240,255'},0.3)`
-                        : 'rgba(255,255,255,0.06)'}`,
-                      cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit',
-                      transition: 'all 0.2s',
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: '#f1f5f9' }}>
-                        {acc.name}
-                      </span>
-                      <span style={{
-                        fontSize: 9, fontWeight: 800, padding: '2px 8px', borderRadius: 10,
-                        background: `rgba(${acc.role === 'DGP' ? '239,68,68' : acc.role === 'Commissioner' ? '245,158,11' : '0,240,255'},0.12)`,
-                        color: roleColor(acc.role),
-                        border: `1px solid rgba(${acc.role === 'DGP' ? '239,68,68' : acc.role === 'Commissioner' ? '245,158,11' : '0,240,255'},0.3)`,
-                        textTransform: 'uppercase', letterSpacing: '0.08em',
-                      }}>
-                        {acc.role}
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', gap: 16, fontSize: 11 }}>
-                      <span style={{ color: '#64748b' }}>
-                        User: <span style={{ color: '#00f0ff', fontFamily: 'monospace', fontWeight: 600 }}>{acc.username}</span>
-                      </span>
-                      <span style={{ color: '#64748b' }}>
-                        Pass: <span style={{ color: '#10b981', fontFamily: 'monospace', fontWeight: 600 }}>{acc.password}</span>
-                      </span>
-                    </div>
-                    <div style={{ fontSize: 11, color: '#475569', marginTop: 4 }}>
-                      {acc.designation} · Badge: {acc.badgeNumber} · {accessLabel(acc.role)}
-                    </div>
-                  </button>
-                ))}
-              </div>
+            {/* Security Footer */}
+            <div className="security-info">
+              <div className="info-title">🔒 256-bit Encrypted · Government Secured · Session Monitored</div>
+              <div className="info-sub">Karnataka State Police · CrimeVision AI v2.0</div>
+              <div className="info-sub text-[#FF3B3B]/70 font-semibold" style={{ marginTop: '2px' }}>Authorized Personnel Only</div>
             </div>
 
-            {/* Footer note */}
-            <div style={{ textAlign: 'center', marginTop: 20 }}>
-              <p style={{ fontSize: 10, color: '#334155', lineHeight: 1.6 }}>
-                This system is restricted to authorized Karnataka State Police personnel.<br />
-                Unauthorized access is a punishable offence under IT Act 2000.
-              </p>
-              <p style={{ fontSize: 10, color: '#1e293b', marginTop: 4 }}>
-                KSP Datathon 2026 • CrimeVision AI v6.0
-              </p>
-            </div>
-          </>
-        )}
+          </div>
+
+        </div>
+
       </div>
 
-      {/* CSS for animations */}
+      {/* ──────────────────────────────────────────────────────────────────────── */}
+      {/* DESIGN SYSTEM CSS                                                        */}
+      {/* ──────────────────────────────────────────────────────────────────────── */}
       <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
+        .login-wrapper {
+          min-height: 100vh;
+          background: #0A1628;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: 'Inter', sans-serif;
+          overflow: hidden;
+          position: relative;
         }
+
+        .login-container {
+          width: 100%;
+          min-height: 100vh;
+          display: flex;
+          transition: opacity 0.4s ease;
+        }
+
+        .fade-out-all {
+          opacity: 0.1;
+          pointer-events: none;
+        }
+
+        /* LEFT PANEL styling */
+        .left-panel {
+          width: 60%;
+          background: #0A1628;
+          height: 100vh;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 40px;
+          border-right: 1px solid #1A3A5C;
+          box-sizing: border-box;
+          position: relative;
+          opacity: 0;
+          animation: leftPanelIn 0.6s ease-out 0.2s forwards;
+        }
+
+        .brand-header {
+          display: flex;
+          align-items: center;
+        }
+
+        .brand-title {
+          font-size: 22px;
+          font-weight: 800;
+          color: #F0F8FF;
+          margin: 0;
+          letter-spacing: 1px;
+        }
+
+        .brand-tagline {
+          font-size: 11px;
+          font-weight: 500;
+          color: #6B8CAE;
+          margin: 2px 0 0;
+          letter-spacing: 2px;
+        }
+
+        .brand-governance {
+          font-size: 9px;
+          font-weight: 400;
+          color: #4A6A8A;
+          margin: 4px 0 0;
+          letter-spacing: 0.5px;
+        }
+
+        /* SVG Map illustration */
+        .map-illustration {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          max-height: 50%;
+        }
+
+        .karnataka-map-svg {
+          width: 100%;
+          max-width: 250px;
+          height: auto;
+          filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.1));
+        }
+
+        /* Pulsing dot animations */
+        .pulse-ring {
+          transform-origin: center;
+        }
+        
+        .ring-1 { animation: mapPulse 2s infinite; }
+        .ring-2 { animation: mapPulse 2s infinite 0.3s; }
+        .ring-3 { animation: mapPulse 2s infinite 0.6s; }
+        .ring-4 { animation: mapPulse 2s infinite 0.9s; }
+        .ring-5 { animation: mapPulse 2s infinite 1.2s; }
+
+        @keyframes mapPulse {
+          0% { transform: scale(0.6); opacity: 1; }
+          50% { transform: scale(1.6); opacity: 0; }
+          100% { transform: scale(0.6); opacity: 0; }
+        }
+
+        /* Stats pills */
+        .stats-row {
+          display: flex;
+          gap: 10px;
+          margin-top: 24px;
+        }
+
+        .stats-pill {
+          background: rgba(0, 212, 255, 0.08);
+          border: 1px solid rgba(0, 212, 255, 0.2);
+          color: #00D4FF;
+          font-size: 11px;
+          font-weight: 600;
+          border-radius: 20px;
+          padding: 6px 14px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .bullet {
+          font-size: 9px;
+        }
+
+        /* Rotating quotes area */
+        .quotes-area {
+          text-align: center;
+          margin: 0 auto;
+          max-width: 440px;
+        }
+
+        .quote-text {
+          font-size: 16px;
+          font-weight: 300;
+          color: #8899AA;
+          font-style: italic;
+          margin: 0 0 12px;
+          line-height: 1.5;
+          min-height: 48px;
+          transition: opacity 0.3s ease;
+        }
+
+        .quote-in { opacity: 1; }
+        .quote-out { opacity: 0; }
+
+        .quote-attribution {
+          font-size: 10px;
+          color: #4A6A8A;
+          margin: 0;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+        }
+
+        .sim-mode-badge {
+          position: absolute;
+          bottom: 24px;
+          left: 40px;
+          font-size: 10px;
+          color: #FFB300;
+          background: rgba(255, 179, 0, 0.08);
+          border: 1px solid rgba(255, 179, 0, 0.15);
+          border-radius: 4px;
+          padding: 4px 10px;
+          letter-spacing: 0.5px;
+        }
+
+        /* RIGHT PANEL styling */
+        .right-panel {
+          width: 40%;
+          background: #0D1B2E;
+          height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 40px;
+          box-sizing: border-box;
+          transform: translateX(40px);
+          opacity: 0;
+          animation: rightPanelIn 0.5s ease-out forwards;
+        }
+
+        .mobile-only-logo {
+          display: none;
+          flex-direction: column;
+          align-items: center;
+          margin-bottom: 24px;
+        }
+
+        .login-card {
+          width: 100%;
+          max-width: 360px;
+        }
+
+        .portal-header {
+          text-align: center;
+          margin-bottom: 32px;
+        }
+
+        .portal-title {
+          font-size: 18px;
+          font-weight: 700;
+          color: #F0F8FF;
+          margin: 0;
+          letter-spacing: 1.5px;
+        }
+
+        .portal-subtitle {
+          font-size: 13px;
+          font-weight: 400;
+          color: #6B8CAE;
+          margin: 6px 0 0;
+        }
+
+        .title-bar-accent {
+          width: 40px;
+          height: 2px;
+          background: #00D4FF;
+          margin: 12px auto 0;
+        }
+
+        /* Role Selector */
+        .role-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+          margin-bottom: 24px;
+        }
+
+        .role-btn {
+          background: #0A1628;
+          border: 1px solid #1A3A5C;
+          border-radius: 8px;
+          padding: 16px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          text-align: center;
+          outline: none;
+        }
+
+        .role-btn:hover {
+          border-color: rgba(0, 212, 255, 0.4);
+        }
+
+        .role-btn.selected {
+          border-color: #00D4FF;
+          background: rgba(0, 212, 255, 0.06);
+        }
+
+        .role-btn-title {
+          font-size: 13px;
+          font-weight: 600;
+          color: #F0F8FF;
+        }
+
+        .role-btn-sub {
+          font-size: 11px;
+          color: #6B8CAE;
+          margin-top: 2px;
+        }
+
+        /* Input styling */
+        .form-fields {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .field-group {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .field-label {
+          font-size: 11px;
+          font-weight: 600;
+          color: #6B8CAE;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+        }
+
+        .input-icon-wrapper {
+          position: relative;
+        }
+
+        .input-icon-left {
+          position: absolute;
+          left: 14px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #6B8CAE;
+        }
+
+        .form-input {
+          width: 100%;
+          background: #0A1628;
+          border: 1px solid #1A3A5C;
+          border-radius: 8px;
+          height: 48px;
+          padding: 0 16px 0 44px;
+          color: #F0F8FF;
+          font-size: 14px;
+          outline: none;
+          box-sizing: border-box;
+          transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+          border-color: #00D4FF;
+          box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .form-input.input-error {
+          border-color: #FF3B3B;
+          box-shadow: 0 0 0 3px rgba(255, 59, 59, 0.1);
+        }
+
+        .password-toggle-btn {
+          position: absolute;
+          right: 14px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: #6B8CAE;
+          padding: 4px;
+        }
+
+        .password-toggle-btn:hover {
+          color: #F0F8FF;
+        }
+
+        .error-message {
+          font-size: 12px;
+          color: #FF3B3B;
+          margin-top: -8px;
+          font-weight: 600;
+        }
+
+        /* Checkbox & Forgot */
+        .utility-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 8px;
+        }
+
+        .remember-label {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 12px;
+          color: #8899AA;
+          cursor: pointer;
+        }
+
+        .remember-checkbox {
+          accent-color: #00D4FF;
+          cursor: pointer;
+        }
+
+        .forgot-btn {
+          background: none;
+          border: none;
+          font-size: 12px;
+          color: #00D4FF;
+          cursor: pointer;
+          padding: 2px;
+        }
+
+        .forgot-btn:hover {
+          text-decoration: underline;
+        }
+
+        /* Authenticate Button */
+        .authenticate-btn {
+          width: 100%;
+          height: 52px;
+          background: #00D4FF;
+          color: #0A1628;
+          font-size: 14px;
+          font-weight: 700;
+          letter-spacing: 1.5px;
+          border-radius: 8px;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          transition: all 0.2s ease;
+          text-transform: uppercase;
+        }
+
+        .authenticate-btn:hover {
+          background: #00B8D9;
+          transform: translateY(-1px);
+        }
+
+        .authenticate-btn:active {
+          transform: translateY(0);
+        }
+
+        .spinner {
+          animation: spin 0.8s linear infinite;
+        }
+
         @keyframes spin {
           to { transform: rotate(360deg); }
         }
-        @keyframes loadBar {
-          from { width: 0%; }
+
+        /* OR Divider */
+        .or-divider {
+          display: flex;
+          align-items: center;
+          margin-top: 8px;
+        }
+
+        .or-line {
+          flex: 1;
+          height: 1px;
+          background: rgba(26, 58, 92, 0.6);
+        }
+
+        .or-text {
+          font-size: 11px;
+          color: #4A6A8A;
+          padding: 0 12px;
+          letter-spacing: 1px;
+        }
+
+        /* Biometric Button */
+        .biometric-btn {
+          width: 100%;
+          height: 44px;
+          background: transparent;
+          border: 1px solid #1A3A5C;
+          color: #8899AA;
+          font-size: 13px;
+          font-weight: 600;
+          border-radius: 8px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          transition: all 0.2s ease;
+        }
+
+        .biometric-btn:hover {
+          border-color: #00D4FF;
+          color: #00D4FF;
+        }
+
+        /* Security Info Panel */
+        .security-info {
+          text-align: center;
+          margin-top: 32px;
+        }
+
+        .info-title {
+          font-size: 10px;
+          color: #4A6A8A;
+          letter-spacing: 0.5px;
+          margin-bottom: 6px;
+        }
+
+        .info-sub {
+          font-size: 10px;
+          color: #3A5A7A;
+          letter-spacing: 0.2px;
+          line-height: 1.4;
+        }
+
+        /* SUCCESS OVERLAY */
+        .success-overlay {
+          position: fixed;
+          inset: 0;
+          background: #0A1628;
+          z-index: 9999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          animation: successBgIn 0.3s ease-out;
+        }
+
+        .success-content {
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .shield-success-svg {
+          filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.4));
+          margin-bottom: 24px;
+          animation: shieldSuccessPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .success-title {
+          font-size: 24px;
+          font-weight: 900;
+          color: #F0F8FF;
+          letter-spacing: 2px;
+          margin: 0 0 8px;
+          animation: fadeInUp 0.4s ease-out 0.2s forwards;
+          opacity: 0;
+        }
+
+        .success-subtitle {
+          font-size: 14px;
+          color: #6B8CAE;
+          margin: 0 0 32px;
+          animation: fadeInUp 0.4s ease-out 0.3s forwards;
+          opacity: 0;
+        }
+
+        .progress-track {
+          width: 240px;
+          height: 4px;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 2px;
+          overflow: hidden;
+          animation: fadeInUp 0.4s ease-out 0.4s forwards;
+          opacity: 0;
+        }
+
+        .progress-fill {
+          height: 100%;
+          background: #00D4FF;
+          width: 0%;
+          animation: fillProgress 1.6s ease-in-out 0.5s forwards;
+          box-shadow: 0 0 8px #00D4FF;
+        }
+
+        /* Animations declarations */
+        @keyframes leftPanelIn {
+          to { opacity: 1; }
+        }
+
+        @keyframes rightPanelIn {
+          to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes successBgIn {
+          from { background: transparent; }
+          to { background: #0A1628; }
+        }
+
+        @keyframes shieldSuccessPop {
+          from { transform: scale(0.5); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fillProgress {
           to { width: 100%; }
         }
+
+        @keyframes fadeInUp {
+          from { transform: translateY(15px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Shake animation for errors */
+        .shake-anim {
+          animation: shake 0.3s ease-in-out;
+        }
+
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          20%, 60% { transform: translateX(-8px); }
+          40%, 80% { transform: translateX(8px); }
+        }
+
+        /* RESPONSIVE MEDIA QUERIES */
+        @media (max-width: 1024px) {
+          .left-panel {
+            width: 45%;
+            padding: 30px;
+          }
+          .right-panel {
+            width: 55%;
+            padding: 30px;
+          }
+          .karnataka-map-svg {
+            max-width: 200px;
+          }
+          .stats-row {
+            flex-wrap: wrap;
+            justify-content: center;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .left-panel {
+            display: none !important;
+          }
+          .right-panel {
+            width: 100%;
+            padding: 40px 24px;
+          }
+          .mobile-only-logo {
+            display: flex;
+          }
+          .portal-header {
+            margin-bottom: 24px;
+          }
+          .role-grid {
+            margin-bottom: 20px;
+          }
+        }
       `}</style>
+
     </div>
   );
 }
