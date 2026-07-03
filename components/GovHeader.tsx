@@ -41,7 +41,7 @@ export default function GovHeader() {
           flexShrink: 0,
         }}>
           <img
-            src="/cm-portrait.png"
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/cm-portrait.png`}
             alt="Hon'ble Chief Minister"
             width={48}
             height={48}
@@ -87,7 +87,7 @@ export default function GovHeader() {
           flexShrink: 0,
         }}>
           <img
-            src="/ksp-emblem.png"
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/ksp-emblem.png`}
             alt="Karnataka State Police Emblem"
             width={50}
             height={50}
@@ -151,7 +151,7 @@ export default function GovHeader() {
           flexShrink: 0,
         }}>
           <img
-            src="/hm-portrait.png"
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/hm-portrait.png`}
             alt="Hon'ble Home Minister"
             width={48}
             height={48}

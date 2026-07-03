@@ -26,7 +26,7 @@ export default function GovFooter() {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <img
-            src="/ksp-emblem.png"
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/ksp-emblem.png`}
             alt="Karnataka State Police Emblem"
             width={32}
             height={32}

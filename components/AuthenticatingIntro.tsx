@@ -59,7 +59,7 @@ export default function AuthenticatingIntro({ onComplete }: { onComplete: () => 
       {/* KSP Emblem */}
       <div style={{ marginBottom: 24 }}>
         <img
-          src="/ksp-emblem.png"
+          src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/ksp-emblem.png`}
           alt="Karnataka State Police"
           width={72}
           height={72}
