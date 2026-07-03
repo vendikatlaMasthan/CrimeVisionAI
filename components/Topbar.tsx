@@ -382,12 +382,18 @@ export default function Topbar({ user, portalType }: TopbarProps) {
         </div>
 
         {/* Center: Global Search */}
-        <div className="relative mx-6" ref={dropdownRef} style={{ flex: '1 1 auto', maxWidth: '420px', minWidth: '150px', height: '40px' }}>
+        <div className="relative ml-6 mr-3" ref={dropdownRef} style={{ flex: '1 1 auto', maxWidth: '420px', minWidth: '150px', height: '40px' }}>
           <div className="relative flex items-center w-full h-full">
             <Search 
               size={15} 
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-10 pointer-events-none" 
-              style={{ color: 'var(--text-muted)' }} 
+              className="pointer-events-none z-10" 
+              style={{ 
+                color: 'var(--text-muted)',
+                position: 'absolute',
+                left: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+              }} 
             />
             <input
               ref={inputRef}
@@ -401,12 +407,14 @@ export default function Topbar({ user, portalType }: TopbarProps) {
               onChange={e => { setSearchQuery(e.target.value); setShowDropdown(true); setActiveIdx(-1); }}
               onFocus={() => setShowDropdown(true)}
               onKeyDown={handleKeyDown}
-              className="w-full h-full pl-9 pr-16 text-xs transition-all duration-200 text-[var(--text-primary)] outline-none"
+              className="w-full h-full text-xs transition-all duration-200 text-[var(--text-primary)] outline-none"
               style={{
                 background: 'var(--bg-input)',
                 border: '1px solid var(--border-default)',
                 borderRadius: '8px',
                 color: 'var(--text-primary)',
+                paddingLeft: '36px',
+                paddingRight: '48px',
               }}
               onFocusCapture={e => { 
                 e.currentTarget.style.borderColor = 'var(--accent-cyan)';
@@ -888,26 +896,27 @@ export default function Topbar({ user, portalType }: TopbarProps) {
           )}
         </div>
 
+        {/* Presentation Mode Toggle - placed as a sibling flex item after the search bar */}
+        <button
+          onClick={togglePresentationMode}
+          title={isPresentationMode ? "Exit Projector View" : "Presentation Mode (Projector)"}
+          className="w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition-colors flex-shrink-0 mr-3"
+          style={{
+            background: isPresentationMode ? 'var(--accent-cyan-dim)' : 'transparent',
+            color: isPresentationMode ? 'var(--accent-cyan)' : 'var(--text-muted)',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = isPresentationMode ? 'var(--accent-cyan-dim)' : 'transparent';
+          }}
+        >
+          <Monitor size={15} />
+        </button>
+
         {/* Right: Spaced Actions Row */}
         <div className="flex items-center gap-3 justify-end">
-          {/* Presentation Mode Toggle */}
-          <button
-            onClick={togglePresentationMode}
-            title={isPresentationMode ? "Exit Projector View" : "Presentation Mode (Projector)"}
-            className="w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition-colors"
-            style={{
-              background: isPresentationMode ? 'var(--accent-cyan-dim)' : 'transparent',
-              color: isPresentationMode ? 'var(--accent-cyan)' : 'var(--text-muted)',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = isPresentationMode ? 'var(--accent-cyan-dim)' : 'transparent';
-            }}
-          >
-            <Monitor size={15} />
-          </button>
 
 
 
