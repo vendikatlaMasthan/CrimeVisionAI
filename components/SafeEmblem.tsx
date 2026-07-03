@@ -39,12 +39,12 @@ export default function SafeEmblem({ width = 50, height = 50, className, style }
 
   return (
     <img
-      src={`${basePath}/seal-karnataka.svg`}
+      src={`${basePath}/crimevision_logo.png`}
       onError={() => {
         console.warn('Emblem failed to load, falling back to placeholder.');
         setError(true);
       }}
-      alt="Official Emblem of the Government of Karnataka"
+      alt="CrimeVision AI Platform Logo"
       width={width}
       height={height}
       className={className}
