@@ -234,7 +234,7 @@ export default function ResourcesPage() {
                           {rec.status.toUpperCase()}
                         </span>
                       </div>
-                      <h3 className="font-bold" style={{ color: '#f1f5f9', fontSize: '15px' }}>{rec.action}</h3>
+                      <h3 className="font-bold" style={{ color: 'var(--text-primary)', fontSize: '15px' }}>{rec.action}</h3>
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5" style={{ color: '#64748b', fontSize: '12px' }}>
@@ -243,13 +243,14 @@ export default function ResourcesPage() {
                   </div>
                 </div>
 
-                <p style={{ color: '#cbd5e1', fontSize: '13px', lineHeight: '1.6', marginBottom: '12px' }}>{rec.reason}</p>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.6', marginBottom: '12px' }}>{rec.reason}</p>
 
                 {selectedRec === rec.id && (
                   <div
                     className="animate-fadeInUp"
                     style={{
-                      background: 'rgba(0, 0, 0, 0.2)',
+                      background: '#F9FAFB',
+                      border: '1px solid #E5E7EB',
                       borderRadius: '8px',
                       padding: '12px',
                       marginBottom: '12px',
@@ -262,7 +263,7 @@ export default function ResourcesPage() {
                       </div>
                       <div>
                         <div style={{ color: '#64748b', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>Timeline</div>
-                        <div style={{ color: '#f1f5f9', fontSize: '14px', fontWeight: 600 }}>{rec.timeline}</div>
+                        <div style={{ color: 'var(--text-primary)', fontSize: '14px', fontWeight: 600 }}>{rec.timeline}</div>
                       </div>
                     </div>
                     <div style={{ color: '#64748b', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>Expected Impact</div>
@@ -366,9 +367,9 @@ export default function ResourcesPage() {
                   <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: item.color }} />
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
-                      <span style={{ color: '#cbd5e1', fontSize: '13px' }}>{item.category}</span>
+                      <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>{item.category}</span>
                       <div className="flex gap-3">
-                        <span style={{ color: '#f1f5f9', fontSize: '13px', fontWeight: 700 }}>₹{item.amount}Cr</span>
+                        <span style={{ color: 'var(--text-primary)', fontSize: '13px', fontWeight: 700 }}>₹{item.amount}Cr</span>
                         <span style={{ color: '#64748b', fontSize: '12px' }}>{item.percentage}%</span>
                       </div>
                     </div>
@@ -412,15 +413,15 @@ export default function ResourcesPage() {
                   <td>
                     <div className="flex items-center gap-2">
                       <MapPin size={12} style={{ color: '#64748b' }} />
-                      <span style={{ color: '#f1f5f9', fontWeight: 600 }}>{d.district}</span>
+                      <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{d.district}</span>
                     </div>
                   </td>
-                  <td style={{ color: '#cbd5e1' }}>{d.totalOfficers.toLocaleString()}</td>
-                  <td style={{ color: '#cbd5e1' }}>{d.deployedPatrol.toLocaleString()}</td>
+                  <td style={{ color: 'var(--text-secondary)' }}>{d.totalOfficers.toLocaleString()}</td>
+                  <td style={{ color: 'var(--text-secondary)' }}>{d.deployedPatrol.toLocaleString()}</td>
                   <td>
                     <span style={{ color: '#8b5cf6', fontWeight: 700 }}>{d.cyberUnits}</span>
                   </td>
-                  <td style={{ color: '#cbd5e1' }}>{d.detectives}</td>
+                  <td style={{ color: 'var(--text-secondary)' }}>{d.detectives}</td>
                   <td>
                     <div className="flex items-center gap-2">
                       <div className="risk-bar-track" style={{ width: 80 }}>

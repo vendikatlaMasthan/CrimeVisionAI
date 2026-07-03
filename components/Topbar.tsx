@@ -382,7 +382,7 @@ export default function Topbar({ user, portalType }: TopbarProps) {
         </div>
 
         {/* Center: Global Search */}
-        <div className="relative mx-6" ref={dropdownRef} style={{ width: '420px', height: '40px' }}>
+        <div className="relative mx-6" ref={dropdownRef} style={{ flex: '1 1 auto', maxWidth: '420px', minWidth: '150px', height: '40px' }}>
           <div className="relative flex items-center w-full h-full">
             <Search 
               size={15} 

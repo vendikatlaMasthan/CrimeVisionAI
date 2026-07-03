@@ -30,11 +30,11 @@ const CustomTooltip = ({ active, payload }: any) => {
     return (
       <div style={{
         background: '#FFFFFF', border: '1px solid rgba(30, 58, 95,0.22)',
-        borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#f1f5f9'
+        borderRadius: 8, padding: '10px 14px', fontSize: 13, color: 'var(--text-primary)'
       }}>
         <div style={{ color: '#0F6B5C', fontWeight: 700, marginBottom: 4 }}>{payload[0].payload.name}</div>
-        <div style={{ color: '#cbd5e1' }}>Crimes: <strong style={{ color: '#fff' }}>{payload[0].value.toLocaleString()}</strong></div>
-        <div style={{ color: '#cbd5e1' }}>Risk Score: <strong style={{ color: '#fff' }}>{payload[0].payload.score}/100</strong></div>
+        <div style={{ color: 'var(--text-secondary)' }}>Crimes: <strong style={{ color: 'var(--text-primary)' }}>{payload[0].value.toLocaleString()}</strong></div>
+        <div style={{ color: 'var(--text-secondary)' }}>Risk Score: <strong style={{ color: 'var(--text-primary)' }}>{payload[0].payload.score}/100</strong></div>
       </div>
     );
   }
@@ -148,7 +148,7 @@ export default function CommissionerPage() {
               <ShieldAlert size={14} color="#ef4444" />
               <span style={{ fontSize: 11, fontWeight: 900, color: '#ef4444', letterSpacing: '0.05em' }}>INTELLIGENCE ALERT STATUS</span>
             </div>
-            <p style={{ fontSize: 13, color: '#cbd5e1', lineHeight: 1.6, margin: 0 }}>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
               State Threat Matrix index calculated at <strong>CRITICAL (84%)</strong>. High activity anomalies registered across 5 major districts.
               Tactical reinforcements active.
             </p>
@@ -173,9 +173,9 @@ export default function CommissionerPage() {
               { district: 'Ballari', score: 51, shortage: '145 Officers', color: '#ef4444' },
               { district: 'Bidar', score: 56, shortage: '85 Officers', color: '#f59e0b' }
             ].map(s => (
-              <div key={s.district} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 10px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 8 }}>
+              <div key={s.district} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 10px', background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 8 }}>
                 <div>
-                  <div style={{ fontSize: 12, fontWeight: 'bold', color: '#f1f5f9' }}>{s.district}</div>
+                  <div style={{ fontSize: 12, fontWeight: 'bold', color: 'var(--text-primary)' }}>{s.district}</div>
                   <div style={{ fontSize: 10, color: '#64748b' }}>Short: <span style={{ color: s.color, fontWeight: 'bold' }}>{s.shortage}</span></div>
                 </div>
                 <div style={{ textAlign: 'right', alignSelf: 'center' }}>
@@ -280,9 +280,9 @@ export default function CommissionerPage() {
           </div>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={chartData} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
-              <XAxis type="number" tick={{ fill: '#94a3b8', fontSize: 11 }} />
-              <YAxis dataKey="name" type="category" tick={{ fill: '#f1f5f9', fontSize: 11, fontWeight: 600 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
+              <XAxis type="number" tick={{ fill: '#64748B', fontSize: 11 }} />
+              <YAxis dataKey="name" type="category" tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontWeight: 600 }} />
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="crimes" name="Crimes YTD" radius={[0, 4, 4, 0]}>
                 {chartData.map((entry, index) => (
@@ -309,18 +309,18 @@ export default function CommissionerPage() {
                   key={t.id}
                   style={{
                     padding: '10px 12px', borderRadius: 8,
-                    background: isCrit ? 'rgba(239,68,68,0.05)' : 'rgba(0,0,0,0.2)',
-                    border: `1px solid ${isCrit ? 'rgba(239,68,68,0.3)' : 'rgba(255,255,255,0.05)'}`,
+                    background: isCrit ? 'rgba(239,68,68,0.05)' : '#F9FAFB',
+                    border: `1px solid ${isCrit ? 'rgba(239,68,68,0.2)' : '#E5E7EB'}`,
                     display: 'flex', flexDirection: 'column', gap: 4
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ fontSize: 12, fontWeight: 800, color: '#f1f5f9' }}>{t.type}</div>
+                    <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)' }}>{t.type}</div>
                     <span className={isCrit ? 'badge badge-red' : 'badge badge-amber'} style={{ fontSize: 9 }}>
                       {t.severity.toUpperCase()}
                     </span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, color: '#cbd5e1' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, color: 'var(--text-secondary)' }}>
                     <MapPin size={9} color="#64748b" />
                     <span>Districts: <strong>{t.districts}</strong></span>
                   </div>
@@ -355,7 +355,7 @@ export default function CommissionerPage() {
                 className="glass-card"
                 style={{
                   padding: 20,
-                  border: isApproved ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(255,255,255,0.06)',
+                  border: isApproved ? '1px solid rgba(16,185,129,0.3)' : '1px solid #E5E7EB',
                   background: isApproved ? 'rgba(16,185,129,0.04)' : '#FFFFFF',
                   display: 'flex', flexDirection: 'column'
                 }}
@@ -374,15 +374,15 @@ export default function CommissionerPage() {
                   </span>
                 </div>
 
-                <div style={{ fontSize: 13, fontWeight: 800, color: '#f1f5f9', marginBottom: 6, lineHeight: 1.4 }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 6, lineHeight: 1.4 }}>
                   {rec.action}
                 </div>
                 
-                <p style={{ fontSize: 12, color: '#cbd5e1', lineHeight: 1.6, marginBottom: 14, flex: 1 }}>
+                <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 14, flex: 1 }}>
                   {rec.rationale}
                 </p>
 
-                <div style={{ display: 'flex', gap: 8, borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 10 }}>
+                <div style={{ display: 'flex', gap: 8, borderTop: '1px solid #E5E7EB', paddingTop: 10 }}>
                   {isApproved ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#10b981', fontSize: 11, fontWeight: 700, margin: '6px auto 0' }}>
                       <CheckCircle size={13} /> APPROVED &amp; DISPATCHED ✓
@@ -398,7 +398,7 @@ export default function CommissionerPage() {
                       </button>
                       <button
                         className="cyber-btn"
-                        style={{ flex: 1, fontSize: 11, padding: '7px 10px', justifyContent: 'center', background: 'rgba(255,255,255,0.03)', color: '#94a3b8', border: '1px solid rgba(255,255,255,0.08)' }}
+                        style={{ flex: 1, fontSize: 11, padding: '7px 10px', justifyContent: 'center', background: '#FFFFFF', color: '#475569', border: '1px solid #D1D5DB' }}
                       >
                         REVIEW INTEL
                       </button>
@@ -425,7 +425,7 @@ export default function CommissionerPage() {
             { label: 'SIT Crime Teams', value: '6 active', color: '#8b5cf6' },
           ].map((item, idx) => (
             <div key={idx} style={{
-              background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.04)',
+              background: '#F9FAFB', border: '1px solid #E5E7EB',
               padding: '10px 14px', borderRadius: 10, textAlign: 'center'
             }}>
               <div style={{ fontSize: 18, fontWeight: 900, color: item.color }}>{item.value}</div>
@@ -435,7 +435,7 @@ export default function CommissionerPage() {
         </div>
         <div style={{
           background: 'rgba(30, 58, 95,0.04)', border: '1px solid rgba(30, 58, 95,0.15)',
-          borderRadius: 8, padding: '12px 16px', fontSize: 12, color: '#cbd5e1', lineHeight: 1.6
+          borderRadius: 8, padding: '12px 16px', fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6
         }}>
           🎯 <strong>Executive Security Summary:</strong> Response time indices indicate that redeploying 1,200 personnel from the low-activity southern corridor to northern districts (Raichur, Kalaburagi) will yield a <strong>23% increase in state-wide crime resolution efficiency</strong>. SIT Teams have successfully disrupted 3 nodes of the Ballari gang ring in the last 48 hours.
         </div>
@@ -456,7 +456,7 @@ export default function CommissionerPage() {
             '👤 Face Recognition', '🚗 Vehicle ANPR', '📡 IoT Sensors'
           ].map((item, idx) => (
             <div key={idx} style={{
-              background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255, 255, 255, 0.04)',
+              background: '#F9FAFB', border: '1px solid #E5E7EB',
               padding: '12px 16px', borderRadius: 8, textAlign: 'center',
               fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)'
             }}>

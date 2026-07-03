@@ -14,12 +14,12 @@ const CustomTooltip = ({ active, payload }: any) => {
     return (
       <div style={{
         background: '#FFFFFF', border: '1px solid rgba(30, 58, 95,0.25)',
-        borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#f1f5f9',
+        borderRadius: 8, padding: '10px 14px', fontSize: 13, color: 'var(--text-primary)',
       }}>
         <div style={{ fontWeight: 700, color: '#0F6B5C', marginBottom: 4 }}>{d?.district}</div>
         {payload.map((p: any) => (
-          <div key={p.name} style={{ color: '#cbd5e1' }}>
-            {p.name}: <strong style={{ color: '#f1f5f9' }}>{typeof p.value === 'number' ? p.value.toFixed(1) : p.value}</strong>
+          <div key={p.name} style={{ color: 'var(--text-secondary)' }}>
+            {p.name}: <strong style={{ color: 'var(--text-primary)' }}>{typeof p.value === 'number' ? p.value.toFixed(1) : p.value}</strong>
           </div>
         ))}
       </div>
@@ -80,9 +80,9 @@ export default function SocialRiskPage() {
           <div style={{ fontSize: 13, fontWeight: 700, color: '#0F6B5C', marginBottom: 4 }}>
             HACKATHON PROBLEM STATEMENT ALIGNMENT
           </div>
-          <div style={{ fontSize: 14, color: '#cbd5e1', lineHeight: 1.6 }}>
-            This analysis directly addresses the hackathon problem statement — identifying the <strong style={{ color: '#f1f5f9' }}>socio-economic root causes of crime in Karnataka</strong> to enable targeted preventive policing.
-            By correlating unemployment, education, urbanization, and migration data with district crime rates, we enable <strong style={{ color: '#f1f5f9' }}>evidence-based resource allocation</strong> and early intervention strategies.
+          <div style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            This analysis directly addresses the hackathon problem statement — identifying the <strong style={{ color: 'var(--text-primary)' }}>socio-economic root causes of crime in Karnataka</strong> to enable targeted preventive policing.
+            By correlating unemployment, education, urbanization, and migration data with district crime rates, we enable <strong style={{ color: 'var(--text-primary)' }}>evidence-based resource allocation</strong> and early intervention strategies.
           </div>
         </div>
       </div>
@@ -98,40 +98,29 @@ export default function SocialRiskPage() {
           {SOCIO_CORRELATIONS.map(cor => {
             const isPositive = cor.direction === 'positive';
             const absVal = Math.abs(cor.correlation);
-            const barColor = isPositive ? '#ef4444' : '#10b981';
+            const strengthLabel = absVal > 0.8 ? 'VERY STRONG' : absVal > 0.6 ? 'STRONG' : 'MODERATE';
             return (
               <div key={cor.factor} className="glass-card" style={{ padding: 20 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: '#f1f5f9' }}>{cor.factor}</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{cor.factor}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     {isPositive
                       ? <TrendingUp size={14} color="#ef4444" />
                       : <TrendingDown size={14} color="#10b981" />}
                     <span style={{
-                      fontSize: 20, fontWeight: 900,
-                      color: isPositive ? '#ef4444' : '#10b981',
+                      fontSize: 12, fontWeight: 800,
+                      color: isPositive ? '#ef4444' : '#10b981'
                     }}>
-                      {isPositive ? '+' : ''}{cor.correlation.toFixed(2)}
+                      {isPositive ? '+' : '-'}{absVal.toFixed(2)}
                     </span>
                   </div>
                 </div>
-                <div style={{ marginBottom: 10 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <span style={{ fontSize: 10, color: '#64748b' }}>Correlation Strength</span>
-                    <span style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700 }}>
-                      {absVal > 0.8 ? 'VERY STRONG' : absVal > 0.6 ? 'STRONG' : 'MODERATE'}
-                    </span>
-                  </div>
-                  <div className="risk-bar-track">
-                    <div className="risk-bar-fill" style={{ width: `${absVal * 100}%`, background: barColor }} />
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
-                  <span className={`badge ${isPositive ? 'badge-red' : 'badge-green'}`}>
-                    {isPositive ? '↑ Crime Risk' : '↓ Crime Risk'}
+                <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+                  <span className={`badge ${isPositive ? 'badge-red' : 'badge-green'}`} style={{ fontSize: '10px', fontWeight: 700 }}>
+                    {strengthLabel} · {isPositive ? '↑ Crime Risk' : '↓ Crime Risk'}
                   </span>
                 </div>
-                <p style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.5 }}>{cor.interpretation}</p>
+                <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{cor.interpretation}</p>
               </div>
             );
           })}
@@ -152,10 +141,10 @@ export default function SocialRiskPage() {
             { x: 'populationDensity', xLabel: 'Population Density (per km²)', y: 'crimeRate', yLabel: 'Crime Rate', title: 'Population Density vs Crime Rate' },
           ].map(chart => (
             <div key={chart.title} className="glass-card" style={{ padding: 20 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#f1f5f9', marginBottom: 14 }}>{chart.title}</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 14 }}>{chart.title}</div>
               <ResponsiveContainer width="100%" height={280}>
                 <ScatterChart margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
                   <XAxis
                     dataKey={chart.x} type="number" name={chart.xLabel}
                     tick={{ fill: '#94a3b8', fontSize: 10 }}
@@ -222,21 +211,21 @@ export default function SocialRiskPage() {
                 const isHighEducation = d.educationIndex > 75;
                 return (
                   <tr key={d.district}>
-                    <td style={{ color: '#f1f5f9', fontWeight: 600 }}>{d.district}</td>
+                    <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{d.district}</td>
                     <td>
                       <span style={{
-                        color: d.crimeRate > 40 ? '#ef4444' : d.crimeRate > 30 ? '#f97316' : d.crimeRate > 20 ? '#f59e0b' : '#34d399',
+                        color: d.crimeRate > 40 ? '#DC2626' : d.crimeRate > 30 ? '#F4A100' : d.crimeRate > 20 ? '#F4A100' : '#2E8B57',
                         fontWeight: 700,
                       }}>
                         {d.crimeRate.toFixed(1)}
                       </span>
                     </td>
-                    <td style={{ color: '#cbd5e1' }}>{d.populationDensity.toLocaleString()}</td>
+                    <td style={{ color: 'var(--text-secondary)' }}>{d.populationDensity.toLocaleString()}</td>
                     <td>
                       <span style={{
-                        color: isHighUnemployment ? '#f87171' : '#34d399',
+                        color: isHighUnemployment ? '#DC2626' : '#2E8B57',
                         fontWeight: isHighUnemployment ? 700 : 400,
-                        background: isHighUnemployment ? 'rgba(239,68,68,0.08)' : 'transparent',
+                        background: isHighUnemployment ? 'rgba(220,38,38,0.08)' : 'transparent',
                         padding: '2px 6px', borderRadius: 4,
                       }}>
                         {d.unemploymentRate}%
@@ -244,16 +233,16 @@ export default function SocialRiskPage() {
                     </td>
                     <td>
                       <span style={{
-                        color: isHighEducation ? '#34d399' : '#f87171',
+                        color: isHighEducation ? '#2E8B57' : '#DC2626',
                         fontWeight: isHighEducation ? 700 : 400,
-                        background: isHighEducation ? 'rgba(16,185,129,0.08)' : 'transparent',
+                        background: isHighEducation ? 'rgba(46,139,87,0.08)' : 'transparent',
                         padding: '2px 6px', borderRadius: 4,
                       }}>
                         {d.educationIndex}
                       </span>
                     </td>
-                    <td style={{ color: '#cbd5e1' }}>{d.urbanizationRate}%</td>
-                    <td style={{ color: d.migrationRate > 20 ? '#f97316' : '#cbd5e1' }}>
+                    <td style={{ color: 'var(--text-secondary)' }}>{d.urbanizationRate}%</td>
+                    <td style={{ color: d.migrationRate > 20 ? '#F4A100' : 'var(--text-secondary)' }}>
                       {d.migrationRate}%
                     </td>
                     <td>
@@ -320,13 +309,13 @@ export default function SocialRiskPage() {
                 }}>
                   {finding.icon}
                 </div>
-                <h3 style={{ fontSize: 15, fontWeight: 700, color: '#f1f5f9' }}>{finding.title}</h3>
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>{finding.title}</h3>
               </div>
               <div style={{ fontSize: 24, fontWeight: 900, color: finding.color, marginBottom: 4 }}>
                 {finding.stat}
               </div>
-              <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 12 }}>{finding.statLabel}</div>
-              <p style={{ fontSize: 13, color: '#cbd5e1', lineHeight: 1.6 }}>{finding.detail}</p>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 12 }}>{finding.statLabel}</div>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{finding.detail}</p>
             </div>
           ))}
         </div>

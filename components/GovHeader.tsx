@@ -1,11 +1,11 @@
 'use client';
 // ─────────────────────────────────────────────────────────────────────────────
 // components/GovHeader.tsx
-// CrimeVision AI v2.0 — Government Branding Header Strip
+// CrimeVision AI v3.0 — Government Branding Header Strip
 // Official Karnataka State Police branding shown on every authenticated page.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import Image from 'next/image';
+import { User } from 'lucide-react';
 
 export default function GovHeader() {
   return (
@@ -23,9 +23,10 @@ export default function GovHeader() {
       left: 0,
       right: 0,
       zIndex: 60,
-      fontFamily: "'Inter', sans-serif",
+      boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
     }}>
-      {/* Left: Chief Minister */}
+      
+      {/* Left: Chief Minister Office */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -33,20 +34,17 @@ export default function GovHeader() {
         flex: '0 0 auto',
       }}>
         <div style={{
-          width: 48,
-          height: 48,
+          width: 44,
+          height: 44,
           borderRadius: '50%',
-          overflow: 'hidden',
-          border: '2px solid #D4A017',
+          background: '#F3F4F6',
+          border: '1px solid #D1D5DB',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           flexShrink: 0,
         }}>
-          <img
-            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/cm-portrait.png`}
-            alt="Hon'ble Chief Minister"
-            width={48}
-            height={48}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
+          <User size={22} style={{ color: '#4B5563' }} />
         </div>
         <div>
           <div style={{
@@ -57,7 +55,7 @@ export default function GovHeader() {
             textTransform: 'uppercase',
             letterSpacing: '0.02em',
           }}>
-            SHRI D.K. SHIVAKUMAR
+            Chief Minister Office
           </div>
           <div style={{
             fontSize: 10,
@@ -65,7 +63,7 @@ export default function GovHeader() {
             fontWeight: 500,
             lineHeight: 1.3,
           }}>
-            Hon&apos;ble Chief Minister | Govt. of Karnataka
+            Government of Karnataka
           </div>
         </div>
       </div>
@@ -82,8 +80,9 @@ export default function GovHeader() {
         <div style={{
           width: 50,
           height: 50,
-          borderRadius: '50%',
-          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           flexShrink: 0,
         }}>
           <img
@@ -91,12 +90,12 @@ export default function GovHeader() {
             alt="Karnataka State Police Emblem"
             width={50}
             height={50}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
           />
         </div>
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: 'left' }}>
           <div style={{
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: 800,
             color: '#1F2937',
             lineHeight: 1.1,
@@ -105,7 +104,7 @@ export default function GovHeader() {
             Karnataka State Police
           </div>
           <div style={{
-            fontSize: 11,
+            fontSize: 10,
             color: '#6B7280',
             fontWeight: 500,
             letterSpacing: '0.02em',
@@ -115,7 +114,7 @@ export default function GovHeader() {
         </div>
       </div>
 
-      {/* Right: Home Minister */}
+      {/* Right: Home Minister Office */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -131,7 +130,7 @@ export default function GovHeader() {
             textTransform: 'uppercase',
             letterSpacing: '0.02em',
           }}>
-            SHRI PRIYANK KHARGE
+            Home Minister Office
           </div>
           <div style={{
             fontSize: 10,
@@ -139,24 +138,21 @@ export default function GovHeader() {
             fontWeight: 500,
             lineHeight: 1.3,
           }}>
-            Hon&apos;ble Home Minister | Govt. of Karnataka
+            Government of Karnataka
           </div>
         </div>
         <div style={{
-          width: 48,
-          height: 48,
+          width: 44,
+          height: 44,
           borderRadius: '50%',
-          overflow: 'hidden',
-          border: '2px solid #D4A017',
+          background: '#F3F4F6',
+          border: '1px solid #D1D5DB',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           flexShrink: 0,
         }}>
-          <img
-            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/hm-portrait.png`}
-            alt="Hon'ble Home Minister"
-            width={48}
-            height={48}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
+          <User size={22} style={{ color: '#4B5563' }} />
         </div>
       </div>
     </div>
