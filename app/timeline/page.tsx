@@ -63,9 +63,9 @@ const CASES = [
         title: "AI Analysis Complete",
         subtitle: "Pattern matched: Raichur Sand Syndicate",
         desc: "Recommended action: Issue lookout + deploy patrol. Confidence: 92%.",
-        extra: "System predicted exit route via NH-50 corridor at 15:00-16:00. Advised roadblock setup at checkpoint.",
+        extra: "System estimated exit route via NH-50 corridor at 15:00-16:00. Advised patrol presence at checkpoint.",
         type: "ai",
-        bulletColor: "#00D4FF", // Blue/Cyan
+        bulletColor: "#0F6B5C", // Blue/Cyan
       },
       {
         time: "14:00 PM",
@@ -206,10 +206,10 @@ const CASES = [
         time: "07:00 AM",
         title: "AI Route Forecast",
         subtitle: "Target: Nelamangala warehouse corridor",
-        desc: "AI predicts route path with 96% confidence based on vehicle direction.",
-        extra: "Syndicate de-registration site predicted. Request sent to Nelamangala division for tactical intercept.",
+        desc: "AI estimated route path with 96% confidence based on vehicle direction.",
+        extra: "Syndicate de-registration site estimated. Request sent to Nelamangala division for tactical patrol.",
         type: "ai",
-        bulletColor: "#00D4FF",
+        bulletColor: "#0F6B5C",
       },
       {
         time: "08:15 AM",
@@ -458,7 +458,7 @@ export default function TimelinePage() {
                     padding: '12px 14px',
                     borderRadius: '10px',
                     border: `1px solid ${isSelected ? 'var(--cyber-cyan)' : 'transparent'}`,
-                    background: isSelected ? 'rgba(0, 240, 255, 0.05)' : 'rgba(255,255,255,0.01)',
+                    background: isSelected ? 'rgba(30, 58, 95, 0.05)' : 'rgba(255,255,255,0.01)',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                   }}
@@ -470,7 +470,7 @@ export default function TimelinePage() {
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: c.color, boxShadow: `0 0 6px ${c.color}` }} />
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: c.color, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }} />
                     <span style={{ fontSize: '12px', fontWeight: 800, color: isSelected ? 'var(--cyber-cyan)' : 'var(--text-primary)', fontFamily: 'JetBrains Mono, monospace' }}>
                       FIR #{c.id}
                     </span>
@@ -521,9 +521,9 @@ export default function TimelinePage() {
                     fontSize: '11px',
                     fontWeight: 700,
                     cursor: 'pointer',
-                    background: filter === btn.id ? 'var(--cyber-cyan)' : 'rgba(0, 240, 255, 0.05)',
+                    background: filter === btn.id ? 'var(--cyber-cyan)' : 'rgba(30, 58, 95, 0.05)',
                     color: filter === btn.id ? '#020617' : 'var(--cyber-cyan)',
-                    border: `1px solid ${filter === btn.id ? 'var(--cyber-cyan)' : 'rgba(0, 240, 255, 0.2)'}`,
+                    border: `1px solid ${filter === btn.id ? 'var(--cyber-cyan)' : 'rgba(30, 58, 95, 0.2)'}`,
                     transition: 'all 0.2s ease',
                   }}
                 >
@@ -553,7 +553,7 @@ export default function TimelinePage() {
                 top: '12px',
                 bottom: '12px',
                 width: '2px',
-                background: 'linear-gradient(180deg, var(--cyber-cyan), rgba(0,240,255,0.05))',
+                background: 'linear-gradient(180deg, var(--cyber-cyan), rgba(30, 58, 95,0.05))',
               }}
             />
 
@@ -580,7 +580,7 @@ export default function TimelinePage() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        boxShadow: `0 0 8px ${ev.bulletColor}`,
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                         zIndex: 10,
                       }}
                     >
@@ -594,7 +594,7 @@ export default function TimelinePage() {
                         padding: '16px 20px',
                         cursor: 'pointer',
                         background: isExpanded ? 'rgba(255,255,255,0.02)' : 'var(--cyber-card)',
-                        borderColor: isExpanded ? 'rgba(0, 240, 255, 0.25)' : 'var(--glass-card-border)',
+                        borderColor: isExpanded ? 'rgba(30, 58, 95, 0.25)' : 'var(--glass-card-border)',
                         transition: 'all 0.2s ease',
                       }}
                       onClick={() => toggleEvent(idx)}
@@ -618,9 +618,9 @@ export default function TimelinePage() {
                             style={{
                               fontSize: '8px',
                               padding: '2px 8px',
-                              background: ev.type === 'fir' ? 'rgba(0, 240, 255, 0.1)' : ev.type === 'ai' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                              background: ev.type === 'fir' ? 'rgba(30, 58, 95, 0.1)' : ev.type === 'ai' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
                               color: ev.type === 'fir' ? 'var(--cyber-cyan)' : ev.type === 'ai' ? '#ef4444' : '#10b981',
-                              border: `1px solid ${ev.type === 'fir' ? 'rgba(0, 240, 255, 0.25)' : ev.type === 'ai' ? 'rgba(239, 68, 68, 0.25)' : 'rgba(16, 185, 129, 0.25)'}`
+                              border: `1px solid ${ev.type === 'fir' ? 'rgba(30, 58, 95, 0.25)' : ev.type === 'ai' ? 'rgba(239, 68, 68, 0.25)' : 'rgba(16, 185, 129, 0.25)'}`
                             }}
                           >
                             {ev.type.toUpperCase()}

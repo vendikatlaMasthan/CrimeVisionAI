@@ -31,7 +31,7 @@ export default function AIRecommendationCard({ action, rationale, urgency, prior
             height: '32px',
             borderRadius: '6px',
             background: 'rgba(0, 240, 255, 0.08)',
-            border: '1px solid rgba(0, 240, 255, 0.25)',
+            border: '1px solid rgba(30,58,95,0.15)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

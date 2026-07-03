@@ -102,15 +102,15 @@ export default function AuditTrail() {
         style={{
           position: 'fixed', bottom: 24, right: 24, zIndex: 1000,
           width: 48, height: 48, borderRadius: '50%',
-          background: 'rgba(0,240,255,0.1)',
-          border: '1px solid rgba(0,240,255,0.3)',
-          color: '#00f0ff', cursor: 'pointer',
+          background: 'rgba(30,58,95,0.08)',
+          border: '1px solid rgba(30,58,95,0.2)',
+          color: '#1E3A5F', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 4px 20px rgba(0,240,255,0.2)',
+          boxShadow: '0 4px 20px rgba(30,58,95,0.15)',
           transition: 'all 0.2s',
         }}
-        onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 24px rgba(0,240,255,0.4)'; }}
-        onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,240,255,0.2)'; }}
+        onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 24px rgba(30,58,95,0.25)'; }}
+        onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(30,58,95,0.15)'; }}
       >
         <ClipboardList size={20} />
         {trail.length > 0 && (
@@ -127,7 +127,7 @@ export default function AuditTrail() {
       {open && (
         <div
           onClick={() => setOpen(false)}
-          style={{ position: 'fixed', inset: 0, zIndex: 1100, background: 'rgba(2,6,23,0.5)' }}
+          style={{ position: 'fixed', inset: 0, zIndex: 1100, background: 'rgba(0,0,0,0.3)' }}
         />
       )}
 
@@ -148,7 +148,7 @@ export default function AuditTrail() {
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <ClipboardList size={18} style={{ color: '#00f0ff' }} />
+            <ClipboardList size={18} style={{ color: '#1E3A5F' }} />
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Session Audit Trail</div>
               <div style={{ fontSize: 10, color: 'var(--text-dim)', fontFamily: 'JetBrains Mono, monospace' }}>{sessionId}</div>
@@ -171,15 +171,15 @@ export default function AuditTrail() {
         {/* Stats */}
         <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--cyber-border)', display: 'flex', gap: 20 }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 18, fontWeight: 700, color: '#00f0ff', fontFamily: 'JetBrains Mono' }}>{trail.length}</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: '#1E3A5F', fontFamily: 'Inter' }}>{trail.length}</div>
             <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>Page Views</div>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 18, fontWeight: 700, color: '#8b5cf6', fontFamily: 'JetBrains Mono' }}>{new Set(trail.map(t => t.path)).size}</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: '#8b5cf6', fontFamily: 'Inter' }}>{new Set(trail.map(t => t.path)).size}</div>
             <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>Unique Pages</div>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 18, fontWeight: 700, color: '#10b981', fontFamily: 'JetBrains Mono' }}>{trail[0]?.timestamp ?? '—'}</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: '#10b981', fontFamily: 'Inter' }}>{trail[0]?.timestamp ?? '—'}</div>
             <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>Last Action</div>
           </div>
         </div>
@@ -205,11 +205,11 @@ export default function AuditTrail() {
                 padding: '10px 20px',
                 borderBottom: '1px solid var(--cyber-border)',
                 display: 'flex', alignItems: 'center', gap: 12,
-                background: idx === 0 ? 'rgba(0,240,255,0.04)' : 'transparent',
+                background: idx === 0 ? 'rgba(30,58,95,0.04)' : 'transparent',
               }}>
                 <div style={{
                   flexShrink: 0, width: 6, height: 6, borderRadius: '50%',
-                  background: idx === 0 ? '#00f0ff' : 'var(--cyber-border)',
+                  background: idx === 0 ? '#1E3A5F' : 'var(--cyber-border)',
                 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{
@@ -217,9 +217,9 @@ export default function AuditTrail() {
                     color: idx === 0 ? 'var(--text-primary)' : 'var(--text-secondary)',
                     whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                   }}>{entry.page}</div>
-                  <div style={{ fontSize: 10, color: 'var(--text-dim)', fontFamily: 'JetBrains Mono', marginTop: 2 }}>{entry.path}</div>
+                  <div style={{ fontSize: 10, color: 'var(--text-dim)', fontFamily: 'Inter', marginTop: 2 }}>{entry.path}</div>
                 </div>
-                <div style={{ flexShrink: 0, fontSize: 10, color: 'var(--text-dim)', fontFamily: 'JetBrains Mono' }}>
+                <div style={{ flexShrink: 0, fontSize: 10, color: 'var(--text-dim)', fontFamily: 'Inter' }}>
                   <Clock size={9} style={{ verticalAlign: 'middle', marginRight: 3 }} />
                   {entry.timestamp}
                 </div>
@@ -234,8 +234,8 @@ export default function AuditTrail() {
             onClick={handleExport}
             style={{
               width: '100%', padding: '9px', fontSize: 13, fontWeight: 600,
-              background: 'rgba(0,240,255,0.08)', color: '#00f0ff',
-              border: '1px solid rgba(0,240,255,0.25)', borderRadius: 8, cursor: 'pointer',
+              background: 'rgba(30,58,95,0.06)', color: '#1E3A5F',
+              border: '1px solid rgba(30,58,95,0.15)', borderRadius: 8, cursor: 'pointer',
             }}
           >
             📥 Export Audit Log (CSV)

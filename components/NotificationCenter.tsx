@@ -70,7 +70,7 @@ export default function NotificationCenter() {
           className={`w-9 h-9 rounded-lg border flex items-center justify-center cursor-pointer transition-all ${
             isListening 
               ? 'border-red-500 bg-red-950/40 text-red-400 animate-pulse' 
-              : 'border-[rgba(0,240,255,0.2)] bg-[rgba(10,22,40,0.6)] text-[#00f0ff] hover:border-[#00f0ff]/50'
+              : 'border-[rgba(30,58,95,0.15)] bg-[rgba(10,22,40,0.6)] text-[#1E3A5F] hover:border-[#1E3A5F]/50'
           }`}
           title="Voice Command Assistant"
         >
@@ -91,7 +91,7 @@ export default function NotificationCenter() {
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => { setIsOpen(!isOpen); setUnreadCount(0); }}
-          className="w-9 h-9 rounded-lg border border-[rgba(0,240,255,0.2)] bg-[rgba(10,22,40,0.6)] text-[#00f0ff] hover:border-[#00f0ff]/50 flex items-center justify-center cursor-pointer relative"
+          className="w-9 h-9 rounded-lg border border-[rgba(30,58,95,0.15)] bg-[rgba(10,22,40,0.6)] text-[#1E3A5F] hover:border-[#1E3A5F]/50 flex items-center justify-center cursor-pointer relative"
         >
           <Bell size={16} />
           {unreadCount > 0 && (
@@ -102,10 +102,10 @@ export default function NotificationCenter() {
         </button>
 
         {isOpen && (
-          <div className="absolute right-0 top-11 w-80 bg-[#070e1e]/98 border border-[rgba(0,240,255,0.25)] rounded-xl shadow-2xl z-50 overflow-hidden backdrop-blur-md">
-            <div className="p-3 border-b border-[rgba(0,240,255,0.1)] flex justify-between items-center bg-[rgba(0,240,255,0.03)]">
+          <div className="absolute right-0 top-11 w-80 bg-[#070e1e]/98 border border-[rgba(30,58,95,0.15)] rounded-xl shadow-2xl z-50 overflow-hidden backdrop-blur-md">
+            <div className="p-3 border-b border-[rgba(30,58,95,0.08)] flex justify-between items-center bg-[rgba(0,240,255,0.03)]">
               <span className="text-xs font-bold text-slate-200 uppercase tracking-widest flex items-center gap-1.5">
-                <ShieldAlert size={12} color="#00f0ff" /> Dispatcher Queue
+                <ShieldAlert size={12} color="#1E3A5F" /> Dispatcher Queue
               </span>
               <button 
                 onClick={() => setNotifications([])} 

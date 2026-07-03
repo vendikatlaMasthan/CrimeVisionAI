@@ -338,7 +338,7 @@ export const DISTRICTS: District[] = [
 // SandMining 8901 + OrganizedCrime 6543 + Other 623 = 82,089
 
 export const CRIME_CATEGORIES: CrimeCategory[] = [
-  { name: 'Cybercrime',       count: 18234, percentage: 22, color: '#00f0ff', trend: '+34%' },
+  { name: 'Cybercrime',       count: 18234, percentage: 22, color: '#0F6B5C', trend: '+34%' },
   { name: 'Theft',            count: 24567, percentage: 30, color: '#8b5cf6', trend: '-5%'  },
   { name: 'Narcotics',        count: 9876,  percentage: 12, color: '#e879f9', trend: '+28%' },
   { name: 'Assault',          count: 12345, percentage: 15, color: '#ef4444', trend: '+2%'  },
@@ -606,54 +606,82 @@ export const SUMMARY_METRICS = {
   accuracyScore: 94.7,
 };
 
+// ─── Demo Account Type ────────────────────────────────────────────────────────
+
+export interface DemoAccount {
+  username: string;
+  password: string;
+  role: 'DGP' | 'Commissioner' | 'Inspector' | 'SubInspector' | 'Constable';
+  portal: 'admin' | 'officer';
+  name: string;
+  badgeNumber: string;
+  designation: string;
+  accessLevel: string;
+  district: string;
+  stationName: string;
+}
+
 // ─── Demo Accounts (for Login) ────────────────────────────────────────────────
 
-export const DEMO_ACCOUNTS = [
+export const DEMO_ACCOUNTS: DemoAccount[] = [
   {
     username: 'dgp2026001',
     password: 'admin@123',
     role: 'DGP',
+    portal: 'admin',
     name: 'DGP Rajesh Kumar',
     badgeNumber: 'KSP-001',
     designation: 'Director General of Police',
     accessLevel: 'FULL',
+    district: 'Karnataka State HQ',
+    stationName: 'DGP Office, Nrupathunga Road',
   },
   {
     username: 'pi2026001',
     password: 'officer@123',
     role: 'Inspector',
+    portal: 'officer',
     name: 'PI Ravi Shankar',
     badgeNumber: 'KSP-3847',
     designation: 'Police Inspector, Kalaburagi',
     accessLevel: 'INSPECTOR',
+    district: 'Kalaburagi',
+    stationName: 'Kalaburagi City Police Station',
   },
   {
     username: 'dgp_admin',
     password: 'KSP@2025',
     role: 'DGP',
+    portal: 'admin',
     name: 'DGP Rajesh Kumar',
     badgeNumber: 'KSP-001',
     designation: 'Director General of Police',
     accessLevel: 'FULL',
+    district: 'Karnataka State HQ',
+    stationName: 'DGP Office, Nrupathunga Road',
   },
   {
     username: 'commissioner',
     password: 'KSP@2025',
     role: 'Commissioner',
+    portal: 'admin',
     name: 'CP Ananya Krishnan',
     badgeNumber: 'KSP-112',
     designation: 'Commissioner of Police, Bengaluru',
     accessLevel: 'COMMISSIONER',
+    district: 'Bengaluru Urban',
+    stationName: 'Commissioner Office, Infantry Road',
   },
   {
     username: 'inspector',
     password: 'KSP@2025',
     role: 'Inspector',
+    portal: 'officer',
     name: 'PI Ravi Shankar',
     badgeNumber: 'KSP-3847',
     designation: 'Police Inspector, Kalaburagi',
     accessLevel: 'INSPECTOR',
+    district: 'Kalaburagi',
+    stationName: 'Kalaburagi City Police Station',
   },
-] as const;
-
-export type DemoAccount = typeof DEMO_ACCOUNTS[number];
+];

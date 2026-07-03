@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { PortalType } from '@/lib/rbac';
 import { 
   Bell, Search, Shield, X, FileText, User, MapPin, AlertTriangle, 
   Monitor, Sun, Moon, Menu, Mic, MicOff, Brain, Sparkles, 
@@ -19,9 +20,10 @@ import { DemoAccount } from '@/lib/crimeData';
 
 interface TopbarProps {
   user?: DemoAccount | null;
+  portalType: PortalType;
 }
 
-export default function Topbar({ user }: TopbarProps) {
+export default function Topbar({ user, portalType }: TopbarProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
@@ -317,7 +319,7 @@ export default function Topbar({ user }: TopbarProps) {
   const riskColor = (score: number) => {
     if (score > 80) return '#ef4444';
     if (score > 60) return '#f59e0b';
-    return 'var(--cyber-cyan)';
+    return '#0F6B5C';
   };
 
   return (
@@ -325,10 +327,10 @@ export default function Topbar({ user }: TopbarProps) {
       <header
         className="fixed top-0 right-0 flex items-center justify-between px-6 z-40"
         style={{
-          left: '260px',
-          background: 'var(--bg-header)',
-          borderBottom: '1px solid var(--border-subtle)',
-          backdropFilter: 'blur(24px)',
+          left: '256px',
+          top: '72px',
+          background: '#FFFFFF',
+          borderBottom: '1px solid #E5E7EB',
           height: '64px',
         }}
       >
@@ -344,7 +346,7 @@ export default function Topbar({ user }: TopbarProps) {
             className="hamburger-btn lg:hidden p-1.5 rounded-lg border cursor-pointer transition-colors"
             style={{
               borderColor: 'var(--border-default)',
-              background: 'rgba(10,22,40,0.1)',
+              background: '#F3F4F6',
               color: 'var(--text-muted)',
               display: 'flex',
               alignItems: 'center',
@@ -357,6 +359,25 @@ export default function Topbar({ user }: TopbarProps) {
           
           <span className="hidden md:inline text-xs font-semibold text-[var(--text-muted)] tracking-widest uppercase">
             AI INTELLIGENCE PLATFORM
+          </span>
+          <span
+            className="hidden md:inline"
+            style={{
+              fontSize: '10px',
+              fontWeight: 700,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              padding: '3px 10px',
+              borderRadius: '999px',
+              background: portalType === 'admin'
+                ? 'rgba(166, 25, 46, 0.08)'
+                : 'rgba(15, 107, 92, 0.08)',
+              color: portalType === 'admin' ? '#A6192E' : '#0F6B5C',
+              border: `1px solid ${portalType === 'admin' ? 'rgba(166, 25, 46, 0.15)' : 'rgba(15, 107, 92, 0.15)'}`,
+              marginLeft: '8px',
+            }}
+          >
+            {portalType === 'admin' ? 'Admin' : 'Officer'}
           </span>
         </div>
 
@@ -444,7 +465,7 @@ export default function Topbar({ user }: TopbarProps) {
                 background: 'var(--topbar-bg)',
                 borderColor: 'var(--cyber-border)',
                 boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
-                backdropFilter: 'blur(28px)',
+                backdropFilter: 'none',
                 padding: '20px',
               }}
             >
@@ -577,7 +598,7 @@ export default function Topbar({ user }: TopbarProps) {
 
               {/* Natural Language Resolve Header */}
               {nlpResult && (
-                <div className="mb-4 p-3.5 rounded-xl border border-[var(--cyber-cyan)]/35" style={{ background: 'rgba(0,240,255,0.03)' }}>
+                <div className="mb-4 p-3.5 rounded-xl border border-[var(--accent-cyan)]/35" style={{ background: 'rgba(15,107,92,0.03)' }}>
                   <div className="flex justify-between items-center mb-1.5">
                     <span className="text-[10px] font-black text-[var(--cyber-cyan)] uppercase tracking-wider flex items-center gap-1.5">
                       <Brain size={11} className="animate-pulse" /> AI Natural Language Resolution
@@ -888,28 +909,7 @@ export default function Topbar({ user }: TopbarProps) {
             <Monitor size={15} />
           </button>
 
-          {/* Theme Toggle (Light/Dark) */}
-          <button
-            onClick={toggleTheme}
-            title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
-            className="w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition-colors"
-            style={{
-              background: 'transparent',
-              color: 'var(--text-muted)',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = 'transparent';
-            }}
-          >
-            {theme === 'light' ? (
-              <Moon size={15} className="text-blue-500" />
-            ) : (
-              <Sun size={15} className="text-amber-500" />
-            )}
-          </button>
+
 
           {/* Language Toggle Link */}
           <div className="flex items-center gap-1 border border-[var(--border-default)] rounded-lg p-0.5 px-1.5 h-9">

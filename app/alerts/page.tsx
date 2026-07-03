@@ -18,7 +18,7 @@ const SEVERITY_BORDER: Record<string, string> = {
   critical: '#ef4444',
   high: '#f59e0b',
   medium: '#eab308',
-  low: '#00f0ff',
+  low: '#0F6B5C',
 };
 
 const SEVERITY_BADGE: Record<string, string> = {
@@ -46,7 +46,7 @@ const RESPONSE_TEAMS = [
 
 const QUICK_ACTIONS = [
   { label: 'Emergency Broadcast', icon: Radio, color: '#ef4444', bg: 'rgba(239,68,68,0.12)', border: 'rgba(239,68,68,0.3)' },
-  { label: 'Dispatch Nearest Unit', icon: Send, color: '#00f0ff', bg: 'rgba(0,240,255,0.08)', border: 'rgba(0,240,255,0.25)' },
+  { label: 'Dispatch Nearest Unit', icon: Send, color: '#0F6B5C', bg: 'rgba(30, 58, 95,0.08)', border: 'rgba(30, 58, 95,0.25)' },
   { label: 'Request Backup', icon: Users, color: '#8b5cf6', bg: 'rgba(139,92,246,0.1)', border: 'rgba(139,92,246,0.3)' },
   { label: 'Alert Commissioner', icon: Phone, color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)' },
 ];
@@ -59,7 +59,7 @@ const tickerItems = LIVE_ALERTS.map(a => {
 const TICKER_TEXT = tickerItems.join('    ·    ') + '    ·    ' + tickerItems.join('    ·    ');
 
 const categoryStats = [
-  { name: 'Cybercrime', count: 3, color: '#00f0ff' },
+  { name: 'Cybercrime', count: 3, color: '#0F6B5C' },
   { name: 'Financial Crime', count: 2, color: '#10b981' },
   { name: 'Gang Activity', count: 1, color: '#ef4444' },
   { name: 'Drug Related', count: 2, color: '#8b5cf6' },
@@ -216,7 +216,7 @@ export default function AlertsPage() {
         {[
           { label: 'Critical Alerts', value: criticalCount, color: '#ef4444', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.25)', pulse: true, icon: AlertTriangle },
           { label: 'High Priority', value: highCount, color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)', pulse: false, icon: Shield },
-          { label: 'Under Response', value: underResponse, color: '#00f0ff', bg: 'rgba(0,240,255,0.06)', border: 'rgba(0,240,255,0.2)', pulse: false, icon: Activity },
+          { label: 'Under Response', value: underResponse, color: '#0F6B5C', bg: 'rgba(30, 58, 95,0.06)', border: 'rgba(30, 58, 95,0.2)', pulse: false, icon: Activity },
           { label: 'Resolved Today', value: 47, color: '#10b981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.2)', pulse: false, icon: CheckCircle },
         ].map((s) => {
           const Icon = s.icon;
@@ -258,13 +258,13 @@ export default function AlertsPage() {
                 padding: '5px 14px', borderRadius: 20, fontSize: 11, fontWeight: 700,
                 cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.06em',
                 border: `1px solid ${selectedSeverity === sev
-                  ? sev === 'all' ? 'rgba(0,240,255,0.5)' : sev === 'critical' ? 'rgba(239,68,68,0.6)' : sev === 'high' ? 'rgba(245,158,11,0.6)' : sev === 'medium' ? 'rgba(234,179,8,0.5)' : 'rgba(0,240,255,0.4)'
+                  ? sev === 'all' ? 'rgba(30, 58, 95,0.5)' : sev === 'critical' ? 'rgba(239,68,68,0.6)' : sev === 'high' ? 'rgba(245,158,11,0.6)' : sev === 'medium' ? 'rgba(234,179,8,0.5)' : 'rgba(30, 58, 95,0.4)'
                   : 'rgba(255,255,255,0.1)'}`,
                 background: selectedSeverity === sev
-                  ? sev === 'all' ? 'rgba(0,240,255,0.12)' : sev === 'critical' ? 'rgba(239,68,68,0.18)' : sev === 'high' ? 'rgba(245,158,11,0.15)' : sev === 'medium' ? 'rgba(234,179,8,0.15)' : 'rgba(0,240,255,0.1)'
+                  ? sev === 'all' ? 'rgba(30, 58, 95,0.12)' : sev === 'critical' ? 'rgba(239,68,68,0.18)' : sev === 'high' ? 'rgba(245,158,11,0.15)' : sev === 'medium' ? 'rgba(234,179,8,0.15)' : 'rgba(30, 58, 95,0.1)'
                   : 'rgba(255,255,255,0.04)',
                 color: selectedSeverity === sev
-                  ? sev === 'critical' ? '#f87171' : sev === 'high' ? '#fbbf24' : sev === 'medium' ? '#facc15' : '#00f0ff'
+                  ? sev === 'critical' ? '#f87171' : sev === 'high' ? '#fbbf24' : sev === 'medium' ? '#facc15' : '#0F6B5C'
                   : '#64748b',
               }}
             >
@@ -284,9 +284,9 @@ export default function AlertsPage() {
               style={{
                 padding: '5px 12px', borderRadius: 20, fontSize: 11, fontWeight: 600,
                 cursor: 'pointer', transition: 'all 0.2s',
-                border: `1px solid ${selectedCategory === cat ? 'rgba(0,240,255,0.4)' : 'rgba(255,255,255,0.08)'}`,
-                background: selectedCategory === cat ? 'rgba(0,240,255,0.1)' : 'rgba(255,255,255,0.03)',
-                color: selectedCategory === cat ? '#00f0ff' : '#64748b',
+                border: `1px solid ${selectedCategory === cat ? 'rgba(30, 58, 95,0.4)' : 'rgba(255,255,255,0.08)'}`,
+                background: selectedCategory === cat ? 'rgba(30, 58, 95,0.1)' : 'rgba(255,255,255,0.03)',
+                color: selectedCategory === cat ? '#0F6B5C' : '#64748b',
               }}
             >
               {cat === 'all' ? 'All Categories' : cat}
@@ -328,8 +328,8 @@ export default function AlertsPage() {
                   className={`alert-card cursor-pointer hover:-translate-y-0.5 transition-all ${isCritical ? 'animate-alert-flash' : ''}`}
                   style={{
                     borderLeftColor: borderColor,
-                    background: isCritical ? 'rgba(30,8,8,0.85)' : 'rgba(10,22,40,0.88)',
-                    border: `1px solid ${isCritical ? 'rgba(239,68,68,0.3)' : 'rgba(0,240,255,0.1)'}`,
+                    background: isCritical ? '#FEF2F2' : '#FFFFFF',
+                    border: `1px solid ${isCritical ? 'rgba(239,68,68,0.3)' : 'rgba(30, 58, 95,0.1)'}`,
                     borderLeftWidth: 3,
                     borderLeftStyle: 'solid',
                     borderRadius: '0 12px 12px 0',
@@ -436,7 +436,7 @@ export default function AlertsPage() {
           {/* ACTIVE DEPLOYMENTS */}
           <div className="glass-card" style={{ padding: 20 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-              <Users size={14} color="#00f0ff" />
+              <Users size={14} color="#0F6B5C" />
               <span className="section-title" style={{ fontSize: 13 }}>Active Deployments</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -528,11 +528,11 @@ export default function AlertsPage() {
           {/* LAST UPDATED */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px',
-            borderRadius: 10, background: 'rgba(0,240,255,0.04)', border: '1px solid rgba(0,240,255,0.1)',
+            borderRadius: 10, background: 'rgba(30, 58, 95,0.04)', border: '1px solid rgba(30, 58, 95,0.1)',
           }}>
-            <RefreshCw size={12} color="#00f0ff" style={{ animation: 'spin-slow 4s linear infinite' }} />
+            <RefreshCw size={12} color="#0F6B5C" style={{ animation: 'spin-slow 4s linear infinite' }} />
             <span style={{ fontSize: 12, color: '#94a3b8' }}>
-              Live feed · Last sync: <span style={{ color: '#00f0ff', fontWeight: 700 }}>{lastUpdated}</span>
+              Live feed · Last sync: <span style={{ color: '#0F6B5C', fontWeight: 700 }}>{lastUpdated}</span>
             </span>
           </div>
         </div>
@@ -545,7 +545,7 @@ export default function AlertsPage() {
           <div 
             className="relative w-[480px] max-w-full h-full p-6 flex flex-col border-l border-white/10 z-10 transition-all duration-300"
             style={{
-              background: 'rgba(2, 6, 23, 0.98)',
+              background: '#FFFFFF',
               backdropFilter: 'blur(24px)',
               boxShadow: '-10px 0 30px rgba(0,0,0,0.5)',
             }}
@@ -554,7 +554,7 @@ export default function AlertsPage() {
             <div className="flex justify-between items-start mb-6 pb-4 border-b border-white/5">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] font-mono tracking-widest text-[#00f0ff] font-black">{selectedAlert.id}</span>
+                  <span className="text-[10px] font-mono tracking-widest text-[#0F6B5C] font-black">{selectedAlert.id}</span>
                   <span className="w-1 h-3 rounded bg-cyan-400" />
                   <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{selectedAlert.timestamp}</span>
                 </div>
@@ -594,7 +594,7 @@ export default function AlertsPage() {
               {/* FORENSIC EVIDENCE */}
               <div className="bg-black/15 p-3.5 rounded-lg border border-white/5 leading-relaxed text-slate-300">
                 <span className="text-slate-500 uppercase tracking-wider text-[9px] block mb-1">Scanned Evidence</span>
-                <span className="text-[#00f0ff] font-bold block mt-0.5">{selectedAlert.evidence}</span>
+                <span className="text-[#0F6B5C] font-bold block mt-0.5">{selectedAlert.evidence}</span>
               </div>
 
               {/* ACCUSED SUSPECTS */}
@@ -606,7 +606,7 @@ export default function AlertsPage() {
                     <Link 
                       href={`/search?query=${name}`}
                       onClick={() => setSelectedAlertId(null)}
-                      className="text-[#00f0ff] hover:underline flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider"
+                      className="text-[#0F6B5C] hover:underline flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider"
                     >
                       Inspect Profile <ArrowUpRight size={10} />
                     </Link>
@@ -623,13 +623,13 @@ export default function AlertsPage() {
                   drawerInfo.firs.map(fir => (
                     <div key={fir.id} className="flex justify-between items-center mt-1 py-1.5 border-b border-white/5 last:border-b-0">
                       <div>
-                        <span className="font-mono font-bold text-[#00f0ff]">{fir.firNumber}</span>
+                        <span className="font-mono font-bold text-[#0F6B5C]">{fir.firNumber}</span>
                         <span className="text-[10px] text-slate-400 block mt-0.5">{fir.crimeCategory}</span>
                       </div>
                       <Link 
                         href={`/fir?id=${fir.id}`}
                         onClick={() => setSelectedAlertId(null)}
-                        className="cyber-btn text-[10px] py-1 px-2.5 bg-cyan-950/20 text-[#00f0ff] border border-[#00f0ff]/20 rounded-md"
+                        className="cyber-btn text-[10px] py-1 px-2.5 bg-cyan-950/20 text-[#0F6B5C] border border-[#0F6B5C]/20 rounded-md"
                       >
                         Open Case
                       </Link>
@@ -664,10 +664,10 @@ export default function AlertsPage() {
                         setAssignedOfficers(prev => ({ ...prev, [selectedAlert.id]: officer }));
                       }}
                       style={{
-                        background: 'rgba(10,22,40,0.95)',
-                        border: '1px solid rgba(0, 240, 255, 0.25)',
+                        background: '#FFFFFF',
+                        border: '1px solid rgba(30, 58, 95, 0.25)',
                         borderRadius: 6,
-                        color: '#00f0ff',
+                        color: '#0F6B5C',
                         fontSize: 11,
                         padding: '4px 8px',
                         fontFamily: 'inherit',

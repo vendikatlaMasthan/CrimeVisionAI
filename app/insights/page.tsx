@@ -29,7 +29,7 @@ const SEVERITY_BADGE: Record<string, string> = {
 const INSIGHT_COLORS: Record<string, { color: string; bg: string; border: string }> = {
   red:    { color: '#f87171', bg: 'rgba(239,68,68,0.1)',    border: 'rgba(239,68,68,0.3)' },
   green:  { color: '#34d399', bg: 'rgba(16,185,129,0.1)',   border: 'rgba(16,185,129,0.3)' },
-  cyan:   { color: '#00f0ff', bg: 'rgba(0,240,255,0.08)',   border: 'rgba(0,240,255,0.3)' },
+  cyan:   { color: '#0F6B5C', bg: 'rgba(30, 58, 95,0.08)',   border: 'rgba(30, 58, 95,0.3)' },
   purple: { color: '#a78bfa', bg: 'rgba(139,92,246,0.1)',   border: 'rgba(139,92,246,0.3)' },
 };
 
@@ -44,7 +44,7 @@ const radarData = [
 
 const patternCards = [
   { icon: Clock,      title: 'Peak Hours Pattern',    value: '10PM - 2AM',         desc: '48% of violent crimes cluster in late-night hours across all districts.',       color: '#ef4444' },
-  { icon: MapPin,     title: 'Geographic Spread',     value: 'Urban to Semi-Urban', desc: 'Cybercrime expanding from metro zones to semi-urban districts at 34% p.a.',    color: '#00f0ff' },
+  { icon: MapPin,     title: 'Geographic Spread',     value: 'Urban to Semi-Urban', desc: 'Cybercrime expanding from metro zones to semi-urban districts at 34% p.a.',    color: '#0F6B5C' },
   { icon: Network,    title: 'Network Growth',        value: '14 Clusters (+3)',    desc: '14 active criminal clusters monitored. 3 new clusters identified this week.',   color: '#8b5cf6' },
   { icon: TrendingUp, title: 'Financial Indicators',  value: 'Rs 42 Cr Economy',   desc: 'Estimated Rs 42 Crore suspected criminal economy active across the state.',     color: '#f59e0b' },
   { icon: Shield,     title: 'Cross-District Links',  value: '8 Active Networks',   desc: '8 inter-district criminal networks operating across district boundaries.',       color: '#e879f9' },
@@ -122,7 +122,7 @@ export default function InsightsPage() {
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
         <h1 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: 10, margin: 0 }}>
-          <Brain size={22} style={{ color: '#00f0ff' }} />
+          <Brain size={22} style={{ color: '#0F6B5C' }} />
           AI INTELLIGENCE INSIGHTS
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 6 }}>
@@ -151,18 +151,18 @@ export default function InsightsPage() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20, marginBottom: 28 }}>
 
         {/* AI EXPLAINABILITY PANEL */}
-        <div className="glass-card" style={{ padding: 24, border: '1px solid rgba(0,240,255,0.2)' }}>
+        <div className="glass-card" style={{ padding: 24, border: '1px solid rgba(30, 58, 95,0.2)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                <Calculator size={18} style={{ color: '#00f0ff' }} />
+                <Calculator size={18} style={{ color: '#0F6B5C' }} />
                 <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>AI EXPLAINABILITY PANEL</h2>
               </div>
               <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0 }}>Transparent weighted scoring — see exactly HOW the risk score is computed</p>
             </div>
             <button
               onClick={() => setShowMethodology(!showMethodology)}
-              style={{ fontSize: 12, color: '#00f0ff', background: 'rgba(0,240,255,0.08)', border: '1px solid rgba(0,240,255,0.25)', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
+              style={{ fontSize: 12, color: '#0F6B5C', background: 'rgba(30, 58, 95,0.08)', border: '1px solid rgba(30, 58, 95,0.25)', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
             >
               <Info size={13} /> Methodology
             </button>
@@ -217,11 +217,11 @@ export default function InsightsPage() {
                   <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 500 }}>{b.factor}</span>
                   <div style={{ display: 'flex', gap: 12 }}>
                     <span style={{ fontSize: 11, color: 'var(--text-dim)', fontFamily: 'JetBrains Mono, monospace' }}>raw: {b.rawScore}/100</span>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: '#00f0ff', fontFamily: 'JetBrains Mono, monospace' }}>x{b.weight} = {b.weightedScore}</span>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: '#0F6B5C', fontFamily: 'JetBrains Mono, monospace' }}>x{b.weight} = {b.weightedScore}</span>
                   </div>
                 </div>
                 <div style={{ height: 6, borderRadius: 4, background: 'var(--cyber-surface)', overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${b.rawScore}%`, background: 'linear-gradient(90deg, #00f0ff, #8b5cf6)', borderRadius: 4, transition: 'width 0.6s ease' }} />
+                  <div style={{ height: '100%', width: `${b.rawScore}%`, background: 'linear-gradient(90deg, #0F6B5C, #8b5cf6)', borderRadius: 4, transition: 'width 0.6s ease' }} />
                 </div>
                 <div style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 3 }}>{RISK_WEIGHTS[i].description}</div>
               </div>
@@ -237,7 +237,7 @@ export default function InsightsPage() {
           {/* Methodology Modal */}
           {showMethodology && (
             <div style={{ marginTop: 16, padding: 16, background: 'rgba(148,163,184,0.06)', border: '1px solid var(--cyber-border)', borderRadius: 10 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#00f0ff', marginBottom: 10 }}>Scoring Methodology</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#0F6B5C', marginBottom: 10 }}>Scoring Methodology</div>
               <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 8px' }}>
                 The risk score is computed using a <strong>weighted multi-factor linear model</strong> — no black box.
               </p>
@@ -263,7 +263,7 @@ export default function InsightsPage() {
               <PolarGrid stroke="rgba(148,163,184,0.15)" />
               <PolarAngleAxis dataKey="dimension" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} />
               <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: 'var(--text-dim)', fontSize: 9 }} />
-              <Radar name="Threat Score" dataKey="score" stroke="#00f0ff" fill="#00f0ff" fillOpacity={0.2} strokeWidth={2} />
+              <Radar name="Threat Score" dataKey="score" stroke="#0F6B5C" fill="#0F6B5C" fillOpacity={0.2} strokeWidth={2} />
             </RadarChart>
           </ResponsiveContainer>
           <div style={{ marginTop: 12 }}>
@@ -320,7 +320,7 @@ export default function InsightsPage() {
                         )}
                         {alert.evidence && (
                           <div style={{ background: 'var(--cyber-surface)', borderRadius: 8, padding: 12, border: '1px solid var(--cyber-border)' }}>
-                            <div style={{ fontSize: 11, fontWeight: 700, color: '#00f0ff', marginBottom: 6 }}>EVIDENCE BASE</div>
+                            <div style={{ fontSize: 11, fontWeight: 700, color: '#0F6B5C', marginBottom: 6 }}>EVIDENCE BASE</div>
                             <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{alert.evidence}</p>
                           </div>
                         )}
@@ -342,7 +342,7 @@ export default function InsightsPage() {
                           <span style={{ fontSize: 11, fontWeight: 700, color: '#10b981', fontFamily: 'JetBrains Mono' }}>{alert.confidence}%</span>
                         </div>
                         <div style={{ height: 8, borderRadius: 4, background: 'var(--cyber-surface)', overflow: 'hidden' }}>
-                          <div style={{ height: '100%', width: `${alert.confidence}%`, background: 'linear-gradient(90deg, #10b981, #00f0ff)', borderRadius: 4, transition: 'width 0.5s ease' }} />
+                          <div style={{ height: '100%', width: `${alert.confidence}%`, background: 'linear-gradient(90deg, #10b981, #0F6B5C)', borderRadius: 4, transition: 'width 0.5s ease' }} />
                         </div>
                       </div>
                       {alert.recommendation && (

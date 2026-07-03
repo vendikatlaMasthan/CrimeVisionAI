@@ -444,7 +444,7 @@ export default function CriminalNetworkPage() {
         <main className="glass-card relative" style={{ background: '#020617', padding: 0, height: '600px', overflow: 'hidden' }}>
           
           {/* Edge Color Legend Top-Left */}
-          <div style={{ position: 'absolute', top: '15px', left: '15px', zIndex: 10, background: 'rgba(10,22,40,0.85)', border: '1px solid var(--cyber-border)', borderRadius: '8px', padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <div style={{ position: 'absolute', top: '15px', left: '15px', zIndex: 10, background: '#FFFFFF', border: '1px solid var(--cyber-border)', borderRadius: '8px', padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <span style={{ fontSize: '9px', fontWeight: 950, color: 'var(--text-dim)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Relationship Map</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: '#f87171' }}>
               <div style={{ width: '12px', height: '3px', background: '#ef4444' }} /> COMMANDS
@@ -471,21 +471,21 @@ export default function CriminalNetworkPage() {
             <button
               onClick={() => handleZoom(1.2)}
               className="cyber-btn"
-              style={{ padding: '6px', borderRadius: '6px', background: 'rgba(10,22,40,0.92)', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)' }}
+              style={{ padding: '6px', borderRadius: '6px', background: '#FFFFFF', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)' }}
             >
               <Plus size={14} />
             </button>
             <button
               onClick={() => handleZoom(0.8)}
               className="cyber-btn"
-              style={{ padding: '6px', borderRadius: '6px', background: 'rgba(10,22,40,0.92)', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)' }}
+              style={{ padding: '6px', borderRadius: '6px', background: '#FFFFFF', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)' }}
             >
               <Minus size={14} />
             </button>
             <button
               onClick={handleZoomReset}
               className="cyber-btn"
-              style={{ padding: '6px 10px', borderRadius: '6px', background: 'rgba(10,22,40,0.92)', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)', fontSize: '10px', fontWeight: 800 }}
+              style={{ padding: '6px 10px', borderRadius: '6px', background: '#FFFFFF', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)', fontSize: '10px', fontWeight: 800 }}
             >
               ⟳ Reset
             </button>
@@ -563,7 +563,7 @@ export default function CriminalNetworkPage() {
               </div>
 
               {/* AI Confidence match details */}
-              <div style={{ background: 'rgba(0, 240, 255, 0.02)', border: '1px solid rgba(0, 240, 255, 0.15)', borderRadius: '8px', padding: '12px', marginBottom: '16px' }}>
+              <div style={{ background: 'rgba(30, 58, 95, 0.02)', border: '1px solid rgba(30, 58, 95, 0.15)', borderRadius: '8px', padding: '12px', marginBottom: '16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: 'var(--cyber-cyan)', fontWeight: 800, marginBottom: '6px' }}>
                   <span>AI CONFIDENCE MATCH:</span>
                   <span>{activeNode.aiMatch}%</span>

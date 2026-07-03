@@ -35,7 +35,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
       <div style={{
-        background: 'rgba(10,22,40,0.98)', border: '1px solid rgba(239,68,68,0.35)',
+        background: '#FFFFFF', border: '1px solid rgba(239,68,68,0.35)',
         borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#f1f5f9'
       }}>
         <div style={{ fontWeight: 700, color: '#f1f5f9', marginBottom: 4 }}>Time: {label}</div>
@@ -89,7 +89,7 @@ export default function AnomalyPage() {
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <span className="badge badge-red animate-pulse-glow" style={{ padding: '6px 14px', fontSize: 11, fontWeight: 800 }}>
+          <span className="badge badge-red animate-pulse" style={{ padding: '6px 14px', fontSize: 11, fontWeight: 800 }}>
             ANOMALY ALERT ACTIVE
           </span>
           <span style={{ fontSize: 12, color: '#94a3b8' }}>State Threat Level: <strong style={{ color: '#ef4444' }}>ELEVATED</strong></span>
@@ -101,7 +101,7 @@ export default function AnomalyPage() {
         {[
           { label: 'Active Anomalies', value: activeCount, sub: 'Triggered alarms', color: '#ef4444', icon: AlertTriangle, bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.2)' },
           { label: 'Critical Spikes', value: criticalCount, sub: 'Immediate attention', color: '#f59e0b', icon: ShieldAlert, bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.2)' },
-          { label: 'Under Investigation', value: anomalyList.filter(a => a.status === 'Under Investigation').length, sub: 'Dispatched teams', color: '#00f0ff', icon: Clock, bg: 'rgba(0,240,255,0.06)', border: 'rgba(0,240,255,0.18)' },
+          { label: 'Under Investigation', value: anomalyList.filter(a => a.status === 'Under Investigation').length, sub: 'Dispatched teams', color: '#0F6B5C', icon: Clock, bg: 'rgba(30, 58, 95,0.06)', border: 'rgba(30, 58, 95,0.18)' },
           { label: 'False Positives', value: falseCount, sub: 'Dismissed signals', color: '#94a3b8', icon: CheckCircle2, bg: 'rgba(148,163,184,0.06)', border: 'rgba(148,163,184,0.18)' },
         ].map((item, i) => (
           <div key={i} className="glass-card" style={{ padding: 20, background: item.bg, border: `1px solid ${item.border}` }}>

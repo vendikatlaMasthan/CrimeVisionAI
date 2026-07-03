@@ -27,7 +27,7 @@ interface Lead {
 const PRIORITY_COLOR: Record<string, string> = {
   CRITICAL: '#ef4444',
   HIGH:     '#f59e0b',
-  MEDIUM:   '#00f0ff',
+  MEDIUM:   '#0F6B5C',
   LOW:      '#64748b',
 };
 
@@ -47,7 +47,7 @@ const STATUS_BADGE: Record<string, string> = {
 
 const STATUS_COLORS: Record<string, string> = {
   investigating: '#f59e0b',
-  arrested:      '#00f0ff',
+  arrested:      '#0F6B5C',
   monitoring:    '#8b5cf6',
   resolved:      '#10b981',
 };
@@ -201,19 +201,19 @@ export default function InvestigationCopilotPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={{
             width: 48, height: 48, borderRadius: 14,
-            background: 'rgba(0,240,255,0.08)', border: '1px solid rgba(0,240,255,0.3)',
+            background: 'rgba(30, 58, 95,0.08)', border: '1px solid rgba(30, 58, 95,0.3)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 0 20px rgba(0,240,255,0.12)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
           }}>
-            <Crosshair size={24} color="#00f0ff" />
+            <Crosshair size={24} color="#0F6B5C" />
           </div>
           <div>
             <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               INVESTIGATION COPILOT
               <span style={{
                 fontSize: 10, fontWeight: 800, letterSpacing: '0.14em',
-                background: 'rgba(0,240,255,0.12)', color: '#00f0ff',
-                border: '1px solid rgba(0,240,255,0.3)', borderRadius: 4,
+                background: 'rgba(30, 58, 95,0.12)', color: '#0F6B5C',
+                border: '1px solid rgba(30, 58, 95,0.3)', borderRadius: 4,
                 padding: '2px 8px', verticalAlign: 'middle',
               }}>AI</span>
             </h1>
@@ -231,7 +231,7 @@ export default function InvestigationCopilotPage() {
             <span style={{
               width: 7, height: 7, borderRadius: '50%', background: '#10b981',
               animation: 'pulse-green 1.5s ease-in-out infinite',
-              boxShadow: '0 0 6px #10b981',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
             }} />
             <span style={{ fontSize: 11, fontWeight: 800, color: '#10b981', letterSpacing: '0.08em' }}>
               COPILOT ACTIVE
@@ -239,9 +239,9 @@ export default function InvestigationCopilotPage() {
           </div>
 
           <div style={{
-            background: 'rgba(0,240,255,0.08)', border: '1px solid rgba(0,240,255,0.25)',
+            background: 'rgba(30, 58, 95,0.08)', border: '1px solid rgba(30, 58, 95,0.25)',
             borderRadius: 20, padding: '5px 12px',
-            fontSize: 11, fontWeight: 700, color: '#00f0ff', letterSpacing: '0.07em',
+            fontSize: 11, fontWeight: 700, color: '#0F6B5C', letterSpacing: '0.07em',
           }}>
             LEADS GENERATED: AI
           </div>
@@ -264,7 +264,7 @@ export default function InvestigationCopilotPage() {
         ════════════════════════════════════════════════════════════════ */}
         <div className="glass-card" style={{ padding: 18, minHeight: '80vh' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-            <FileText size={14} color="#00f0ff" />
+            <FileText size={14} color="#0F6B5C" />
             <span style={{ fontSize: 13, fontWeight: 800, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Select Case File
             </span>
@@ -282,9 +282,9 @@ export default function InvestigationCopilotPage() {
                 style={{
                   padding: '4px 10px', borderRadius: 14, fontSize: 10, fontWeight: 700,
                   cursor: 'pointer', letterSpacing: '0.06em', textTransform: 'uppercase',
-                  border: `1px solid ${statusFilter === f.value ? 'rgba(0,240,255,0.5)' : 'rgba(255,255,255,0.1)'}`,
-                  background: statusFilter === f.value ? 'rgba(0,240,255,0.12)' : 'rgba(255,255,255,0.03)',
-                  color: statusFilter === f.value ? '#00f0ff' : '#64748b',
+                  border: `1px solid ${statusFilter === f.value ? 'rgba(30, 58, 95,0.5)' : 'rgba(255,255,255,0.1)'}`,
+                  background: statusFilter === f.value ? 'rgba(30, 58, 95,0.12)' : 'rgba(255,255,255,0.03)',
+                  color: statusFilter === f.value ? '#0F6B5C' : '#64748b',
                   transition: 'all 0.2s',
                 }}
               >
@@ -307,12 +307,12 @@ export default function InvestigationCopilotPage() {
                   style={{
                     padding: '12px 14px', borderRadius: 10, cursor: 'pointer',
                     border: isSelected
-                      ? '1px solid rgba(0,240,255,0.55)'
+                      ? '1px solid rgba(30, 58, 95,0.55)'
                       : '1px solid rgba(255,255,255,0.06)',
                     background: isSelected
-                      ? 'rgba(0,240,255,0.07)'
+                      ? 'rgba(30, 58, 95,0.07)'
                       : 'rgba(255,255,255,0.025)',
-                    boxShadow: isSelected ? '0 0 16px rgba(0,240,255,0.1)' : 'none',
+                    boxShadow: isSelected ? '0 0 16px rgba(30, 58, 95,0.1)' : 'none',
                     transition: 'all 0.18s ease',
                     position: 'relative',
                   }}
@@ -323,13 +323,13 @@ export default function InvestigationCopilotPage() {
                       position: 'absolute', top: 10, right: 10,
                       width: 7, height: 7, borderRadius: '50%',
                       background: isCritical ? '#ef4444' : '#f59e0b',
-                      boxShadow: `0 0 6px ${isCritical ? '#ef4444' : '#f59e0b'}`,
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                       animation: isCritical ? 'pulse-red 1.5s ease-in-out infinite' : 'none',
                     }} />
                   )}
 
                   {/* FIR Number */}
-                  <div style={{ fontFamily: 'monospace', fontSize: 11, fontWeight: 800, color: '#00f0ff', marginBottom: 4, letterSpacing: '0.04em' }}>
+                  <div style={{ fontFamily: 'monospace', fontSize: 11, fontWeight: 800, color: '#0F6B5C', marginBottom: 4, letterSpacing: '0.04em' }}>
                     {fir.firNumber}
                   </div>
 
@@ -388,25 +388,25 @@ export default function InvestigationCopilotPage() {
               <div style={{ position: 'relative', width: 100, height: 100, marginBottom: 28 }}>
                 <div style={{
                   position: 'absolute', inset: 0, borderRadius: '50%',
-                  border: '1px solid rgba(0,240,255,0.2)',
+                  border: '1px solid rgba(30, 58, 95,0.2)',
                 }} />
                 <div style={{
                   position: 'absolute', inset: 8, borderRadius: '50%',
-                  border: '1px solid rgba(0,240,255,0.15)',
+                  border: '1px solid rgba(30, 58, 95,0.15)',
                 }} />
                 <div style={{
                   position: 'absolute', inset: 20, borderRadius: '50%',
-                  border: '1px solid rgba(0,240,255,0.1)',
+                  border: '1px solid rgba(30, 58, 95,0.1)',
                 }} />
                 <div style={{
                   position: 'absolute', inset: 0, borderRadius: '50%',
-                  background: 'conic-gradient(rgba(0,240,255,0.15) 0deg, transparent 60deg, transparent 360deg)',
+                  background: 'conic-gradient(rgba(30, 58, 95,0.15) 0deg, transparent 60deg, transparent 360deg)',
                   animation: 'spin 3s linear infinite',
                 }} />
                 <div style={{
                   position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                  <Crosshair size={32} color="#00f0ff" style={{ opacity: 0.8 }} />
+                  <Crosshair size={32} color="#0F6B5C" style={{ opacity: 0.8 }} />
                 </div>
               </div>
 
@@ -419,11 +419,11 @@ export default function InvestigationCopilotPage() {
 
               <div style={{
                 marginTop: 24, display: 'flex', alignItems: 'center', gap: 8,
-                background: 'rgba(0,240,255,0.06)', border: '1px solid rgba(0,240,255,0.15)',
+                background: 'rgba(30, 58, 95,0.06)', border: '1px solid rgba(30, 58, 95,0.15)',
                 borderRadius: 10, padding: '10px 20px',
               }}>
-                <Brain size={14} color="#00f0ff" />
-                <span style={{ fontSize: 12, color: '#00f0ff', fontWeight: 600 }}>
+                <Brain size={14} color="#0F6B5C" />
+                <span style={{ fontSize: 12, color: '#0F6B5C', fontWeight: 600 }}>
                   {FIR_RECORDS.length} case files indexed • AI copilot ready
                 </span>
               </div>
@@ -433,11 +433,11 @@ export default function InvestigationCopilotPage() {
               {/* ── CASE BRIEF BAR ── */}
               <div className="glass-card" style={{
                 padding: '12px 18px',
-                background: 'rgba(0,240,255,0.04)',
-                border: '1px solid rgba(0,240,255,0.15)',
+                background: 'rgba(30, 58, 95,0.04)',
+                border: '1px solid rgba(30, 58, 95,0.15)',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', fontSize: 11 }}>
-                  <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#00f0ff', fontSize: 12 }}>
+                  <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#0F6B5C', fontSize: 12 }}>
                     {selectedFir.firNumber}
                   </span>
                   <span style={{ color: '#64748b' }}>|</span>
@@ -461,13 +461,13 @@ export default function InvestigationCopilotPage() {
                 {/* Section Header */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <Target size={15} color="#00f0ff" />
+                    <Target size={15} color="#0F6B5C" />
                     <span style={{ fontSize: 13, fontWeight: 800, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                       TOP INVESTIGATION LEADS
                     </span>
                     <span style={{
-                      fontSize: 9, fontWeight: 800, background: 'rgba(0,240,255,0.12)',
-                      color: '#00f0ff', border: '1px solid rgba(0,240,255,0.3)',
+                      fontSize: 9, fontWeight: 800, background: 'rgba(30, 58, 95,0.12)',
+                      color: '#0F6B5C', border: '1px solid rgba(30, 58, 95,0.3)',
                       borderRadius: 4, padding: '1px 6px', letterSpacing: '0.08em',
                     }}>AI GENERATED</span>
                   </div>
@@ -497,7 +497,7 @@ export default function InvestigationCopilotPage() {
                   <div style={{
                     height: '100%', borderRadius: 3,
                     width: `${totalLeads > 0 ? (completedCount / totalLeads) * 100 : 0}%`,
-                    background: 'linear-gradient(90deg, #00b4cc, #00f0ff)',
+                    background: 'linear-gradient(90deg, #00b4cc, #0F6B5C)',
                     transition: 'width 0.5s ease',
                   }} />
                 </div>
@@ -515,7 +515,7 @@ export default function InvestigationCopilotPage() {
                           padding: '14px 16px',
                           borderRadius: '0 10px 10px 0',
                           borderLeft: `3px solid ${isChecked ? '#334155' : borderColor}`,
-                          background: isChecked ? 'rgba(255,255,255,0.015)' : 'rgba(10,22,40,0.6)',
+                          background: isChecked ? 'rgba(255,255,255,0.015)' : '#FFFFFF',
                           border: `1px solid ${isChecked ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.07)'}`,
                           borderLeftColor: isChecked ? '#334155' : borderColor,
                           borderLeftWidth: 3,
@@ -729,7 +729,7 @@ export default function InvestigationCopilotPage() {
                     { label: 'Arrests', value: suspect?.arrestCount ?? 0, color: '#ef4444' },
                     { label: 'Associates', value: suspect?.knownAssociates?.length ?? 0, color: '#f59e0b' },
                     { label: 'Vehicles', value: suspect?.vehiclesUsed?.length ?? 0, color: '#8b5cf6' },
-                    { label: 'Mobiles', value: suspect?.mobileNumbers?.length ?? 0, color: '#00f0ff' },
+                    { label: 'Mobiles', value: suspect?.mobileNumbers?.length ?? 0, color: '#0F6B5C' },
                   ].map(fact => (
                     <div key={fact.label} style={{
                       background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)',
@@ -768,7 +768,7 @@ export default function InvestigationCopilotPage() {
                       height: '100%', borderRadius: 4,
                       width: `${(selectedFir.evidenceCount / 10) * 100}%`,
                       background: 'linear-gradient(90deg, #059669, #10b981)',
-                      boxShadow: '0 0 6px rgba(16,185,129,0.4)',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
                       transition: 'width 1s ease',
                     }} />
                   </div>
@@ -843,7 +843,7 @@ export default function InvestigationCopilotPage() {
                         width: `${factor.score}%`,
                         background: `linear-gradient(90deg, ${factor.color}88, ${factor.color})`,
                         transition: 'width 1s ease',
-                        boxShadow: `0 0 6px ${factor.color}60`,
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                       }} />
                     </div>
                   </div>
@@ -904,9 +904,9 @@ export default function InvestigationCopilotPage() {
                   <div style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
                     marginTop: 6, padding: '7px 0',
-                    borderRadius: 7, border: '1px solid rgba(0,240,255,0.15)',
-                    background: 'rgba(0,240,255,0.04)', cursor: 'pointer',
-                    fontSize: 11, fontWeight: 700, color: '#00f0ff',
+                    borderRadius: 7, border: '1px solid rgba(30, 58, 95,0.15)',
+                    background: 'rgba(30, 58, 95,0.04)', cursor: 'pointer',
+                    fontSize: 11, fontWeight: 700, color: '#0F6B5C',
                     transition: 'all 0.2s',
                   }}>
                     <FileText size={11} /> View Full FIR <ArrowRight size={11} />

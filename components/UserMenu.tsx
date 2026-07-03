@@ -39,10 +39,10 @@ export default function UserMenu({ user }: UserMenuProps) {
   };
 
   const getRoleBadge = (role?: string) => {
-    if (!role) return { text: 'Officer', color: 'rgba(0, 240, 255, 0.15)', textCol: '#00f0ff' };
+    if (!role) return { text: 'Officer', color: 'rgba(30,58,95,0.1)', textCol: '#1E3A5F' };
     if (role === 'DGP') return { text: 'DGP', color: 'rgba(239, 68, 68, 0.15)', textCol: '#ef4444' };
     if (role === 'Commissioner') return { text: 'Commissioner', color: 'rgba(245, 158, 11, 0.15)', textCol: '#f59e0b' };
-    return { text: role, color: 'rgba(0, 240, 255, 0.15)', textCol: '#00f0ff' };
+    return { text: role, color: 'rgba(30,58,95,0.1)', textCol: '#1E3A5F' };
   };
 
   const badge = getRoleBadge(user?.role);
@@ -54,7 +54,7 @@ export default function UserMenu({ user }: UserMenuProps) {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 p-1.5 rounded-lg border transition-all cursor-pointer"
         style={{
-          background: 'rgba(10, 22, 40, 0.2)',
+          background: '#F3F4F6',
           borderColor: 'var(--border-default)',
         }}
         onMouseEnter={e => {
@@ -67,7 +67,7 @@ export default function UserMenu({ user }: UserMenuProps) {
         <div
           className="w-8 h-8 rounded-full flex items-center justify-center font-black text-xs"
           style={{
-            background: 'linear-gradient(135deg, rgba(0,240,255,0.1), rgba(139,92,246,0.1))',
+            background: 'linear-gradient(135deg, rgba(30,58,95,0.08), rgba(139,92,246,0.1))',
             border: `1px solid ${badge.textCol}44`,
             color: badge.textCol,
           }}
@@ -148,25 +148,7 @@ export default function UserMenu({ user }: UserMenuProps) {
 
             <hr className="my-1 opacity-10" style={{ borderColor: 'var(--border-default)' }} />
 
-            {/* Theme */}
-            <button
-              onClick={() => {
-                toggleTheme();
-              }}
-              className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-slate-500/5 transition-colors cursor-pointer text-left"
-            >
-              <div className="flex items-center gap-2.5">
-                {theme === 'dark' ? (
-                  <Sun size={13} className="text-amber-500" />
-                ) : (
-                  <Moon size={13} className="text-blue-500" />
-                )}
-                <span>Theme</span>
-              </div>
-              <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-white/5 text-[var(--text-muted)]">
-                {theme === 'dark' ? 'Dark' : 'Light'}
-              </span>
-            </button>
+
 
             {/* Language */}
             <button

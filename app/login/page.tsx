@@ -83,10 +83,8 @@ export default function LoginPage() {
         setProgress(prog);
       } else {
         clearInterval(progressInterval);
-        const targetRoute = matchedAccount.role === 'DGP' || matchedAccount.role === 'Commissioner' 
-          ? '/commissioner-dashboard' 
-          : '/dashboard';
-        router.replace(targetRoute);
+        // Unified routing: all roles go to Home. RBAC sidebar handles portal differences.
+        router.replace('/');
       }
     }, 90);
   };
@@ -145,7 +143,7 @@ export default function LoginPage() {
         <div className="success-overlay">
           <div className="success-content">
             <div className="success-shield-box">
-              <Shield size={38} className="text-teal-400" />
+              <Shield size={38} style={{ color: '#A6192E' }} />
             </div>
             <h2 className="success-title">{LOADING_STEPS[stepIdx].toUpperCase()}</h2>
             <p className="success-subtitle">CrimeVision Secure Authorization Protocol</p>
@@ -944,7 +942,7 @@ export default function LoginPage() {
         .success-overlay {
           position: fixed;
           inset: 0;
-          background: #0B3D3A;
+          background: #FFFFFF;
           z-index: 100;
           display: flex;
           align-items: center;
@@ -965,40 +963,39 @@ export default function LoginPage() {
           width: 64px;
           height: 64px;
           border-radius: 50%;
-          background: rgba(255, 255, 255, 0.05);
-          border: 2px solid var(--brand-cyan);
+          background: rgba(166, 25, 46, 0.08);
+          border: 2px solid #A6192E;
           display: flex;
           align-items: center;
           justify-content: center;
           margin-bottom: 20px;
-          box-shadow: 0 0 20px rgba(45, 212, 191, 0.2);
         }
 
         .success-title {
           font-size: 16px;
           font-weight: 800;
           letter-spacing: 0.1em;
-          color: #FFFFFF;
+          color: #1E3A5F;
           margin: 0;
         }
 
         .success-subtitle {
           font-size: 11px;
-          color: rgba(255, 255, 255, 0.6);
+          color: #475569;
           margin: 6px 0 16px;
         }
 
         .progress-track {
           width: 100%;
           height: 4px;
-          background: rgba(255, 255, 255, 0.08);
+          background: #E5E7EB;
           border-radius: 2px;
           overflow: hidden;
         }
 
         .progress-fill {
           height: 100%;
-          background: var(--brand-cyan);
+          background: #A6192E;
           transition: width 0.1s linear;
         }
 
@@ -1006,7 +1003,7 @@ export default function LoginPage() {
           font-size: 10px;
           font-weight: 700;
           font-family: monospace;
-          color: var(--brand-cyan);
+          color: #A6192E;
           margin-top: 8px;
         }
 

@@ -233,7 +233,7 @@ export default function AlertPanel({ isOpen, onClose }: AlertPanelProps) {
           <Link
             href="/alerts"
             onClick={onClose}
-            className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-4 rounded-lg text-xs font-bold text-[var(--cyber-cyan)] border border-[var(--cyber-border)] hover:bg-[rgba(0,240,255,0.08)] transition-all uppercase tracking-wider"
+            className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-4 rounded-lg text-xs font-bold text-[var(--cyber-cyan)] border border-[var(--cyber-border)] hover:bg-[rgba(30,58,95,0.06)] transition-all uppercase tracking-wider"
           >
             Go to Alert Command Center <ArrowRight size={13} />
           </Link>

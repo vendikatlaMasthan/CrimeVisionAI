@@ -1,0 +1,29 @@
+{
+  "defaults": {
+    "project": 1
+  },
+  "actives": {
+    "project": 1,
+    "env": 1
+  },
+  "projects": [
+    {
+      "idx": 1,
+      "id": "42352000000020001",
+      "name": "AI-CRIMEVISION",
+      "domain": {
+        "id": "50042994186",
+        "name": "ai-crimevision-60072985440.development"
+      },
+      "timezone": "Asia/Kolkata",
+      "env": [
+        {
+          "idx": 1,
+          "id": "60072985440",
+          "name": "Development",
+          "type": 3
+        }
+      ]
+    }
+  ]
+}

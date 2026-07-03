@@ -12,7 +12,7 @@ import { CRIMINAL_PROFILES, FIR_RECORDS, type CriminalProfile } from '@/lib/mock
 function riskColor(level: string) {
   if (level === 'Critical') return '#ef4444';
   if (level === 'High') return '#f59e0b';
-  if (level === 'Medium') return '#00f0ff';
+  if (level === 'Medium') return '#0F6B5C';
   return '#64748b';
 }
 
@@ -43,7 +43,7 @@ function getInitials(name: string) {
 function getAvatarBg(riskLevel: string) {
   if (riskLevel === 'Critical') return 'linear-gradient(135deg, #ef4444, #b91c1c)';
   if (riskLevel === 'High') return 'linear-gradient(135deg, #f59e0b, #d97706)';
-  if (riskLevel === 'Medium') return 'linear-gradient(135deg, #00f0ff, #0891b2)';
+  if (riskLevel === 'Medium') return 'linear-gradient(135deg, #0F6B5C, #0891b2)';
   return 'linear-gradient(135deg, #64748b, #475569)';
 }
 
@@ -89,7 +89,7 @@ function buildReasoningSteps(p: CriminalProfile): ReasoningStep[] {
       num: 2,
       title: 'MOBILE INTELLIGENCE',
       icon: <Phone size={16} />,
-      iconColor: '#00f0ff',
+      iconColor: '#0F6B5C',
       evidence: `Mobile number ${p.mobileNumbers[0] || '+91-XXXXX-XXXXX'} flagged in active database. IMEI tracked across ${2 + p.arrestCount} incident locations in ${p.district} corridor. Multiple SIM-swap events detected.`,
       confidence: 87,
       label: 'CORROBORATING EVIDENCE',
@@ -149,7 +149,7 @@ function ConfidenceMeter({ value, color }: { value: number; color: string }) {
         <div style={{
           width: `${value}%`, height: '100%',
           background: color,
-          boxShadow: `0 0 6px ${color}`,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
           transition: 'width 0.8s ease',
         }} />
       </div>
@@ -168,7 +168,7 @@ function SuspectCard({ profile, selected, onClick }: {
     <div
       onClick={onClick}
       style={{
-        background: selected ? 'rgba(0,240,255,0.07)' : 'rgba(255,255,255,0.03)',
+        background: selected ? 'rgba(30, 58, 95,0.07)' : 'rgba(255,255,255,0.03)',
         border: `1px solid ${selected ? color : 'rgba(255,255,255,0.08)'}`,
         borderRadius: 10,
         padding: '12px 14px',
@@ -203,7 +203,7 @@ function SuspectCard({ profile, selected, onClick }: {
           width: `${profile.profileScore}%`,
           height: '100%',
           background: color,
-          boxShadow: `0 0 4px ${color}`,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
         }} />
       </div>
     </div>
@@ -236,7 +236,7 @@ function ReasoningStepCard({ step, isLast }: { step: ReasoningStep; isLast: bool
             background: `${step.iconColor}22`,
             border: `2px solid ${step.iconColor}`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: `0 0 12px ${step.iconColor}55`,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
             animation: isPulsing ? 'pulse 2s infinite' : undefined,
             color: step.iconColor,
             flexShrink: 0,
@@ -245,10 +245,10 @@ function ReasoningStepCard({ step, isLast }: { step: ReasoningStep; isLast: bool
           </div>
           <div style={{
             width: 20, height: 20, borderRadius: '50%',
-            background: 'rgba(0,240,255,0.15)',
-            border: '1px solid rgba(0,240,255,0.3)',
+            background: 'rgba(30, 58, 95,0.15)',
+            border: '1px solid rgba(30, 58, 95,0.3)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 10, fontWeight: 800, color: '#00f0ff',
+            fontSize: 10, fontWeight: 800, color: '#0F6B5C',
           }}>{step.num}</div>
         </div>
 
@@ -292,8 +292,8 @@ function ReasoningStepCard({ step, isLast }: { step: ReasoningStep; isLast: bool
           position: 'absolute',
           left: 32, top: '100%',
           width: 2, height: 16,
-          background: 'linear-gradient(to bottom, rgba(0,240,255,0.4), rgba(0,240,255,0.1))',
-          borderLeft: '2px dashed rgba(0,240,255,0.35)',
+          background: 'linear-gradient(to bottom, rgba(30, 58, 95,0.4), rgba(30, 58, 95,0.1))',
+          borderLeft: '2px dashed rgba(30, 58, 95,0.35)',
           zIndex: 1,
         }} />
       )}
@@ -312,13 +312,13 @@ function EmptyState() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: 40, minHeight: 500 }}>
       <div style={{
         width: 80, height: 80, borderRadius: '50%',
-        background: 'rgba(0,240,255,0.08)',
-        border: '2px solid rgba(0,240,255,0.25)',
+        background: 'rgba(30, 58, 95,0.08)',
+        border: '2px solid rgba(30, 58, 95,0.25)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         marginBottom: 20,
-        boxShadow: '0 0 30px rgba(0,240,255,0.15)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
       }}>
-        <Brain size={36} color="#00f0ff" />
+        <Brain size={36} color="#0F6B5C" />
       </div>
       <h2 style={{ color: '#f1f5f9', fontWeight: 800, fontSize: 18, marginBottom: 8, textAlign: 'center' }}>
         Select a Suspect to Run AI Detective Analysis
@@ -328,7 +328,7 @@ function EmptyState() {
       </p>
 
       <div style={{ width: '100%', maxWidth: 480 }}>
-        <div style={{ fontSize: 11, color: '#00f0ff', fontWeight: 700, letterSpacing: '0.1em', marginBottom: 12 }}>
+        <div style={{ fontSize: 11, color: '#0F6B5C', fontWeight: 700, letterSpacing: '0.1em', marginBottom: 12 }}>
           SAMPLE ANALYSIS PREVIEWS
         </div>
         {ghosts.map((g, i) => (
@@ -407,12 +407,12 @@ export default function DetectivePage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 8 }}>
           <div style={{
             width: 48, height: 48, borderRadius: 12,
-            background: 'rgba(0,240,255,0.12)',
-            border: '2px solid rgba(0,240,255,0.35)',
+            background: 'rgba(30, 58, 95,0.12)',
+            border: '2px solid rgba(30, 58, 95,0.35)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 0 20px rgba(0,240,255,0.2)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
           }}>
-            <Brain size={26} color="#00f0ff" />
+            <Brain size={26} color="#0F6B5C" />
           </div>
           <div>
             <h1 className="page-title" style={{ fontSize: 26, marginBottom: 2 }}>
@@ -428,7 +428,7 @@ export default function DetectivePage() {
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 14 }}>
           {[
             { label: 'NEURAL NET: ACTIVE', color: '#10b981', icon: <Radio size={11} /> },
-            { label: 'LINK ANALYSIS: RUNNING', color: '#00f0ff', icon: <Network size={11} /> },
+            { label: 'LINK ANALYSIS: RUNNING', color: '#0F6B5C', icon: <Network size={11} /> },
             { label: 'CONFIDENCE: 94.2%', color: '#f59e0b', icon: <Zap size={11} /> },
             { label: 'CLASSIFIED: LEVEL 4', color: '#ef4444', icon: <Lock size={11} /> },
           ].map((s, i) => (
@@ -445,7 +445,7 @@ export default function DetectivePage() {
                 <span style={{
                   display: 'inline-block', width: 6, height: 6, borderRadius: '50%',
                   background: s.color, marginLeft: 4,
-                  boxShadow: `0 0 6px ${s.color}`,
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                   animation: 'pulse 1.5s infinite',
                 }} />
               )}
@@ -464,19 +464,19 @@ export default function DetectivePage() {
             <div style={{
               padding: '14px 16px',
               borderBottom: '1px solid rgba(255,255,255,0.07)',
-              background: 'rgba(0,240,255,0.04)',
+              background: 'rgba(30, 58, 95,0.04)',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Users size={16} color="#00f0ff" />
-                  <span style={{ fontWeight: 800, fontSize: 13, color: '#00f0ff', letterSpacing: '0.08em' }}>
+                  <Users size={16} color="#0F6B5C" />
+                  <span style={{ fontWeight: 800, fontSize: 13, color: '#0F6B5C', letterSpacing: '0.08em' }}>
                     SUSPECT REGISTRY
                   </span>
                 </div>
                 <span style={{
-                  background: 'rgba(0,240,255,0.15)',
-                  border: '1px solid rgba(0,240,255,0.3)',
-                  color: '#00f0ff', fontSize: 11, fontWeight: 700,
+                  background: 'rgba(30, 58, 95,0.15)',
+                  border: '1px solid rgba(30, 58, 95,0.3)',
+                  color: '#0F6B5C', fontSize: 11, fontWeight: 700,
                   padding: '2px 8px', borderRadius: 4,
                 }}>{filteredProfiles.length} SUBJECTS</span>
               </div>
@@ -534,7 +534,7 @@ export default function DetectivePage() {
               {/* ── SECTION 1: INTELLIGENCE DOSSIER ─────────────────────── */}
               <div className="glass-card" style={{
                 border: `1px solid ${verdictColor}44`,
-                boxShadow: `0 0 30px ${verdictColor}18`,
+                boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
               }}>
                 <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
                   {/* Avatar */}
@@ -544,7 +544,7 @@ export default function DetectivePage() {
                       background: getAvatarBg(selected.riskLevel),
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontWeight: 900, fontSize: 24, color: '#fff',
-                      boxShadow: `0 0 24px ${verdictColor}55`,
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                       border: `3px solid ${verdictColor}`,
                     }}>{getInitials(selected.name)}</div>
                   </div>
@@ -592,7 +592,7 @@ export default function DetectivePage() {
                           width: `${selected.profileScore}%`,
                           height: '100%',
                           background: `linear-gradient(90deg, ${verdictColor}99, ${verdictColor})`,
-                          boxShadow: `0 0 10px ${verdictColor}`,
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                           transition: 'width 1s ease',
                         }} />
                       </div>
@@ -624,7 +624,7 @@ export default function DetectivePage() {
                     { label: 'ARRESTS', value: selected.arrestCount, color: '#ef4444' },
                     { label: 'CRIMES ON RECORD', value: selected.crimeHistory.length, color: '#f59e0b' },
                     { label: 'KNOWN ASSOCIATES', value: selected.knownAssociates.length, color: '#8b5cf6' },
-                    { label: 'EVIDENCE PIECES', value: getEvidenceCount(selected), color: '#00f0ff' },
+                    { label: 'EVIDENCE PIECES', value: getEvidenceCount(selected), color: '#0F6B5C' },
                   ].map((stat, i) => (
                     <div key={i} style={{ textAlign: 'center' }}>
                       <div style={{ fontSize: 26, fontWeight: 900, color: stat.color, textShadow: `0 0 12px ${stat.color}` }}>
@@ -642,11 +642,11 @@ export default function DetectivePage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
                     <div style={{
                       width: 32, height: 32, borderRadius: 8,
-                      background: 'rgba(0,240,255,0.12)',
-                      border: '1px solid rgba(0,240,255,0.3)',
+                      background: 'rgba(30, 58, 95,0.12)',
+                      border: '1px solid rgba(30, 58, 95,0.3)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
-                      <Network size={16} color="#00f0ff" />
+                      <Network size={16} color="#0F6B5C" />
                     </div>
                     <div>
                       <div style={{ fontWeight: 800, fontSize: 15, color: '#f1f5f9' }}>
@@ -657,8 +657,8 @@ export default function DetectivePage() {
                       </div>
                     </div>
                     <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <Crosshair size={13} color="#00f0ff" />
-                      <span style={{ fontSize: 12, color: '#00f0ff', fontWeight: 700 }}>
+                      <Crosshair size={13} color="#0F6B5C" />
+                      <span style={{ fontSize: 12, color: '#0F6B5C', fontWeight: 700 }}>
                         {reasoningSteps.length} STEPS
                       </span>
                     </div>
@@ -671,8 +671,8 @@ export default function DetectivePage() {
                   }}>
                     <div style={{
                       width: '100%', height: '100%',
-                      background: 'linear-gradient(90deg, #00f0ff, #8b5cf6)',
-                      boxShadow: '0 0 8px #00f0ff',
+                      background: 'linear-gradient(90deg, #0F6B5C, #8b5cf6)',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
                     }} />
                   </div>
                 </div>
@@ -691,22 +691,22 @@ export default function DetectivePage() {
                 {/* AI confidence summary */}
                 <div style={{
                   marginTop: 16,
-                  background: 'rgba(0,240,255,0.05)',
-                  border: '1px solid rgba(0,240,255,0.2)',
+                  background: 'rgba(30, 58, 95,0.05)',
+                  border: '1px solid rgba(30, 58, 95,0.2)',
                   borderRadius: 10, padding: '12px 16px',
                   display: 'flex', alignItems: 'center', gap: 12,
                 }}>
-                  <Brain size={18} color="#00f0ff" />
+                  <Brain size={18} color="#0F6B5C" />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 12, color: '#00f0ff', fontWeight: 700, marginBottom: 2 }}>
+                    <div style={{ fontSize: 12, color: '#0F6B5C', fontWeight: 700, marginBottom: 2 }}>
                       OVERALL AI CONFIDENCE
                     </div>
                     <ConfidenceMeter
                       value={Math.round(reasoningSteps.reduce((a, s) => a + s.confidence, 0) / reasoningSteps.length)}
-                      color="#00f0ff"
+                      color="#0F6B5C"
                     />
                   </div>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: '#00f0ff', textShadow: '0 0 12px #00f0ff' }}>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: '#0F6B5C', textShadow: '0 0 12px #0F6B5C' }}>
                     {Math.round(reasoningSteps.reduce((a, s) => a + s.confidence, 0) / reasoningSteps.length)}%
                   </div>
                 </div>
@@ -784,9 +784,9 @@ export default function DetectivePage() {
                           href={`/fir?id=${fir.id}`}
                           style={{
                             display: 'flex', alignItems: 'center', gap: 5,
-                            background: 'rgba(0,240,255,0.1)',
-                            border: '1px solid rgba(0,240,255,0.3)',
-                            color: '#00f0ff', fontSize: 11, fontWeight: 700,
+                            background: 'rgba(30, 58, 95,0.1)',
+                            border: '1px solid rgba(30, 58, 95,0.3)',
+                            color: '#0F6B5C', fontSize: 11, fontWeight: 700,
                             padding: '6px 12px', borderRadius: 6,
                             textDecoration: 'none', whiteSpace: 'nowrap',
                             flexShrink: 0,
@@ -803,7 +803,7 @@ export default function DetectivePage() {
               {/* ── SECTION 4: AI VERDICT ─────────────────────────────────── */}
               <div className="glass-card" style={{
                 border: `2px solid ${verdictColor}55`,
-                boxShadow: `0 0 40px ${verdictColor}1a, inset 0 0 30px ${verdictColor}08`,
+                boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                 position: 'relative',
                 overflow: 'hidden',
               }}>
@@ -825,7 +825,7 @@ export default function DetectivePage() {
                     background: `${verdictColor}22`,
                     border: `2px solid ${verdictColor}`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: `0 0 16px ${verdictColor}55`,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                   }}>
                     <Star size={18} color={verdictColor} />
                   </div>
@@ -871,10 +871,10 @@ export default function DetectivePage() {
                       color: '#8b5cf6',
                     },
                     {
-                      icon: <Eye size={15} color="#00f0ff" />,
+                      icon: <Eye size={15} color="#0F6B5C" />,
                       label: 'Evidence Chain',
                       value: `${getEvidenceCount(selected)} pieces of corroborating evidence identified across ${reasoningSteps.length} intelligence streams`,
-                      color: '#00f0ff',
+                      color: '#0F6B5C',
                     },
                     {
                       icon: <Crosshair size={15} color={verdictColor} />,

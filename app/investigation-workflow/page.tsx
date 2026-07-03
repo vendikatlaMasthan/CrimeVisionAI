@@ -64,11 +64,11 @@ const CASES = [
         status: "active"
       },
       {
-        title: "Risk Prediction",
+        title: "Risk Assessment",
         details: "⏳ Expected recurrence rating: HIGH (78%)",
         time: "Pending",
         meta: "Awaiting next dispatch threshold",
-        extra: "Predictive model is waiting for deployment indicators to update risk metrics. Re-routing probability is high if checkpoints are left unmonitored.",
+        extra: "Risk assessment model is waiting for deployment indicators to update risk metrics. Re-routing probability is elevated if checkpoints are left unmonitored.",
         status: "pending"
       },
       {
@@ -147,11 +147,11 @@ const CASES = [
         status: "pending"
       },
       {
-        title: "Risk Prediction",
+        title: "Risk Assessment",
         details: "⏳ Financial threat recurrence check",
         time: "Pending",
         meta: "System scanning",
-        extra: "Predictive threat of victim expansion rate: Moderate. Recommended firewall blocks.",
+        extra: "Estimated threat of victim expansion rate: Moderate. Recommended firewall blocks.",
         status: "pending"
       },
       {
@@ -223,14 +223,14 @@ const CASES = [
       },
       {
         title: "AI Investigation",
-        details: "🤖 Route prediction: 96% match to Nelamangala warehouse.",
+        details: "🤖 Route estimation: 96% match to Nelamangala warehouse.",
         time: "07:00 AM",
-        meta: "Dismantling site threat predicted",
-        extra: "Historical path analysis predicts vehicle transport to de-registration scrapyard in Nelamangala corridor.",
+        meta: "Dismantling site threat estimated",
+        extra: "Historical path analysis estimates vehicle transport to de-registration scrapyard in Nelamangala corridor.",
         status: "completed"
       },
       {
-        title: "Risk Prediction",
+        title: "Risk Assessment",
         details: "⚡ Scrap yard raid planning complete",
         time: "08:15 AM",
         meta: "Risk level: LOW",
@@ -313,7 +313,7 @@ const CASES = [
         status: "pending"
       },
       {
-        title: "Risk Prediction",
+        title: "Risk Assessment",
         details: "⏳ Threat forecast pending",
         time: "Pending",
         meta: "Pending logs",
@@ -570,7 +570,7 @@ export default function InvestigationWorkflowPage() {
                     padding: '12px 14px',
                     borderRadius: '10px',
                     border: `1px solid ${isSelected ? 'var(--cyber-cyan)' : 'transparent'}`,
-                    background: isSelected ? 'rgba(0, 240, 255, 0.05)' : 'rgba(255,255,255,0.01)',
+                    background: isSelected ? 'rgba(30, 58, 95, 0.05)' : 'rgba(255,255,255,0.01)',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                   }}
@@ -582,7 +582,7 @@ export default function InvestigationWorkflowPage() {
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: c.color, boxShadow: `0 0 6px ${c.color}` }} />
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: c.color, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }} />
                     <span style={{ fontSize: '12px', fontWeight: 800, color: isSelected ? 'var(--cyber-cyan)' : 'var(--text-primary)', fontFamily: 'JetBrains Mono, monospace' }}>
                       FIR #{c.id}
                     </span>
@@ -636,7 +636,7 @@ export default function InvestigationWorkflowPage() {
                   <CountUp end={selectedCase.progress} suffix="%" />
                 </div>
                 <div style={{ height: '5px', background: 'rgba(255,255,255,0.06)', borderRadius: '2.5px', overflow: 'hidden', marginTop: '6px' }}>
-                  <div style={{ height: '100%', width: `${selectedCase.progress}%`, background: 'var(--cyber-cyan)', boxShadow: '0 0 8px var(--cyber-cyan)' }} />
+                  <div style={{ height: '100%', width: `${selectedCase.progress}%`, background: 'var(--cyber-cyan)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }} />
                 </div>
               </div>
             </div>
@@ -657,8 +657,8 @@ export default function InvestigationWorkflowPage() {
                   style={{
                     padding: '16px 20px',
                     borderColor: isActive ? 'var(--cyber-cyan)' : 'var(--glass-card-border)',
-                    boxShadow: isActive ? '0 0 16px rgba(0, 240, 255, 0.15)' : 'none',
-                    background: isActive ? 'rgba(0, 240, 255, 0.02)' : 'var(--cyber-card)',
+                    boxShadow: isActive ? '0 0 16px rgba(30, 58, 95, 0.15)' : 'none',
+                    background: isActive ? 'rgba(30, 58, 95, 0.02)' : 'var(--cyber-card)',
                     transition: 'all 0.3s ease',
                   }}
                 >
@@ -683,7 +683,7 @@ export default function InvestigationWorkflowPage() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          background: isCompleted ? 'rgba(0, 240, 255, 0.1)' : isActive ? 'rgba(0, 240, 255, 0.05)' : 'transparent',
+                          background: isCompleted ? 'rgba(30, 58, 95, 0.1)' : isActive ? 'rgba(30, 58, 95, 0.05)' : 'transparent',
                           color: isCompleted || isActive ? 'var(--cyber-cyan)' : 'var(--text-dim)',
                           boxShadow: isActive ? '0 0 8px var(--cyber-cyan)' : 'none',
                           flexShrink: 0,
@@ -716,11 +716,11 @@ export default function InvestigationWorkflowPage() {
                               style={{
                                 fontSize: '8px',
                                 fontWeight: 900,
-                                background: 'rgba(0, 240, 255, 0.12)',
+                                background: 'rgba(30, 58, 95, 0.12)',
                                 color: 'var(--cyber-cyan)',
                                 padding: '1px 5px',
                                 borderRadius: '4px',
-                                border: '1px solid rgba(0, 240, 255, 0.25)',
+                                border: '1px solid rgba(30, 58, 95, 0.25)',
                                 letterSpacing: '0.04em',
                               }}
                             >

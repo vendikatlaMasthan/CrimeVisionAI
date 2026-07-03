@@ -22,17 +22,17 @@ const chartData = [
   { name: 'Belagavi', score: 76, crimes: 6234, color: '#f59e0b' },
   { name: 'Mangaluru', score: 72, crimes: 4321, color: '#8b5cf6' },
   { name: 'Hubballi', score: 69, crimes: 5432, color: '#8b5cf6' },
-  { name: 'Vijayapura', score: 64, crimes: 4567, color: '#00f0ff' }
+  { name: 'Vijayapura', score: 64, crimes: 4567, color: '#0F6B5C' }
 ].sort((a, b) => b.crimes - a.crimes);
 
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
       <div style={{
-        background: 'rgba(10,22,40,0.98)', border: '1px solid rgba(0,240,255,0.22)',
+        background: '#FFFFFF', border: '1px solid rgba(30, 58, 95,0.22)',
         borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#f1f5f9'
       }}>
-        <div style={{ color: '#00f0ff', fontWeight: 700, marginBottom: 4 }}>{payload[0].payload.name}</div>
+        <div style={{ color: '#0F6B5C', fontWeight: 700, marginBottom: 4 }}>{payload[0].payload.name}</div>
         <div style={{ color: '#cbd5e1' }}>Crimes: <strong style={{ color: '#fff' }}>{payload[0].value.toLocaleString()}</strong></div>
         <div style={{ color: '#cbd5e1' }}>Risk Score: <strong style={{ color: '#fff' }}>{payload[0].payload.score}/100</strong></div>
       </div>
@@ -80,8 +80,8 @@ export default function CommissionerPage() {
               padding: '4px 10px', fontSize: 10, fontWeight: 800, letterSpacing: '0.08em'
             }}>CONFIDENTIAL</span>
             <span style={{
-              background: 'rgba(0,240,255,0.1)', color: '#00f0ff',
-              border: '1px solid rgba(0,240,255,0.3)', borderRadius: 6,
+              background: 'rgba(30, 58, 95,0.1)', color: '#0F6B5C',
+              border: '1px solid rgba(30, 58, 95,0.3)', borderRadius: 6,
               padding: '4px 10px', fontSize: 10, fontWeight: 800, letterSpacing: '0.08em'
             }}>DGP COMMAND CENTER</span>
           </div>
@@ -190,7 +190,7 @@ export default function CommissionerPage() {
       {/* ── EXECUTIVE STATS CARDS ROW ── */}
       <div className="responsive-grid-4">
         {[
-          { label: 'State YTD Crimes', value: COMMISSIONER_METRICS.totalCrimes.toLocaleString(), sub: 'Recorded Year-to-Date', color: '#00f0ff', icon: BarChart3 },
+          { label: 'State YTD Crimes', value: COMMISSIONER_METRICS.totalCrimes.toLocaleString(), sub: 'Recorded Year-to-Date', color: '#0F6B5C', icon: BarChart3 },
           { label: 'Active Case Registry', value: COMMISSIONER_METRICS.activeCases.toLocaleString(), sub: 'Across 31 Districts', color: '#f59e0b', icon: Users },
           { label: 'Force Clearance Index', value: `${COMMISSIONER_METRICS.clearanceRate}%`, sub: 'Cleared & closed rate', color: '#10b981', icon: ShieldCheck, badge: 'STABLE' },
           { label: 'Critical Risk Districts', value: COMMISSIONER_METRICS.criticalDistricts.toString(), sub: 'Immediate resource focus', color: '#ef4444', icon: ShieldAlert },
@@ -201,7 +201,7 @@ export default function CommissionerPage() {
             style={{
               padding: '18px 20px',
               border: `1px solid ${m.color}25`,
-              background: 'rgba(10,22,40,0.85)',
+              background: '#FFFFFF',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
@@ -222,7 +222,7 @@ export default function CommissionerPage() {
       {/* ── DISTRICT COMPARISON DASHBOARD ── */}
       <div className="glass-card" style={{ padding: 22 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-          <div className="section-header-line" style={{ background: '#00f0ff' }} />
+          <div className="section-header-line" style={{ background: '#0F6B5C' }} />
           <h2 className="section-title">District Comparison Dashboard</h2>
           <span className="badge badge-cyan" style={{ marginLeft: 'auto' }}>STATE INTEL PROFILE</span>
         </div>
@@ -256,7 +256,7 @@ export default function CommissionerPage() {
                   <tr key={d.name}>
                     <td style={{ fontWeight: 'bold' }}>{d.name}</td>
                     <td>{d.crimes.toLocaleString()}</td>
-                    <td style={{ color: d.risk > 80 ? '#ef4444' : d.risk > 60 ? '#f59e0b' : '#00f0ff', fontWeight: 'bold' }}>{d.risk}/100</td>
+                    <td style={{ color: d.risk > 80 ? '#ef4444' : d.risk > 60 ? '#f59e0b' : '#0F6B5C', fontWeight: 'bold' }}>{d.risk}/100</td>
                     <td>{d.active.toLocaleString()}</td>
                     <td>{d.clearance}%</td>
                     <td>{d.officers.toLocaleString()}</td>
@@ -341,7 +341,7 @@ export default function CommissionerPage() {
       {/* ── AI RECOMMENDATIONS SECTION ── */}
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
-          <div className="section-header-line" style={{ background: '#00f0ff' }} />
+          <div className="section-header-line" style={{ background: '#0F6B5C' }} />
           <h2 className="section-title">AI Suggested Executive Decisions</h2>
           <span className="badge badge-cyan" style={{ marginLeft: 8 }}>PREVENTIVE ACTION LIST</span>
         </div>
@@ -356,16 +356,16 @@ export default function CommissionerPage() {
                 style={{
                   padding: 20,
                   border: isApproved ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(255,255,255,0.06)',
-                  background: isApproved ? 'rgba(16,185,129,0.04)' : 'rgba(10,22,40,0.85)',
+                  background: isApproved ? 'rgba(16,185,129,0.04)' : '#FFFFFF',
                   display: 'flex', flexDirection: 'column'
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                   <div style={{
                     width: 30, height: 30, borderRadius: '50%',
-                    background: 'rgba(0,240,255,0.08)', border: '1px solid rgba(0,240,255,0.2)',
+                    background: 'rgba(30, 58, 95,0.08)', border: '1px solid rgba(30, 58, 95,0.2)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 11, fontWeight: 900, color: '#00f0ff'
+                    fontSize: 11, fontWeight: 900, color: '#0F6B5C'
                   }}>
                     {rec.priority}
                   </div>
@@ -420,7 +420,7 @@ export default function CommissionerPage() {
         <div className="responsive-grid-4" style={{ marginBottom: 14 }}>
           {[
             { label: 'Deployed Officers', value: '28,450', color: '#10b981' },
-            { label: 'Active Cyber Units', value: '589 units', color: '#00f0ff' },
+            { label: 'Active Cyber Units', value: '589 units', color: '#0F6B5C' },
             { label: 'Active Investigations', value: '14,823', color: '#f59e0b' },
             { label: 'SIT Crime Teams', value: '6 active', color: '#8b5cf6' },
           ].map((item, idx) => (
@@ -434,7 +434,7 @@ export default function CommissionerPage() {
           ))}
         </div>
         <div style={{
-          background: 'rgba(0,240,255,0.04)', border: '1px solid rgba(0,240,255,0.15)',
+          background: 'rgba(30, 58, 95,0.04)', border: '1px solid rgba(30, 58, 95,0.15)',
           borderRadius: 8, padding: '12px 16px', fontSize: 12, color: '#cbd5e1', lineHeight: 1.6
         }}>
           🎯 <strong>Executive Security Summary:</strong> Response time indices indicate that redeploying 1,200 personnel from the low-activity southern corridor to northern districts (Raichur, Kalaburagi) will yield a <strong>23% increase in state-wide crime resolution efficiency</strong>. SIT Teams have successfully disrupted 3 nodes of the Ballari gang ring in the last 48 hours.

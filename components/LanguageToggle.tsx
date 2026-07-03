@@ -78,7 +78,7 @@ export default function LanguageToggle() {
         gap: 4,
         padding: '5px 10px',
         borderRadius: 8,
-        border: '1px solid rgba(0, 240, 255, 0.25)',
+        border: '1px solid rgba(30,58,95,0.15)',
         background: 'rgba(0, 240, 255, 0.06)',
         cursor: 'pointer',
         transition: 'all 0.2s ease',
@@ -91,7 +91,7 @@ export default function LanguageToggle() {
       }}
       onMouseLeave={e => {
         (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,240,255,0.06)';
-        (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,240,255,0.25)';
+        (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(30,58,95,0.15)';
       }}
     >
       {/* English label */}
@@ -99,7 +99,7 @@ export default function LanguageToggle() {
         style={{
           fontSize: 11,
           fontWeight: lang === 'en' ? 800 : 500,
-          color: lang === 'en' ? '#00f0ff' : '#64748b',
+          color: lang === 'en' ? '#1E3A5F' : '#64748b',
           letterSpacing: '0.04em',
           transition: 'all 0.2s',
         }}
@@ -115,7 +115,7 @@ export default function LanguageToggle() {
         style={{
           fontSize: 12,
           fontWeight: lang === 'kn' ? 800 : 500,
-          color: lang === 'kn' ? '#00f0ff' : '#64748b',
+          color: lang === 'kn' ? '#1E3A5F' : '#64748b',
           transition: 'all 0.2s',
         }}
       >
@@ -128,8 +128,8 @@ export default function LanguageToggle() {
           width: 5,
           height: 5,
           borderRadius: '50%',
-          background: '#00f0ff',
-          boxShadow: '0 0 6px #00f0ff',
+          background: '#1E3A5F',
+          boxShadow: '0 0 6px #1E3A5F',
           flexShrink: 0,
         }}
       />

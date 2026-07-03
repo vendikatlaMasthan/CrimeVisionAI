@@ -44,7 +44,7 @@ export const KARNATAKA_DISTRICTS = [
 // ─────────────────────────────────────────────
 
 export const CRIME_CATEGORIES = [
-  { name: "Cybercrime", count: 18234, percentage: 22, color: "#00f0ff", trend: "+34%", icon: "monitor" },
+  { name: "Cybercrime", count: 18234, percentage: 22, color: "#0F6B5C", trend: "+34%", icon: "monitor" },
   { name: "Theft & Burglary", count: 24567, percentage: 30, color: "#8b5cf6", trend: "-5%", icon: "package" },
   { name: "Sand Mining", count: 8901, percentage: 11, color: "#f97316", trend: "+18%", icon: "layers" },
   { name: "Assault & Violence", count: 12345, percentage: 15, color: "#ef4444", trend: "+2%", icon: "shield-alert" },
@@ -358,7 +358,7 @@ export const TIMELINE_INSIGHTS = [
   { title: "Peak Crime Hours", value: "10 PM – 2 AM", icon: "clock", color: "#ef4444", description: "48% of violent crimes occur during late-night hours" },
   { title: "Weekend Spike", value: "+34% increase", icon: "calendar", color: "#f59e0b", description: "Saturday and Sunday see significantly higher crime rates" },
   { title: "Festival Impact", value: "5 annual peaks", icon: "star", color: "#8b5cf6", description: "Dasara & New Year show the highest seasonal spikes" },
-  { title: "Cyber Crime Peak", value: "9 AM – 1 PM", icon: "monitor", color: "#00f0ff", description: "Online fraud peaks during banking hours" },
+  { title: "Cyber Crime Peak", value: "9 AM – 1 PM", icon: "monitor", color: "#0F6B5C", description: "Online fraud peaks during banking hours" },
 ];
 
 // ─────────────────────────────────────────────
@@ -413,7 +413,7 @@ export const AI_CANNED_RESPONSES: Record<string, {
     type: "analysis",
     content: "Bengaluru Urban shows a multi-vector crime pattern with cybercrime as the dominant category (28.5% of all incidents). The district follows a temporal pattern where financial fraud peaks 09:00–13:00, while violent crimes peak 22:00–02:00. Year-over-year increase of +8.3% driven primarily by UPI phishing and organized cybercrime rings.",
     data: [
-      { label: "Cybercrime", value: "4,231 cases", color: "#00f0ff" },
+      { label: "Cybercrime", value: "4,231 cases", color: "#0F6B5C" },
       { label: "Theft & Burglary", value: "3,892 cases", color: "#8b5cf6" },
       { label: "Fraud", value: "2,341 cases", color: "#f59e0b" },
       { label: "Assault", value: "1,823 cases", color: "#ef4444" },
@@ -542,7 +542,7 @@ export const RESOURCE_RECOMMENDATIONS = [
     impact: "Expected 40% reduction in phishing success rate",
     timeline: "Immediate (< 24 hours)",
     icon: "monitor",
-    color: "#00f0ff",
+    color: "#0F6B5C",
   },
   {
     id: 2, priority: "Critical", action: "Increase Border Checkposts",
@@ -603,7 +603,7 @@ export const DISTRICT_RESOURCES = [
 ];
 
 export const BUDGET_ALLOCATION = [
-  { category: "Personnel & Salaries", amount: 1240, percentage: 52, color: "#00f0ff" },
+  { category: "Personnel & Salaries", amount: 1240, percentage: 52, color: "#0F6B5C" },
   { category: "Technology & Cyber", amount: 340, percentage: 14, color: "#8b5cf6" },
   { category: "Vehicles & Equipment", amount: 290, percentage: 12, color: "#f59e0b" },
   { category: "Intelligence Operations", amount: 210, percentage: 9, color: "#ef4444" },

@@ -79,7 +79,7 @@ export default function CaseSearchPage() {
 
   const getCategoryColor = (cat: string) => {
     switch (cat) {
-      case 'Cybercrime': return '#00f0ff';
+      case 'Cybercrime': return '#0F6B5C';
       case 'Narcotic Trafficking': return '#e879f9';
       case 'Theft & Burglary': return '#8b5cf6';
       case 'Sand Mining': return '#f97316';
@@ -99,11 +99,11 @@ export default function CaseSearchPage() {
         <div className="flex items-center gap-14">
           <div style={{
             width: 44, height: 44, borderRadius: 12,
-            background: 'rgba(0,240,255,0.1)', border: '1px solid rgba(0,240,255,0.3)',
+            background: 'rgba(30, 58, 95,0.1)', border: '1px solid rgba(30, 58, 95,0.3)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             paddingLeft: '13px'
           }}>
-            <Search size={18} color="#00f0ff" />
+            <Search size={18} color="#0F6B5C" />
           </div>
           <div>
             <h1 className="page-title">Case Intelligence Search</h1>
@@ -196,8 +196,8 @@ export default function CaseSearchPage() {
       <div className="responsive-grid-3-2">
         {/* LEFT: RESULTS LIST */}
         <div className="glass-card p-0 overflow-hidden flex flex-col">
-          <div className="p-4 border-b border-white/5 bg-[rgba(0,240,255,0.02)] flex justify-between items-center">
-            <span className="text-xs font-bold tracking-widest text-[#00f0ff] uppercase">Investigation Case Index</span>
+          <div className="p-4 border-b border-white/5 bg-[rgba(30, 58, 95,0.02)] flex justify-between items-center">
+            <span className="text-xs font-bold tracking-widest text-[#0F6B5C] uppercase">Investigation Case Index</span>
             <span className="text-[10px] text-slate-500 font-mono">Showing {filteredCases.length} of {FIR_RECORDS.length}</span>
           </div>
           
@@ -226,9 +226,9 @@ export default function CaseSearchPage() {
                     <tr 
                       key={c.id} 
                       onClick={() => setSelectedCase(c)}
-                      className={`cursor-pointer transition-colors ${selectedCase?.id === c.id ? 'bg-[rgba(0,240,255,0.06)]' : 'hover:bg-white/5'}`}
+                      className={`cursor-pointer transition-colors ${selectedCase?.id === c.id ? 'bg-[rgba(30, 58, 95,0.06)]' : 'hover:bg-white/5'}`}
                     >
-                      <td className="font-mono text-[#00f0ff] font-bold">{c.id}</td>
+                      <td className="font-mono text-[#0F6B5C] font-bold">{c.id}</td>
                       <td className="text-slate-300 font-bold">{c.firNumber}</td>
                       <td>
                         <div className="text-slate-200 font-semibold">{c.district}</div>
@@ -259,8 +259,8 @@ export default function CaseSearchPage() {
               <div className="flex justify-between items-start border-b border-white/5 pb-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-mono tracking-widest text-[#00f0ff] font-black">{selectedCase.id}</span>
-                    <span className="w-1 h-3 rounded bg-[#00f0ff]" />
+                    <span className="text-[10px] font-mono tracking-widest text-[#0F6B5C] font-black">{selectedCase.id}</span>
+                    <span className="w-1 h-3 rounded bg-[#0F6B5C]" />
                     <span className="text-[10px] font-mono text-slate-500">{selectedCase.date}</span>
                   </div>
                   <h2 className="text-lg font-black text-slate-100">{selectedCase.firNumber}</h2>
@@ -281,7 +281,7 @@ export default function CaseSearchPage() {
                 <div className="bg-black/25 rounded-xl p-3 border border-white/5">
                   <div className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Assigned Officer</div>
                   <div className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                    <User size={12} color="#00f0ff" /> {selectedCase.assignedOfficer}
+                    <User size={12} color="#0F6B5C" /> {selectedCase.assignedOfficer}
                   </div>
                 </div>
                 <div className="bg-black/25 rounded-xl p-3 border border-white/5">
@@ -292,7 +292,7 @@ export default function CaseSearchPage() {
                 </div>
                 <div className="bg-black/25 rounded-xl p-3 border border-white/5">
                   <div className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Evidence Collected</div>
-                  <div className="text-xs font-bold text-[#00f0ff] flex items-center gap-1.5">
+                  <div className="text-xs font-bold text-[#0F6B5C] flex items-center gap-1.5">
                     <ShieldCheck size={12} /> {selectedCase.evidenceCount} Exhibits Flagged
                   </div>
                 </div>
@@ -307,16 +307,16 @@ export default function CaseSearchPage() {
               {/* SUSPECT PROFILE */}
               <div className="bg-black/30 rounded-2xl p-4 border border-white/5">
                 <div className="flex items-center gap-2 mb-3 border-b border-white/5 pb-2">
-                  <UserCheck size={13} color="#00f0ff" />
+                  <UserCheck size={13} color="#0F6B5C" />
                   <span className="text-xs font-bold tracking-widest uppercase text-slate-300">Criminal Intelligence Profile</span>
                   <span className="ml-auto">{getRiskBadge(selectedCase.suspectDetails.riskLevel)}</span>
                 </div>
 
                 <div className="flex gap-4 items-start mb-4">
                   {/* Photo Placeholder */}
-                  <div className="w-16 h-16 rounded-xl bg-[rgba(0,240,255,0.06)] border border-[rgba(0,240,255,0.2)] flex flex-col items-center justify-center flex-shrink-0 relative overflow-hidden">
-                    <User size={32} color="#00f0ff" style={{ opacity: 0.3 }} />
-                    <div className="absolute bottom-0 inset-x-0 bg-[#00f0ff]/20 text-[9px] font-bold text-[#00f0ff] text-center py-0.5">
+                  <div className="w-16 h-16 rounded-xl bg-[rgba(30, 58, 95,0.06)] border border-[rgba(30, 58, 95,0.2)] flex flex-col items-center justify-center flex-shrink-0 relative overflow-hidden">
+                    <User size={32} color="#0F6B5C" style={{ opacity: 0.3 }} />
+                    <div className="absolute bottom-0 inset-x-0 bg-[#0F6B5C]/20 text-[9px] font-bold text-[#0F6B5C] text-center py-0.5">
                       SUSPECT
                     </div>
                   </div>
@@ -368,7 +368,7 @@ export default function CaseSearchPage() {
               {/* TIMELINE */}
               <div>
                 <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-2">
-                  <Clock size={13} color="#00f0ff" />
+                  <Clock size={13} color="#0F6B5C" />
                   <span className="text-xs font-bold tracking-widest uppercase text-slate-300">Investigation Timeline</span>
                 </div>
 

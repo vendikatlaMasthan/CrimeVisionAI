@@ -13,10 +13,10 @@ const CustomTooltip = ({ active, payload }: any) => {
     const d = payload[0]?.payload;
     return (
       <div style={{
-        background: 'rgba(10,22,40,0.98)', border: '1px solid rgba(0,240,255,0.25)',
+        background: '#FFFFFF', border: '1px solid rgba(30, 58, 95,0.25)',
         borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#f1f5f9',
       }}>
-        <div style={{ fontWeight: 700, color: '#00f0ff', marginBottom: 4 }}>{d?.district}</div>
+        <div style={{ fontWeight: 700, color: '#0F6B5C', marginBottom: 4 }}>{d?.district}</div>
         {payload.map((p: any) => (
           <div key={p.name} style={{ color: '#cbd5e1' }}>
             {p.name}: <strong style={{ color: '#f1f5f9' }}>{typeof p.value === 'number' ? p.value.toFixed(1) : p.value}</strong>
@@ -70,14 +70,14 @@ export default function SocialRiskPage() {
 
       {/* HACKATHON BANNER */}
       <div style={{
-        background: 'rgba(0,240,255,0.06)',
-        border: '1px solid rgba(0,240,255,0.25)',
+        background: 'rgba(30, 58, 95,0.06)',
+        border: '1px solid rgba(30, 58, 95,0.25)',
         borderRadius: 12, padding: '16px 20px', marginBottom: 28,
         display: 'flex', gap: 14, alignItems: 'flex-start',
       }}>
-        <Info size={20} color="#00f0ff" style={{ marginTop: 2, flexShrink: 0 }} />
+        <Info size={20} color="#0F6B5C" style={{ marginTop: 2, flexShrink: 0 }} />
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#00f0ff', marginBottom: 4 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#0F6B5C', marginBottom: 4 }}>
             HACKATHON PROBLEM STATEMENT ALIGNMENT
           </div>
           <div style={{ fontSize: 14, color: '#cbd5e1', lineHeight: 1.6 }}>
@@ -141,7 +141,7 @@ export default function SocialRiskPage() {
       {/* SCATTER CHARTS 2x2 */}
       <div style={{ marginBottom: 28 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-          <div style={{ width: 3, height: 22, background: '#00f0ff', borderRadius: 2 }} />
+          <div style={{ width: 3, height: 22, background: '#0F6B5C', borderRadius: 2 }} />
           <h2 className="section-title">Scatter Plot Analysis — Districts</h2>
         </div>
         <div className="responsive-grid-2">
@@ -169,7 +169,7 @@ export default function SocialRiskPage() {
                   <Tooltip content={<CustomTooltip />} />
                   <Scatter
                     data={SOCIOECONOMIC_DATA}
-                    fill="#00f0ff"
+                    fill="#0F6B5C"
                     fillOpacity={0.7}
                     r={6}
                   />
@@ -207,7 +207,7 @@ export default function SocialRiskPage() {
                     style={{
                       cursor: col.key !== 'district' && col.key !== 'risk' ? 'pointer' : 'default',
                       userSelect: 'none',
-                      color: sortCol === col.key ? '#00f0ff' : undefined,
+                      color: sortCol === col.key ? '#0F6B5C' : undefined,
                     }}
                   >
                     {col.label} {sortCol === col.key ? '▼' : ''}

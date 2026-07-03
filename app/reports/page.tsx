@@ -63,21 +63,21 @@ interface JsPDFDoc {
 
 function buildHeader(doc: JsPDFDoc, title: string, lang: 'en' | 'kn') {
   const pw = doc.internal.pageSize.getWidth();
-  // Dark header bar
-  doc.setFillColor(2, 6, 23).rect(0, 0, pw, 32, 'F');
+  // Navy header bar
+  doc.setFillColor(30, 58, 95).rect(0, 0, pw, 32, 'F');
   doc.setTextColor(255, 255, 255).setFontSize(13).setFont('helvetica', 'bold');
   doc.text('KARNATAKA STATE POLICE', pw / 2, 12, { align: 'center' });
-  doc.setFontSize(8).setTextColor(180, 180, 180);
+  doc.setFontSize(8).setTextColor(220, 220, 220);
   doc.text('RESTRICTED — FOR OFFICIAL USE ONLY', pw / 2, 19, { align: 'center' });
-  doc.setFontSize(9).setTextColor(0, 200, 220);
-  doc.text('CrimeVision AI v6.0 | KSP Datathon 2026', pw / 2, 26, { align: 'center' });
+  doc.setFontSize(9).setTextColor(255, 255, 255);
+  doc.text('CrimeVision AI v2.0 | KSP Datathon 2026', pw / 2, 26, { align: 'center' });
 
   // Title section
   doc.setTextColor(30, 30, 30).setFontSize(14).setFont('helvetica', 'bold');
   doc.text(title, pw / 2, 44, { align: 'center' });
   doc.setFontSize(9).setTextColor(100, 100, 100).setFont('helvetica', 'normal');
   doc.text(`Generated: ${new Date().toLocaleString('en-IN')} IST`, pw / 2, 52, { align: 'center' });
-  doc.setDrawColor(0, 200, 220).line(15, 56, pw - 15, 56);
+  doc.setDrawColor(166, 25, 46).line(15, 56, pw - 15, 56);
 }
 
 function buildFooter(doc: JsPDFDoc, y: number) {
@@ -348,16 +348,17 @@ async function buildAllReports(lang: 'en' | 'kn') {
   const pw = doc.internal.pageSize.getWidth();
 
   // Cover page
-  doc.setFillColor(2, 6, 23).rect(0, 0, pw, 297, 'F');
-  doc.setTextColor(0, 200, 220).setFont('helvetica', 'bold').setFontSize(10);
+  doc.setFillColor(245, 247, 250).rect(0, 0, pw, 297, 'F');
+  doc.setDrawColor(166, 25, 46).rect(5, 5, pw - 10, 287);
+  doc.setTextColor(166, 25, 46).setFont('helvetica', 'bold').setFontSize(11);
   doc.text('KARNATAKA STATE POLICE', pw / 2, 100, { align: 'center' });
-  doc.setFontSize(20).setTextColor(240, 240, 240);
-  doc.text('CrimeVision AI v6.0', pw / 2, 120, { align: 'center' });
-  doc.setFontSize(12).setTextColor(100, 150, 200);
+  doc.setFontSize(22).setTextColor(30, 58, 95);
+  doc.text('CrimeVision AI v2.0', pw / 2, 120, { align: 'center' });
+  doc.setFontSize(12).setTextColor(70, 70, 70);
   doc.text('COMPREHENSIVE INTELLIGENCE REPORT', pw / 2, 132, { align: 'center' });
   doc.setFontSize(9).setTextColor(120, 120, 120);
   doc.text(`Generated: ${new Date().toLocaleString('en-IN')} IST`, pw / 2, 145, { align: 'center' });
-  doc.text('KSP DATATHON 2026 | RESTRICTED — OFFICIAL USE ONLY', pw / 2, 285, { align: 'center' });
+  doc.text('KSP DATATHON 2026 | RESTRICTED — FOR OFFICIAL USE ONLY', pw / 2, 280, { align: 'center' });
 
   // Add each report on new pages
   const titles = [
@@ -511,7 +512,7 @@ export default function ReportsPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={{
             width: 44, height: 44, borderRadius: 12,
-            background: 'rgba(0,240,255,0.1)', border: '1px solid rgba(0,240,255,0.3)',
+            background: 'rgba(30, 58, 95,0.1)', border: '1px solid rgba(30, 58, 95,0.3)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             <FileText size={22} className="text-[var(--cyber-cyan)]" />
@@ -533,9 +534,9 @@ export default function ReportsPage() {
           disabled={generatingAll || generatingId !== null}
           style={{
             display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px',
-            background: generatingAll ? 'rgba(0,240,255,0.05)' : 'linear-gradient(135deg, rgba(0,240,255,0.15), rgba(139,92,246,0.15))',
-            border: '1px solid rgba(0,240,255,0.35)', borderRadius: 10,
-            color: generatingAll ? '#64748b' : '#00f0ff',
+            background: generatingAll ? 'rgba(30, 58, 95,0.05)' : 'linear-gradient(135deg, rgba(30, 58, 95,0.15), rgba(139,92,246,0.15))',
+            border: '1px solid rgba(30, 58, 95,0.35)', borderRadius: 10,
+            color: generatingAll ? '#64748b' : '#0F6B5C',
             fontSize: 13, fontWeight: 800, cursor: generatingAll ? 'not-allowed' : 'pointer',
             fontFamily: 'inherit', letterSpacing: '0.04em', transition: 'all 0.2s',
           }}
@@ -583,7 +584,7 @@ export default function ReportsPage() {
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
                 <div style={{
                   width: 48, height: 48, borderRadius: 12,
-                  background: 'rgba(0, 240, 255, 0.05)',
+                  background: 'rgba(30, 58, 95, 0.05)',
                   border: '1px solid var(--cyber-border)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
@@ -592,7 +593,7 @@ export default function ReportsPage() {
                 <div style={{ textAlign: 'right' }}>
                   <div style={{
                     fontSize: 9, fontWeight: 800, padding: '3px 8px', borderRadius: 6,
-                    background: 'rgba(0, 240, 255, 0.05)',
+                    background: 'rgba(30, 58, 95, 0.05)',
                     color: card.color, border: '1px solid var(--cyber-border)',
                     letterSpacing: '0.1em',
                   }}>
@@ -633,7 +634,7 @@ export default function ReportsPage() {
                     ? 'rgba(16,185,129,0.1)'
                     : isGen
                       ? 'rgba(0,0,0,0.03)'
-                      : 'rgba(0, 240, 255, 0.05)',
+                      : 'rgba(30, 58, 95, 0.05)',
                   border: `1px solid ${isDone ? 'rgba(16,185,129,0.3)' : 'var(--cyber-border)'}`,
                   borderRadius: 10, fontFamily: 'inherit',
                   color: isDone ? '#10b981' : isGen ? '#64748b' : card.color,
@@ -671,7 +672,7 @@ export default function ReportsPage() {
       {/* Info Note */}
       <div style={{
         marginTop: 24, padding: '14px 18px', borderRadius: 12,
-        background: 'rgba(0,240,255,0.03)', border: '1px solid var(--cyber-border)',
+        background: 'rgba(30, 58, 95,0.03)', border: '1px solid var(--cyber-border)',
         display: 'flex', alignItems: 'flex-start', gap: 10,
       }}>
         <AlertCircle size={15} className="text-[var(--cyber-cyan)]" style={{ flexShrink: 0, marginTop: 2 }} />

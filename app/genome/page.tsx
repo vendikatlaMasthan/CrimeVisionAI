@@ -160,28 +160,22 @@ function DNABadge({ dna }: { dna: string }) {
 // ─────────────────────────────────────────────
 
 function SimilarityBar({ score }: { score: number }) {
-  const color = score >= 75 ? '#ef4444' : score >= 50 ? '#f59e0b' : '#00f0ff';
-  const glowColor = score >= 75
-    ? '0 0 8px #ef4444'
-    : score >= 50
-    ? '0 0 8px #f59e0b'
-    : '0 0 8px #00f0ff';
+  const color = score >= 75 ? '#ef4444' : score >= 50 ? '#f59e0b' : '#0F6B5C';
 
   return (
     <div className="flex items-center gap-3">
-      <div className="relative flex-1 h-2 rounded-full bg-slate-700/60 overflow-hidden">
+      <div className="relative flex-1 h-2 rounded-full bg-slate-200 overflow-hidden">
         <div
           className="absolute left-0 top-0 h-full rounded-full transition-all duration-700"
           style={{
             width: `${score}%`,
             backgroundColor: color,
-            boxShadow: glowColor,
           }}
         />
       </div>
       <span
         className="text-xs font-bold font-mono px-2 py-0.5 rounded border"
-        style={{ color, borderColor: color, boxShadow: glowColor }}
+        style={{ color, borderColor: color }}
       >
         {score}% MATCH
       </span>
@@ -198,11 +192,11 @@ interface VectorBlockProps {
   label: string;
   sublabel: string;
   bgColor: string;
-  glowColor: string;
+  glowColor?: string;
   barHeight: number;
 }
 
-function VectorBlock({ code, label, sublabel, bgColor, glowColor, barHeight }: VectorBlockProps) {
+function VectorBlock({ code, label, sublabel, bgColor, barHeight }: VectorBlockProps) {
   return (
     <div className="flex flex-col items-center gap-2">
       {/* Bar visualization */}
@@ -211,7 +205,7 @@ function VectorBlock({ code, label, sublabel, bgColor, glowColor, barHeight }: V
         style={{
           height: `${barHeight}px`,
           backgroundColor: bgColor,
-          boxShadow: `0 0 12px ${glowColor}, 0 0 24px ${glowColor}40`,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
         }}
       />
       {/* Code block */}
@@ -220,12 +214,12 @@ function VectorBlock({ code, label, sublabel, bgColor, glowColor, barHeight }: V
         style={{
           backgroundColor: `${bgColor}20`,
           border: `1px solid ${bgColor}60`,
-          boxShadow: `0 0 16px ${glowColor}30`,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
         }}
       >
         <div
           className="text-xl font-black font-mono tracking-widest"
-          style={{ color: bgColor, textShadow: `0 0 10px ${glowColor}` }}
+          style={{ color: bgColor }}
         >
           {code}
         </div>
@@ -370,7 +364,7 @@ export default function GenomePage() {
     investigating: '#f59e0b',
     arrested: '#ef4444',
     resolved: '#10b981',
-    monitoring: '#00f0ff',
+    monitoring: '#0F6B5C',
   };
 
   return (
@@ -382,9 +376,9 @@ export default function GenomePage() {
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center"
               style={{
-                background: 'linear-gradient(135deg, #00f0ff20, #00f0ff40)',
-                border: '1px solid #00f0ff60',
-                boxShadow: '0 0 24px #00f0ff30',
+                background: 'linear-gradient(135deg, #0F6B5C20, #0F6B5C40)',
+                border: '1px solid #0F6B5C60',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
               }}
             >
               <Dna size={28} className="neon-cyan" />
@@ -405,7 +399,7 @@ export default function GenomePage() {
 
         {/* Stats row */}
         <div className="flex flex-wrap gap-3 mt-4">
-          <StatCard label="Total Cases Analyzed" value={55} color="#00f0ff" />
+          <StatCard label="Total Cases Analyzed" value={55} color="#0F6B5C" />
           <StatCard label="Genome Matches Found" value={23} color="#10b981" />
           <StatCard label="Pattern Clusters" value={8} color="#8b5cf6" />
           <StatCard label="Accuracy" value="94.7%" color="#f59e0b" />
@@ -416,8 +410,8 @@ export default function GenomePage() {
       <div
         className="glass-card p-4 mb-6"
         style={{
-          border: '1px solid #00f0ff30',
-          background: 'linear-gradient(135deg, #00f0ff08, #8b5cf608)',
+          border: '1px solid #0F6B5C30',
+          background: 'linear-gradient(135deg, #0F6B5C08, #8b5cf608)',
         }}
       >
         <div className="flex flex-wrap items-center gap-4">
@@ -508,19 +502,19 @@ export default function GenomePage() {
                     onClick={() => setSelectedId(fir.id)}
                     className="w-full text-left p-3 rounded-xl transition-all duration-200"
                     style={{
-                      background: isSelected ? '#00f0ff10' : '#0f172a80',
+                      background: isSelected ? '#0F6B5C10' : '#0f172a80',
                       border: isSelected
-                        ? '1px solid #00f0ff80'
+                        ? '1px solid #0F6B5C80'
                         : '1px solid #1e293b',
                       boxShadow: isSelected
-                        ? '0 0 16px #00f0ff20, inset 0 0 16px #00f0ff08'
+                        ? '0 0 16px #0F6B5C20, inset 0 0 16px #0F6B5C08'
                         : 'none',
                     }}
                   >
                     <div className="flex items-start justify-between gap-2 mb-1.5">
                       <span
                         className="font-mono text-sm font-bold"
-                        style={{ color: isSelected ? '#00f0ff' : '#94a3b8' }}
+                        style={{ color: isSelected ? '#0F6B5C' : '#94a3b8' }}
                       >
                         {fir.firNumber}
                       </span>
@@ -563,9 +557,9 @@ export default function GenomePage() {
               <div
                 className="w-24 h-24 rounded-full flex items-center justify-center"
                 style={{
-                  background: 'radial-gradient(circle, #00f0ff15, transparent)',
-                  border: '2px solid #00f0ff40',
-                  boxShadow: '0 0 40px #00f0ff20',
+                  background: 'radial-gradient(circle, #0F6B5C15, transparent)',
+                  border: '2px solid #0F6B5C40',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
                 }}
               >
                 <Dna size={48} className="neon-cyan" />
@@ -583,10 +577,10 @@ export default function GenomePage() {
                     key={sample}
                     className="px-4 py-2 rounded-lg font-mono text-sm"
                     style={{
-                      background: '#00f0ff08',
-                      border: '1px solid #00f0ff30',
-                      color: '#00f0ff',
-                      boxShadow: '0 0 8px #00f0ff15',
+                      background: '#0F6B5C08',
+                      border: '1px solid #0F6B5C30',
+                      color: '#0F6B5C',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
                     }}
                   >
                     🧬 {sample}
@@ -603,8 +597,8 @@ export default function GenomePage() {
               <div
                 className="glass-card p-5"
                 style={{
-                  border: '1px solid #00f0ff30',
-                  background: 'linear-gradient(135deg, #00f0ff06, #8b5cf606)',
+                  border: '1px solid #0F6B5C30',
+                  background: 'linear-gradient(135deg, #0F6B5C06, #8b5cf606)',
                 }}
               >
                 {/* Title row */}
@@ -626,9 +620,9 @@ export default function GenomePage() {
                   className="text-center mb-5 py-3 rounded-xl font-mono text-2xl font-black tracking-[0.3em]"
                   style={{
                     background: '#0f172a',
-                    border: '1px solid #00f0ff20',
-                    color: '#00f0ff',
-                    textShadow: '0 0 20px #00f0ff80',
+                    border: '1px solid #0F6B5C20',
+                    color: '#0F6B5C',
+                    textShadow: '0 0 20px #0F6B5C80',
                     letterSpacing: '0.25em',
                   }}
                 >
@@ -872,7 +866,7 @@ export default function GenomePage() {
                         style={{
                           background: 'linear-gradient(135deg, #ef444420, #ef444440)',
                           border: '2px solid #ef4444',
-                          boxShadow: '0 0 20px #ef444430',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
                         }}
                       >
                         <Shield size={16} className="text-red-400 mb-1" />
@@ -994,7 +988,7 @@ export default function GenomePage() {
                         style={{
                           background: 'linear-gradient(135deg, #ef444415, #ef444435)',
                           border: '2px dashed #ef4444',
-                          boxShadow: '0 0 20px #ef444440',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
                           animation: 'pulse 2s infinite',
                         }}
                       >

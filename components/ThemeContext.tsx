@@ -13,46 +13,25 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('light');
+  const [theme] = useState<Theme>('light');
 
-  // Load theme on mount
+  // Lock to light theme on mount
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('ksp_theme') as Theme | null;
-      if (stored === 'light' || stored === 'dark') {
-        setThemeState(stored);
-        if (stored === 'light') {
-          document.documentElement.classList.add('light');
-        } else {
-          document.documentElement.classList.remove('light');
-        }
-      } else {
-        // Default is light mode in v5.0
-        setThemeState('light');
-        document.documentElement.classList.add('light');
-      }
-    } catch {
-      // localStorage is not available
-    }
-  }, []);
-
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-    try {
-      localStorage.setItem('ksp_theme', newTheme);
+      document.documentElement.classList.add('light');
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('ksp_theme', 'light');
     } catch {
       // ignore
     }
+  }, []);
 
-    if (newTheme === 'light') {
-      document.documentElement.classList.add('light');
-    } else {
-      document.documentElement.classList.remove('light');
-    }
+  const setTheme = () => {
+    // no-op in v3.0 (forced light theme)
   };
 
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+    // no-op in v3.0 (forced light theme)
   };
 
   return (

@@ -233,7 +233,7 @@ export default function HeatmapPage() {
           alignItems: 'center', 
           gap: '14px', 
           flexWrap: 'wrap',
-          background: 'rgba(10,22,40,0.85)',
+          background: '#FFFFFF',
           border: '1px solid var(--cyber-border)',
         }}
       >
@@ -274,16 +274,16 @@ export default function HeatmapPage() {
       <div style={{ display: 'grid', gridTemplateColumns: activeDistrict ? '1fr 360px' : '1fr', gap: '20px', alignItems: 'stretch' }}>
         
         {/* MAP COLUMN */}
-        <div className="glass-card relative" style={{ background: '#020617', padding: '24px', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '620px', overflow: 'hidden' }}>
+        <div className="glass-card relative" style={{ background: '#FFFFFF', padding: '24px', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '620px', overflow: 'hidden' }}>
           
           {/* Statewide Stats Strip (Top Left Floating) */}
-          <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 10, background: 'rgba(10,22,40,0.92)', border: '1px solid var(--cyber-border)', borderRadius: '12px', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '180px' }}>
+          <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 10, background: '#FFFFFF', border: '1px solid var(--cyber-border)', borderRadius: '12px', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '180px' }}>
             <span style={{ fontSize: '9px', fontWeight: 900, color: 'var(--text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Statewide Overview</span>
             <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Total Crimes: <strong style={{ color: 'var(--cyber-cyan)' }}>82,089</strong></div>
             <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>High Risk Districts: <strong style={{ color: '#ef4444' }}>7</strong></div>
             <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Active Alerts: <strong style={{ color: '#f59e0b' }}>34</strong></div>
           </div>
-
+ 
           {/* SVG Map of Karnataka (Honeycomb representation centered on coordinates) */}
           <svg
             width="100%"
@@ -295,18 +295,18 @@ export default function HeatmapPage() {
             {/* Background grid markings */}
             <defs>
               <pattern id="dot-grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                <circle cx="2" cy="2" r="1" fill="rgba(0, 240, 255, 0.08)" />
+                <circle cx="2" cy="2" r="1" fill="rgba(30, 58, 95, 0.08)" />
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#dot-grid)" />
-
+ 
             {/* Render Honeycomb Districts */}
             {Object.entries(DISTRICT_DATA).map(([name, d]) => {
               const { x, y } = getCoords(d.lat, d.lng);
               const isSelected = selectedDistrict === name;
               const isHovered = hoveredDistrict === name;
               const r = 20; // Cell size
-
+ 
               // Draw stylized polygon (hexagon)
               const points = [];
               for (let i = 0; i < 6; i++) {
@@ -316,7 +316,7 @@ export default function HeatmapPage() {
                 points.push(`${px},${py}`);
               }
               const pointsStr = points.join(' ');
-
+ 
               return (
                 <g key={name}>
                   {/* Outer glow ring for critical nodes */}
@@ -332,30 +332,29 @@ export default function HeatmapPage() {
                       style={{ transformOrigin: `${x}px ${y}px` }}
                     />
                   )}
-
+ 
                   {/* Main district cell polygon */}
                   <polygon
                     points={pointsStr}
                     fill={d.color}
                     fillOpacity={isHovered ? 0.8 : isSelected ? 0.75 : 0.4}
-                    stroke={isHovered || isSelected ? '#ffffff' : 'rgba(0, 240, 255, 0.25)'}
+                    stroke={isHovered || isSelected ? '#1B263B' : 'rgba(30, 58, 95, 0.25)'}
                     strokeWidth={isHovered ? 2.5 : isSelected ? 2 : 1}
                     style={{ cursor: 'pointer', transition: 'all 0.2s ease-in-out' }}
                     onClick={() => setSelectedDistrict(name)}
                     onMouseEnter={() => setHoveredDistrict(name)}
                     onMouseLeave={() => setHoveredDistrict(null)}
                   />
-
+ 
                   {/* Micro Text Label */}
                   <text
                     x={x}
                     y={y + 3}
-                    fill={isHovered || isSelected ? '#ffffff' : 'var(--text-muted)'}
+                    fill={isHovered || isSelected ? '#1B263B' : 'var(--text-muted)'}
                     fontSize="7.5px"
                     fontWeight="800"
                     textAnchor="middle"
                     pointerEvents="none"
-                    style={{ textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}
                   >
                     {name.substring(0, 5).toUpperCase()}
                   </text>
@@ -376,9 +375,9 @@ export default function HeatmapPage() {
                   top: tooltipPos.y - 10,
                   zIndex: 100,
                   transform: 'translateY(-100%)',
-                  background: 'rgba(10,22,40,0.98)',
+                  background: '#FFFFFF',
                   borderColor: hDist.color,
-                  boxShadow: `0 0 16px ${hDist.color}35`,
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                   pointerEvents: 'none',
                 }}
               >
@@ -402,7 +401,7 @@ export default function HeatmapPage() {
               bottom: '20px', 
               left: '20px', 
               zIndex: 10, 
-              background: 'rgba(10,22,40,0.92)', 
+              background: '#FFFFFF', 
               border: '1px solid var(--cyber-border)', 
               borderRadius: '12px', 
               padding: '12px 16px', 
@@ -413,19 +412,19 @@ export default function HeatmapPage() {
           >
             <span style={{ fontSize: '9px', fontWeight: 900, color: 'var(--text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>LEGEND</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#f87171' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#8b0000', boxShadow: '0 0 4px #8b0000' }} />
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#8b0000', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }} />
               🔴 CRITICAL (81-100)
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#fb923c' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FF3B3B', boxShadow: '0 0 4px #FF3B3B' }} />
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FF3B3B', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }} />
               🟠 HIGH (61-80)
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#fbbf24' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FFB300', boxShadow: '0 0 4px #FFB300' }} />
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FFB300', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }} />
               🟡 MEDIUM (41-60)
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#34d399' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#27AE60', boxShadow: '0 0 4px #27AE60' }} />
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#27AE60', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }} />
               🟢 LOW (0-40)
             </div>
           </div>

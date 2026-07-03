@@ -1,10 +1,9 @@
 'use client';
 // ─────────────────────────────────────────────────────────────────────────────
-// Save this file to: app/predictions/page.tsx  (REPLACE existing file entirely)
-// CrimeVision AI — AI Risk Prediction (Real Claude API call → JSON output)
+// app/predictions/page.tsx — AI Risk Prediction & Predictive Analytics (Light Theme)
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, Suspense } from 'react';
 import {
   TrendingUp, Brain, RefreshCw, AlertTriangle, CheckCircle,
   Shield, Zap, Clock, Activity, MapPin, ChevronUp,
@@ -58,7 +57,7 @@ interface PredictionResult {
 
 // ─── System Prompt for Predictions ───────────────────────────────────────────
 
-const PREDICTION_PROMPT = `You are the Karnataka State Police AI Risk Prediction Engine. Based on 18 months of crime data (Jan 2024 – Jun 2025) covering 82,089 total crimes across 31 districts, predict crime risk for the next 30 days.
+const PREDICTION_PROMPT = `You are the Karnataka State Police AI-assisted Risk Assessment Engine. Based on 18 months of synthetic crime data (Jan 2024 – Jun 2025) covering 82,089 total crimes across 31 districts, assess elevated risk indexes and provide decision support recommendations for the next 30 days based on historical patterns. Do not present findings as absolute guarantees of future crime.
 
 CURRENT DATA (for context):
 - Total crimes: 82,089 | Active cases: 14,823 | Clearance rate: 81.9%
@@ -84,7 +83,7 @@ Return ONLY a valid JSON object with exactly this structure (no text before or a
       "predictedIncrease": "+12%",
       "confidenceScore": 91,
       "keyFactors": ["factor 1", "factor 2", "factor 3"],
-      "recommendation": "Specific action"
+      "recommendation": "Deploy Patrol Focus: Increase presence near IT corridors and banking zones."
     }
   ],
   "crimeSpikes": [
@@ -93,14 +92,14 @@ Return ONLY a valid JSON object with exactly this structure (no text before or a
       "expectedIncrease": "+18%",
       "peakPeriod": "Week 2-3 of July",
       "affectedDistricts": ["Bengaluru Urban", "Mangaluru", "Mysuru"],
-      "preventiveMeasure": "Specific prevention action",
+      "preventiveMeasure": "Investigation Lead: Initiate technical audit on local payment gateways.",
       "confidence": 87
     }
   ],
   "recommendations": [
     {
       "priority": "Critical",
-      "action": "Deploy 80 additional cybercrime specialists",
+      "action": "Patrol Focus: Deploy 80 additional cybercrime specialists across high risk tech corridors.",
       "districts": ["Bengaluru Urban"],
       "expectedImpact": "30% reduction in cybercrime",
       "timeframe": "Immediate"
@@ -122,7 +121,7 @@ Rules:
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function PredictionsPage() {
+function PredictionsPageContent() {
   const { t, lang } = useLanguage();
   const [prediction, setPrediction] = useState<PredictionResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -161,37 +160,44 @@ export default function PredictionsPage() {
 
   // ── Helpers ───────────────────────────────────────────────────────────────
 
-  const threatColors: Record<string, { bg: string; border: string; text: string; glow: string }> = {
-    Critical: { bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.35)', text: '#ef4444', glow: 'rgba(239,68,68,0.4)' },
-    High:     { bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.35)', text: '#f59e0b', glow: 'rgba(245,158,11,0.4)' },
-    Medium:   { bg: 'rgba(0,240,255,0.06)', border: 'rgba(0,240,255,0.25)', text: '#00f0ff', glow: 'rgba(0,240,255,0.3)' },
-    Low:      { bg: 'rgba(16,185,129,0.06)', border: 'rgba(16,185,129,0.25)', text: '#10b981', glow: 'rgba(16,185,129,0.3)' },
+  const threatColors: Record<string, { bg: string; border: string; text: string }> = {
+    Critical: { bg: '#FEF2F2', border: '#FCA5A5', text: '#ef4444' },
+    High:     { bg: '#FFFBEB', border: '#FDE68A', text: '#f59e0b' },
+    Medium:   { bg: '#E0F2FE', border: '#BAE6FD', text: '#1976D2' },
+    Low:      { bg: '#D1FAE5', border: '#A7F3D0', text: '#2E8B57' },
   };
 
-  const riskBarColor = (score: number) => score > 80 ? '#ef4444' : score > 60 ? '#f59e0b' : score > 40 ? '#00f0ff' : '#10b981';
+  const getThreatLevelByScore = (score: number): 'Critical' | 'High' | 'Medium' | 'Low' => {
+    if (score > 80) return 'Critical';
+    if (score > 60) return 'High';
+    if (score > 40) return 'Medium';
+    return 'Low';
+  };
+
+  const riskBarColor = (score: number) => score > 80 ? '#ef4444' : score > 60 ? '#f59e0b' : score > 40 ? '#1E3A5F' : '#2E8B57';
   const minutesAgo = lastUpdated ? Math.floor((Date.now() - lastUpdated.getTime()) / 60000) : 0;
 
-  // ─── Render ───────────────────────────────────────────────────────────────
-
   return (
-    <div style={{ padding: 24, minHeight: '100vh', display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <div style={{ padding: 24, minHeight: '100vh', display: 'flex', flexDirection: 'column', gap: 24, background: '#F5F7FA' }}>
 
       {/* ── Page Header ───────────────────────────────────────────────── */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={{
             width: 44, height: 44, borderRadius: 12,
-            background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.35)',
+            background: '#F5F3FF', border: '1px solid #DDD6FE',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 0 20px rgba(139,92,246,0.2)',
           }}>
-            <TrendingUp size={22} color="#a78bfa" />
+            <TrendingUp size={22} color="#7C3AED" />
           </div>
           <div>
-            <h1 style={{ fontSize: 20, fontWeight: 900, color: '#f1f5f9', margin: 0 }}>
-              {t.page_risk_prediction}
-            </h1>
-            <p style={{ fontSize: 12, color: '#64748b', margin: '2px 0 0' }}>
+            <div className="section-header" style={{ marginBottom: 0 }}>
+              <span className="section-header-line" />
+              <h1 className="section-title">
+                {t.page_risk_prediction}
+              </h1>
+            </div>
+            <p style={{ fontSize: 12, color: '#475569', margin: '2px 0 0' }}>
               {t.sub_risk_prediction}
             </p>
           </div>
@@ -199,7 +205,7 @@ export default function PredictionsPage() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           {lastUpdated && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#64748b' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#475569' }}>
               <Clock size={11} />
               {t.pred_last_updated}: {minutesAgo === 0 ? 'Just now' : `${minutesAgo}m ago`}
             </div>
@@ -210,14 +216,11 @@ export default function PredictionsPage() {
             disabled={isLoading}
             style={{
               display: 'flex', alignItems: 'center', gap: 8, padding: '10px 22px',
-              background: isLoading
-                ? 'rgba(139,92,246,0.05)'
-                : 'linear-gradient(135deg, rgba(139,92,246,0.2), rgba(0,240,255,0.1))',
-              border: '1px solid rgba(139,92,246,0.45)', borderRadius: 10,
-              color: isLoading ? '#64748b' : '#a78bfa',
-              fontSize: 13, fontWeight: 800, cursor: isLoading ? 'not-allowed' : 'pointer',
+              background: isLoading ? '#E5E7EB' : '#1E3A5F',
+              border: '1px solid #1E3A5F', borderRadius: 10,
+              color: isLoading ? '#475569' : '#FFFFFF',
+              fontSize: 13, fontWeight: 700, cursor: isLoading ? 'not-allowed' : 'pointer',
               fontFamily: 'inherit', letterSpacing: '0.04em', transition: 'all 0.2s',
-              boxShadow: isLoading ? 'none' : '0 0 20px rgba(139,92,246,0.2)',
             }}
           >
             {isLoading ? (
@@ -239,7 +242,7 @@ export default function PredictionsPage() {
       {apiKeyMissing && (
         <div style={{
           padding: '14px 18px', borderRadius: 12,
-          background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.25)',
+          background: '#FEF2F2', border: '1px solid #FCA5A5',
           display: 'flex', alignItems: 'flex-start', gap: 10,
         }}>
           <AlertTriangle size={16} color="#ef4444" style={{ flexShrink: 0, marginTop: 2 }} />
@@ -247,7 +250,7 @@ export default function PredictionsPage() {
             <p style={{ color: '#ef4444', fontSize: 13, fontWeight: 700, margin: '0 0 4px' }}>
               {t.error_api_key_missing}
             </p>
-            <p style={{ color: '#94a3b8', fontSize: 12, margin: 0 }}>
+            <p style={{ color: '#475569', fontSize: 12, margin: 0 }}>
               {t.error_api_key_instructions}
             </p>
           </div>
@@ -258,7 +261,7 @@ export default function PredictionsPage() {
       {error && (
         <div style={{
           padding: '14px 18px', borderRadius: 12,
-          background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.25)',
+          background: '#FEF2F2', border: '1px solid #FCA5A5',
           display: 'flex', alignItems: 'center', gap: 10,
         }}>
           <AlertTriangle size={15} color="#ef4444" />
@@ -270,30 +273,29 @@ export default function PredictionsPage() {
       {!prediction && !isLoading && !error && (
         <div style={{
           flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          minHeight: 400, textAlign: 'center',
+          minHeight: 400, textAlign: 'center', background: '#FFFFFF', borderRadius: 16, border: '1px solid #E5E7EB'
         }}>
-          <div style={{ maxWidth: 460 }}>
+          <div style={{ maxWidth: 460, padding: 20 }}>
             <div style={{
               width: 80, height: 80, borderRadius: 20, margin: '0 auto 24px',
-              background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.25)',
+              background: '#F5F3FF', border: '1px solid #DDD6FE',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 0 40px rgba(139,92,246,0.15)',
             }}>
-              <Brain size={36} color="#a78bfa" />
+              <Brain size={36} color="#7C3AED" />
             </div>
-            <h2 style={{ fontSize: 18, fontWeight: 800, color: '#e2e8f0', marginBottom: 10 }}>
-              AI Risk Prediction Engine
+            <h2 style={{ fontSize: 18, fontWeight: 800, color: '#1F2937', marginBottom: 10 }}>
+              AI-assisted Risk Assessment Engine
             </h2>
-            <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.7, marginBottom: 24 }}>
+            <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.7, marginBottom: 24 }}>
               {t.pred_no_prediction}
             </p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap', marginBottom: 32, fontSize: 12, color: '#475569' }}>
-              {['82,089 crime records', '31 districts', 'claude-sonnet-4-6', '18-month trend data'].map(tag => (
+              {['82,089 crime records', '31 districts', 'AI models calibrated', '18-month trend data'].map(tag => (
                 <div key={tag} style={{
                   padding: '4px 12px', borderRadius: 20, display: 'flex', alignItems: 'center', gap: 5,
-                  background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
+                  background: '#F9FAFB', border: '1px solid #E5E7EB',
                 }}>
-                  <CheckCircle size={10} color="#10b981" /> {tag}
+                  <CheckCircle size={10} color="#2E8B57" /> {tag}
                 </div>
               ))}
             </div>
@@ -301,10 +303,8 @@ export default function PredictionsPage() {
               onClick={generatePrediction}
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 28px',
-                background: 'linear-gradient(135deg, rgba(139,92,246,0.2), rgba(0,240,255,0.1))',
-                border: '1px solid rgba(139,92,246,0.45)', borderRadius: 10, cursor: 'pointer',
-                color: '#a78bfa', fontSize: 14, fontWeight: 800, fontFamily: 'inherit',
-                boxShadow: '0 0 24px rgba(139,92,246,0.25)',
+                background: '#1E3A5F', border: '1px solid #1E3A5F', borderRadius: 10, cursor: 'pointer',
+                color: '#FFFFFF', fontSize: 14, fontWeight: 700, fontFamily: 'inherit',
               }}
             >
               <Zap size={16} /> {t.btn_generate_prediction}
@@ -317,28 +317,22 @@ export default function PredictionsPage() {
       {isLoading && (
         <div style={{
           flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          minHeight: 400, textAlign: 'center',
+          minHeight: 400, textAlign: 'center', background: '#FFFFFF', borderRadius: 16, border: '1px solid #E5E7EB'
         }}>
           <div>
             <div style={{ position: 'relative', width: 80, height: 80, margin: '0 auto 24px' }}>
               <div style={{
                 width: 80, height: 80, borderRadius: '50%',
-                border: '3px solid rgba(139,92,246,0.15)',
-                borderTopColor: '#a78bfa',
+                border: '3px solid #E5E7EB',
+                borderTopColor: '#7C3AED',
                 animation: 'spin 1s linear infinite',
               }} />
-              <div style={{
-                position: 'absolute', inset: 12,
-                borderRadius: '50%', border: '2px solid rgba(0,240,255,0.2)',
-                borderBottomColor: '#00f0ff',
-                animation: 'spin 0.7s linear infinite reverse',
-              }} />
-              <Brain size={24} color="#a78bfa" style={{ position: 'absolute', inset: 0, margin: 'auto' }} />
+              <Brain size={24} color="#7C3AED" style={{ position: 'absolute', inset: 0, margin: 'auto' }} />
             </div>
-            <h3 style={{ fontSize: 16, fontWeight: 800, color: '#e2e8f0', marginBottom: 8 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: '#1F2937', marginBottom: 8 }}>
               {t.pred_generating}
             </h3>
-            <p style={{ fontSize: 12, color: '#64748b' }}>
+            <p style={{ fontSize: 12, color: '#475569', maxWidth: 400, margin: '0 auto' }}>
               Analyzing 82,089 crime records · Computing district risk scores · Generating recommendations...
             </p>
           </div>
@@ -354,19 +348,18 @@ export default function PredictionsPage() {
             padding: '20px 24px', borderRadius: 16, display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap',
             background: threatColors[prediction.overallThreatLevel].bg,
             border: `1px solid ${threatColors[prediction.overallThreatLevel].border}`,
-            boxShadow: `0 0 32px ${threatColors[prediction.overallThreatLevel].glow}`,
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, flex: '0 0 auto' }}>
               <div style={{
                 width: 56, height: 56, borderRadius: 14,
-                background: threatColors[prediction.overallThreatLevel].bg,
+                background: '#FFFFFF',
                 border: `2px solid ${threatColors[prediction.overallThreatLevel].border}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <AlertTriangle size={26} color={threatColors[prediction.overallThreatLevel].text} />
               </div>
               <div>
-                <div style={{ fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>
+                <div style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>
                   {t.pred_threat_level}
                 </div>
                 <div style={{ fontSize: 22, fontWeight: 900, color: threatColors[prediction.overallThreatLevel].text }}>
@@ -376,33 +369,33 @@ export default function PredictionsPage() {
             </div>
 
             {/* Divider */}
-            <div style={{ width: 1, height: 56, background: 'rgba(255,255,255,0.08)' }} />
+            <div style={{ width: 1, height: 56, background: '#E5E7EB' }} />
 
             {/* Threat Score Dial */}
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 28, fontWeight: 900, color: threatColors[prediction.overallThreatLevel].text }}>
                 {prediction.threatScore}
               </div>
-              <div style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase' }}>/ 100</div>
+              <div style={{ fontSize: 10, color: '#475569', textTransform: 'uppercase' }}>/ 100</div>
             </div>
 
             {/* Divider */}
-            <div style={{ width: 1, height: 56, background: 'rgba(255,255,255,0.08)' }} />
+            <div style={{ width: 1, height: 56, background: '#E5E7EB' }} />
 
             <div style={{ flex: 1, minWidth: 200 }}>
-              <div style={{ fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>
+              <div style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>
                 {t.pred_overall_analysis}
               </div>
-              <p style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.6, margin: 0 }}>
+              <p style={{ fontSize: 12, color: '#1F2937', lineHeight: 1.6, margin: 0 }}>
                 {prediction.overallSummary}
               </p>
             </div>
 
             <div style={{ textAlign: 'right', flex: '0 0 auto' }}>
-              <div style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>
+              <div style={{ fontSize: 10, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>
                 Model Confidence
               </div>
-              <div style={{ fontSize: 20, fontWeight: 800, color: '#10b981' }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: '#2E8B57' }}>
                 {prediction.modelConfidence}%
               </div>
               <div style={{ fontSize: 10, color: '#475569' }}>{prediction.predictionPeriod}</div>
@@ -413,15 +406,15 @@ export default function PredictionsPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
 
             {/* ── High Risk Districts ───────────────────────────────── */}
-            <div style={{ background: 'rgba(2,6,23,0.9)', border: '1px solid rgba(0,240,255,0.12)', borderRadius: 16, padding: 20 }}>
+            <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 16, padding: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
                 <MapPin size={15} color="#ef4444" />
-                <span style={{ fontSize: 12, fontWeight: 800, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                <span style={{ fontSize: 12, fontWeight: 800, color: '#1F2937', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                   {t.pred_high_risk_districts}
                 </span>
                 <span style={{
                   marginLeft: 'auto', fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 6,
-                  background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)',
+                  background: '#FEF2F2', color: '#ef4444', border: '1px solid #FCA5A5',
                 }}>
                   TOP {prediction.highRiskDistricts.length}
                 </span>
@@ -430,54 +423,59 @@ export default function PredictionsPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {prediction.highRiskDistricts.map((d, i) => {
                   const diff = d.predictedRisk - d.currentRisk;
+                  const threatLevel = getThreatLevelByScore(d.predictedRisk);
                   return (
                     <div key={i} style={{
                       padding: 14, borderRadius: 12,
-                      background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)',
+                      background: '#F9FAFB', border: '1px solid #E5E7EB',
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
                         <div>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0' }}>{d.district}</div>
-                          <div style={{ fontSize: 10, color: '#64748b', marginTop: 1 }}>{d.primaryThreat} · {d.secondaryThreat}</div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: '#1F2937' }}>{d.district}</div>
+                          <div style={{ fontSize: 10, color: '#475569', marginTop: 1 }}>{d.primaryThreat} · {d.secondaryThreat}</div>
                         </div>
                         <div style={{ textAlign: 'right' }}>
                           <div style={{ fontSize: 18, fontWeight: 900, color: riskBarColor(d.predictedRisk) }}>
                             {d.predictedRisk}
                           </div>
-                          <div style={{ fontSize: 9, color: diff > 0 ? '#ef4444' : '#10b981', display: 'flex', alignItems: 'center', gap: 2, justifyContent: 'flex-end' }}>
+                          <div style={{ fontSize: 9, color: diff > 0 ? '#ef4444' : '#2E8B57', display: 'flex', alignItems: 'center', gap: 2, justifyContent: 'flex-end' }}>
                             <ChevronUp size={9} style={{ transform: diff < 0 ? 'rotate(180deg)' : 'none' }} />
                             {diff > 0 ? '+' : ''}{diff} pts
                           </div>
                         </div>
                       </div>
 
+                      {/* Display explicit details required by prompt */}
+                      <div style={{ display: 'flex', gap: 10, marginBottom: 8, fontSize: 10, color: '#475569', flexWrap: 'wrap' }}>
+                        <span><strong>Risk Score:</strong> {d.predictedRisk}/100</span>
+                        <span>•</span>
+                        <span><strong>Threat Level:</strong> <span style={{ color: threatColors[threatLevel].text, fontWeight: 700 }}>{threatLevel}</span></span>
+                        <span>•</span>
+                        <span><strong>Confidence:</strong> {d.confidenceScore}%</span>
+                      </div>
+
                       {/* Risk bar */}
-                      <div style={{ height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden', marginBottom: 10 }}>
+                      <div style={{ height: 4, background: '#E5E7EB', borderRadius: 2, overflow: 'hidden', marginBottom: 10 }}>
                         <div style={{
                           height: '100%', width: `${d.predictedRisk}%`, borderRadius: 2,
                           background: riskBarColor(d.predictedRisk),
-                          boxShadow: `0 0 8px ${riskBarColor(d.predictedRisk)}60`,
                         }} />
                       </div>
 
                       {/* Key factors */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginBottom: 8 }}>
                         {d.keyFactors.map((f, j) => (
-                          <div key={j} style={{ fontSize: 10, color: '#64748b', display: 'flex', gap: 5, alignItems: 'flex-start' }}>
-                            <span style={{ color: '#475569', flexShrink: 0 }}>•</span> {f}
+                          <div key={j} style={{ fontSize: 10, color: '#475569', display: 'flex', gap: 5, alignItems: 'flex-start' }}>
+                            <span style={{ color: '#9CA3AF', flexShrink: 0 }}>•</span> {f}
                           </div>
                         ))}
                       </div>
 
                       <div style={{
-                        fontSize: 10, color: '#a78bfa', padding: '6px 10px', borderRadius: 6,
-                        background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.2)',
+                        fontSize: 11, color: '#5B21B6', padding: '6px 10px', borderRadius: 6,
+                        background: '#F5F3FF', border: '1px solid #DDD6FE', fontWeight: 600
                       }}>
-                        💡 {d.recommendation}
-                      </div>
-
-                      <div style={{ fontSize: 9, color: '#334155', marginTop: 6, textAlign: 'right' }}>
-                        Confidence: {d.confidenceScore}% · Expected: {d.predictedIncrease}
+                        💡 <strong>Recommended Action:</strong> {d.recommendation}
                       </div>
                     </div>
                   );
@@ -489,10 +487,10 @@ export default function PredictionsPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
               {/* Crime Spikes */}
-              <div style={{ background: 'rgba(2,6,23,0.9)', border: '1px solid rgba(245,158,11,0.15)', borderRadius: 16, padding: 20 }}>
+              <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 16, padding: 20 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
                   <Activity size={15} color="#f59e0b" />
-                  <span style={{ fontSize: 12, fontWeight: 800, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: '#1F2937', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                     {t.pred_crime_spikes}
                   </span>
                 </div>
@@ -501,26 +499,26 @@ export default function PredictionsPage() {
                   {prediction.crimeSpikes.map((spike, i) => (
                     <div key={i} style={{
                       padding: 12, borderRadius: 10,
-                      background: 'rgba(245,158,11,0.04)', border: '1px solid rgba(245,158,11,0.12)',
+                      background: '#FFFBEB', border: '1px solid #FDE68A',
                     }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0' }}>{spike.crimeType}</span>
-                        <span style={{ fontSize: 13, fontWeight: 900, color: '#f59e0b' }}>{spike.expectedIncrease}</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: '#1F2937' }}>{spike.crimeType}</span>
+                        <span style={{ fontSize: 13, fontWeight: 900, color: '#d97706' }}>{spike.expectedIncrease}</span>
                       </div>
-                      <div style={{ fontSize: 10, color: '#64748b', marginBottom: 6 }}>
+                      <div style={{ fontSize: 10, color: '#475569', marginBottom: 6 }}>
                         Peak: {spike.peakPeriod}
-                        <span style={{ margin: '0 6px', color: '#334155' }}>·</span>
+                        <span style={{ margin: '0 6px', color: '#D1D5DB' }}>·</span>
                         Confidence: {spike.confidence}%
                       </div>
                       <div style={{ fontSize: 10, color: '#475569', marginBottom: 6 }}>
                         Districts: {spike.affectedDistricts.join(', ')}
                       </div>
-                      <div style={{ fontSize: 10, color: '#10b981' }}>
+                      <div style={{ fontSize: 11, color: '#059669', fontWeight: 600 }}>
                         ✓ {spike.preventiveMeasure}
                       </div>
 
                       {/* Confidence bar */}
-                      <div style={{ height: 2, background: 'rgba(255,255,255,0.06)', borderRadius: 1, overflow: 'hidden', marginTop: 8 }}>
+                      <div style={{ height: 2, background: '#E5E7EB', borderRadius: 1, overflow: 'hidden', marginTop: 8 }}>
                         <div style={{ height: '100%', width: `${spike.confidence}%`, background: '#f59e0b' }} />
                       </div>
                     </div>
@@ -529,10 +527,10 @@ export default function PredictionsPage() {
               </div>
 
               {/* Recommendations */}
-              <div style={{ background: 'rgba(2,6,23,0.9)', border: '1px solid rgba(0,240,255,0.12)', borderRadius: 16, padding: 20 }}>
+              <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 16, padding: 20 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                  <Shield size={15} color="#00f0ff" />
-                  <span style={{ fontSize: 12, fontWeight: 800, color: '#f1f5f9', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  <Shield size={15} color="#0F6B5C" />
+                  <span style={{ fontSize: 12, fontWeight: 800, color: '#1F2937', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                     {t.pred_recommendations}
                   </span>
                 </div>
@@ -553,15 +551,15 @@ export default function PredictionsPage() {
                           }}>
                             {rec.priority}
                           </span>
-                          <span style={{ fontSize: 10, color: '#64748b' }}>{rec.timeframe}</span>
+                          <span style={{ fontSize: 10, color: '#475569' }}>{rec.timeframe}</span>
                         </div>
-                        <p style={{ fontSize: 12, color: '#e2e8f0', margin: '0 0 6px', fontWeight: 600, lineHeight: 1.4 }}>
+                        <p style={{ fontSize: 12, color: '#1F2937', margin: '0 0 6px', fontWeight: 700, lineHeight: 1.4 }}>
                           {rec.action}
                         </p>
-                        <div style={{ fontSize: 10, color: '#64748b' }}>
+                        <div style={{ fontSize: 10, color: '#475569' }}>
                           Districts: {rec.districts.join(', ')}
                         </div>
-                        <div style={{ fontSize: 10, color: '#10b981', marginTop: 3 }}>
+                        <div style={{ fontSize: 10, color: '#2E8B57', marginTop: 3, fontWeight: 600 }}>
                           Impact: {rec.expectedImpact}
                         </div>
                       </div>
@@ -578,12 +576,12 @@ export default function PredictionsPage() {
               onClick={generatePrediction}
               style={{
                 display: 'flex', alignItems: 'center', gap: 6, padding: '8px 20px',
-                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: 8, color: '#64748b', fontSize: 12, fontWeight: 600,
+                background: '#FFFFFF', border: '1px solid #D1D5DB',
+                borderRadius: 8, color: '#475569', fontSize: 12, fontWeight: 600,
                 cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.2s',
               }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#94a3b8'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = '#64748b'; }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#F9FAFB'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FFFFFF'; }}
             >
               <RefreshCw size={12} /> {t.btn_refresh} Prediction
             </button>
@@ -596,5 +594,13 @@ export default function PredictionsPage() {
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
       `}</style>
     </div>
+  );
+}
+
+export default function PredictionsPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: 24, color: '#64748b', fontSize: 14 }}>Loading Predictions...</div>}>
+      <PredictionsPageContent />
+    </Suspense>
   );
 }

@@ -24,7 +24,7 @@ const PRIORITY_COLORS: Record<string, string> = {
 
 const STATUS_COLORS: Record<string, string> = {
   'Pending Approval': '#f59e0b',
-  'Approved': '#00f0ff',
+  'Approved': '#0F6B5C',
   'Deployed': '#10b981',
   'In Progress': '#8b5cf6',
   'Pending': '#64748b',
@@ -49,7 +49,7 @@ const CustomTooltip = ({
     return (
       <div className="tooltip">
         <p style={{ color: '#f1f5f9', fontWeight: 700 }}>{payload[0].payload.category}</p>
-        <p style={{ color: '#00f0ff' }}>₹{payload[0].value}Cr</p>
+        <p style={{ color: '#0F6B5C' }}>₹{payload[0].value}Cr</p>
       </div>
     );
   }
@@ -68,7 +68,7 @@ const SimulatorTooltip = ({
   if (active && payload && payload.length) {
     return (
       <div className="tooltip">
-        <p style={{ color: '#00f0ff', fontWeight: 700, marginBottom: 4 }}>{label}</p>
+        <p style={{ color: '#0F6B5C', fontWeight: 700, marginBottom: 4 }}>{label}</p>
         {payload.map((p, i) => (
           <p key={i} style={{ color: p.color, fontSize: 12 }}>
             {p.name}: <strong>{p.value.toLocaleString()}</strong>
@@ -135,9 +135,9 @@ export default function ResourcesPage() {
           <div className="flex items-center gap-3 mb-2">
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: 'rgba(0, 240, 255, 0.12)', border: '1px solid rgba(0, 240, 255, 0.3)' }}
+              style={{ background: 'rgba(30, 58, 95, 0.12)', border: '1px solid rgba(30, 58, 95, 0.3)' }}
             >
-              <Package size={20} style={{ color: '#00f0ff' }} />
+              <Package size={20} style={{ color: '#0F6B5C' }} />
             </div>
             <h1 className="page-title">Resource Deployment Intelligence</h1>
           </div>
@@ -158,7 +158,7 @@ export default function ResourcesPage() {
       {/* Summary Metrics */}
       <div className="grid grid-cols-4 gap-4 mb-8">
         {[
-          { label: 'Total Police Force', value: totalOfficers.toLocaleString(), sub: 'Karnataka', color: '#00f0ff', icon: Users },
+          { label: 'Total Police Force', value: totalOfficers.toLocaleString(), sub: 'Karnataka', color: '#0F6B5C', icon: Users },
           { label: 'Active Patrol Units', value: totalDeployed.toLocaleString(), sub: 'Deployed', color: '#10b981', icon: Shield },
           { label: 'Cyber Crime Units', value: totalCyber.toLocaleString(), sub: 'Specialized', color: '#8b5cf6', icon: Monitor },
           { label: 'Pending Approvals', value: '3', sub: 'AI Recommendations', color: '#f59e0b', icon: Clock },
@@ -258,7 +258,7 @@ export default function ResourcesPage() {
                     <div className="grid grid-cols-2 gap-3 mb-3">
                       <div>
                         <div style={{ color: '#64748b', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>Units Required</div>
-                        <div style={{ color: '#00f0ff', fontSize: '18px', fontWeight: 800 }}>{rec.units}</div>
+                        <div style={{ color: '#0F6B5C', fontSize: '18px', fontWeight: 800 }}>{rec.units}</div>
                       </div>
                       <div>
                         <div style={{ color: '#64748b', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>Timeline</div>
@@ -455,7 +455,7 @@ export default function ResourcesPage() {
       {/* ══════════════════════════════════════════════════════════════ */}
       <div style={{ marginBottom: 32 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-          <Sliders size={18} style={{ color: '#00f0ff' }} />
+          <Sliders size={18} style={{ color: '#0F6B5C' }} />
           <h2 className="section-title" style={{ margin: 0 }}>PREDICTIVE RESOURCE DEPLOYMENT SIMULATOR</h2>
         </div>
         <p style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 20 }}>
@@ -471,14 +471,14 @@ export default function ResourcesPage() {
             <div style={{ marginBottom: 24 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                 <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Shield size={14} style={{ color: '#00f0ff' }} /> Patrol Units Deployed
+                  <Shield size={14} style={{ color: '#0F6B5C' }} /> Patrol Units Deployed
                 </label>
-                <span style={{ fontSize: 15, fontWeight: 700, color: '#00f0ff', fontFamily: 'JetBrains Mono, monospace' }}>{patrolUnits}</span>
+                <span style={{ fontSize: 15, fontWeight: 700, color: '#0F6B5C', fontFamily: 'JetBrains Mono, monospace' }}>{patrolUnits}</span>
               </div>
               <input
                 type="range" min={100} max={1000} value={patrolUnits}
                 onChange={(e) => { setPatrolUnits(Number(e.target.value)); setSimApplied(false); }}
-                style={{ width: '100%', accentColor: '#00f0ff', cursor: 'pointer' }}
+                style={{ width: '100%', accentColor: '#0F6B5C', cursor: 'pointer' }}
               />
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--text-dim)', marginTop: 4 }}>
                 <span>100 (Minimal)</span><span>1000 (Maximum)</span>
@@ -546,7 +546,7 @@ export default function ResourcesPage() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               {[
                 { label: 'Crime Reduction', value: `${simulation.reductionPct}%`, color: '#10b981', icon: TrendingUp, desc: 'Projected annual reduction' },
-                { label: 'Response Time', value: `${simulation.responseTime} min`, color: '#00f0ff', icon: Clock, desc: 'Average incident response' },
+                { label: 'Response Time', value: `${simulation.responseTime} min`, color: '#0F6B5C', icon: Clock, desc: 'Average incident response' },
                 { label: 'Cyber Intercept Rate', value: `${simulation.cyberInterceptRate}%`, color: '#8b5cf6', icon: Monitor, desc: 'Cybercrime detection rate' },
                 { label: 'ROI Score', value: `${simulation.roiScore}`, color: '#f59e0b', icon: Target, desc: 'Effectiveness per ₹Cr' },
               ].map((metric) => (
