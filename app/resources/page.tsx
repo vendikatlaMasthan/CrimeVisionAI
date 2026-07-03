@@ -18,7 +18,7 @@ import { KARNATAKA_DISTRICTS } from '@/lib/mockData';
 const PRIORITY_COLORS: Record<string, string> = {
   Critical: '#ef4444',
   High: '#f59e0b',
-  Medium: '#8b5cf6',
+  Medium: '#1976D2', // Distinct Blue
   Low: '#10b981',
 };
 
@@ -27,7 +27,7 @@ const STATUS_COLORS: Record<string, string> = {
   'Approved': '#0F6B5C',
   'Deployed': '#10b981',
   'In Progress': '#8b5cf6',
-  'Pending': '#64748b',
+  'Pending': '#D97706', // Distinct Amber/Orange
 };
 
 const ICON_MAP: Record<string, React.FC<{ size?: number; style?: React.CSSProperties }>> = {

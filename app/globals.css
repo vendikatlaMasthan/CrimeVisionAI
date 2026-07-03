@@ -4,29 +4,30 @@
    DESIGN TOKENS
    ───────────────────────────────────────────── */
 :root {
-  /* Brand Tokens */
-  --brand-teal-900: #0B3D3A;   /* deepest — login hero gradient start */
-  --brand-teal-700: #0F4C4C;   /* login hero gradient end, dark surfaces */
-  --brand-teal-600: #0F6B5C;   /* primary buttons, active states, links */
-  --brand-teal-100: #E6F4F1;   /* selected/hover fill, soft badges */
-  --brand-gold:     #D4AF37;   /* emblem border, quotes, premium accents */
-  --brand-cyan:     #2DD4BF;   /* live/network/map glow accents */
+  /* Brand Tokens (from Karnataka Emblem & Flag) */
+  --brand-gold:     #D9A441;   /* Primary accent, borders, icons */
+  --brand-crimson:  #B5342B;   /* Primary buttons, alerts, header accent */
+  --brand-plum:     #5B2333;   /* Card headers, dark accents, page headers */
+  --brand-forest:   #3F6B4A;   /* Success states, secondary accent */
+  --brand-navy:     #1E3A5F;   /* Secondary buttons, sidebar background */
+  --brand-cream:    #F4EFE6;   /* Text on dark, card backgrounds */
+  --brand-charcoal: #1A1620;   /* App background / deep command center theme */
 
   /* DEFAULT LIGHT MODE (post-login application interior) */
-  --bg-app: #F5F7FA;          /* --surface-bg */
-  --bg-sidebar: #FFFFFF;      /* --surface-card */
-  --bg-header: #FFFFFF;       /* --surface-card */
-  --bg-card: #FFFFFF;         /* --surface-card */
-  --bg-card-hover: #E6F4F1;   /* --brand-teal-100 */
+  --bg-app: #F5F7FA;          /* Clean light gray background */
+  --bg-sidebar: var(--brand-navy);      /* Dark Navy Sidebar */
+  --bg-header: #FFFFFF;       /* White header */
+  --bg-card: #FFFFFF;         /* White card background */
+  --bg-card-hover: var(--brand-cream);   /* Soft cream card hover */
   --bg-input: #F8FAFC;
 
   --border-default: #E4EAF2;  /* --surface-border */
-  --border-subtle: rgba(11, 61, 58, 0.05);
+  --border-subtle: rgba(217, 164, 65, 0.15); /* Gold-tint border */
 
-  --accent-cyan: #0F6B5C;      /* --brand-teal-600 */
-  --accent-cyan-dim: #E6F4F1;  /* --brand-teal-100 */
-  --accent-cyan-border: rgba(15, 107, 92, 0.2);
-  --accent-cyan-text-on-fill: #FFFFFF;
+  --accent-cyan: var(--brand-gold);      /* Brand Gold accent */
+  --accent-cyan-dim: rgba(217, 164, 65, 0.1);  /* Soft gold */
+  --accent-cyan-border: rgba(217, 164, 65, 0.3);
+  --accent-cyan-text-on-fill: var(--brand-charcoal);
 
   --priority-critical: #DC2626; /* --status-critical */
   --priority-high: #F4A100;     /* --status-warning */
@@ -38,10 +39,11 @@
   --status-deployed: #0F6B5C;
   --status-progress: #1976D2;
 
-  --text-primary: #1B263B;
-  --text-secondary: #475569;
-  --text-muted: #6B7280;
-  --text-faint: #94A3B8;
+  /* Contrast-compliant text colors (at least 4.5:1 ratio minimum) */
+  --text-primary: #1A1620;      /* Extremely high contrast */
+  --text-secondary: #2D3748;    /* Very dark slate/gray */
+  --text-muted: #3F4E64;        /* Dark gray-blue, passes AA on light bg */
+  --text-faint: #556275;        /* Medium dark gray, passes AA on white bg */
 
   --threat-high: #DC2626;
   --threat-medium: #F4A100;
@@ -130,21 +132,71 @@ html, body {
    CARDS — Clean Light Theme
 ───────────────────────────────────────────── */
 .glass-card {
-  background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
   border-radius: 14px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--brand-gold) 0%, #FFFFFF 50%, var(--brand-gold) 100%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  transition: opacity 0.3s ease;
+}
+
 .glass-card:hover {
-  border-color: #D1D5DB;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: var(--accent-cyan-border);
+  box-shadow: 0 4px 16px rgba(217, 164, 65, 0.08);
+}
+
+.glass-card:hover::before {
+  animation: borderShimmer 0.8s ease-out forwards;
+}
+
+@keyframes borderShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Page Navigation Transition */
+.page-transition {
+  animation: pageTransition 0.22s ease-out forwards;
+}
+
+@keyframes pageTransition {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Critical Status Pill Pulse */
+@keyframes criticalPulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+.badge-red, .badge-critical, .badge-status-critical {
+  animation: criticalPulse 2s ease-in-out infinite;
 }
 
 .glass-card-solid {
-  background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
   border-radius: 14px;
 }
 
@@ -1022,6 +1074,10 @@ body, p, span, td, th, input, select, textarea, button {
 }
 
 /* Card titles */
+.card-title, .glass-card h3, .glass-card .section-title, .section-title, .section-header .section-title, .page-title, h1, h2, h3, h4, h5, h6 {
+  font-family: 'Merriweather', Georgia, serif;
+}
+
 .card-title, .glass-card h3, .glass-card .section-title {
   font-size: var(--font-card-title) !important;
 }

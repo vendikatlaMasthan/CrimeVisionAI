@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Shield, Lock, Eye, EyeOff, Fingerprint, CreditCard, Loader, FileText, Target, ShieldAlert } from 'lucide-react';
 import { DEMO_ACCOUNTS, DemoAccount } from '@/lib/crimeData';
+import GlobalSimulationBanner from '@/components/GlobalSimulationBanner';
+import CountUp from '@/components/CountUp';
 
 const LOADING_STEPS = [
   'Checking Credentials…',
@@ -137,6 +139,9 @@ export default function LoginPage() {
 
   return (
     <div className="login-wrapper">
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 100 }}>
+        <GlobalSimulationBanner />
+      </div>
       
       {/* ── SUCCESS LOADING SCREEN OVERLAY ──────────────────────── */}
       {isSuccess && (
@@ -179,60 +184,60 @@ export default function LoginPage() {
               <path
                 d="M 170,40 L 195,65 L 180,95 L 215,115 L 205,150 L 190,170 L 225,230 L 210,270 L 230,305 L 220,325 L 210,320 L 200,345 L 175,375 L 155,365 L 165,340 L 130,335 L 115,345 L 90,320 L 85,270 L 75,235 L 68,190 L 80,140 L 75,120 L 105,115 L 125,80 Z"
                 fill="none"
-                stroke="rgba(45, 212, 191, 0.2)"
+                stroke="rgba(217, 164, 65, 0.25)"
                 strokeWidth="1.5"
                 strokeDasharray="4 2"
               />
               {/* Network Connection Lines */}
-              <line x1="205" y1="280" x2="150" y2="310" stroke="rgba(45, 212, 191, 0.15)" strokeWidth="1" className="animated-line" />
-              <line x1="205" y1="280" x2="205" y2="125" stroke="rgba(45, 212, 191, 0.15)" strokeWidth="1" className="animated-line" />
-              <line x1="180" y1="80" x2="205" y2="125" stroke="rgba(45, 212, 191, 0.15)" strokeWidth="1" className="animated-line" />
-              <line x1="85" y1="135" x2="180" y2="80" stroke="rgba(45, 212, 191, 0.15)" strokeWidth="1" className="animated-line" />
-              <line x1="85" y1="135" x2="150" y2="310" stroke="rgba(45, 212, 191, 0.15)" strokeWidth="1" className="animated-line" />
-              <line x1="205" y1="125" x2="85" y2="135" stroke="rgba(45, 212, 191, 0.15)" strokeWidth="1" className="animated-line" />
+              <line x1="205" y1="280" x2="150" y2="310" stroke="rgba(217, 164, 65, 0.15)" strokeWidth="1" className="animated-line" />
+              <line x1="205" y1="280" x2="205" y2="125" stroke="rgba(217, 164, 65, 0.15)" strokeWidth="1" className="animated-line" />
+              <line x1="180" y1="80" x2="205" y2="125" stroke="rgba(217, 164, 65, 0.15)" strokeWidth="1" className="animated-line" />
+              <line x1="85" y1="135" x2="180" y2="80" stroke="rgba(217, 164, 65, 0.15)" strokeWidth="1" className="animated-line" />
+              <line x1="85" y1="135" x2="150" y2="310" stroke="rgba(217, 164, 65, 0.15)" strokeWidth="1" className="animated-line" />
+              <line x1="205" y1="125" x2="85" y2="135" stroke="rgba(217, 164, 65, 0.15)" strokeWidth="1" className="animated-line" />
               
               {/* 6 nodes: Belagavi, Kalaburagi, Raichur, Bengaluru, Mysuru, Dharwad (connector) */}
               {/* Bengaluru */}
               <g transform="translate(205, 280)">
-                <circle r="8" className="pulse-ring ring-1" fill="none" stroke="var(--brand-cyan)" strokeWidth="1.5" />
-                <circle r="3.5" fill="var(--brand-cyan)" />
+                <circle r="8" className="pulse-ring ring-1" fill="none" stroke="var(--brand-gold)" strokeWidth="1.5" />
+                <circle r="3.5" fill="var(--brand-gold)" className="map-dot-pulse map-dot-pulse-1" />
               </g>
               {/* Kalaburagi */}
               <g transform="translate(180, 80)">
-                <circle r="8" className="pulse-ring ring-2" fill="none" stroke="var(--brand-cyan)" strokeWidth="1.5" />
-                <circle r="3.5" fill="var(--brand-cyan)" />
+                <circle r="8" className="pulse-ring ring-2" fill="none" stroke="var(--brand-gold)" strokeWidth="1.5" />
+                <circle r="3.5" fill="var(--brand-gold)" className="map-dot-pulse map-dot-pulse-2" />
               </g>
               {/* Mysuru */}
               <g transform="translate(150, 310)">
-                <circle r="8" className="pulse-ring ring-3" fill="none" stroke="var(--brand-cyan)" strokeWidth="1.5" />
-                <circle r="3.5" fill="var(--brand-cyan)" />
+                <circle r="8" className="pulse-ring ring-3" fill="none" stroke="var(--brand-gold)" strokeWidth="1.5" />
+                <circle r="3.5" fill="var(--brand-gold)" className="map-dot-pulse map-dot-pulse-3" />
               </g>
               {/* Raichur */}
               <g transform="translate(205, 125)">
-                <circle r="8" className="pulse-ring ring-4" fill="none" stroke="var(--brand-cyan)" strokeWidth="1.5" />
-                <circle r="3.5" fill="var(--brand-cyan)" />
+                <circle r="8" className="pulse-ring ring-4" fill="none" stroke="var(--brand-gold)" strokeWidth="1.5" />
+                <circle r="3.5" fill="var(--brand-gold)" className="map-dot-pulse map-dot-pulse-4" />
               </g>
               {/* Belagavi */}
               <g transform="translate(85, 135)">
-                <circle r="8" className="pulse-ring ring-5" fill="none" stroke="var(--brand-cyan)" strokeWidth="1.5" />
-                <circle r="3.5" fill="var(--brand-cyan)" />
+                <circle r="8" className="pulse-ring ring-5" fill="none" stroke="var(--brand-gold)" strokeWidth="1.5" />
+                <circle r="3.5" fill="var(--brand-gold)" className="map-dot-pulse map-dot-pulse-5" />
               </g>
               {/* Dharwad */}
               <g transform="translate(115, 180)">
-                <circle r="8" className="pulse-ring ring-6" fill="none" stroke="var(--brand-cyan)" strokeWidth="1.5" />
-                <circle r="3.5" fill="var(--brand-cyan)" />
+                <circle r="8" className="pulse-ring ring-6" fill="none" stroke="var(--brand-gold)" strokeWidth="1.5" />
+                <circle r="3.5" fill="var(--brand-gold)" className="map-dot-pulse map-dot-pulse-6" />
               </g>
             </svg>
-
+ 
             {/* Stat Row */}
             <div className="stats-container">
               <div className="glass-stat-card">
                 <FileText size={14} className="text-[#FFFFFF]/70" />
-                <span>82,089 CASES</span>
+                <span><CountUp end={82089} suffix=" CASES" /></span>
               </div>
               <div className="glass-stat-card">
                 <Target size={14} className="text-[#FFFFFF]/70" />
-                <span>94.7% ACCURACY</span>
+                <span><CountUp end={94.7} decimals={1} suffix="% ACCURACY" /></span>
               </div>
               <div className="glass-stat-card">
                 <ShieldAlert size={14} className="text-[#FFFFFF]/70" />
@@ -467,7 +472,7 @@ export default function LoginPage() {
         /* LEFT PANEL: HERO SECTION */
         .left-panel {
           width: 45%;
-          background: linear-gradient(135deg, var(--brand-teal-900), var(--brand-teal-700));
+          background: linear-gradient(135deg, var(--brand-charcoal), var(--brand-plum));
           height: 100vh;
           display: flex;
           flex-direction: column;
@@ -579,7 +584,7 @@ export default function LoginPage() {
         }
 
         .glass-stat-card {
-          background: rgba(15, 76, 76, 0.45);
+          background: rgba(26, 22, 32, 0.5);
           border: 1px solid rgba(255, 255, 255, 0.08);
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
@@ -595,10 +600,10 @@ export default function LoginPage() {
           transition: all 0.2s ease;
           cursor: pointer;
         }
-
+ 
         .glass-stat-card:hover {
           transform: translateY(-2px);
-          background: rgba(15, 76, 76, 0.65);
+          background: rgba(26, 22, 32, 0.75);
           border-color: rgba(255, 255, 255, 0.15);
         }
 
@@ -695,7 +700,7 @@ export default function LoginPage() {
           width: 38px;
           height: 38px;
           border-radius: 50%;
-          background: var(--brand-teal-100);
+          background: rgba(181, 52, 43, 0.08);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -743,9 +748,9 @@ export default function LoginPage() {
 
         .role-tab-btn.active {
           background: #FFFFFF;
-          border-color: var(--brand-teal-600);
-          color: var(--brand-teal-600);
-          box-shadow: 0 4px 10px rgba(15, 107, 92, 0.05);
+          border-color: var(--brand-crimson);
+          color: var(--brand-crimson);
+          box-shadow: 0 4px 10px rgba(181, 52, 43, 0.05);
         }
 
         .role-tab-sub {
@@ -802,11 +807,11 @@ export default function LoginPage() {
         }
 
         .input-field:focus {
-          border-color: var(--brand-teal-600);
+          border-color: var(--brand-crimson);
           background: #FFFFFF;
-          box-shadow: 0 0 0 3px rgba(15, 107, 92, 0.08);
+          box-shadow: 0 0 0 3px rgba(181, 52, 43, 0.08);
         }
-
+ 
         .input-password-toggle {
           position: absolute;
           right: 14px;
@@ -816,27 +821,27 @@ export default function LoginPage() {
           cursor: pointer;
           display: flex;
           align-items: center;
-          justify-content: center;
+          justifyContent: center;
         }
-
+ 
         .input-password-toggle:hover {
           color: var(--text-primary);
         }
-
+ 
         .form-error-msg {
           font-size: 12px;
           font-weight: 600;
           color: var(--status-danger);
           margin-top: -4px;
         }
-
+ 
         .form-utility-row {
           display: flex;
           align-items: center;
           justify-content: space-between;
           font-size: 12px;
         }
-
+ 
         .remember-checkbox-label {
           display: flex;
           align-items: center;
@@ -845,25 +850,25 @@ export default function LoginPage() {
           font-weight: 500;
           cursor: pointer;
         }
-
+ 
         .remember-checkbox-input {
-          accent-color: var(--brand-teal-600);
+          accent-color: var(--brand-crimson);
         }
-
+ 
         .forgot-pass-btn {
           background: transparent;
           border: none;
-          color: var(--brand-teal-600);
+          color: var(--brand-crimson);
           font-weight: 600;
           cursor: pointer;
         }
-
+ 
         .forgot-pass-btn:hover {
           text-decoration: underline;
         }
-
+ 
         .login-submit-btn {
-          background: var(--brand-teal-600);
+          background: var(--brand-crimson);
           color: #FFFFFF;
           border: none;
           border-radius: 10px;
@@ -878,9 +883,9 @@ export default function LoginPage() {
           transition: all 200ms ease;
           width: 100%;
         }
-
+ 
         .login-submit-btn:hover {
-          background: #0D594C;
+          background: #96251E;
           transform: translateY(-1px);
         }
 
@@ -922,10 +927,10 @@ export default function LoginPage() {
         }
 
         .biometric-login-btn:hover {
-          border-color: var(--brand-teal-600);
-          color: var(--brand-teal-600);
+          border-color: var(--brand-crimson);
+          color: var(--brand-crimson);
         }
-
+ 
         .form-portal-footer {
           margin-top: 24px;
           display: flex;
@@ -937,7 +942,7 @@ export default function LoginPage() {
           color: var(--text-muted);
           text-align: center;
         }
-
+ 
         /* SUCCESS OVERLAY */
         .success-overlay {
           position: fixed;
@@ -949,7 +954,7 @@ export default function LoginPage() {
           justify-content: center;
           animation: overlayFadeIn 0.3s ease forwards;
         }
-
+ 
         .success-content {
           display: flex;
           flex-direction: column;
@@ -958,19 +963,19 @@ export default function LoginPage() {
           max-width: 320px;
           width: 100%;
         }
-
+ 
         .success-shield-box {
           width: 64px;
           height: 64px;
           border-radius: 50%;
-          background: rgba(166, 25, 46, 0.08);
-          border: 2px solid #A6192E;
+          background: rgba(181, 52, 43, 0.08);
+          border: 2px solid var(--brand-crimson);
           display: flex;
           align-items: center;
           justify-content: center;
           margin-bottom: 20px;
         }
-
+ 
         .success-title {
           font-size: 16px;
           font-weight: 800;
@@ -978,13 +983,13 @@ export default function LoginPage() {
           color: #1E3A5F;
           margin: 0;
         }
-
+ 
         .success-subtitle {
           font-size: 11px;
           color: #475569;
           margin: 6px 0 16px;
         }
-
+ 
         .progress-track {
           width: 100%;
           height: 4px;
@@ -992,44 +997,63 @@ export default function LoginPage() {
           border-radius: 2px;
           overflow: hidden;
         }
-
+ 
         .progress-fill {
           height: 100%;
-          background: #A6192E;
+          background: var(--brand-crimson);
           transition: width 0.1s linear;
         }
-
+ 
         .progress-percentage {
           font-size: 10px;
           font-weight: 700;
           font-family: monospace;
-          color: #A6192E;
+          color: var(--brand-crimson);
           margin-top: 8px;
         }
-
+ 
         /* Animations */
         @keyframes overlayFadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
         }
-
+ 
         .shake-anim {
           animation: shake 0.4s ease;
         }
-
+ 
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
           20%, 60% { transform: translateX(-6px); }
           40%, 80% { transform: translateX(6px); }
         }
-
+ 
         .spinner {
           animation: spin 1s linear infinite;
+          color: var(--brand-gold);
         }
-
+ 
         @keyframes spin {
           to { transform: rotate(360deg); }
         }
+ 
+        /* Map Dots Pulse Stagger Animations */
+        @keyframes mapDotPulse {
+          0%, 100% { opacity: 0.45; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.15); }
+        }
+ 
+        .map-dot-pulse {
+          animation: mapDotPulse 2.5s ease-in-out infinite;
+          transform-origin: center;
+        }
+ 
+        .map-dot-pulse-1 { animation-delay: 0s; }
+        .map-dot-pulse-2 { animation-delay: 0.4s; }
+        .map-dot-pulse-3 { animation-delay: 0.8s; }
+        .map-dot-pulse-4 { animation-delay: 1.2s; }
+        .map-dot-pulse-5 { animation-delay: 1.6s; }
+        .map-dot-pulse-6 { animation-delay: 2.0s; }
 
         /* RESPONSIVE LAYOUT */
         @media (max-width: 1024px) {

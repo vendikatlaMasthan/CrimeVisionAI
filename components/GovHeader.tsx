@@ -5,14 +5,15 @@
 // Official Karnataka State Police branding shown on every authenticated page.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { User } from 'lucide-react';
+import { UserCircle } from 'lucide-react';
+import SafeEmblem from './SafeEmblem';
 
 export default function GovHeader() {
   return (
     <div style={{
       width: '100%',
       background: '#FFFFFF',
-      borderBottom: '3px solid #A6192E',
+      borderBottom: '3px solid var(--brand-crimson)',
       height: '72px',
       display: 'flex',
       alignItems: 'center',
@@ -44,22 +45,22 @@ export default function GovHeader() {
           justifyContent: 'center',
           flexShrink: 0,
         }}>
-          <User size={22} style={{ color: '#4B5563' }} />
+          <UserCircle size={28} style={{ color: '#4B5563' }} />
         </div>
         <div>
           <div style={{
             fontSize: 12,
             fontWeight: 700,
-            color: '#1F2937',
+            color: 'var(--text-primary)',
             lineHeight: 1.2,
             textTransform: 'uppercase',
             letterSpacing: '0.02em',
           }}>
-            Chief Minister Office
+            Chief Minister
           </div>
           <div style={{
             fontSize: 10,
-            color: '#6B7280',
+            color: 'var(--text-muted)',
             fontWeight: 500,
             lineHeight: 1.3,
           }}>
@@ -85,27 +86,22 @@ export default function GovHeader() {
           justifyContent: 'center',
           flexShrink: 0,
         }}>
-          <img
-            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/ksp-emblem.png`}
-            alt="Karnataka State Police Emblem"
-            width={50}
-            height={50}
-            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-          />
+          <SafeEmblem width={50} height={50} />
         </div>
         <div style={{ textAlign: 'left' }}>
           <div style={{
             fontSize: 16,
             fontWeight: 800,
-            color: '#1F2937',
+            color: 'var(--text-primary)',
             lineHeight: 1.1,
             letterSpacing: '0.01em',
+            fontFamily: "'Merriweather', Georgia, serif",
           }}>
             Karnataka State Police
           </div>
           <div style={{
             fontSize: 10,
-            color: '#6B7280',
+            color: 'var(--text-muted)',
             fontWeight: 500,
             letterSpacing: '0.02em',
           }}>
@@ -125,16 +121,16 @@ export default function GovHeader() {
           <div style={{
             fontSize: 12,
             fontWeight: 700,
-            color: '#1F2937',
+            color: 'var(--text-primary)',
             lineHeight: 1.2,
             textTransform: 'uppercase',
             letterSpacing: '0.02em',
           }}>
-            Home Minister Office
+            Home Minister
           </div>
           <div style={{
             fontSize: 10,
-            color: '#6B7280',
+            color: 'var(--text-muted)',
             fontWeight: 500,
             lineHeight: 1.3,
           }}>
@@ -152,7 +148,7 @@ export default function GovHeader() {
           justifyContent: 'center',
           flexShrink: 0,
         }}>
-          <User size={22} style={{ color: '#4B5563' }} />
+          <UserCircle size={28} style={{ color: '#4B5563' }} />
         </div>
       </div>
     </div>

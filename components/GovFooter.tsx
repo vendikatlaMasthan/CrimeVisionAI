@@ -1,4 +1,5 @@
 import React from 'react';
+import SafeEmblem from './SafeEmblem';
 
 export default function GovFooter() {
   return (
@@ -25,13 +26,7 @@ export default function GovFooter() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <img
-            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/ksp-emblem.png`}
-            alt="Karnataka State Police Emblem"
-            width={32}
-            height={32}
-            style={{ objectFit: 'contain' }}
-          />
+          <SafeEmblem width={32} height={32} />
           <div>
             <div style={{ fontSize: '12px', fontWeight: 700, color: '#1B263B' }}>
               Karnataka State Police Intelligence Unit

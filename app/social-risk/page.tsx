@@ -105,11 +105,11 @@ export default function SocialRiskPage() {
                   <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{cor.factor}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     {isPositive
-                      ? <TrendingUp size={14} color="#ef4444" />
-                      : <TrendingDown size={14} color="#10b981" />}
+                      ? <TrendingUp size={14} color="var(--brand-crimson)" />
+                      : <TrendingDown size={14} color="var(--brand-forest)" />}
                     <span style={{
                       fontSize: 12, fontWeight: 800,
-                      color: isPositive ? '#ef4444' : '#10b981'
+                      color: isPositive ? 'var(--brand-crimson)' : 'var(--brand-forest)'
                     }}>
                       {isPositive ? '+' : '-'}{absVal.toFixed(2)}
                     </span>
@@ -117,7 +117,7 @@ export default function SocialRiskPage() {
                 </div>
                 <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
                   <span className={`badge ${isPositive ? 'badge-red' : 'badge-green'}`} style={{ fontSize: '10px', fontWeight: 700 }}>
-                    {strengthLabel} · {isPositive ? '↑ Crime Risk' : '↓ Crime Risk'}
+                    {isPositive ? '↑ Crime Risk' : '↓ Crime Risk'}
                   </span>
                 </div>
                 <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{cor.interpretation}</p>

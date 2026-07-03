@@ -27,6 +27,8 @@ function getStoredUser(): DemoAccount | null {
 
 const PUBLIC_PATHS = ['/login', '/login/'];
 
+import GlobalSimulationBanner from './GlobalSimulationBanner';
+
 // Layout constants
 const GOV_HEADER_HEIGHT = 72;
 const TOPBAR_HEIGHT = 72;
@@ -155,24 +157,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         {/* Main content area */}
         <main className="flex-1 min-h-screen min-w-0 flex flex-col" style={{ paddingLeft: `${SIDEBAR_WIDTH}px` }}>
           <Topbar user={user} portalType={portalType} />
-          <div className="flex-1" style={{ paddingTop: `${TOPBAR_HEIGHT}px` }}>
-            {/* Simulation mode persistent disclosure banner */}
-            <div style={{
-              background: '#FFFBEB',
-              borderBottom: '1px solid #FDE68A',
-              color: '#B45309',
-              fontSize: '11px',
-              fontWeight: 700,
-              padding: '8px 16px',
-              textAlign: 'center',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
-            }}>
-              <span>⚠️ <strong>SIMULATION MODE</strong> · Synthetic Demo Data, Not an Official Government Platform</span>
-            </div>
+          <div className="flex-1 page-transition" key={pathname} style={{ paddingTop: `${TOPBAR_HEIGHT}px` }}>
+            <GlobalSimulationBanner />
             {children}
           </div>
           <GovFooter />

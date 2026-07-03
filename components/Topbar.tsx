@@ -390,7 +390,7 @@ export default function Topbar({ user, portalType }: TopbarProps) {
               style={{ 
                 color: 'var(--text-muted)',
                 position: 'absolute',
-                left: '12px',
+                left: '14px',
                 top: '50%',
                 transform: 'translateY(-50%)',
               }} 
@@ -413,8 +413,8 @@ export default function Topbar({ user, portalType }: TopbarProps) {
                 border: '1px solid var(--border-default)',
                 borderRadius: '8px',
                 color: 'var(--text-primary)',
-                paddingLeft: '36px',
-                paddingRight: '48px',
+                paddingLeft: '40px',
+                paddingRight: '64px',
               }}
               onFocusCapture={e => { 
                 e.currentTarget.style.borderColor = 'var(--accent-cyan)';

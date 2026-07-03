@@ -5,6 +5,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState, useEffect } from 'react';
+import SafeEmblem from './SafeEmblem';
 
 const LOADING_STEPS = [
   'Connecting to Karnataka State Police Database…',
@@ -57,14 +58,8 @@ export default function AuthenticatingIntro({ onComplete }: { onComplete: () => 
       }}
     >
       {/* KSP Emblem */}
-      <div style={{ marginBottom: 24 }}>
-        <img
-          src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/ksp-emblem.png`}
-          alt="Karnataka State Police"
-          width={72}
-          height={72}
-          style={{ width: 72, height: 72, objectFit: 'contain' }}
-        />
+      <div style={{ marginBottom: 24, width: 72, height: 72 }}>
+        <SafeEmblem width={72} height={72} />
       </div>
 
       {/* Title */}
