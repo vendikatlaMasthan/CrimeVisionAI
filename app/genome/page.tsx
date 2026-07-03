@@ -5,6 +5,7 @@ import {
   MapPin, Shield, Link2, Fingerprint, Target, Activity, User
 } from 'lucide-react';
 import { FIR_RECORDS, CRIMINAL_PROFILES, FIRRecord } from '@/lib/mockData';
+import { SearchInput } from '@/components/SearchInput';
 
 // ─────────────────────────────────────────────
 // DNA COMPUTATION UTILITIES
@@ -470,31 +471,26 @@ export default function GenomePage() {
       <div className="flex gap-6" style={{ minHeight: '72vh' }}>
         {/* ─── LEFT: CASE LIST (40%) ─── */}
         <div className="flex flex-col" style={{ width: '40%', minWidth: 0 }}>
-          <div className="glass-card flex flex-col h-full" style={{ border: '1px solid #1e293b' }}>
+          <div className="glass-card flex flex-col h-full" style={{ border: '1.5px solid var(--border-default)', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
             {/* Panel header */}
             <div
               className="px-4 py-3 flex items-center justify-between"
-              style={{ borderBottom: '1px solid #1e293b' }}
+              style={{ borderBottom: '1.5px solid var(--border-default)' }}
             >
               <div className="flex items-center gap-2">
                 <Target size={16} className="neon-cyan" />
-                <span className="section-title text-sm">FIR Case Registry</span>
+                <span className="section-title text-sm" style={{ color: 'var(--text-primary)' }}>FIR Case Registry</span>
                 <span className="badge badge-cyan text-[10px]">{filteredRecords.length}</span>
               </div>
             </div>
 
             {/* Search */}
-            <div className="px-4 py-3" style={{ borderBottom: '1px solid #1e293b' }}>
-              <div className="relative">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                <input
-                  type="text"
-                  placeholder="Search FIR, category, district, DNA..."
-                  value={filterText}
-                  onChange={(e) => setFilterText(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 rounded-lg text-sm text-slate-200 bg-slate-800/60 border border-slate-700 focus:outline-none focus:border-cyan-500/60 placeholder-slate-600"
-                />
-              </div>
+            <div className="px-4 py-3" style={{ borderBottom: '1.5px solid var(--border-default)' }}>
+              <SearchInput
+                placeholder="Search FIR, category, district, DNA..."
+                value={filterText}
+                onChange={setFilterText}
+              />
             </div>
 
             {/* Case list */}
@@ -511,21 +507,20 @@ export default function GenomePage() {
                   <button
                     key={fir.id}
                     onClick={() => setSelectedId(fir.id)}
-                    className="w-full text-left p-3 rounded-xl transition-all duration-200"
+                    className="w-full text-left p-3 rounded-xl"
                     style={{
-                      background: isSelected ? '#0F6B5C10' : '#0f172a80',
-                      border: isSelected
-                        ? '1px solid #0F6B5C80'
-                        : '1px solid #1e293b',
-                      boxShadow: isSelected
-                        ? '0 0 16px #0F6B5C20, inset 0 0 16px #0F6B5C08'
-                        : 'none',
+                      background: isSelected ? 'rgba(11, 31, 58, 0.05)' : 'var(--bg-card)',
+                      border: isSelected ? '1.5px solid var(--primary-navy)' : '1.5px solid var(--border-default)',
+                      borderLeft: isSelected ? '4px solid var(--primary-navy)' : '1.5px solid var(--border-default)',
+                      boxShadow: isSelected ? 'var(--shadow-card)' : 'none',
+                      cursor: 'pointer',
+                      transition: 'all 150ms ease',
                     }}
                   >
                     <div className="flex items-start justify-between gap-2 mb-1.5">
                       <span
                         className="font-mono text-sm font-bold"
-                        style={{ color: isSelected ? '#0F6B5C' : '#94a3b8' }}
+                        style={{ color: isSelected ? 'var(--primary-navy)' : 'var(--text-primary)' }}
                       >
                         {fir.firNumber}
                       </span>
@@ -583,80 +578,28 @@ export default function GenomePage() {
             </div>
           ) : (
             <>
-              {/* ── 1. CRIME DNA PROFILE ── */}
-              <div
-                className="glass-card p-5"
-                style={{
-                  border: '1.5px solid var(--border-default)',
-                  background: 'var(--bg-card)',
-                  boxShadow: 'var(--shadow-card)',
+              {/* Selected Case Header */}
+              <div 
+                className="glass-card p-4 mb-4" 
+                style={{ 
+                  border: '1.5px solid var(--border-default)', 
+                  background: 'var(--bg-card)', 
+                  boxShadow: 'var(--shadow-card)' 
                 }}
               >
-                {/* Title row */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <Fingerprint size={18} style={{ color: 'var(--primary-navy)' }} />
-                    <span className="section-title text-sm" style={{ color: 'var(--text-primary)' }}>CRIME DNA PROFILE</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <RiskBadge level={dnaRiskLevel} />
-                    <span className="text-xs font-mono font-bold text-slate-500">
-                      {selectedFIR.firNumber}
+                    <span className="font-bold text-sm text-[var(--text-primary)]" style={{ fontSize: '15px' }}>
+                      CASE DETAILS — {selectedFIR.firNumber}
                     </span>
                   </div>
+                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded" style={{ background: 'rgba(11, 31, 58, 0.05)', color: 'var(--primary-navy)' }}>
+                    Risk Score: {selectedFIR.riskScore}/100
+                  </span>
                 </div>
-
-                {/* Full DNA string */}
-                <div
-                  className="text-center mb-5 py-3 rounded-xl font-mono text-2xl font-black tracking-[0.3em]"
-                  style={{
-                    background: 'var(--neutral-light)',
-                    border: '1.5px solid var(--border-default)',
-                    color: 'var(--primary-navy)',
-                    textShadow: '0 0 10px rgba(11, 31, 58, 0.1)',
-                  }}
-                >
-                  {selectedDNA!.timeCode} · {selectedDNA!.locationCode} · {selectedDNA!.methodCode} · {selectedDNA!.targetCode}
-                </div>
-
-                {/* Vector blocks */}
-                <div className="flex items-end justify-center gap-6">
-                  <VectorBlock
-                    code={selectedDNA!.timeCode}
-                    label="TIME VECTOR"
-                    sublabel={TIME_LABELS[selectedDNA!.timeCode]}
-                    bgColor="#8B5CF6"
-                    glowColor="rgba(139, 92, 246, 0.2)"
-                    barHeight={48 + (selectedDNA!.timeCode.charCodeAt(0) % 4) * 12}
-                  />
-                  <VectorBlock
-                    code={selectedDNA!.locationCode}
-                    label="GEO VECTOR"
-                    sublabel={selectedFIR.district.substring(0, 10)}
-                    bgColor="#3B82F6"
-                    glowColor="rgba(59, 130, 246, 0.2)"
-                    barHeight={60 + (selectedDNA!.locationCode.charCodeAt(0) % 5) * 10}
-                  />
-                  <VectorBlock
-                    code={selectedDNA!.methodCode}
-                    label="METHOD VECTOR"
-                    sublabel={METHOD_LABELS[selectedDNA!.methodCode]}
-                    bgColor="#EF4444"
-                    glowColor="rgba(239, 68, 68, 0.2)"
-                    barHeight={52 + (selectedDNA!.methodCode.charCodeAt(0) % 4) * 14}
-                  />
-                  <VectorBlock
-                    code={selectedDNA!.targetCode}
-                    label="TARGET VECTOR"
-                    sublabel={TARGET_LABELS[selectedDNA!.targetCode]}
-                    bgColor="#F59E0B"
-                    glowColor="rgba(245, 158, 11, 0.2)"
-                    barHeight={44 + (selectedDNA!.targetCode.charCodeAt(0) % 5) * 12}
-                  />
-                </div>
-
-                {/* Meta row */}
-                <div className="mt-4 pt-4 flex flex-wrap gap-4 text-xs text-slate-500" style={{ borderTop: '1px solid var(--border-default)' }}>
+                
+                <div className="flex flex-wrap gap-4 text-xs text-slate-500">
                   <span className="flex items-center gap-1">
                     <Clock size={11} /> {selectedFIR.date}
                   </span>
@@ -666,8 +609,8 @@ export default function GenomePage() {
                   <span className="flex items-center gap-1">
                     <Shield size={11} /> {selectedFIR.assignedOfficer}
                   </span>
-                  <span className="flex items-center gap-1 ml-auto font-mono font-bold text-slate-600">
-                    Risk Score: {selectedFIR.riskScore}/100
+                  <span className="flex items-center gap-1">
+                    <Target size={11} /> Category: {selectedFIR.crimeCategory}
                   </span>
                 </div>
               </div>
@@ -677,6 +620,9 @@ export default function GenomePage() {
                 <button
                   onClick={() => setActiveTab('matches')}
                   style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
                     padding: '8px 16px',
                     fontSize: '13px',
                     fontWeight: 700,
@@ -689,11 +635,26 @@ export default function GenomePage() {
                     marginBottom: '-1.5px',
                   }}
                 >
-                  Pattern Matches & Anomalies
+                  <Zap size={14} style={{ color: activeTab === 'matches' ? 'var(--primary-navy)' : 'var(--text-muted)' }} />
+                  <span>Pattern Matches & Anomalies</span>
+                  <span 
+                    style={{ 
+                      fontSize: '10px', 
+                      padding: '2px 6px', 
+                      borderRadius: '10px', 
+                      background: activeTab === 'matches' ? 'var(--primary-navy)' : 'var(--border-default)', 
+                      color: activeTab === 'matches' ? '#FFFFFF' : 'var(--text-secondary)' 
+                    }}
+                  >
+                    {topMatches.length}
+                  </span>
                 </button>
                 <button
                   onClick={() => setActiveTab('clusters')}
                   style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
                     padding: '8px 16px',
                     fontSize: '13px',
                     fontWeight: 700,
@@ -706,51 +667,138 @@ export default function GenomePage() {
                     marginBottom: '-1.5px',
                   }}
                 >
-                  Forensic Link & Clusters
+                  <Link2 size={14} style={{ color: activeTab === 'clusters' ? 'var(--primary-navy)' : 'var(--text-muted)' }} />
+                  <span>Forensic Link & Clusters</span>
+                  <span 
+                    style={{ 
+                      fontSize: '10px', 
+                      padding: '2px 6px', 
+                      borderRadius: '10px', 
+                      background: activeTab === 'clusters' ? 'var(--primary-navy)' : 'var(--border-default)', 
+                      color: activeTab === 'clusters' ? '#FFFFFF' : 'var(--text-secondary)' 
+                    }}
+                  >
+                    {patternClusters.length}
+                  </span>
                 </button>
               </div>
 
               {/* Tab 1: Pattern Matches & Anomalies */}
               {activeTab === 'matches' && (
                 <>
-                  {/* Anomaly Explainability Panel */}
+                  {/* Consolidated Alert Banner & Anomaly Explainability Panel */}
                   {deviations && (
-                    <div className="glass-card p-5" style={{ border: '1.5px solid var(--border-default)', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-2">
-                          <AlertTriangle size={18} style={{ color: deviations.isAnomaly ? 'var(--alert-red)' : 'var(--warning-amber)' }} />
-                          <span className="section-title text-sm" style={{ color: 'var(--text-primary)' }}>ANOMALY EXPLAINABILITY SCORE</span>
-                        </div>
-                        <span className={`badge-status-pill ${deviations.isAnomaly ? 'critical' : 'warning'}`}>
-                          {deviations.isAnomaly ? 'ANOMALOUS PATTERN' : 'TYPICAL PATTERN'}
-                        </span>
+                    <div className="glass-card p-5 mb-4" style={{ border: '1.5px solid var(--border-default)', background: 'var(--bg-card)', boxShadow: 'var(--shadow-card)' }}>
+                      
+                      {/* Consolidated Alert Banner */}
+                      {(() => {
+                        const averageDeviation = Math.round((deviations.timeDev + deviations.geoDev + deviations.methodDev + deviations.targetDev) / 4);
+                        const isAnomaly = deviations.isAnomaly;
+                        const riskLevel = selectedFIR.riskScore > 80 ? 'CRITICAL' : selectedFIR.riskScore > 60 ? 'HIGH' : 'MEDIUM';
+                        const alertColor = isAnomaly ? 'var(--alert-red)' : 'var(--success-green)';
+                        const alertBg = isAnomaly ? 'rgba(239, 68, 68, 0.08)' : 'rgba(16, 185, 129, 0.08)';
+                        
+                        return (
+                          <div 
+                            style={{ 
+                              padding: '12px 16px', 
+                              borderRadius: '8px', 
+                              background: alertBg,
+                              border: `1.5px solid ${alertColor}`,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '12px',
+                              marginBottom: '20px'
+                            }}
+                          >
+                            <AlertTriangle size={20} style={{ color: alertColor }} />
+                            <div>
+                              <div style={{ fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', color: alertColor }}>
+                                {isAnomaly ? 'ANOMALOUS PATTERN DETECTED' : 'TYPICAL PATTERN VERIFIED'} — RISK: {riskLevel}
+                              </div>
+                              <div style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 600, marginTop: '2px' }}>
+                                {isAnomaly 
+                                  ? `Case shows an atypical modus operandi with an average DNA profile deviation of ${averageDeviation}%.`
+                                  : `Case pattern is consistent with standard historical baselines.`}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      <div className="flex items-center gap-2 mb-4">
+                        <Fingerprint size={18} style={{ color: 'var(--primary-navy)' }} />
+                        <span className="section-title text-sm" style={{ color: 'var(--text-primary)' }}>CRIME DNA DEVIATION PROFILE</span>
                       </div>
 
-                      <p className="text-xs text-slate-600 mb-4 font-medium">
-                        {deviations.isAnomaly 
-                          ? `🚨 CRIME DNA DEVIATION: This case shows a highly unusual pattern deviating ${Math.round((deviations.timeDev + deviations.geoDev + deviations.methodDev + deviations.targetDev)/4)}% from expected historical behaviors.`
-                          : `✓ TYPICAL CRIME DNA: Pattern matches standard operating procedures in this district.`}
-                      </p>
-
-                      {/* Vector Delta Bars */}
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {/* Unified Visualization: 4 Vertical Bars */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', margin: '24px 0', alignItems: 'end' }}>
                         {[
-                          { label: 'Time Code Deviation', val: deviations.timeDev, color: '#8b5cf6', desc: 'Hour of occurrence deviates from the typical peak hours (11 PM - 3 AM).' },
-                          { label: 'Geo Location Deviation', val: deviations.geoDev, color: '#3b82f6', desc: 'Crime registered in a low-incident sector for this category.' },
-                          { label: 'Method Code Deviation', val: deviations.methodDev, color: '#ef4444', desc: 'Modus operandi (method code) is rarely seen in this type of offense.' },
-                          { label: 'Target Code Deviation', val: deviations.targetDev, color: '#f59e0b', desc: 'Victim profile or property target class is atypical for this region.' }
-                        ].map((item, i) => (
-                          <div key={i}>
-                            <div className="flex justify-between text-xs mb-1">
-                              <span style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>{item.label}</span>
-                              <span style={{ fontWeight: 800, color: item.val > 70 ? 'var(--alert-red)' : 'var(--text-primary)' }}>{item.val}%</span>
+                          { label: 'TIME', code: selectedDNA!.timeCode, sub: TIME_LABELS[selectedDNA!.timeCode], val: deviations.timeDev },
+                          { label: 'GEO', code: selectedDNA!.locationCode, sub: selectedFIR.district.substring(0, 10), val: deviations.geoDev },
+                          { label: 'METHOD', code: selectedDNA!.methodCode, sub: METHOD_LABELS[selectedDNA!.methodCode], val: deviations.methodDev },
+                          { label: 'TARGET', code: selectedDNA!.targetCode, sub: TARGET_LABELS[selectedDNA!.targetCode], val: deviations.targetDev },
+                        ].map((vector, idx) => {
+                          const barColor = vector.val > 60 
+                            ? 'var(--alert-red)' 
+                            : vector.val > 30 
+                              ? 'var(--warning-amber)' 
+                              : 'var(--success-green)';
+                          
+                          return (
+                            <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                              <span style={{ fontSize: '11px', fontWeight: 800, color: barColor }}>{vector.val}%</span>
+                              <div style={{ width: '28px', height: '100px', background: 'rgba(0,0,0,0.05)', borderRadius: '4px', overflow: 'hidden', position: 'relative' }}>
+                                <div 
+                                  style={{ 
+                                    position: 'absolute',
+                                    bottom: 0,
+                                    left: 0,
+                                    width: '100%',
+                                    height: `${Math.max(8, vector.val)}%`, 
+                                    background: barColor, 
+                                    borderRadius: '4px',
+                                    transition: 'all 0.3s ease'
+                                  }} 
+                                />
+                              </div>
+                              <div style={{ textAlign: 'center', marginTop: '4px' }}>
+                                <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-primary)' }}>{vector.label}: {vector.code}</div>
+                                <div 
+                                  style={{ fontSize: '10px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '80px' }} 
+                                  title={vector.sub}
+                                >
+                                  {vector.sub}
+                                </div>
+                              </div>
                             </div>
-                            <div style={{ height: '6px', background: 'rgba(0,0,0,0.05)', borderRadius: '3px', overflow: 'hidden', marginBottom: '4px' }}>
-                              <div style={{ height: '100%', width: `${item.val}%`, background: item.val > 70 ? 'var(--alert-red)' : item.color, borderRadius: '3px' }} />
+                          );
+                        })}
+                      </div>
+
+                      {/* Vector Explanation Text list */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px', borderTop: '1px solid var(--border-default)', paddingTop: '16px' }}>
+                        {[
+                          { label: 'Time Code Deviation', val: deviations.timeDev, desc: 'Hour of occurrence deviates from expected typical peak hours (11 PM - 3 AM).' },
+                          { label: 'Geo Location Deviation', val: deviations.geoDev, desc: 'Crime registered in a low-incident sector for this category.' },
+                          { label: 'Method Code Deviation', val: deviations.methodDev, desc: 'Modus operandi (method code) is rarely seen in this type of offense.' },
+                          { label: 'Target Code Deviation', val: deviations.targetDev, desc: 'Victim profile or property target class is atypical for this region.' }
+                        ].map((item, i) => {
+                          const barColor = item.val > 60 
+                            ? 'var(--alert-red)' 
+                            : item.val > 30 
+                              ? 'var(--warning-amber)' 
+                              : 'var(--success-green)';
+                          return (
+                            <div key={i} className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: barColor }} />
+                              <div className="flex-1 text-xs">
+                                <span style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>{item.label} ({item.val}%):</span>{' '}
+                                <span style={{ color: 'var(--text-muted)' }}>{item.desc}</span>
+                              </div>
                             </div>
-                            <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: 0 }}>{item.desc}</p>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}

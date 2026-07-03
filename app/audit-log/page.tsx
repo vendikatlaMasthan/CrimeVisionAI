@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { getAuditLogs, AuditLogEntry } from '@/lib/auditLogger';
 import SimulationBanner from '@/components/SimulationBanner';
+import { SearchInput } from '@/components/SearchInput';
 
 export default function AuditLogPage() {
   const [logs, setLogs] = useState<AuditLogEntry[]>([]);
@@ -73,17 +74,11 @@ export default function AuditLogPage() {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center' }}>
           
           {/* Search bar */}
-          <div style={{ flex: '1 1 300px', position: 'relative' }}>
-            <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-            <input
-              type="text"
+          <div style={{ flex: '1 1 300px' }}>
+            <SearchInput
               placeholder="Search actions, case IDs, log references..."
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              style={{
-                width: '100%',
-                paddingLeft: '36px',
-              }}
+              onChange={setSearchQuery}
             />
           </div>
 

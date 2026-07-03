@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from './LanguageToggle';
 import { useTheme } from './ThemeContext';
 import { usePresentation } from './PresentationContext';
+import { SearchInput } from './SearchInput';
 import AlertPanel from './AlertPanel';
 import UserMenu from './UserMenu';
 import { FIR_RECORDS, CRIMINAL_PROFILES, CRIME_CATEGORIES, LIVE_ALERTS, CRIMINAL_NETWORK } from '@/lib/mockData';
@@ -384,45 +385,20 @@ export default function Topbar({ user, portalType }: TopbarProps) {
         {/* Center: Global Search */}
         <div className="relative ml-6 mr-3" ref={dropdownRef} style={{ flex: '1 1 auto', maxWidth: '420px', minWidth: '150px', height: '40px' }}>
           <div className="relative flex items-center w-full h-full">
-            <Search 
-              size={15} 
-              className="pointer-events-none z-10" 
-              style={{ 
-                color: 'var(--text-muted)',
-                position: 'absolute',
-                left: '14px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-              }} 
-            />
-            <input
+            <SearchInput
               ref={inputRef}
               id="global-search-input"
-              type="text"
               placeholder={lang === 'kn' 
                 ? "ಹುಡುಕಿ FIRಗಳು, ಶಂಕಿತರು... (Press /)"
                 : "Search FIRs, Suspects, Districts, Crime IDs... (Press /)"
               }
               value={searchQuery}
-              onChange={e => { setSearchQuery(e.target.value); setShowDropdown(true); setActiveIdx(-1); }}
+              onChange={val => { setSearchQuery(val); setShowDropdown(true); setActiveIdx(-1); }}
               onFocus={() => setShowDropdown(true)}
               onKeyDown={handleKeyDown}
-              className="w-full h-full text-xs transition-all duration-200 text-[var(--text-primary)] outline-none"
               style={{
                 background: 'var(--bg-input)',
-                border: '1px solid var(--border-default)',
-                borderRadius: '8px',
-                color: 'var(--text-primary)',
-                paddingLeft: '40px',
                 paddingRight: '64px',
-              }}
-              onFocusCapture={e => { 
-                e.currentTarget.style.borderColor = 'var(--accent-cyan)';
-                e.currentTarget.style.boxShadow = '0 0 0 3px var(--accent-cyan-dim)';
-              }}
-              onBlurCapture={e => { 
-                e.currentTarget.style.borderColor = 'var(--border-default)';
-                e.currentTarget.style.boxShadow = 'none';
               }}
             />
 
