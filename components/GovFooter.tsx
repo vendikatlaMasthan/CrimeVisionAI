@@ -37,10 +37,14 @@ export default function GovFooter() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '11px', color: '#6B7280' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '11px', color: '#6B7280', flexWrap: 'wrap' }}>
+          <span>Chief Minister Office</span>
+          <span>•</span>
+          <span>Home Minister Office</span>
+          <span>•</span>
           <span>System Version: v3.0 (Production)</span>
           <span>•</span>
-          <span style={{ color: '#DC2626', fontWeight: 700, letterSpacing: '0.05em' }}>
+          <span style={{ color: 'var(--alert-red)', fontWeight: 700, letterSpacing: '0.05em' }}>
             RESTRICTED - INTERNAL OFFICIAL USE ONLY
           </span>
         </div>

@@ -50,9 +50,9 @@ function SidebarItem({ href, icon: Icon, label, badge }: SidebarItemProps) {
         height: '44px',
         textDecoration: 'none',
         borderRadius: isActive ? '0 10px 10px 0' : '0',
-        borderLeft: isActive ? '3px solid #A6192E' : '3px solid transparent',
-        background: isActive ? 'rgba(166, 25, 46, 0.06)' : 'transparent',
-        color: isActive ? '#A6192E' : '#475569',
+        borderLeft: isActive ? '3px solid var(--primary-navy)' : '3px solid transparent',
+        background: isActive ? 'rgba(11, 31, 58, 0.05)' : 'transparent',
+        color: isActive ? 'var(--primary-navy)' : '#475569',
         userSelect: 'none',
         transition: 'all 150ms ease',
         marginRight: isActive ? '8px' : '0',
@@ -70,12 +70,12 @@ function SidebarItem({ href, icon: Icon, label, badge }: SidebarItemProps) {
         }
       }}
     >
-      <Icon size={20} style={{ flexShrink: 0, color: isActive ? '#A6192E' : '#94A3B8', strokeWidth: 1.8 }} />
+      <Icon size={20} style={{ flexShrink: 0, color: isActive ? 'var(--primary-navy)' : '#94A3B8', strokeWidth: 1.8 }} />
       <span style={{ flex: 1, fontSize: '13.5px', fontWeight: isActive ? 600 : 500, letterSpacing: '0.01em' }}>{label}</span>
       {badge && (
         <span style={{
           minWidth: '20px', height: '20px', borderRadius: '10px',
-          background: '#DC2626', color: '#FFFFFF',
+          background: 'var(--alert-red)', color: '#FFFFFF',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: '10px', fontWeight: 700, padding: '0 6px', flexShrink: 0,
         }}>
@@ -124,16 +124,16 @@ export default function Sidebar({ user, portalType }: SidebarProps) {
       }}>
         <div style={{
           width: 36, height: 36, borderRadius: 10,
-          background: 'rgba(166, 25, 46, 0.08)',
+          background: 'rgba(11, 31, 58, 0.06)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <Shield size={20} style={{ color: '#A6192E' }} />
+          <Shield size={20} style={{ color: 'var(--primary-navy)' }} />
         </div>
         <div>
-          <div style={{ fontSize: 13, fontWeight: 800, color: '#A6192E', letterSpacing: '0.08em', lineHeight: 1 }}>
-            CRIMEVISION AI
+          <div className="logo-wordmark" style={{ fontSize: 15, color: 'var(--primary-navy)', letterSpacing: '-0.01em', lineHeight: 1 }}>
+            CrimeVision AI
           </div>
-          <div style={{ fontSize: 9, fontWeight: 600, color: '#94A3B8', letterSpacing: '0.06em', marginTop: 2, textTransform: 'uppercase' }}>
+          <div style={{ fontSize: 9, fontWeight: 600, color: '#94A3B8', letterSpacing: '0.06em', marginTop: 4, textTransform: 'uppercase' }}>
             {portalType === 'admin' ? 'Admin Portal' : 'Officer Portal'}
           </div>
         </div>
@@ -191,6 +191,7 @@ export default function Sidebar({ user, portalType }: SidebarProps) {
           <div>
             <SidebarItem href="/resources" icon={Package} label={lang === 'en' ? 'Officer Deployment' : 'ಸಂಪನ್ಮೂಲ ನಿಯೋಜನೆ'} />
             <SidebarItem href="/reports" icon={FileText} label={lang === 'en' ? 'Reports' : 'ವರದಿಗಳು'} />
+            <SidebarItem href="/audit-log" icon={ScrollText} label={lang === 'en' ? 'Audit Trail' : 'ಆಡಿಟ್ ದಾಖಲೆಗಳು'} />
           </div>
         </div>
 
@@ -202,7 +203,6 @@ export default function Sidebar({ user, portalType }: SidebarProps) {
               <SidebarItem href="/admin/officers" icon={Users} label={lang === 'en' ? 'Officer Management' : 'ಅಧಿಕಾರಿ ನಿರ್ವಹಣೆ'} />
               <SidebarItem href="/admin/database" icon={Database} label={lang === 'en' ? 'Database' : 'ಡೇಟಾಬೇಸ್'} />
               <SidebarItem href="/admin/settings" icon={Settings} label={lang === 'en' ? 'Settings' : 'ಸಂಯೋಜನೆಗಳು'} />
-              <SidebarItem href="/admin/activity-logs" icon={ScrollText} label={lang === 'en' ? 'Activity Logs' : 'ಚಟುವಟಿಕೆ ದಾಖಲೆಗಳು'} />
             </div>
           </div>
         )}
@@ -271,11 +271,11 @@ export default function Sidebar({ user, portalType }: SidebarProps) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
           <div style={{
             width: 34, height: 34, borderRadius: '50%',
-            background: portalType === 'admin' ? 'rgba(166, 25, 46, 0.08)' : 'rgba(37, 99, 235, 0.08)',
+            background: 'rgba(11, 31, 58, 0.08)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            border: `1px solid ${portalType === 'admin' ? 'rgba(166, 25, 46, 0.15)' : 'rgba(37, 99, 235, 0.15)'}`,
+            border: '1px solid rgba(11, 31, 58, 0.15)',
           }}>
-            <User size={16} style={{ color: portalType === 'admin' ? '#A6192E' : '#2563EB' }} />
+            <User size={16} style={{ color: 'var(--primary-navy)' }} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 12, fontWeight: 600, color: '#1F2937', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

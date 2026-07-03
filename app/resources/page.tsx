@@ -83,6 +83,7 @@ const SimulatorTooltip = ({
 export default function ResourcesPage() {
   const [selectedRec, setSelectedRec] = useState<number | null>(null);
   const [actionStatus, setActionStatus] = useState<Record<number, string>>({});
+  const [activeTab, setActiveTab] = useState<'deployment' | 'simulator'>('deployment');
 
   // Simulator state
   const [patrolUnits, setPatrolUnits] = useState(450);
@@ -127,8 +128,27 @@ export default function ResourcesPage() {
     }));
   }, [simulation.reductionPct]);
 
+  const getDistrictCaseload = (districtName: string, totalOfficers: number) => {
+    const mockActiveCases: Record<string, number> = {
+      'Bengaluru Urban': 6200,
+      'Mysuru': 1800,
+      'Kalaburagi': 1400,
+      'Belagavi': 1200,
+      'Hubli-Dharwad': 950,
+      'Mangaluru': 700,
+      'Vijayapura': 650,
+      'Ballari': 550,
+    };
+    const baseCases = mockActiveCases[districtName] || Math.round(totalOfficers * 0.15);
+    const reductionPct = simApplied ? parseFloat(simulation.reductionPct) : 0;
+    const cases = Math.round(baseCases * (1 - reductionPct / 100));
+    const ratio = cases / totalOfficers;
+    const status = ratio > 0.35 ? 'Overloaded' : ratio > 0.15 ? 'Moderate' : 'Optimal';
+    return { cases, ratio, status };
+  };
+
   return (
-    <div style={{ padding: '28px' }}>
+    <div style={{ background: 'var(--bg-app)', padding: '24px', minHeight: 'calc(100vh - 64px)' }}>
       {/* Page Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -154,6 +174,47 @@ export default function ResourcesPage() {
           </button>
         </div>
       </div>
+
+      {/* Tab Header Bar */}
+      <div style={{ display: 'flex', borderBottom: '1.5px solid var(--border-default)', marginBottom: '24px' }}>
+        <button
+          onClick={() => setActiveTab('deployment')}
+          style={{
+            padding: '8px 16px',
+            fontSize: '14px',
+            fontWeight: 700,
+            color: activeTab === 'deployment' ? 'var(--primary-navy)' : 'var(--text-muted)',
+            borderBottom: activeTab === 'deployment' ? '3px solid var(--primary-navy)' : '3px solid transparent',
+            background: 'transparent',
+            borderLeft: 'none', borderRight: 'none', borderTop: 'none',
+            cursor: 'pointer',
+            transition: 'all 150ms ease',
+            marginBottom: '-1.5px',
+          }}
+        >
+          Force Deployment & Budget
+        </button>
+        <button
+          onClick={() => setActiveTab('simulator')}
+          style={{
+            padding: '8px 16px',
+            fontSize: '14px',
+            fontWeight: 700,
+            color: activeTab === 'simulator' ? 'var(--primary-navy)' : 'var(--text-muted)',
+            borderBottom: activeTab === 'simulator' ? '3px solid var(--primary-navy)' : '3px solid transparent',
+            background: 'transparent',
+            borderLeft: 'none', borderRight: 'none', borderTop: 'none',
+            cursor: 'pointer',
+            transition: 'all 150ms ease',
+            marginBottom: '-1.5px',
+          }}
+        >
+          AI Predictive Simulation Model
+        </button>
+      </div>
+
+      {activeTab === 'deployment' && (
+        <>
 
       {/* Summary Metrics */}
       <div className="grid grid-cols-4 gap-4 mb-8">
@@ -404,6 +465,7 @@ export default function ResourcesPage() {
                 <th>Patrol Deployed</th>
                 <th>Cyber Units</th>
                 <th>Detectives</th>
+                <th>Officer Caseload</th>
                 <th>Coverage Score</th>
               </tr>
             </thead>
@@ -422,6 +484,26 @@ export default function ResourcesPage() {
                     <span style={{ color: '#8b5cf6', fontWeight: 700 }}>{d.cyberUnits}</span>
                   </td>
                   <td style={{ color: 'var(--text-secondary)' }}>{d.detectives}</td>
+                  <td>
+                    {(() => {
+                      const caseload = getDistrictCaseload(d.district, d.totalOfficers);
+                      const badgeClass = caseload.status === 'Overloaded' 
+                        ? 'badge-red' 
+                        : caseload.status === 'Moderate' 
+                          ? 'badge-amber' 
+                          : 'badge-green';
+                      return (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                          <span className={`badge ${badgeClass} text-[10px] font-bold`} style={{ alignSelf: 'flex-start' }}>
+                            {caseload.status.toUpperCase()}
+                          </span>
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                            {caseload.cases.toLocaleString()} cases / {d.totalOfficers.toLocaleString()} force
+                          </span>
+                        </div>
+                      );
+                    })()}
+                  </td>
                   <td>
                     <div className="flex items-center gap-2">
                       <div className="risk-bar-track" style={{ width: 80 }}>
@@ -451,19 +533,21 @@ export default function ResourcesPage() {
         </div>
       </div>
 
-      {/* ══════════════════════════════════════════════════════════════ */}
-      {/* PREDICTIVE RESOURCE DEPLOYMENT SIMULATOR                      */}
-      {/* ══════════════════════════════════════════════════════════════ */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-          <Sliders size={18} style={{ color: '#0F6B5C' }} />
-          <h2 className="section-title" style={{ margin: 0 }}>PREDICTIVE RESOURCE DEPLOYMENT SIMULATOR</h2>
-        </div>
-        <p style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 20 }}>
-          Adjust patrol units, rapid response teams, and technology investment to simulate projected crime reduction impact using statistical modeling.
-        </p>
+      </>
+      )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+      {activeTab === 'simulator' && (
+        <>
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+              <Sliders size={18} style={{ color: '#0F6B5C' }} />
+              <h2 className="section-title" style={{ margin: 0 }}>PREDICTIVE RESOURCE DEPLOYMENT SIMULATOR</h2>
+            </div>
+            <p style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 20 }}>
+              Adjust patrol units, rapid response teams, and technology investment to simulate projected crime reduction impact using statistical modeling.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
           {/* Left: Sliders */}
           <div className="glass-card" style={{ padding: 24 }}>
             <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 20 }}>Deployment Parameters</h3>
@@ -588,6 +672,8 @@ export default function ResourcesPage() {
           </span>
         </div>
       </div>
-    </div>
+    </>
+    )}
+  </div>
   );
 }

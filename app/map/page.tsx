@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import * as d3 from 'd3';
 import { 
   MapPin, AlertTriangle, Shield, Activity, Eye, Filter, Calendar, Users, 
   Map, TrendingUp, Info, ChevronRight, X, Sparkles, Plus, Clock
@@ -206,6 +207,47 @@ export default function HeatmapPage() {
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>("Kalaburagi");
   const [hoveredDistrict, setHoveredDistrict] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
+  const [geoJson, setGeoJson] = useState<any>(null);
+  const [loadingMap, setLoadingMap] = useState(true);
+
+  useEffect(() => {
+    fetch('https://raw.githubusercontent.com/inosaint/StatesOfIndia/master/karnataka.geojson')
+      .then(res => {
+        if (!res.ok) throw new Error("Status " + res.status);
+        return res.json();
+      })
+      .then(data => {
+        setGeoJson(data);
+        setLoadingMap(false);
+      })
+      .catch(err => {
+        console.error("Failed to load Karnataka GeoJSON, using schematic fallback:", err);
+        setLoadingMap(false);
+      });
+  }, []);
+
+  const getDistrictKey = (name2: string) => {
+    const name = name2.trim();
+    const map: Record<string, string> = {
+      'Bangalore Rural': 'Bengaluru Rural',
+      'Bangalore Urban': 'Bengaluru Urban',
+      'Chikmagalur': 'Chikkamagaluru',
+      'Chikballapur': 'Chikkaballapur',
+      'Mysore': 'Mysuru',
+      'Shimoga': 'Shivamogga',
+      'Gulbarga': 'Kalaburagi',
+      'Bijapur': 'Vijayapura',
+      'Bellary': 'Ballari',
+      'Tumkur': 'Tumakuru',
+      'Belgaum': 'Belagavi',
+      'Dharwar': 'Dharwad',
+      'North Kannada': 'Uttara Kannada',
+      'Uttara Kannada': 'Uttara Kannada',
+      'South Kannada': 'Dakshina Kannada',
+      'Dakshina Kannada': 'Dakshina Kannada',
+    };
+    return map[name] || name;
+  };
 
   const activeDistrict = selectedDistrict ? DISTRICT_DATA[selectedDistrict] : null;
 
@@ -285,6 +327,7 @@ export default function HeatmapPage() {
           </div>
  
           {/* SVG Map of Karnataka (Honeycomb representation centered on coordinates) */}
+          {/* SVG Map of Karnataka (Real District Choropleth dynamically projected) */}
           <svg
             width="100%"
             height="100%"
@@ -300,67 +343,130 @@ export default function HeatmapPage() {
             </defs>
             <rect width="100%" height="100%" fill="url(#dot-grid)" />
  
-            {/* Render Honeycomb Districts */}
-            {Object.entries(DISTRICT_DATA).map(([name, d]) => {
-              const { x, y } = getCoords(d.lat, d.lng);
-              const isSelected = selectedDistrict === name;
-              const isHovered = hoveredDistrict === name;
-              const r = 20; // Cell size
- 
-              // Draw stylized polygon (hexagon)
-              const points = [];
-              for (let i = 0; i < 6; i++) {
-                const angle = (Math.PI / 3) * i;
-                const px = x + r * Math.cos(angle);
-                const py = y + r * Math.sin(angle);
-                points.push(`${px},${py}`);
+            {/* Map projection calculations */}
+            {(() => {
+              const mapWidth = 520;
+              const mapHeight = 580;
+              let projection: any = null;
+              let pathGenerator: any = null;
+
+              if (geoJson) {
+                projection = d3.geoMercator().fitSize([mapWidth - 40, mapHeight - 40], geoJson);
+                pathGenerator = d3.geoPath().projection(projection);
               }
-              const pointsStr = points.join(' ');
- 
-              return (
-                <g key={name}>
-                  {/* Outer glow ring for critical nodes */}
-                  {d.level === 'CRITICAL' && (
-                    <polygon
-                      points={pointsStr}
-                      fill="none"
-                      stroke="#ef4444"
-                      strokeWidth={1.5}
-                      strokeDasharray="2 3"
-                      opacity={0.3}
-                      className="animate-spin-slow"
-                      style={{ transformOrigin: `${x}px ${y}px` }}
+
+              if (loadingMap) {
+                return (
+                  <g>
+                    <text x="50%" y="45%" textAnchor="middle" fill="var(--text-primary)" fontSize="14px" fontWeight="700">
+                      Initializing GIS Map Data...
+                    </text>
+                    <text x="50%" y="52%" textAnchor="middle" fill="var(--text-muted)" fontSize="11px">
+                      Fetching official district coordinates chain from raw.githubusercontent.com
+                    </text>
+                  </g>
+                );
+              }
+
+              if (!geoJson) {
+                // FALLBACK: Honeycomb Cells
+                return Object.entries(DISTRICT_DATA).map(([name, d]) => {
+                  const { x, y } = getCoords(d.lat, d.lng);
+                  const isSelected = selectedDistrict === name;
+                  const isHovered = hoveredDistrict === name;
+                  const r = 20;
+
+                  const points = [];
+                  for (let i = 0; i < 6; i++) {
+                    const angle = (Math.PI / 3) * i;
+                    const px = x + r * Math.cos(angle);
+                    const py = y + r * Math.sin(angle);
+                    points.push(`${px},${py}`);
+                  }
+                  const pointsStr = points.join(' ');
+
+                  return (
+                    <g key={name}>
+                      <polygon
+                        points={pointsStr}
+                        fill={d.color}
+                        fillOpacity={isHovered ? 0.8 : isSelected ? 0.75 : 0.4}
+                        stroke={isHovered || isSelected ? 'var(--primary-navy)' : 'rgba(30, 58, 95, 0.25)'}
+                        strokeWidth={isHovered ? 2.5 : isSelected ? 2 : 1}
+                        style={{ cursor: 'pointer', transition: 'all 0.2s ease-in-out' }}
+                        onClick={() => setSelectedDistrict(name)}
+                        onMouseEnter={() => setHoveredDistrict(name)}
+                        onMouseLeave={() => setHoveredDistrict(null)}
+                      />
+                      <text
+                        x={x}
+                        y={y + 3}
+                        fill={isHovered || isSelected ? '#FFFFFF' : 'var(--text-muted)'}
+                        fontSize="7.5px"
+                        fontWeight="800"
+                        textAnchor="middle"
+                        pointerEvents="none"
+                      >
+                        {name.substring(0, 5).toUpperCase()}
+                      </text>
+                    </g>
+                  );
+                });
+              }
+
+              // REAL CHOROPLETH RENDERING
+              return geoJson.features.map((f: any, idx: number) => {
+                const districtName = f.properties.NAME_2;
+                const key = getDistrictKey(districtName);
+                const d = DISTRICT_DATA[key] || {
+                  score: 30, level: "LOW", color: "#27AE60",
+                  crimes: 1000, lat: 0, lng: 0, policeStations: 10, officers: 10, arrests: 10, solved: 10,
+                  breakdown: [], recommendations: ["General patrol reinforcement"]
+                };
+                const pathData = pathGenerator(f);
+                const centroid = pathGenerator.centroid(f);
+                const [cx, cy] = centroid || [0, 0];
+
+                const isSelected = selectedDistrict === key;
+                const isHovered = hoveredDistrict === key;
+
+                return (
+                  <g key={idx}>
+                    <path
+                      d={pathData}
+                      fill={d.color}
+                      fillOpacity={isHovered ? 0.85 : isSelected ? 0.8 : 0.45}
+                      stroke={isHovered || isSelected ? 'var(--primary-navy)' : 'rgba(11, 31, 58, 0.15)'}
+                      strokeWidth={isHovered ? 2 : isSelected ? 1.5 : 0.8}
+                      style={{ cursor: 'pointer', transition: 'all 0.15s ease-in-out' }}
+                      onClick={() => setSelectedDistrict(key)}
+                      onMouseEnter={() => setHoveredDistrict(key)}
+                      onMouseLeave={() => setHoveredDistrict(null)}
                     />
-                  )}
- 
-                  {/* Main district cell polygon */}
-                  <polygon
-                    points={pointsStr}
-                    fill={d.color}
-                    fillOpacity={isHovered ? 0.8 : isSelected ? 0.75 : 0.4}
-                    stroke={isHovered || isSelected ? '#1B263B' : 'rgba(30, 58, 95, 0.25)'}
-                    strokeWidth={isHovered ? 2.5 : isSelected ? 2 : 1}
-                    style={{ cursor: 'pointer', transition: 'all 0.2s ease-in-out' }}
-                    onClick={() => setSelectedDistrict(name)}
-                    onMouseEnter={() => setHoveredDistrict(name)}
-                    onMouseLeave={() => setHoveredDistrict(null)}
-                  />
- 
-                  {/* Micro Text Label */}
-                  <text
-                    x={x}
-                    y={y + 3}
-                    fill={isHovered || isSelected ? '#1B263B' : 'var(--text-muted)'}
-                    fontSize="7.5px"
-                    fontWeight="800"
-                    textAnchor="middle"
-                    pointerEvents="none"
-                  >
-                    {name.substring(0, 5).toUpperCase()}
-                  </text>
-                </g>
-              );
-            })}
+                    {cx && cy && (
+                      <text
+                        x={cx}
+                        y={cy + 3}
+                        fill={isHovered || isSelected ? '#FFFFFF' : 'var(--text-muted)'}
+                        fontSize="7px"
+                        fontWeight="900"
+                        textAnchor="middle"
+                        pointerEvents="none"
+                        style={{
+                          textShadow: isHovered || isSelected 
+                            ? '0px 0px 4px var(--primary-navy)' 
+                            : '0px 0px 3px rgba(255,255,255,0.95)',
+                          fontFamily: "'Inter', sans-serif",
+                          letterSpacing: '-0.02em',
+                        }}
+                      >
+                        {key.substring(0, 5).toUpperCase()}
+                      </text>
+                    )}
+                  </g>
+                );
+              });
+            })()}
           </svg>
 
           {/* Interactive Floating Tooltip HUD */}

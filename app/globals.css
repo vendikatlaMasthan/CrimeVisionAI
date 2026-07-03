@@ -4,83 +4,200 @@
    DESIGN TOKENS
    ───────────────────────────────────────────── */
 :root {
-  /* Brand Tokens (from Karnataka Emblem & Flag) */
-  --brand-gold:     #D9A441;   /* Primary accent, borders, icons */
-  --brand-crimson:  #B5342B;   /* Primary buttons, alerts, header accent */
-  --brand-plum:     #5B2333;   /* Card headers, dark accents, page headers */
-  --brand-forest:   #3F6B4A;   /* Success states, secondary accent */
-  --brand-navy:     #1E3A5F;   /* Secondary buttons, sidebar background */
-  --brand-cream:    #F4EFE6;   /* Text on dark, card backgrounds */
-  --brand-charcoal: #1A1620;   /* App background / deep command center theme */
+  /* Strict 5-Color System (Karnataka Prototype) */
+  --primary-navy:     #0B1F3A;   /* Primary UI (deep navy), headers, sidebar */
+  --alert-red:        #D32F2F;   /* Critical/Alert states ONLY */
+  --warning-amber:    #F59E0B;   /* Warning/Pending states */
+  --success-green:    #2E8B57;   /* Success/Resolved/Deployed states */
+  
+  /* Neutral Gray Scale */
+  --neutral-dark:     #1E293B;   /* High-contrast body text */
+  --neutral-medium:   #64748B;   /* Muted text/labels */
+  --neutral-light:    #F8FAFC;   /* Light background surfaces, input fields */
+  --neutral-border:   #E2E8F0;   /* Clean grid borders */
+  --neutral-white:    #FFFFFF;   /* Card backgrounds, clean surfaces */
 
-  /* DEFAULT LIGHT MODE (post-login application interior) */
-  --bg-app: #F5F7FA;          /* Clean light gray background */
-  --bg-sidebar: var(--brand-navy);      /* Dark Navy Sidebar */
-  --bg-header: #FFFFFF;       /* White header */
-  --bg-card: #FFFFFF;         /* White card background */
-  --bg-card-hover: var(--brand-cream);   /* Soft cream card hover */
-  --bg-input: #F8FAFC;
+  /* Semantic Mappings */
+  --bg-app: var(--neutral-light);
+  --bg-sidebar: var(--primary-navy);
+  --bg-header: var(--primary-navy);
+  --bg-card: var(--neutral-white);
+  --bg-card-hover: rgba(11, 31, 58, 0.03);
+  --bg-input: var(--neutral-light);
 
-  --border-default: #E4EAF2;  /* --surface-border */
-  --border-subtle: rgba(217, 164, 65, 0.15); /* Gold-tint border */
+  --border-default: var(--neutral-border);
+  --border-subtle: rgba(11, 31, 58, 0.08);
 
-  --accent-cyan: var(--brand-gold);      /* Brand Gold accent */
-  --accent-cyan-dim: rgba(217, 164, 65, 0.1);  /* Soft gold */
-  --accent-cyan-border: rgba(217, 164, 65, 0.3);
-  --accent-cyan-text-on-fill: var(--brand-charcoal);
+  --accent-cyan: var(--primary-navy);
+  --accent-cyan-dim: rgba(11, 31, 58, 0.05);
+  --accent-cyan-border: rgba(11, 31, 58, 0.15);
+  --accent-cyan-text-on-fill: var(--neutral-white);
 
-  --priority-critical: #DC2626; /* --status-critical */
-  --priority-high: #F4A100;     /* --status-warning */
-  --priority-medium: #1976D2;   /* --status-info */
-  --priority-low: #2E8B57;      /* --status-success */
+  --priority-critical: var(--alert-red);
+  --priority-high: var(--warning-amber);
+  --priority-medium: var(--neutral-medium); /* Kept gray to stay under 5 colors */
+  --priority-low: var(--neutral-medium);
 
-  --status-approved: #2E8B57;
-  --status-pending: #F4A100;
-  --status-deployed: #0F6B5C;
-  --status-progress: #1976D2;
+  --status-approved: var(--success-green);
+  --status-pending: var(--warning-amber);
+  --status-deployed: var(--success-green);
+  --status-progress: var(--primary-navy);
 
   /* Contrast-compliant text colors (at least 4.5:1 ratio minimum) */
-  --text-primary: #1A1620;      /* Extremely high contrast */
-  --text-secondary: #2D3748;    /* Very dark slate/gray */
-  --text-muted: #3F4E64;        /* Dark gray-blue, passes AA on light bg */
-  --text-faint: #556275;        /* Medium dark gray, passes AA on white bg */
+  --text-primary: var(--primary-navy);
+  --text-secondary: var(--neutral-dark);
+  --text-muted: var(--neutral-medium);
+  --text-faint: #475569;
 
-  --threat-high: #DC2626;
-  --threat-medium: #F4A100;
-  --threat-low: #2E8B57;
+  --threat-high: var(--alert-red);
+  --threat-medium: var(--warning-amber);
+  --threat-low: var(--success-green);
 
-  --shadow-card: 0 4px 12px rgba(27, 38, 59, 0.03);
+  --shadow-card: 0 4px 12px rgba(11, 31, 58, 0.03);
 
   /* Font scale defaults */
-  --font-base: 16px;
-  --font-card-title: 20px;
-  --font-section-title: 24px;
-  --font-page-title: 32px;
-  --font-label: 15px;
+  --font-base: 14px;
+  --font-card-title: 18px;
+  --font-section-title: 22px;
+  --font-page-title: 28px;
+  --font-label: 12px;
 
-  /* Legacy variables aliased to semantic tokens for compatibility */
+  /* Legacy variables mapped to new system to avoid compilation breaks */
   --cyber-bg: var(--bg-app);
-  --cyber-surface: var(--bg-sidebar);
+  --cyber-surface: var(--neutral-white);
   --cyber-card: var(--bg-card);
   --cyber-card-hover: var(--bg-card-hover);
   --cyber-border: var(--border-default);
-  --cyber-cyan: var(--accent-cyan);
-  --cyber-blue: var(--status-deployed);
-  --cyber-purple: var(--priority-medium);
-  --cyber-magenta: #e879f9;
-  --cyber-amber: var(--priority-high);
-  --cyber-red: var(--priority-critical);
-  --cyber-green: var(--priority-low);
-  --cyber-orange: #f97316;
+  --cyber-cyan: var(--primary-navy);
+  --cyber-blue: var(--success-green);
+  --cyber-purple: var(--neutral-medium);
+  --cyber-magenta: var(--neutral-medium);
+  --cyber-amber: var(--warning-amber);
+  --cyber-red: var(--alert-red);
+  --cyber-green: var(--success-green);
+  --cyber-orange: var(--warning-amber);
   --text-dim: var(--text-muted);
   --sidebar-bg: var(--bg-sidebar);
-  --topbar-bg: var(--bg-header);
+  --topbar-bg: var(--neutral-white);
   --glass-card-border: var(--border-default);
   --glass-card-border-hover: var(--accent-cyan-border);
   --glass-card-shadow-hover: var(--accent-cyan-dim);
 }
 
-/* Dark theme removed - v3.0 locks light theme globally */
+.logo-wordmark {
+  font-family: 'Merriweather', Georgia, serif;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+h1, h2, h3, h4, h5, h6, .page-title, .section-title, .card-title {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-weight: 700;
+}
+
+/* Distinct Badge Styles */
+.badge-category {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--neutral-light);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+}
+
+.badge-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 9999px;
+  border: 1px solid var(--border-default);
+  background: var(--neutral-light);
+  color: var(--text-secondary);
+}
+.badge-status-pill::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+.badge-status-pill.success {
+  background: rgba(46, 139, 87, 0.08);
+  color: var(--success-green);
+  border-color: rgba(46, 139, 87, 0.2);
+}
+.badge-status-pill.warning {
+  background: rgba(245, 158, 11, 0.08);
+  color: var(--warning-amber);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+.badge-status-pill.critical {
+  background: rgba(211, 47, 47, 0.08);
+  color: var(--alert-red);
+  border-color: rgba(211, 47, 47, 0.2);
+  animation: criticalPulse 2s ease-in-out infinite;
+}
+
+.badge-risk-ring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px.5 solid;
+  font-size: 11px;
+  font-weight: 900;
+  background: var(--neutral-light);
+}
+.badge-risk-ring.critical {
+  border: 2px solid var(--alert-red);
+  color: var(--alert-red);
+  background: rgba(211, 47, 47, 0.05);
+}
+.badge-risk-ring.warning {
+  border: 2px solid var(--warning-amber);
+  color: var(--warning-amber);
+  background: rgba(245, 158, 11, 0.05);
+}
+.badge-risk-ring.success {
+  border: 2px solid var(--success-green);
+  color: var(--success-green);
+  background: rgba(46, 139, 87, 0.05);
+}
+
+/* Form inputs & interactive controls contrast upgrades */
+input[type="text"], input[type="search"], select, textarea {
+  background: var(--neutral-white) !important;
+  border: 1.5px solid var(--neutral-border) !important;
+  color: var(--text-primary) !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-weight: 500 !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  transition: border-color 150ms ease, box-shadow 150ms ease !important;
+}
+input[type="text"]:focus, input[type="search"]:focus, select:focus, textarea:focus {
+  border-color: var(--primary-navy) !important;
+  box-shadow: 0 0 0 2px rgba(11, 31, 58, 0.1) !important;
+  outline: none !important;
+}
+input[disabled], select[disabled], textarea[disabled] {
+  background: var(--neutral-light) !important;
+  color: var(--text-muted) !important;
+  border-color: var(--neutral-border) !important;
+  cursor: not-allowed !important;
+}
 
 *, *::before, *::after {
   transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease, box-shadow 200ms ease;

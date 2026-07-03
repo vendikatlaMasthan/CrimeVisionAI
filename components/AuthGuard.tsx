@@ -11,7 +11,6 @@ import Topbar from './Topbar';
 import GovHeader from './GovHeader';
 import GovFooter from './GovFooter';
 import AuthenticatingIntro from './AuthenticatingIntro';
-import AuditTrail from './AuditTrail';
 import { DemoAccount } from '@/lib/crimeData';
 import { canAccessRoute, getPortalForRole, PortalType } from '@/lib/rbac';
 
@@ -164,8 +163,6 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
           <GovFooter />
         </main>
       </div>
-
-      <AuditTrail />
     </>
   );
 }
