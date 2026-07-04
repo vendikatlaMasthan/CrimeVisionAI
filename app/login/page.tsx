@@ -933,7 +933,7 @@ export default function LoginPage() {
           justify-content: center;
         }
 
-        .input-field {
+        .input-field-wrapper input.input-field {
           width: 100%;
           height: 42px;
           border-radius: 10px;
@@ -946,13 +946,13 @@ export default function LoginPage() {
           transition: all 150ms ease;
         }
 
-        .input-field:focus {
+        .input-field-wrapper input.input-field:focus {
           border-color: var(--brand-crimson) !important;
           background: #FFFFFF !important;
           box-shadow: 0 0 0 3px rgba(181, 52, 43, 0.08) !important;
         }
 
-        .input-field.password-input {
+        .input-field-wrapper input.input-field.password-input {
           padding-left: 55px !important;
         }
  
