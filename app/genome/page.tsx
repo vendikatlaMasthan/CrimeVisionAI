@@ -137,9 +137,45 @@ const HIGH_RISK_METHODS: MethodCode[] = ['CY', 'NA', 'OR', 'MR'];
 
 function StatCard({ label, value, color }: { label: string; value: string | number; color: string }) {
   return (
-    <div className="glass-card p-4 flex flex-col items-center gap-1 min-w-[130px]">
-      <span className="text-2xl font-bold font-mono" style={{ color }}>{value}</span>
-      <span className="metric-label text-xs text-center">{label}</span>
+    <div 
+      style={{
+        background: '#FFFFFF',
+        border: '1px solid #E5E7EB',
+        borderRadius: '16px',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02)',
+        padding: '16px 20px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        height: '95px',
+        boxSizing: 'border-box',
+        flex: 1,
+      }}
+    >
+      <span 
+        style={{ 
+          fontSize: '30px', 
+          fontWeight: 800, 
+          color: color, 
+          lineHeight: '1',
+          marginBottom: '6px'
+        }}
+      >
+        {value}
+      </span>
+      <span 
+        style={{ 
+          fontSize: '12px', 
+          textTransform: 'uppercase', 
+          color: '#6B7280', 
+          fontWeight: 500,
+          letterSpacing: '0.02em',
+          lineHeight: '1.2'
+        }}
+      >
+        {label}
+      </span>
     </div>
   );
 }
@@ -419,7 +455,15 @@ export default function GenomePage() {
         </div>
 
         {/* Stats row */}
-        <div className="flex flex-wrap gap-3 mt-4">
+        <div 
+          style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(4, 1fr)', 
+            gap: '18px', 
+            marginTop: '16px',
+            marginBottom: '24px'
+          }}
+        >
           <StatCard label="Total Cases Analyzed" value={55} color="#0F6B5C" />
           <StatCard label="Genome Matches Found" value={23} color="#10b981" />
           <StatCard label="Pattern Clusters" value={8} color="#8b5cf6" />
@@ -429,10 +473,11 @@ export default function GenomePage() {
 
       {/* ── GENOME BUILDER HEADER ── */}
       <div
-        className="glass-card p-4 mb-6"
+        className="glass-card p-4"
         style={{
           border: '1px solid #0F6B5C30',
           background: 'linear-gradient(135deg, #0F6B5C08, #8b5cf608)',
+          marginBottom: '20px',
         }}
       >
         <div className="flex flex-wrap items-center gap-4">
