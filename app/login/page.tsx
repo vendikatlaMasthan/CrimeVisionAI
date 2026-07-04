@@ -21,7 +21,7 @@ export default function LoginPage() {
   const [mounted, setMounted] = useState(false);
 
   // Form states
-  const [selectedRole, setSelectedRole] = useState<'Officer' | 'Investigator' | 'Commissioner' | 'Admin'>('Officer');
+  const [selectedRole, setSelectedRole] = useState<'Officer_Commissioner' | 'Admin_Investigator'>('Officer_Commissioner');
   const [badgeId, setBadgeId] = useState('PI2026001');
   const [password, setPassword] = useState('officer@123');
   const [showPassword, setShowPassword] = useState(false);
@@ -49,10 +49,10 @@ export default function LoginPage() {
   }, [router]);
 
   // Handle role pre-fills
-  const handleRoleChange = (role: 'Officer' | 'Investigator' | 'Commissioner' | 'Admin') => {
+  const handleRoleChange = (role: 'Officer_Commissioner' | 'Admin_Investigator') => {
     setSelectedRole(role);
     setError('');
-    if (role === 'Officer' || role === 'Investigator') {
+    if (role === 'Officer_Commissioner') {
       setBadgeId('PI2026001');
       setPassword('officer@123');
     } else {
@@ -121,7 +121,7 @@ export default function LoginPage() {
     // Simulate biometric scan
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    const targetUsername = (selectedRole === 'Officer' || selectedRole === 'Investigator') ? 'pi2026001' : 'dgp2026001';
+    const targetUsername = selectedRole === 'Officer_Commissioner' ? 'pi2026001' : 'dgp2026001';
     const matched = DEMO_ACCOUNTS.find((a) => a.username === targetUsername);
 
     if (matched) {
@@ -326,46 +326,34 @@ export default function LoginPage() {
               <div className="role-grid">
                 <button
                   type="button"
-                  onClick={() => handleRoleChange('Officer')}
-                  className={`role-card-btn ${selectedRole === 'Officer' ? 'active' : ''}`}
+                  onClick={() => handleRoleChange('Officer_Commissioner')}
+                  className={`role-card-btn ${selectedRole === 'Officer_Commissioner' ? 'active' : ''}`}
                 >
                   <Shield size={16} className="role-card-icon" />
                   <div className="role-card-text">
-                    <span className="role-card-title">Officer</span>
-                    <span className="role-card-sub">Field Ops</span>
+                    <span className="role-card-title">Officer / Commissioner</span>
+                    <span className="role-card-sub">Field Operations & Command</span>
+                  </div>
+                  <div className="radio-container">
+                    <div className="radio-circle">
+                      {selectedRole === 'Officer_Commissioner' && <div className="radio-dot" />}
+                    </div>
                   </div>
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleRoleChange('Investigator')}
-                  className={`role-card-btn ${selectedRole === 'Investigator' ? 'active' : ''}`}
-                >
-                  <Search size={16} className="role-card-icon" />
-                  <div className="role-card-text">
-                    <span className="role-card-title">Investigator</span>
-                    <span className="role-card-sub">Analytics</span>
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleRoleChange('Commissioner')}
-                  className={`role-card-btn ${selectedRole === 'Commissioner' ? 'active' : ''}`}
-                >
-                  <Award size={16} className="role-card-icon" />
-                  <div className="role-card-text">
-                    <span className="role-card-title">Commissioner</span>
-                    <span className="role-card-sub">Command</span>
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleRoleChange('Admin')}
-                  className={`role-card-btn ${selectedRole === 'Admin' ? 'active' : ''}`}
+                  onClick={() => handleRoleChange('Admin_Investigator')}
+                  className={`role-card-btn ${selectedRole === 'Admin_Investigator' ? 'active' : ''}`}
                 >
                   <Settings size={16} className="role-card-icon" />
                   <div className="role-card-text">
-                    <span className="role-card-title">Admin</span>
-                    <span className="role-card-sub">Systems</span>
+                    <span className="role-card-title">Admin / Investigator</span>
+                    <span className="role-card-sub">Administration & Analytics</span>
+                  </div>
+                  <div className="radio-container">
+                    <div className="radio-circle">
+                      {selectedRole === 'Admin_Investigator' && <div className="radio-dot" />}
+                    </div>
                   </div>
                 </button>
               </div>
@@ -803,27 +791,31 @@ export default function LoginPage() {
         .role-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
+          gap: 12px;
           margin-bottom: 24px;
         }
 
         .role-card-btn {
           display: flex;
+          flex-direction: column;
           align-items: center;
+          justify-content: space-between;
+          text-align: center;
           gap: 10px;
-          padding: 12px;
+          padding: 16px 12px;
           border-radius: 10px;
           border: 1.5px solid var(--neutral-border);
           background: #FFFFFF;
           color: var(--text-primary);
           cursor: pointer;
           transition: all 0.2s ease;
-          text-align: left;
+          height: 145px;
+          box-sizing: border-box;
         }
 
         .role-card-btn:hover {
-          border-color: var(--brand-crimson);
-          background: #FFFDFD;
+          border-color: #2563EB;
+          background: #F8FAFC;
         }
 
         .role-card-icon {
@@ -835,33 +827,69 @@ export default function LoginPage() {
         .role-card-text {
           display: flex;
           flex-direction: column;
+          align-items: center;
+          gap: 4px;
         }
 
         .role-card-title {
-          font-size: 12px;
+          font-size: 13px;
           font-weight: 700;
+          line-height: 1.2;
         }
 
         .role-card-sub {
-          font-size: 9px;
+          font-size: 9.5px;
           color: var(--text-muted);
           font-weight: 500;
+          line-height: 1.3;
         }
 
-        /* active state must have a solid filled background with clear contrast */
+        /* Radio button indicator centered at the bottom of the card */
+        .radio-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-top: auto;
+        }
+
+        .radio-circle {
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          border: 1.5px solid #94A3B8;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #FFFFFF;
+          transition: all 0.2s ease;
+        }
+
+        .radio-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #2563EB;
+        }
+
+        /* ACTIVE STATE: light blue background and blue border */
         .role-card-btn.active {
-          background: var(--brand-crimson) !important;
-          border-color: var(--brand-crimson) !important;
-          color: #FFFFFF !important;
-          box-shadow: 0 4px 12px rgba(139, 30, 30, 0.2);
+          background: #EFF6FF !important;
+          border-color: #2563EB !important;
+          color: #1E40AF !important;
+          box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
         }
 
         .role-card-btn.active .role-card-icon {
-          color: #FFFFFF !important;
+          color: #2563EB !important;
         }
 
         .role-card-btn.active .role-card-sub {
-          color: rgba(255, 255, 255, 0.8) !important;
+          color: #1E40AF !important;
+          opacity: 0.85;
+        }
+
+        .role-card-btn.active .radio-circle {
+          border-color: #2563EB;
         }
 
         /* Inputs form */
