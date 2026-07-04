@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Shield, Lock, Eye, EyeOff, Fingerprint, CreditCard, Loader, FileText, Target, ShieldAlert, Search, Award, Settings, Users } from 'lucide-react';
+import { Shield, Lock, Eye, EyeOff, Fingerprint, CreditCard, Loader, FileText, Target, ShieldAlert, Search, Award, Settings, Users, User } from 'lucide-react';
 import { DEMO_ACCOUNTS, DemoAccount } from '@/lib/crimeData';
 import GlobalSimulationBanner from '@/components/GlobalSimulationBanner';
 import CountUp from '@/components/CountUp';
@@ -366,7 +366,7 @@ export default function LoginPage() {
               <div className="input-group">
                 <label className="input-label">BADGE / SERVICE ID</label>
                 <div className="input-field-wrapper">
-                  <CreditCard className="input-field-icon" size={15} />
+                  <User className="input-field-icon" size={15} />
                   <input
                     type="text"
                     value={badgeId}
@@ -389,7 +389,7 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => { setPassword(e.target.value); setError(''); }}
                     placeholder="Enter secure password..."
-                    className="input-field"
+                    className="input-field password-input"
                     disabled={loading || bioScanning}
                     required
                   />
@@ -950,6 +950,10 @@ export default function LoginPage() {
           border-color: var(--brand-crimson) !important;
           background: #FFFFFF !important;
           box-shadow: 0 0 0 3px rgba(181, 52, 43, 0.08) !important;
+        }
+
+        .input-field.password-input {
+          padding-left: 55px !important;
         }
  
         .input-password-toggle {
