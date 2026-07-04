@@ -894,11 +894,11 @@ export default function LoginPage() {
 
         .input-field-icon {
           position: absolute;
-          left: 12px;
+          left: 16px;
           top: 50%;
           transform: translateY(-50%);
-          color: var(--text-muted);
           pointer-events: none;
+          color: var(--text-muted);
           z-index: 10;
           display: flex;
           align-items: center;
@@ -911,8 +911,7 @@ export default function LoginPage() {
           border-radius: 10px;
           border: 1px solid var(--neutral-border) !important;
           background: #F8FAFC !important;
-          padding-left: 44px !important;
-          padding-right: 44px !important;
+          padding: 0 48px 0 52px !important;
           font-size: 13px !important;
           color: var(--text-primary) !important;
           outline: none;
@@ -927,7 +926,9 @@ export default function LoginPage() {
  
         .input-password-toggle {
           position: absolute;
-          right: 14px;
+          right: 16px;
+          top: 50%;
+          transform: translateY(-50%);
           background: transparent;
           border: none;
           color: var(--text-muted);
