@@ -480,8 +480,8 @@ export default function DetectivePage() {
                   padding: '2px 8px', borderRadius: 4,
                 }}>{filteredProfiles.length} SUBJECTS</span>
               </div>
-              <div style={{ position: 'relative' }}>
-                <Search size={14} color="#64748b" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
+              <div className="input-with-icon">
+                <Search size={14} color="#64748b" className="icon" />
                 <input
                   type="text"
                   placeholder="Search by name or district..."
@@ -490,7 +490,7 @@ export default function DetectivePage() {
                   style={{
                     width: '100%', background: 'rgba(255,255,255,0.05)',
                     border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: 8, padding: '8px 12px 8px 32px',
+                    borderRadius: 8, padding: '8px 12px',
                     color: '#f1f5f9', fontSize: 13, outline: 'none',
                     boxSizing: 'border-box',
                   }}

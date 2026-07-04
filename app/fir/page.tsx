@@ -472,15 +472,15 @@ function FIRPageContent() {
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
           
           {/* Search Input */}
-          <div style={{ position: 'relative', flex: 1, minWidth: 260 }}>
-            <Search size={16} color="#6B7280" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }} />
+          <div className="input-with-icon" style={{ flex: 1, minWidth: 260 }}>
+            <Search size={16} color="#6B7280" className="icon" />
             <input
               type="text"
               placeholder="Search by FIR number, suspect, crime type, or district..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               style={{
-                width: '100%', padding: '10px 12px 10px 38px', borderRadius: 8,
+                width: '100%', padding: '10px 12px', borderRadius: 8,
                 border: '1px solid #D1D5DB', background: '#FFFFFF', color: '#1F2937',
                 fontSize: 13, outline: 'none', fontFamily: 'inherit',
               }}

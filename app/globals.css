@@ -1302,3 +1302,27 @@ body {
 .hamburger-btn {
   display: none;
 }
+
+/* ── Global Input Icon Overlap Fix ──────────────────────── */
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-with-icon input {
+  padding-left: 44px !important; /* ensures text starts after the icon with spacing */
+}
+
+.input-with-icon .icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none; /* icon shouldn't block clicking into the input */
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -154,15 +154,15 @@ export default function OfficerManagementPage() {
         boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', gap: 12, alignItems: 'center',
         marginBottom: 20
       }}>
-        <div style={{ position: 'relative', flex: 1 }}>
-          <Search size={16} color="#6B7280" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }} />
+        <div className="input-with-icon" style={{ flex: 1 }}>
+          <Search size={16} color="#6B7280" className="icon" />
           <input 
             type="text"
             placeholder="Search officers by name, badge ID, station..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             style={{
-              width: '100%', padding: '10px 12px 10px 38px', borderRadius: 8,
+              width: '100%', padding: '10px 12px', borderRadius: 8,
               border: '1px solid #D1D5DB', fontSize: 13, outline: 'none'
             }}
           />

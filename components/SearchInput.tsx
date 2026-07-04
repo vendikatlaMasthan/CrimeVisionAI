@@ -12,17 +12,12 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const [isFocused, setIsFocused] = useState(false);
 
     return (
-      <div className="relative w-full h-full flex items-center">
+      <div className="input-with-icon relative w-full h-full flex items-center">
         <Search
           size={16}
+          className="icon"
           style={{
-            position: 'absolute',
-            left: '12px',
-            top: '50%',
-            transform: 'translateY(-50%)',
             color: '#94A3B8',
-            pointerEvents: 'none',
-            zIndex: 10,
             transition: 'color 0.2s ease',
           }}
         />
@@ -41,7 +36,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             if (onBlur) onBlur(e);
           }}
           style={{
-            paddingLeft: '36px',
             paddingRight: '16px',
             border: isFocused ? '1.5px solid var(--primary-navy)' : '1px solid var(--border-default)',
             background: 'var(--bg-card)',

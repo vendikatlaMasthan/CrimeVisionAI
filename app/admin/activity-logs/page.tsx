@@ -120,14 +120,14 @@ export default function ActivityLogsPage() {
       }}>
         
         {/* Search Input */}
-        <div style={{ position: 'relative', flex: 1, minWidth: 200 }}>
-          <Search size={14} color="#6B7280" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }} />
+        <div className="input-with-icon" style={{ flex: 1, minWidth: 200 }}>
+          <Search size={14} color="#6B7280" className="icon" />
           <input 
             type="text" 
             placeholder="Search logs..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            style={{ width: '100%', padding: '8px 12px 8px 34px', borderRadius: 8, border: '1px solid #D1D5DB', fontSize: 13 }}
+            style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #D1D5DB', fontSize: 13 }}
           />
         </div>
 

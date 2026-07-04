@@ -207,14 +207,14 @@ export default function DatabaseManagementPage() {
 
           {/* Table Search */}
           <div style={{ padding: 14, borderBottom: '1px solid #E5E7EB' }}>
-            <div style={{ position: 'relative' }}>
-              <Search size={14} color="#6B7280" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }} />
+            <div className="input-with-icon">
+              <Search size={14} color="#6B7280" className="icon" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder={`Search records in active registry...`}
-                style={{ width: '100%', padding: '8px 12px 8px 34px', borderRadius: 8, border: '1px solid #D1D5DB', fontSize: 13 }}
+                style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #D1D5DB', fontSize: 13 }}
               />
             </div>
           </div>

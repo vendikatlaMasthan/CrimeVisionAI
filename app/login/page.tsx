@@ -365,8 +365,8 @@ export default function LoginPage() {
               {/* Badge ID Input */}
               <div className="input-group">
                 <label className="input-label">BADGE / SERVICE ID</label>
-                <div className="input-field-wrapper">
-                  <User className="input-field-icon" size={15} />
+                <div className="input-field-wrapper input-with-icon">
+                  <User className="input-field-icon icon" size={15} />
                   <input
                     type="text"
                     value={badgeId}
@@ -382,8 +382,8 @@ export default function LoginPage() {
               {/* Password Input */}
               <div className="input-group">
                 <label className="input-label">PASSWORD</label>
-                <div className="input-field-wrapper">
-                  <Lock className="input-field-icon" size={15} />
+                <div className="input-field-wrapper input-with-icon">
+                  <Lock className="input-field-icon icon" size={15} />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
@@ -939,7 +939,7 @@ export default function LoginPage() {
           border-radius: 10px;
           border: 1px solid var(--neutral-border) !important;
           background: #F8FAFC !important;
-          padding: 0 48px 0 52px !important;
+          padding-right: 48px !important;
           font-size: 13px !important;
           color: var(--text-primary) !important;
           outline: none;
@@ -953,7 +953,7 @@ export default function LoginPage() {
         }
 
         .input-field-wrapper input.input-field.password-input {
-          padding-left: 55px !important;
+          padding-left: 47px !important;
         }
  
         .input-password-toggle {

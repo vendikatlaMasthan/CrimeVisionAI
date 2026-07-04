@@ -117,12 +117,12 @@ export default function CaseSearchPage() {
       <div className="glass-card p-5 mb-6">
         <div className="flex flex-col gap-4">
           {/* Main search bar */}
-          <div className="relative">
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+          <div className="input-with-icon">
+            <Search size={16} className="icon text-slate-500" />
             <input
               type="text"
               placeholder="Search by FIR No, Suspect, Vehicle, Mobile, District, Category..."
-              className="cyber-input pl-11"
+              className="cyber-input"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
