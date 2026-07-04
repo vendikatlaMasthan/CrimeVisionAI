@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Shield, Lock, Eye, EyeOff, Fingerprint, CreditCard, Loader, FileText, Target, ShieldAlert } from 'lucide-react';
+import { Shield, Lock, Eye, EyeOff, Fingerprint, CreditCard, Loader, FileText, Target, ShieldAlert, Search, Award, Settings, Users } from 'lucide-react';
 import { DEMO_ACCOUNTS, DemoAccount } from '@/lib/crimeData';
 import GlobalSimulationBanner from '@/components/GlobalSimulationBanner';
 import CountUp from '@/components/CountUp';
@@ -21,7 +21,7 @@ export default function LoginPage() {
   const [mounted, setMounted] = useState(false);
 
   // Form states
-  const [selectedRole, setSelectedRole] = useState<'Officer' | 'Admin'>('Officer');
+  const [selectedRole, setSelectedRole] = useState<'Officer' | 'Investigator' | 'Commissioner' | 'Admin'>('Officer');
   const [badgeId, setBadgeId] = useState('PI2026001');
   const [password, setPassword] = useState('officer@123');
   const [showPassword, setShowPassword] = useState(false);
@@ -49,10 +49,10 @@ export default function LoginPage() {
   }, [router]);
 
   // Handle role pre-fills
-  const handleRoleChange = (role: 'Officer' | 'Admin') => {
+  const handleRoleChange = (role: 'Officer' | 'Investigator' | 'Commissioner' | 'Admin') => {
     setSelectedRole(role);
     setError('');
-    if (role === 'Officer') {
+    if (role === 'Officer' || role === 'Investigator') {
       setBadgeId('PI2026001');
       setPassword('officer@123');
     } else {
@@ -121,7 +121,7 @@ export default function LoginPage() {
     // Simulate biometric scan
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    const targetUsername = selectedRole === 'Officer' ? 'pi2026001' : 'dgp2026001';
+    const targetUsername = (selectedRole === 'Officer' || selectedRole === 'Investigator') ? 'pi2026001' : 'dgp2026001';
     const matched = DEMO_ACCOUNTS.find((a) => a.username === targetUsername);
 
     if (matched) {
@@ -169,12 +169,11 @@ export default function LoginPage() {
           {/* Logo Block (circular gold-bordered shield emblem) */}
           <div className="brand-header">
             <div className="emblem-container">
-              <Shield size={24} className="text-[#FFFFFF]" />
+              <Shield size={24} className="text-[#FFFFFF]" style={{ fill: 'var(--brand-gold)' }} />
             </div>
             <div>
               <h1 className="brand-title">CRIMEVISION AI</h1>
-              <p className="brand-tagline">AI INTELLIGENCE PLATFORM</p>
-              <p className="brand-governance">KARNATAKA STATE POLICE</p>
+              <p className="brand-tagline">AI Intelligence Platform &bull; Karnataka State Police</p>
             </div>
           </div>
 
@@ -188,6 +187,12 @@ export default function LoginPage() {
                 strokeWidth="1.5"
                 strokeDasharray="4 2"
               />
+              {/* Floating background particles */}
+              <circle cx="50" cy="80" r="1.5" fill="rgba(217, 164, 65, 0.4)" className="floating-particle-1" />
+              <circle cx="260" cy="140" r="1.2" fill="rgba(217, 164, 65, 0.3)" className="floating-particle-2" />
+              <circle cx="120" cy="240" r="2" fill="rgba(217, 164, 65, 0.5)" className="floating-particle-3" />
+              <circle cx="220" cy="50" r="1" fill="rgba(217, 164, 65, 0.3)" className="floating-particle-4" />
+
               {/* Network Connection Lines */}
               <line x1="205" y1="280" x2="150" y2="310" stroke="rgba(217, 164, 65, 0.15)" strokeWidth="1" className="animated-line" />
               <line x1="205" y1="280" x2="205" y2="125" stroke="rgba(217, 164, 65, 0.15)" strokeWidth="1" className="animated-line" />
@@ -229,31 +234,47 @@ export default function LoginPage() {
               </g>
             </svg>
  
-            {/* Stat Row */}
-            <div className="stats-container">
-              <div className="glass-stat-card">
-                <FileText size={14} className="text-[#FFFFFF]/70" />
-                <span><CountUp end={82089} suffix=" CASES" /></span>
+            {/* Stat Cards Grid (Frosted Glassmorphism, Multi-colored Accent Icons) */}
+            <div className="stats-grid">
+              <div className="glass-stat-card neutral">
+                <FileText size={18} className="stat-icon" />
+                <div className="stat-info">
+                  <span className="stat-value"><CountUp end={82089} /></span>
+                  <span className="stat-label">Total Cases</span>
+                </div>
               </div>
-              <div className="glass-stat-card">
-                <Target size={14} className="text-[#FFFFFF]/70" />
-                <span><CountUp end={94.7} decimals={1} suffix="% ACCURACY" /></span>
+              <div className="glass-stat-card success">
+                <Target size={18} className="stat-icon" />
+                <div className="stat-info">
+                  <span className="stat-value"><CountUp end={94.7} decimals={1} suffix="%" /></span>
+                  <span className="stat-label">AI Accuracy</span>
+                </div>
               </div>
-              <div className="glass-stat-card">
-                <ShieldAlert size={14} className="text-[#FFFFFF]/70" />
-                <span>HIGH ALERT LEVEL</span>
+              <div className="glass-stat-card warning">
+                <ShieldAlert size={18} className="stat-icon" />
+                <div className="stat-info">
+                  <span className="stat-value"><CountUp end={4} /> Active</span>
+                  <span className="stat-label">Critical Alerts</span>
+                </div>
+              </div>
+              <div className="glass-stat-card info">
+                <Users size={18} className="stat-icon" />
+                <div className="stat-info">
+                  <span className="stat-value"><CountUp end={184} /> Online</span>
+                  <span className="stat-label">Active Officers</span>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Mission Quote & gold accent */}
           <div className="quote-box">
-            <span style={{ color: 'var(--brand-gold)', fontSize: '14px', fontWeight: 600, fontStyle: 'italic', letterSpacing: '0.02em', display: 'block', marginBottom: '8px' }}>
+            <span style={{ color: '#F3C65F', fontSize: '14px', fontWeight: 700, fontStyle: 'italic', letterSpacing: '0.02em', display: 'block', marginBottom: '8px' }}>
               &ldquo;Protecting Karnataka through Intelligence and Technology&rdquo;
             </span>
-            <div className="quote-divider" />
-            <span className="quote-tagline">
-              Data Driven. AI Powered. Safer Karnataka.
+            <div className="quote-divider" style={{ background: 'rgba(243, 198, 95, 0.3)', width: '40px', height: '1px', margin: '8px 0' }} />
+            <span className="quote-tagline" style={{ color: '#FFFFFF', fontWeight: 600, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Data Driven &bull; AI Powered &bull; Safer Karnataka
             </span>
           </div>
 
@@ -280,10 +301,10 @@ export default function LoginPage() {
           {/* Mobile-only logo */}
           <div className="mobile-header">
             <div className="emblem-container" style={{ width: '36px', height: '36px', border: '1px solid var(--brand-gold)' }}>
-              <Shield size={16} style={{ color: 'var(--brand-gold)' }} />
+              <Shield size={16} style={{ color: 'var(--brand-gold)', fill: 'var(--brand-gold)' }} />
             </div>
             <div style={{ textAlign: 'left' }}>
-              <h2 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--brand-teal-900)', margin: 0 }}>CRIMEVISION AI</h2>
+              <h2 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--brand-crimson)', margin: 0 }}>CRIMEVISION AI</h2>
               <p style={{ fontSize: '9px', fontWeight: 600, color: 'var(--text-muted)', margin: 0 }}>KARNATAKA STATE POLICE</p>
             </div>
           </div>
@@ -293,30 +314,61 @@ export default function LoginPage() {
             {/* Header Lock Icon Badge */}
             <div className="form-portal-header">
               <div className="lock-icon-badge">
-                <Lock size={16} className="text-[var(--brand-teal-600)]" />
+                <Lock size={16} className="text-[#8B1E1E]" />
               </div>
               <h2 className="portal-title">Secure Access Portal</h2>
               <p className="portal-subtitle">Please login to continue</p>
             </div>
 
-            {/* Role Selectors */}
-            <div className="role-selector-container">
-              <button
-                type="button"
-                onClick={() => handleRoleChange('Officer')}
-                className={`role-tab-btn ${selectedRole === 'Officer' ? 'active' : ''}`}
-              >
-                Officer Login
-                <span className="role-tab-sub">Field Operations</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleRoleChange('Admin')}
-                className={`role-tab-btn ${selectedRole === 'Admin' ? 'active' : ''}`}
-              >
-                Admin / Commissioner
-                <span className="role-tab-sub">Command Access</span>
-              </button>
+            {/* Role selector cards */}
+            <div style={{ marginBottom: '20px' }}>
+              <label className="input-label" style={{ marginBottom: '8px', display: 'block', color: 'var(--text-muted)' }}>SELECT ACCESS LEVEL</label>
+              <div className="role-grid">
+                <button
+                  type="button"
+                  onClick={() => handleRoleChange('Officer')}
+                  className={`role-card-btn ${selectedRole === 'Officer' ? 'active' : ''}`}
+                >
+                  <Shield size={16} className="role-card-icon" />
+                  <div className="role-card-text">
+                    <span className="role-card-title">Officer</span>
+                    <span className="role-card-sub">Field Ops</span>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleRoleChange('Investigator')}
+                  className={`role-card-btn ${selectedRole === 'Investigator' ? 'active' : ''}`}
+                >
+                  <Search size={16} className="role-card-icon" />
+                  <div className="role-card-text">
+                    <span className="role-card-title">Investigator</span>
+                    <span className="role-card-sub">Analytics</span>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleRoleChange('Commissioner')}
+                  className={`role-card-btn ${selectedRole === 'Commissioner' ? 'active' : ''}`}
+                >
+                  <Award size={16} className="role-card-icon" />
+                  <div className="role-card-text">
+                    <span className="role-card-title">Commissioner</span>
+                    <span className="role-card-sub">Command</span>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleRoleChange('Admin')}
+                  className={`role-card-btn ${selectedRole === 'Admin' ? 'active' : ''}`}
+                >
+                  <Settings size={16} className="role-card-icon" />
+                  <div className="role-card-text">
+                    <span className="role-card-title">Admin</span>
+                    <span className="role-card-sub">Systems</span>
+                  </div>
+                </button>
+              </div>
             </div>
 
             {/* Inputs Form */}
@@ -398,7 +450,7 @@ export default function LoginPage() {
                     <span>AUTHENTICATING...</span>
                   </>
                 ) : (
-                  <span>LOGIN</span>
+                  <span>SECURE LOGIN</span>
                 )}
               </button>
 
@@ -418,7 +470,7 @@ export default function LoginPage() {
               >
                 {bioScanning ? (
                   <>
-                    <Loader size={15} className="spinner" style={{ color: 'var(--brand-teal-600)' }} />
+                    <Loader size={15} className="spinner" style={{ color: 'var(--brand-crimson)' }} />
                     <span>VERIFYING ENROLLMENT...</span>
                   </>
                 ) : (
@@ -433,7 +485,7 @@ export default function LoginPage() {
 
             {/* Portal Footer */}
             <div className="form-portal-footer">
-              <Shield size={12} className="text-teal-800" />
+              <Shield size={12} style={{ color: 'var(--brand-crimson)', fill: 'var(--brand-gold)', marginRight: '6px' }} />
               <span>Karnataka State Police · Government of Karnataka · Est. 1963</span>
             </div>
 
@@ -451,9 +503,10 @@ export default function LoginPage() {
           align-items: center;
           justify-content: center;
           font-family: 'Inter', sans-serif;
-          overflow: hidden;
+          overflow-y: auto;
           background: #F5F7FA;
           position: relative;
+          padding-top: 28px; /* Safe space for top simulation banner */
         }
 
         .login-container {
@@ -469,10 +522,12 @@ export default function LoginPage() {
           pointer-events: none;
         }
 
-        /* LEFT PANEL: HERO SECTION */
+        /* LEFT PANEL: BRANDING & VISUALIZATION */
         .left-panel {
-          width: 45%;
-          background: linear-gradient(135deg, var(--brand-charcoal), var(--brand-plum));
+          width: 60%;
+          background: linear-gradient(135deg, #0B1E3D, #1E3A8A, #0B1F3B);
+          background-size: 400% 400%;
+          animation: gradientShift 15s ease infinite;
           height: 100vh;
           display: flex;
           flex-direction: column;
@@ -483,10 +538,17 @@ export default function LoginPage() {
           color: #FFFFFF;
         }
 
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
         .brand-header {
           display: flex;
           align-items: center;
           gap: 16px;
+          z-index: 10;
         }
 
         .emblem-container {
@@ -510,20 +572,11 @@ export default function LoginPage() {
         }
 
         .brand-tagline {
-          font-size: 9px;
-          font-weight: 700;
-          color: var(--brand-gold);
-          margin: 4px 0 0;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-        }
-
-        .brand-governance {
-          font-size: 9px;
-          font-weight: 500;
+          font-size: 10px;
+          font-weight: 600;
           color: rgba(255, 255, 255, 0.7);
-          margin: 2px 0 0;
-          letter-spacing: 0.05em;
+          margin: 4px 0 0;
+          letter-spacing: 0.02em;
         }
 
         .map-wrapper {
@@ -535,6 +588,7 @@ export default function LoginPage() {
           margin: 24px 0;
           position: relative;
           width: 100%;
+          z-index: 10;
         }
 
         .map-svg {
@@ -543,6 +597,16 @@ export default function LoginPage() {
           width: 100%;
           opacity: 0.95;
         }
+
+        /* Floating background particles */
+        @keyframes floatParticle {
+          0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.3; }
+          50% { transform: translateY(-15px) translateX(10px); opacity: 0.8; }
+        }
+        .floating-particle-1 { animation: floatParticle 8s ease-in-out infinite; }
+        .floating-particle-2 { animation: floatParticle 12s ease-in-out infinite 2s; }
+        .floating-particle-3 { animation: floatParticle 10s ease-in-out infinite 1s; }
+        .floating-particle-4 { animation: floatParticle 7s ease-in-out infinite 3s; }
 
         /* Animated connection lines */
         .animated-line {
@@ -562,49 +626,73 @@ export default function LoginPage() {
           transform-origin: center;
         }
 
-        .ring-1 { animation-delay: 0s; }
-        .ring-2 { animation-delay: 0.4s; }
-        .ring-3 { animation-delay: 0.8s; }
-        .ring-4 { animation-delay: 1.2s; }
-        .ring-5 { animation-delay: 1.6s; }
-        .ring-6 { animation-delay: 2.0s; }
-
         @keyframes ringPulse {
           0% { transform: scale(0.6); opacity: 1; }
           100% { transform: scale(2.2); opacity: 0; }
         }
 
-        /* Stats Row */
-        .stats-container {
-          display: flex;
-          gap: 10px;
-          width: 100%;
-          justify-content: center;
+        /* Stat Grid (2x2 Glassmorphism layout) */
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 16px;
           margin-top: 24px;
+          width: 100%;
+          max-width: 500px;
         }
 
         .glass-stat-card {
-          background: rgba(26, 22, 32, 0.5);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border-radius: 999px;
-          padding: 8px 16px;
+          background: rgba(255, 255, 255, 0.07);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 12px;
+          padding: 14px 16px;
           display: flex;
           align-items: center;
-          gap: 8px;
-          font-size: 10px;
-          font-weight: 700;
-          color: #FFFFFF;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          gap: 12px;
           transition: all 0.2s ease;
-          cursor: pointer;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
- 
+
         .glass-stat-card:hover {
+          background: rgba(255, 255, 255, 0.12);
+          border-color: rgba(255, 255, 255, 0.2);
           transform: translateY(-2px);
-          background: rgba(26, 22, 32, 0.75);
-          border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .stat-icon {
+          flex-shrink: 0;
+          padding: 8px;
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-stat-card.neutral .stat-icon { color: #FFFFFF; background: rgba(255, 255, 255, 0.15); }
+        .glass-stat-card.success .stat-icon { color: #10B981; background: rgba(16, 185, 129, 0.15); }
+        .glass-stat-card.warning .stat-icon { color: #F59E0B; background: rgba(245, 158, 11, 0.15); }
+        .glass-stat-card.info .stat-icon { color: #3B82F6; background: rgba(59, 130, 246, 0.15); }
+
+        .stat-info {
+          display: flex;
+          flex-direction: column;
+          text-align: left;
+        }
+
+        .stat-value {
+          font-size: 16px;
+          font-weight: 800;
+          color: #FFFFFF;
+          line-height: 1.2;
+        }
+
+        .stat-label {
+          font-size: 10px;
+          color: rgba(255, 255, 255, 0.6);
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          margin-top: 2px;
         }
 
         /* Quote Box */
@@ -613,20 +701,8 @@ export default function LoginPage() {
           padding-left: 16px;
           margin-bottom: 24px;
           max-width: 420px;
-        }
-
-        .quote-divider {
-          width: 40px;
-          height: 1px;
-          background: rgba(255, 255, 255, 0.25);
-          margin: 8px 0;
-        }
-
-        .quote-tagline {
-          font-size: 11px;
-          font-weight: 500;
-          color: rgba(255, 255, 255, 0.65);
-          letter-spacing: 0.05em;
+          z-index: 10;
+          text-align: left;
         }
 
         /* Government building watermark */
@@ -634,7 +710,7 @@ export default function LoginPage() {
           position: absolute;
           bottom: 20px;
           left: 48px;
-          opacity: 0.04;
+          opacity: 0.025;
           color: #FFFFFF;
           pointer-events: none;
         }
@@ -643,12 +719,13 @@ export default function LoginPage() {
           display: flex;
           justify-content: flex-end;
           width: 100%;
+          z-index: 10;
         }
 
         .simulation-pill {
           background: rgba(244, 161, 0, 0.15);
           border: 1px solid rgba(244, 161, 0, 0.35);
-          color: var(--status-warning);
+          color: #FFB020;
           border-radius: 999px;
           padding: 6px 14px;
           font-size: 10px;
@@ -658,7 +735,7 @@ export default function LoginPage() {
 
         /* RIGHT PANEL: SECURE FORM CARD */
         .right-panel {
-          width: 55%;
+          width: 40%;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -678,10 +755,12 @@ export default function LoginPage() {
         }
 
         .form-card {
-          background: #FFFFFF;
+          background: rgba(255, 255, 255, 0.85);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.6);
           border-radius: 16px;
-          box-shadow: 0 10px 30px rgba(27, 38, 59, 0.04);
-          border: 1px solid var(--surface-border);
+          box-shadow: 0 20px 40px rgba(11, 30, 61, 0.08);
           width: 100%;
           max-width: 480px;
           padding: 48px;
@@ -700,7 +779,7 @@ export default function LoginPage() {
           width: 38px;
           height: 38px;
           border-radius: 50%;
-          background: rgba(181, 52, 43, 0.08);
+          background: rgba(139, 30, 30, 0.08);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -720,44 +799,69 @@ export default function LoginPage() {
           margin: 4px 0 0;
         }
 
-        /* Role Selector */
-        .role-selector-container {
+        /* Role Selector Cards Grid (2x2) */
+        .role-grid {
           display: grid;
-          grid-template-cols: 1fr 1fr;
-          gap: 8px;
-          background: #F1F5F9;
-          padding: 4px;
-          border-radius: 10px;
-          margin-bottom: 20px;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10px;
+          margin-bottom: 24px;
         }
 
-        .role-tab-btn {
-          background: transparent;
-          border: 1px solid transparent;
-          border-radius: 8px;
-          padding: 8px 12px;
+        .role-card-btn {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 12px;
+          border-radius: 10px;
+          border: 1.5px solid var(--neutral-border);
+          background: #FFFFFF;
+          color: var(--text-primary);
           cursor: pointer;
-          transition: all 150ms ease;
+          transition: all 0.2s ease;
+          text-align: left;
+        }
+
+        .role-card-btn:hover {
+          border-color: var(--brand-crimson);
+          background: #FFFDFD;
+        }
+
+        .role-card-icon {
+          color: var(--text-secondary);
+          flex-shrink: 0;
+          transition: color 0.2s ease;
+        }
+
+        .role-card-text {
           display: flex;
           flex-direction: column;
-          align-items: center;
+        }
+
+        .role-card-title {
           font-size: 12px;
           font-weight: 700;
-          color: var(--text-muted);
         }
 
-        .role-tab-btn.active {
-          background: #FFFFFF;
-          border-color: var(--brand-crimson);
-          color: var(--brand-crimson);
-          box-shadow: 0 4px 10px rgba(181, 52, 43, 0.05);
-        }
-
-        .role-tab-sub {
+        .role-card-sub {
           font-size: 9px;
-          font-weight: 500;
           color: var(--text-muted);
-          margin-top: 2px;
+          font-weight: 500;
+        }
+
+        /* active state must have a solid filled background with clear contrast */
+        .role-card-btn.active {
+          background: var(--brand-crimson) !important;
+          border-color: var(--brand-crimson) !important;
+          color: #FFFFFF !important;
+          box-shadow: 0 4px 12px rgba(139, 30, 30, 0.2);
+        }
+
+        .role-card-btn.active .role-card-icon {
+          color: #FFFFFF !important;
+        }
+
+        .role-card-btn.active .role-card-sub {
+          color: rgba(255, 255, 255, 0.8) !important;
         }
 
         /* Inputs form */
@@ -778,6 +882,7 @@ export default function LoginPage() {
           font-weight: 700;
           color: var(--text-muted);
           letter-spacing: 0.08em;
+          text-align: left;
         }
 
         .input-field-wrapper {
@@ -842,6 +947,7 @@ export default function LoginPage() {
           font-weight: 600;
           color: var(--status-danger);
           margin-top: -4px;
+          text-align: left;
         }
  
         .form-utility-row {
@@ -877,27 +983,33 @@ export default function LoginPage() {
         }
  
         .login-submit-btn {
-          background: var(--brand-crimson);
+          background: linear-gradient(135deg, var(--brand-crimson), #A22222);
           color: #FFFFFF;
           border: none;
           border-radius: 10px;
-          height: 42px;
-          font-size: 13px;
+          height: 44px;
+          font-size: 14px;
           font-weight: 700;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 8px;
-          transition: all 200ms ease;
+          transition: all 150ms ease;
           width: 100%;
+          box-shadow: 0 4px 12px rgba(139, 30, 30, 0.15);
         }
  
         .login-submit-btn:hover {
-          background: #96251E;
+          filter: brightness(1.05);
           transform: translateY(-1px);
+          box-shadow: 0 6px 16px rgba(139, 30, 30, 0.25);
         }
 
+        .login-submit-btn:active {
+          transform: translateY(1px);
+        }
+ 
         .form-or-divider {
           display: flex;
           align-items: center;
@@ -905,24 +1017,24 @@ export default function LoginPage() {
           gap: 12px;
           margin: 4px 0;
         }
-
+ 
         .or-line {
           flex: 1;
           height: 1px;
           background: var(--surface-border);
         }
-
+ 
         .or-text {
           font-size: 10px;
           font-weight: 700;
           color: var(--text-muted);
         }
-
+ 
         .biometric-login-btn {
           background: transparent;
-          border: 1px solid var(--surface-border);
+          border: 1.5px solid var(--neutral-border);
           border-radius: 10px;
-          height: 42px;
+          height: 44px;
           font-size: 13px;
           font-weight: 700;
           color: var(--text-primary);
@@ -931,15 +1043,20 @@ export default function LoginPage() {
           align-items: center;
           justify-content: center;
           gap: 8px;
-          transition: all 200ms ease;
+          transition: all 150ms ease;
           width: 100%;
         }
-
+ 
         .biometric-login-btn:hover {
+          background: rgba(139, 30, 30, 0.04);
           border-color: var(--brand-crimson);
           color: var(--brand-crimson);
         }
- 
+
+        .biometric-login-btn:active {
+          transform: translateY(1px);
+        }
+  
         .form-portal-footer {
           margin-top: 24px;
           display: flex;
@@ -1066,14 +1183,30 @@ export default function LoginPage() {
 
         /* RESPONSIVE LAYOUT */
         @media (max-width: 1024px) {
+          .login-wrapper {
+            padding-top: 28px;
+            overflow-y: auto;
+          }
+          .login-container {
+            flex-direction: column-reverse;
+            min-height: calc(100vh - 28px);
+          }
           .left-panel {
-            display: none;
+            width: 100%;
+            height: auto;
+            padding: 40px 24px;
           }
           .right-panel {
             width: 100%;
+            height: auto;
+            min-height: calc(100vh - 28px);
+            padding: 40px 24px;
+          }
+          .stats-grid {
+            max-width: 100%;
           }
           .mobile-header {
-            display: flex;
+            display: none !important;
           }
         }
       `}</style>
