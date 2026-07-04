@@ -239,17 +239,26 @@ function VectorBlock({ code, label, sublabel, bgColor, barHeight }: VectorBlockP
 
 function CategoryBadge({ category }: { category: string }) {
   const colorMap: Record<string, string> = {
-    'Cybercrime': 'badge-cyan',
-    'Theft & Burglary': 'badge-purple',
-    'Sand Mining': 'badge-amber',
+    // Violent Crimes (red)
     'Assault & Violence': 'badge-red',
-    'Narcotic Trafficking': 'badge-red',
-    'Organized Crime': 'badge-amber',
-    'Fraud': 'badge-amber',
+    'Assault': 'badge-red',
     'Rape': 'badge-red',
     'Murder': 'badge-red',
-    'Drug Cases': 'badge-red',
-    'Financial Fraud': 'badge-amber',
+    
+    // Property Crimes (orange)
+    'Theft & Burglary': 'badge-orange',
+    'Theft': 'badge-orange',
+    'Burglary': 'badge-orange',
+    'Sand Mining': 'badge-orange',
+    
+    // Organized/Financial/Cyber Crimes (purple)
+    'Organized Crime': 'badge-purple',
+    'Fraud': 'badge-purple',
+    'Financial Fraud': 'badge-purple',
+    'Narcotic Trafficking': 'badge-purple',
+    'Narcotics': 'badge-purple',
+    'Drug Cases': 'badge-purple',
+    'Cybercrime': 'badge-purple',
   };
   return (
     <span className={`badge ${colorMap[category] ?? 'badge-gray'} text-[10px]`}>
@@ -509,18 +518,21 @@ export default function GenomePage() {
                     onClick={() => setSelectedId(fir.id)}
                     className="w-full text-left p-3 rounded-xl"
                     style={{
-                      background: isSelected ? 'rgba(11, 31, 58, 0.05)' : 'var(--bg-card)',
-                      border: isSelected ? '1.5px solid var(--primary-navy)' : '1.5px solid var(--border-default)',
-                      borderLeft: isSelected ? '4px solid var(--primary-navy)' : '1.5px solid var(--border-default)',
-                      boxShadow: isSelected ? 'var(--shadow-card)' : 'none',
+                      background: isSelected ? '#EFF6FF' : 'var(--bg-card)',
+                      border: isSelected ? '1.5px solid #BFDBFE' : '1.5px solid var(--border-default)',
+                      borderLeft: isSelected ? '4px solid #2563EB' : '1.5px solid var(--border-default)',
+                      boxShadow: isSelected ? '0 4px 6px -1px rgba(37, 99, 235, 0.1), 0 2px 4px -1px rgba(37, 99, 235, 0.06)' : 'none',
                       cursor: 'pointer',
                       transition: 'all 150ms ease',
                     }}
                   >
                     <div className="flex items-start justify-between gap-2 mb-1.5">
                       <span
-                        className="font-mono text-sm font-bold"
-                        style={{ color: isSelected ? 'var(--primary-navy)' : 'var(--text-primary)' }}
+                        className="font-mono text-sm"
+                        style={{ 
+                          fontWeight: isSelected ? 800 : 700, 
+                          color: isSelected ? '#1E40AF' : 'var(--text-primary)' 
+                        }}
                       >
                         {fir.firNumber}
                       </span>
@@ -625,8 +637,8 @@ export default function GenomePage() {
                     gap: '8px',
                     padding: '8px 16px',
                     fontSize: '13px',
-                    fontWeight: 700,
-                    color: activeTab === 'matches' ? 'var(--primary-navy)' : 'var(--text-muted)',
+                    fontWeight: activeTab === 'matches' ? 800 : 500,
+                    color: activeTab === 'matches' ? 'var(--primary-navy)' : '#94A3B8',
                     borderBottom: activeTab === 'matches' ? '3px solid var(--primary-navy)' : '3px solid transparent',
                     background: 'transparent',
                     borderLeft: 'none', borderRight: 'none', borderTop: 'none',
@@ -635,15 +647,15 @@ export default function GenomePage() {
                     marginBottom: '-1.5px',
                   }}
                 >
-                  <Zap size={14} style={{ color: activeTab === 'matches' ? 'var(--primary-navy)' : 'var(--text-muted)' }} />
+                  <Zap size={14} style={{ color: activeTab === 'matches' ? 'var(--primary-navy)' : '#94A3B8' }} />
                   <span>Pattern Matches & Anomalies</span>
                   <span 
                     style={{ 
                       fontSize: '10px', 
                       padding: '2px 6px', 
                       borderRadius: '10px', 
-                      background: activeTab === 'matches' ? 'var(--primary-navy)' : 'var(--border-default)', 
-                      color: activeTab === 'matches' ? '#FFFFFF' : 'var(--text-secondary)' 
+                      background: '#E2E8F0', 
+                      color: '#475569' 
                     }}
                   >
                     {topMatches.length}
@@ -657,8 +669,8 @@ export default function GenomePage() {
                     gap: '8px',
                     padding: '8px 16px',
                     fontSize: '13px',
-                    fontWeight: 700,
-                    color: activeTab === 'clusters' ? 'var(--primary-navy)' : 'var(--text-muted)',
+                    fontWeight: activeTab === 'clusters' ? 800 : 500,
+                    color: activeTab === 'clusters' ? 'var(--primary-navy)' : '#94A3B8',
                     borderBottom: activeTab === 'clusters' ? '3px solid var(--primary-navy)' : '3px solid transparent',
                     background: 'transparent',
                     borderLeft: 'none', borderRight: 'none', borderTop: 'none',
@@ -667,15 +679,15 @@ export default function GenomePage() {
                     marginBottom: '-1.5px',
                   }}
                 >
-                  <Link2 size={14} style={{ color: activeTab === 'clusters' ? 'var(--primary-navy)' : 'var(--text-muted)' }} />
+                  <Link2 size={14} style={{ color: activeTab === 'clusters' ? 'var(--primary-navy)' : '#94A3B8' }} />
                   <span>Forensic Link & Clusters</span>
                   <span 
                     style={{ 
                       fontSize: '10px', 
                       padding: '2px 6px', 
                       borderRadius: '10px', 
-                      background: activeTab === 'clusters' ? 'var(--primary-navy)' : 'var(--border-default)', 
-                      color: activeTab === 'clusters' ? '#FFFFFF' : 'var(--text-secondary)' 
+                      background: '#E2E8F0', 
+                      color: '#475569' 
                     }}
                   >
                     {patternClusters.length}
@@ -694,9 +706,19 @@ export default function GenomePage() {
                       {(() => {
                         const averageDeviation = Math.round((deviations.timeDev + deviations.geoDev + deviations.methodDev + deviations.targetDev) / 4);
                         const isAnomaly = deviations.isAnomaly;
-                        const riskLevel = selectedFIR.riskScore > 80 ? 'CRITICAL' : selectedFIR.riskScore > 60 ? 'HIGH' : 'MEDIUM';
-                        const alertColor = isAnomaly ? 'var(--alert-red)' : 'var(--success-green)';
-                        const alertBg = isAnomaly ? 'rgba(239, 68, 68, 0.08)' : 'rgba(16, 185, 129, 0.08)';
+                        const riskVal = selectedFIR.riskScore;
+                        const riskLevel = riskVal >= 80 ? 'CRITICAL' : riskVal >= 60 ? 'HIGH' : riskVal >= 34 ? 'MEDIUM' : 'LOW';
+                        
+                        let alertColor = 'var(--success-green)';
+                        let alertBg = 'rgba(16, 185, 129, 0.08)';
+                        
+                        if (riskLevel === 'CRITICAL' || riskLevel === 'HIGH') {
+                          alertColor = 'var(--alert-red)';
+                          alertBg = 'rgba(239, 68, 68, 0.08)';
+                        } else if (riskLevel === 'MEDIUM') {
+                          alertColor = '#f97316';
+                          alertBg = 'rgba(249, 115, 22, 0.08)';
+                        }
                         
                         return (
                           <div 
@@ -739,10 +761,10 @@ export default function GenomePage() {
                           { label: 'METHOD', code: selectedDNA!.methodCode, sub: METHOD_LABELS[selectedDNA!.methodCode], val: deviations.methodDev },
                           { label: 'TARGET', code: selectedDNA!.targetCode, sub: TARGET_LABELS[selectedDNA!.targetCode], val: deviations.targetDev },
                         ].map((vector, idx) => {
-                          const barColor = vector.val > 60 
+                          const barColor = vector.val >= 67 
                             ? 'var(--alert-red)' 
-                            : vector.val > 30 
-                              ? 'var(--warning-amber)' 
+                            : vector.val >= 34 
+                              ? '#f97316' 
                               : 'var(--success-green)';
                           
                           return (
@@ -784,10 +806,10 @@ export default function GenomePage() {
                           { label: 'Method Code Deviation', val: deviations.methodDev, desc: 'Modus operandi (method code) is rarely seen in this type of offense.' },
                           { label: 'Target Code Deviation', val: deviations.targetDev, desc: 'Victim profile or property target class is atypical for this region.' }
                         ].map((item, i) => {
-                          const barColor = item.val > 60 
+                          const barColor = item.val >= 67 
                             ? 'var(--alert-red)' 
-                            : item.val > 30 
-                              ? 'var(--warning-amber)' 
+                            : item.val >= 34 
+                              ? '#f97316' 
                               : 'var(--success-green)';
                           return (
                             <div key={i} className="flex items-start gap-2">
