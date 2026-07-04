@@ -4,15 +4,22 @@
    DESIGN TOKENS
    ───────────────────────────────────────────── */
 :root {
+  /* Karnataka State branding theme colors */
+  --primary-navy:     #8B1E1E;   /* Maroon as Primary UI color */
+  --brand-crimson:    #8B1E1E;   /* Maroon buttons/borders */
+  --brand-gold:       #D4A017;   /* Gold secondary accent */
+  --brand-forest:     #2E8B57;   /* Success green */
+  --brand-charcoal:   #1A2332;   /* Dark Panel Background (macOS Cmd Center Look) */
+  --brand-plum:       #0F1520;   /* Partner gradient color for login page */
+
   /* Strict 5-Color System (Karnataka Prototype) */
-  --primary-navy:     #0B1F3A;   /* Primary UI (deep navy), headers, sidebar */
   --alert-red:        #D32F2F;   /* Critical/Alert states ONLY */
   --warning-amber:    #F59E0B;   /* Warning/Pending states */
   --success-green:    #2E8B57;   /* Success/Resolved/Deployed states */
   
   /* Neutral Gray Scale */
-  --neutral-dark:     #1E293B;   /* High-contrast body text */
-  --neutral-medium:   #64748B;   /* Muted text/labels */
+  --neutral-dark:     #1A2332;   /* High-contrast body text */
+  --neutral-medium:   #3F4E64;   /* Muted text/labels (passes 4.5:1 ratio on light bg) */
   --neutral-light:    #F8FAFC;   /* Light background surfaces, input fields */
   --neutral-border:   #E2E8F0;   /* Clean grid borders */
   --neutral-white:    #FFFFFF;   /* Card backgrounds, clean surfaces */
@@ -22,15 +29,15 @@
   --bg-sidebar: var(--primary-navy);
   --bg-header: var(--primary-navy);
   --bg-card: var(--neutral-white);
-  --bg-card-hover: rgba(11, 31, 58, 0.03);
+  --bg-card-hover: rgba(139, 30, 30, 0.03); /* Maroon-tinted soft hover */
   --bg-input: var(--neutral-light);
 
   --border-default: var(--neutral-border);
-  --border-subtle: rgba(11, 31, 58, 0.08);
+  --border-subtle: rgba(139, 30, 30, 0.08);
 
-  --accent-cyan: var(--primary-navy);
-  --accent-cyan-dim: rgba(11, 31, 58, 0.05);
-  --accent-cyan-border: rgba(11, 31, 58, 0.15);
+  --accent-cyan: var(--brand-gold);
+  --accent-cyan-dim: rgba(212, 160, 23, 0.05);
+  --accent-cyan-border: rgba(212, 160, 23, 0.15);
   --accent-cyan-text-on-fill: var(--neutral-white);
 
   --priority-critical: var(--alert-red);
@@ -44,16 +51,16 @@
   --status-progress: var(--primary-navy);
 
   /* Contrast-compliant text colors (at least 4.5:1 ratio minimum) */
-  --text-primary: var(--primary-navy);
-  --text-secondary: var(--neutral-dark);
+  --text-primary: var(--neutral-dark);
+  --text-secondary: #2D3748;
   --text-muted: var(--neutral-medium);
-  --text-faint: #475569;
+  --text-faint: #556275;
 
   --threat-high: var(--alert-red);
   --threat-medium: var(--warning-amber);
   --threat-low: var(--success-green);
 
-  --shadow-card: 0 4px 12px rgba(11, 31, 58, 0.03);
+  --shadow-card: 0 4px 12px rgba(139, 30, 30, 0.03);
 
   /* Font scale defaults */
   --font-base: 14px;
@@ -701,7 +708,7 @@ html, body {
 .badge-red    { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
 .badge-amber  { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
 .badge-green  { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
-.badge-cyan   { background: #E6F4F1; color: #0F6B5C; border: 1px solid #B2DFDB; }
+.badge-cyan   { background: #E6F4F1; color: #084037; border: 1px solid #B2DFDB; }
 .badge-purple { background: #EDE9FE; color: #5B21B6; border: 1px solid #DDD6FE; }
 .badge-orange { background: #FFEDD5; color: #9A3412; border: 1px solid #FED7AA; }
 .badge-pink   { background: #FCE7F3; color: #9D174D; border: 1px solid #FBCFE8; }

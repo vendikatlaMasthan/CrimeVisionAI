@@ -3,7 +3,7 @@
 // app/page.tsx — Command Dashboard (8 Spec'd Blocks, Light Theme)
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useMemo } from 'react';
 import Link from 'next/link';
 import {
   AreaChart, Area, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -19,6 +19,8 @@ import {
 } from '@/lib/mockData';
 import { SUMMARY_METRICS, CRIME_CATEGORIES, DISTRICTS } from '@/lib/crimeData';
 import { usePresentation } from '@/components/PresentationContext';
+import { useLanguage } from '@/components/LanguageToggle';
+import { TranslationSet } from '@/lib/translations';
 import CountUp from '@/components/CountUp';
 import Card from '@/components/Card';
 import Table, { TableColumn } from '@/components/Table';
@@ -55,6 +57,14 @@ function alertSeverityColor(severity: string) {
   return '#2E8B57';
 }
 
+function getAlertSeverityText(severity: string, t: any) {
+  if (severity.toLowerCase() === 'critical') return t.priority_critical;
+  if (severity.toLowerCase() === 'high') return t.priority_high;
+  if (severity.toLowerCase() === 'medium') return t.priority_medium;
+  if (severity.toLowerCase() === 'low') return t.priority_low;
+  return severity;
+}
+
 function statusBadgeClass(status: string) {
   const s = status.toLowerCase();
   if (s === 'investigating' || s === 'pending') return 'badge-status-pending';
@@ -65,13 +75,12 @@ function statusBadgeClass(status: string) {
 
 export default function DashboardPage() {
   const { isPresentationMode } = usePresentation();
+  const { lang, t } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  if (!mounted) return null;
 
   // Donut chart colors
   const COLORS = ['#1E3A5F', '#7C3AED', '#EC4899', '#EF4444', '#F97316', '#F59E0B', '#64748B'];
@@ -81,25 +90,77 @@ export default function DashboardPage() {
     .sort((a, b) => b.riskScore - a.riskScore)
     .slice(0, 4);
 
+  const translatedMonthlyTrends = useMemo(() => {
+    return MONTHLY_CRIME_TRENDS.map(item => {
+      const [m, y] = item.month.split(' ');
+      const key = `month_${m.toLowerCase()}`;
+      const translatedMonth = t[key as keyof TranslationSet] || m;
+      return {
+        ...item,
+        month: `${translatedMonth} ${y}`,
+      };
+    });
+  }, [t]);
+
+  const translatedCrimeCategories = useMemo(() => {
+    return CRIME_CATEGORIES.map(cat => {
+      let key = 'crime_other';
+      if (cat.name === 'Cybercrime') key = 'crime_cybercrime';
+      else if (cat.name === 'Theft') key = 'crime_theft';
+      else if (cat.name === 'Narcotics') key = 'crime_narcotics';
+      else if (cat.name === 'Assault') key = 'crime_assault';
+      else if (cat.name === 'Sand Mining') key = 'crime_sand_mining';
+      else if (cat.name === 'Organized Crime') key = 'crime_organized';
+      else if (cat.name === 'Other Offenses') key = 'crime_other';
+      return {
+        ...cat,
+        name: t[key as keyof TranslationSet] || cat.name,
+      };
+    });
+  }, [t]);
+
   const firColumns: TableColumn<typeof FIR_RECORDS[0]>[] = [
     {
-      header: 'FIR Number',
+      header: t.fir_number || 'FIR Number',
       accessor: (fir) => (
         <Link href={`/fir?id=${fir.id}`} className="text-[#1E3A5F] hover:underline font-mono font-bold text-[12px]">
           {fir.firNumber}
         </Link>
       ),
     },
-    { header: 'District', accessor: 'district' },
-    { header: 'Category', accessor: 'crimeCategory', style: { fontWeight: 600, color: '#1F2937' } },
-    { header: 'Assigned Officer', accessor: 'assignedOfficer' },
+    { header: t.district || 'District', accessor: 'district' },
     {
-      header: 'Status',
-      accessor: (fir) => (
-        <span className={`badge-status ${statusBadgeClass(fir.investigationStatus)}`}>
-          {fir.investigationStatus.toUpperCase()}
-        </span>
-      ),
+      header: t.top_crime || 'Category',
+      accessor: (fir) => {
+        let key = 'crime_other';
+        if (fir.crimeCategory === 'Cybercrime') key = 'crime_cybercrime';
+        else if (fir.crimeCategory === 'Theft') key = 'crime_theft';
+        else if (fir.crimeCategory === 'Narcotics') key = 'crime_narcotics';
+        else if (fir.crimeCategory === 'Assault') key = 'crime_assault';
+        else if (fir.crimeCategory === 'Sand Mining') key = 'crime_sand_mining';
+        else if (fir.crimeCategory === 'Organized Crime') key = 'crime_organized';
+        else if (fir.crimeCategory === 'Other Offenses') key = 'crime_other';
+        return <span style={{ fontWeight: 600, color: '#1F2937' }}>{t[key as keyof TranslationSet] || fir.crimeCategory}</span>;
+      }
+    },
+    { header: t.officer || 'Assigned Officer', accessor: 'assignedOfficer' },
+    {
+      header: t.status || 'Status',
+      accessor: (fir) => {
+        let statusKey = 'status_investigating';
+        const s = fir.investigationStatus.toLowerCase();
+        if (s === 'investigating') statusKey = 'status_investigating';
+        else if (s === 'arrested') statusKey = 'status_arrested';
+        else if (s === 'resolved') statusKey = 'status_resolved';
+        else if (s === 'chargesheet filed') statusKey = 'status_chargesheet';
+        
+        const translatedStatus = t[statusKey as keyof TranslationSet] || fir.investigationStatus;
+        return (
+          <span className={`badge-status ${statusBadgeClass(fir.investigationStatus)}`}>
+            {translatedStatus.toUpperCase()}
+          </span>
+        );
+      },
     },
   ];
 
@@ -111,17 +172,17 @@ export default function DashboardPage() {
         <div>
           <div className="section-header" style={{ marginBottom: 0 }}>
             <span className="section-header-line" />
-            <h1 className="section-title">Command Dashboard</h1>
+            <h1 className="section-title">{t.page_dashboard || 'Command Dashboard'}</h1>
           </div>
           <p className="page-subtitle" style={{ fontSize: '14px', color: '#475569', margin: '4px 0 0' }}>
-            Real-time intelligence overview &amp; AI-assisted risk assessment across Karnataka State Police jurisdictions.
+            {t.sub_dashboard || 'Karnataka State Police — Real-Time Intelligence Overview'}
           </p>
         </div>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '20px', padding: '6px 14px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
           <RefreshCw size={12} style={{ animation: 'spin 4s linear infinite', color: '#1E3A5F' }} />
           <span style={{ color: '#475569', fontSize: '12px', fontWeight: 600 }}>
-            Live · Connected to State HQ
+            {t.dashboard_realtime_connected || 'Live · Connected to State HQ'}
           </span>
         </div>
       </div>
@@ -134,7 +195,7 @@ export default function DashboardPage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                Active Cases
+                {t.stat_active_cases || 'Active Investigations'}
               </span>
               <div style={{ fontSize: '32px', fontWeight: 800, color: '#1F2937', marginTop: '6px', lineHeight: 1 }}>
                 <CountUp end={SUMMARY_METRICS.activeCases} />
@@ -149,7 +210,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '8px' }}>
-            Cases under active KSP investigation
+            {t.dashboard_cases_description || 'Cases under active KSP investigation'}
           </div>
         </Card>
 
@@ -158,7 +219,7 @@ export default function DashboardPage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                Officers Deployed
+                {t.stat_total_officers || 'Total Officers'}
               </span>
               <div style={{ fontSize: '32px', fontWeight: 800, color: '#1F2937', marginTop: '6px', lineHeight: 1 }}>
                 <CountUp end={SUMMARY_METRICS.totalOfficers} />
@@ -173,7 +234,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '8px' }}>
-            Active duty personnel across districts
+            {t.dashboard_officers_description || 'Active duty personnel across districts'}
           </div>
         </Card>
 
@@ -182,7 +243,7 @@ export default function DashboardPage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                AI Model Precision
+                {t.stat_accuracy || 'AI Accuracy'}
               </span>
               <div style={{ fontSize: '32px', fontWeight: 800, color: '#1F2937', marginTop: '6px', lineHeight: 1 }}>
                 <CountUp end={SUMMARY_METRICS.accuracyScore} decimals={1} suffix="%" />
@@ -197,7 +258,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '8px' }}>
-            Confidence score on predictive grids
+            {t.dashboard_accuracy_description || 'Confidence score on predictive grids'}
           </div>
         </Card>
 
@@ -206,10 +267,10 @@ export default function DashboardPage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                State Threat Rating
+                {t.state_threat || 'STATE THREAT LEVEL'}
               </span>
               <div style={{ fontSize: '32px', fontWeight: 800, color: '#ef4444', marginTop: '6px', lineHeight: 1 }}>
-                HIGH
+                {t.priority_high?.toUpperCase() || 'HIGH'}
               </div>
             </div>
             <div style={{
@@ -221,7 +282,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '8px' }}>
-            Statewide alert index status
+            {t.dashboard_threat_description || 'Statewide alert index status'}
           </div>
         </Card>
 
@@ -234,11 +295,11 @@ export default function DashboardPage() {
         <div className="glass-card col-span-12 lg:col-span-8" style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>Crime Trend Analysis</h2>
+              <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>{t.dashboard_trend_analysis || 'Crime Trend Analysis'}</h2>
               <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>LAST 18 MONTHS</span>
             </div>
             <ResponsiveContainer width="100%" height={230}>
-              <AreaChart data={MONTHLY_CRIME_TRENDS} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart data={translatedMonthlyTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="dashboardTrend" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#1E3A5F" stopOpacity={0.2} />
@@ -249,13 +310,13 @@ export default function DashboardPage() {
                 <XAxis dataKey="month" tick={{ fill: '#475569', fontSize: 10 }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fill: '#475569', fontSize: 10 }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
-                <Area type="monotone" dataKey="crimes" name="Total Crimes" stroke="#1E3A5F" strokeWidth={2} fill="url(#dashboardTrend)" />
+                <Area type="monotone" dataKey="crimes" name={t.stat_total_crimes || 'Total Crimes'} stroke="#1E3A5F" strokeWidth={2} fill="url(#dashboardTrend)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid #E5E7EB', paddingTop: '12px', marginTop: '12px' }}>
             <Link href="/insights" className="text-[#1E3A5F] hover:underline flex items-center gap-1 text-[12px] font-bold">
-              View Full Analytics <ChevronRight size={14} />
+              {t.dashboard_view_all || 'View Full Analytics'} <ChevronRight size={14} />
             </Link>
           </div>
         </div>
@@ -264,7 +325,7 @@ export default function DashboardPage() {
         <div className="glass-card col-span-12 lg:col-span-4" style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>Crime Category Share</h2>
+              <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>{t.dashboard_category_share || 'Crime Category Share'}</h2>
               <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>DISTRIBUTION</span>
             </div>
             
@@ -272,7 +333,7 @@ export default function DashboardPage() {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={CRIME_CATEGORIES}
+                    data={translatedCrimeCategories}
                     cx="50%"
                     cy="50%"
                     innerRadius={50}
@@ -280,7 +341,7 @@ export default function DashboardPage() {
                     paddingAngle={3}
                     dataKey="count"
                   >
-                    {CRIME_CATEGORIES.map((entry, index) => (
+                    {translatedCrimeCategories.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
@@ -290,7 +351,7 @@ export default function DashboardPage() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 12, maxHeight: 90, overflowY: 'auto' }}>
-              {CRIME_CATEGORIES.map((cat, index) => (
+              {translatedCrimeCategories.map((cat, index) => (
                 <div key={cat.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 11 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     <span style={{ width: 8, height: 8, borderRadius: '50%', background: COLORS[index % COLORS.length] }} />
@@ -312,8 +373,8 @@ export default function DashboardPage() {
         <div className="glass-card col-span-12 lg:col-span-8" style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>Recent FIR Registry</h2>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>KSP FILINGS</span>
+              <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>{t.dashboard_recent_registry || 'Recent FIR Registry'}</h2>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>{t.dashboard_ksp_filings || 'KSP FILINGS'}</span>
             </div>
             
             <div style={{ marginTop: '16px' }}>
@@ -337,7 +398,7 @@ export default function DashboardPage() {
         <div className="glass-card col-span-12 lg:col-span-4" style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>Live Alerts Pipeline</h2>
+              <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>{t.dashboard_alerts_pipeline || 'Live Alerts Pipeline'}</h2>
               <span className="badge-alert-count">4 ACTIVE</span>
             </div>
             
@@ -353,7 +414,7 @@ export default function DashboardPage() {
                       background: '#FFFFFF', color: alertSeverityColor(alert.severity),
                       border: `1px solid ${alertSeverityColor(alert.severity)}30`, textTransform: 'uppercase'
                     }}>
-                      {alert.severity}
+                      {getAlertSeverityText(alert.severity, t)}
                     </span>
                     <span style={{ fontSize: '10px', color: '#475569' }}>{alert.timestamp} · {alert.affectedDistricts?.[0] || ''}</span>
                   </div>
@@ -382,7 +443,7 @@ export default function DashboardPage() {
         <div className="glass-card col-span-12 lg:col-span-4" style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>High-Risk Districts</h2>
+              <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>{t.dashboard_threat_index || 'High-Risk Districts'}</h2>
               <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>ANALYTICS</span>
             </div>
 
@@ -415,7 +476,7 @@ export default function DashboardPage() {
         <div className="glass-card col-span-12 lg:col-span-4" style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>AI Recommendations</h2>
+              <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>{t.dashboard_ai_recommendations || 'AI Recommendations'}</h2>
               <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>COGNITIVE</span>
             </div>
 
@@ -461,7 +522,7 @@ export default function DashboardPage() {
                     <Search size={14} color="#1E3A5F" />
                   </div>
                   <div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#1F2937' }}>Cases / FIR Search</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#1F2937' }}>{t.nav_case_search || 'Cases / FIR Search'}</div>
                   </div>
                 </div>
               </Link>
@@ -479,7 +540,7 @@ export default function DashboardPage() {
                     <Cpu size={14} color="#2E8B57" />
                   </div>
                   <div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#1F2937' }}>AI Investigator Engine</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#1F2937' }}>{t.nav_ai_investigator || 'AI Investigator Engine'}</div>
                   </div>
                 </div>
               </Link>
@@ -497,7 +558,7 @@ export default function DashboardPage() {
                     <Sliders size={14} color="#D97706" />
                   </div>
                   <div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#1F2937' }}>Officer Deployment</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#1F2937' }}>{t.nav_resource_allocation || 'Officer Deployment'}</div>
                   </div>
                 </div>
               </Link>

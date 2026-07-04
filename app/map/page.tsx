@@ -7,6 +7,7 @@ import {
   Map, TrendingUp, Info, ChevronRight, X, Sparkles, Plus, Clock
 } from 'lucide-react';
 import { useLanguage } from '@/components/LanguageToggle';
+import { TranslationSet } from '@/lib/translations';
 import CountUp from '@/components/CountUp';
 import SimulationBanner from '@/components/SimulationBanner';
 import AIRecommendationCard from '@/components/AIRecommendationCard';
@@ -554,7 +555,7 @@ export default function HeatmapPage() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                 <div>
                   <h2 style={{ fontSize: '18px', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
-                    {selectedDistrict.toUpperCase()} INTEL
+                    {selectedDistrict.toUpperCase()} {lang === 'kn' ? 'ಮಾಹಿತಿ' : 'INTEL'}
                   </h2>
                   <span 
                     className="badge" 
@@ -566,7 +567,7 @@ export default function HeatmapPage() {
                       border: `1px solid ${activeDistrict.color}`,
                     }}
                   >
-                    {activeDistrict.level} RISK SCORE
+                    {(lang === 'kn' ? (activeDistrict.level === 'CRITICAL' ? t.priority_critical : t.priority_high) : activeDistrict.level)} {lang === 'kn' ? 'ಅಪಾಯ ಸೂಚ್ಯಂಕ' : 'RISK SCORE'}
                   </span>
                 </div>
                 <button
@@ -580,7 +581,7 @@ export default function HeatmapPage() {
               {/* Threat dial */}
               <div style={{ marginBottom: '18px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>
-                  <span>Calculated Threat Index:</span>
+                  <span>{lang === 'kn' ? 'ಲೆಕ್ಕಾಚಾರದ ಬೆದರಿಕೆ ಸೂಚ್ಯಂಕ:' : 'Calculated Threat Index:'}</span>
                   <span style={{ fontWeight: 800, color: activeDistrict.color }}>{activeDistrict.score}/100</span>
                 </div>
                 <div style={{ height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '3px', overflow: 'hidden' }}>
@@ -591,12 +592,12 @@ export default function HeatmapPage() {
               {/* Summary Stats list */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '20px' }}>
                 {[
-                  { label: 'Active Cases', val: activeDistrict.crimes },
-                  { label: 'Arrests MTD', val: activeDistrict.arrests },
-                  { label: 'Solved Cases', val: activeDistrict.solved },
-                  { label: 'Officers Deployed', val: activeDistrict.officers }
+                  { label: lang === 'kn' ? t.stat_active_cases : 'Active Cases', val: activeDistrict.crimes },
+                  { label: lang === 'kn' ? t.stat_arrests_mtd : 'Arrests MTD', val: activeDistrict.arrests },
+                  { label: lang === 'kn' ? t.stat_solved_cases : 'Solved Cases', val: activeDistrict.solved },
+                  { label: lang === 'kn' ? t.stat_total_officers : 'Officers Deployed', val: activeDistrict.officers }
                 ].map((stat, idx) => (
-                  <div key={idx} style={{ background: 'rgba(0,0,0,0.15)', border: '1px solid var(--cyber-border)', borderRadius: '8px', padding: '10px' }}>
+                  <div key={idx} style={{ background: 'rgba(0,0,0,0.05)', border: '1px solid var(--cyber-border)', borderRadius: '8px', padding: '10px' }}>
                     <div style={{ fontSize: '10px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>{stat.label}</div>
                     <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'JetBrains Mono, monospace', marginTop: '2px' }}>
                       <CountUp end={stat.val} />
@@ -608,33 +609,44 @@ export default function HeatmapPage() {
               {/* Breakdown Bars */}
               <div style={{ marginBottom: '20px' }}>
                 <div style={{ fontSize: '11px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
-                  TOP CRIME CATEGORIES
+                  {lang === 'kn' ? 'ಮುಖ್ಯ ಅಪರಾಧ ವಿಭಾಗಗಳು' : 'TOP CRIME CATEGORIES'}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {activeDistrict.breakdown.map((item, idx) => (
-                    <div key={idx}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '3px' }}>
-                        <span>{item.label}</span>
-                        <span style={{ fontWeight: 700 }}>{item.pct}%</span>
+                  {activeDistrict.breakdown.map((item, idx) => {
+                    let key = 'crime_other';
+                    const l = item.label.toLowerCase();
+                    if (l.includes('cyber') || l.includes('fraud')) key = 'crime_cybercrime';
+                    else if (l.includes('theft')) key = 'crime_theft';
+                    else if (l.includes('narcotics')) key = 'crime_narcotics';
+                    else if (l.includes('assault')) key = 'crime_assault';
+                    else if (l.includes('sand') || l.includes('mining') || l.includes('mafia')) key = 'crime_sand_mining';
+                    else if (l.includes('organized')) key = 'crime_organized';
+
+                    return (
+                      <div key={idx}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '3px' }}>
+                          <span>{t[key as keyof TranslationSet] || item.label}</span>
+                          <span style={{ fontWeight: 700 }}>{item.pct}%</span>
+                        </div>
+                        <div style={{ height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                          <div style={{ height: '100%', width: `${item.pct}%`, background: 'var(--cyber-cyan)' }} />
+                        </div>
                       </div>
-                      <div style={{ height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${item.pct}%`, background: 'var(--cyber-cyan)' }} />
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
               {/* Recommendations directives checklist list */}
               <div style={{ marginBottom: '16px' }}>
                 <div style={{ fontSize: '11px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
-                  AI RECOMMENDATIONS
+                  {lang === 'kn' ? 'AI ಶಿಫಾರಸುಗಳು' : 'AI RECOMMENDATIONS'}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)' }}>
                   {activeDistrict.recommendations.map((rec, idx) => (
                     <div key={idx} style={{ display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
                       <span style={{ color: 'var(--cyber-cyan)' }}>→</span>
-                      <span>{rec}</span>
+                      <span>{lang === 'kn' ? 'ತಕ್ಷಣದ ಭದ್ರತಾ ಕಾರ್ಯವಿಧಾನವನ್ನು ನಿಯೋಜಿಸಿ' : rec}</span>
                     </div>
                   ))}
                 </div>
@@ -645,8 +657,8 @@ export default function HeatmapPage() {
             {/* Recommendation card bottom actions */}
             <div>
               <AIRecommendationCard
-                action={activeDistrict.recommendations[0]}
-                rationale={`AI models flagged high priority threat vectors inside ${selectedDistrict} requiring immediate tactical reinforcement.`}
+                action={lang === 'kn' ? 'ಗಸ್ತು ಹೆಚ್ಚಿಸಿ' : activeDistrict.recommendations[0]}
+                rationale={lang === 'kn' ? `AI ವ್ಯವಸ್ಥೆಯು ${selectedDistrict} ನಲ್ಲಿ ಹೆಚ್ಚಿನ ಅಪಾಯದ ಅಂಶಗಳನ್ನು ಗುರುತಿಸಿದೆ.` : `AI models flagged high priority threat vectors inside ${selectedDistrict} requiring immediate tactical reinforcement.`}
                 urgency={activeDistrict.level}
                 priority={1}
               />
@@ -657,14 +669,14 @@ export default function HeatmapPage() {
                   className="cyber-btn"
                   style={{ flex: 1, justifyContent: 'center', borderRadius: '8px', fontSize: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)', textTransform: 'none' }}
                 >
-                  View Full Report
+                  {lang === 'kn' ? 'ವರದಿ ನೋಡಿ' : 'View Full Report'}
                 </button>
                 <button
                   onClick={() => alert(`Tactical officers dispatched to coordinates in ${selectedDistrict}`)}
                   className="cyber-btn cyber-btn-cyan"
                   style={{ flex: 1, justifyContent: 'center', borderRadius: '8px', fontSize: '12px', textTransform: 'none' }}
                 >
-                  Assign Officers
+                  {lang === 'kn' ? 'ಅಧಿಕಾರಿಗಳನ್ನು ನಿಯೋಜಿಸಿ' : 'Assign Officers'}
                 </button>
               </div>
             </div>
@@ -673,7 +685,7 @@ export default function HeatmapPage() {
           <aside className="glass-card flex items-center justify-center text-center p-6" style={{ height: '620px', color: 'var(--text-dim)', fontSize: '13px' }}>
             <div>
               <Map size={36} style={{ margin: '0 auto 12px', color: 'var(--cyber-cyan)' }} />
-              Select a district hexagon on the map to display localized threat intelligence logs.
+              {lang === 'kn' ? 'ಸ್ಥಳೀಯ ಬೆದರಿಕೆ ಗುಪ್ತಚರ ಲಾಗ್‌ಗಳನ್ನು ಪ್ರದರ್ಶಿಸಲು ನಕ್ಷೆಯಲ್ಲಿ ಜಿಲ್ಲೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ.' : 'Select a district on the map to display localized threat intelligence logs.'}
             </div>
           </aside>
         )}

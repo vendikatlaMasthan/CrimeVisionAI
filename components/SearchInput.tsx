@@ -17,7 +17,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           size={16}
           style={{
             position: 'absolute',
-            left: '16px',
+            left: '12px',
             top: '50%',
             transform: 'translateY(-50%)',
             color: '#94A3B8',
@@ -41,7 +41,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             if (onBlur) onBlur(e);
           }}
           style={{
-            paddingLeft: '44px', // 16px inset + 16px icon + 12px spacing
+            paddingLeft: '36px',
             paddingRight: '16px',
             border: isFocused ? '1.5px solid var(--primary-navy)' : '1px solid var(--border-default)',
             background: 'var(--bg-card)',

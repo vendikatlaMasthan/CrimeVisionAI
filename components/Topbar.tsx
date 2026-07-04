@@ -398,7 +398,8 @@ export default function Topbar({ user, portalType }: TopbarProps) {
               onKeyDown={handleKeyDown}
               style={{
                 background: 'var(--bg-input)',
-                paddingRight: '64px',
+                paddingLeft: '36px',
+                paddingRight: '48px',
               }}
             />
 

@@ -14,6 +14,8 @@ import {
   RESOURCE_RECOMMENDATIONS, DISTRICT_RESOURCES, BUDGET_ALLOCATION,
 } from '@/lib/mockData';
 import { KARNATAKA_DISTRICTS } from '@/lib/mockData';
+import { useLanguage } from '@/components/LanguageToggle';
+import { TranslationSet } from '@/lib/translations';
 
 const PRIORITY_COLORS: Record<string, string> = {
   Critical: '#ef4444',
@@ -81,6 +83,7 @@ const SimulatorTooltip = ({
 };
 
 export default function ResourcesPage() {
+  const { lang, t } = useLanguage();
   const [selectedRec, setSelectedRec] = useState<number | null>(null);
   const [actionStatus, setActionStatus] = useState<Record<number, string>>({});
   const [activeTab, setActiveTab] = useState<'deployment' | 'simulator'>('deployment');
@@ -159,18 +162,18 @@ export default function ResourcesPage() {
             >
               <Package size={20} style={{ color: '#0F6B5C' }} />
             </div>
-            <h1 className="page-title">Resource Deployment Intelligence</h1>
+            <h1 className="page-title">{lang === 'kn' ? 'ಸಂಪನ್ಮೂಲ ನಿಯೋಜನೆ ಗುಪ್ತಚರ' : 'Resource Deployment Intelligence'}</h1>
           </div>
-          <p className="page-subtitle">AI-powered force allocation and deployment recommendations across Karnataka</p>
+          <p className="page-subtitle">{lang === 'kn' ? 'ಕರ್ನಾಟಕದಾದ್ಯಂತ AI ಚಾಲಿತ ಪೊಲೀಸ್ ಬಲ ನಿಯೋಜನೆ ಮತ್ತು ಸಂಪನ್ಮೂಲ ಹಂಚಿಕೆ ಶಿಫಾರಸುಗಳು' : 'AI-powered force allocation and deployment recommendations across Karnataka'}</p>
         </div>
         <div className="flex gap-3">
           <button className="cyber-btn cyber-btn-amber">
             <BarChart3 size={14} />
-            ALLOCATION REPORT
+            {lang === 'kn' ? 'ಹಂಚಿಕೆ ವರದಿ' : 'ALLOCATION REPORT'}
           </button>
           <button className="cyber-btn cyber-btn-cyan">
             <Zap size={14} />
-            AI OPTIMIZE
+            {lang === 'kn' ? 'AI ಆಪ್ಟಿಮೈಸ್' : 'AI OPTIMIZE'}
           </button>
         </div>
       </div>
@@ -192,7 +195,7 @@ export default function ResourcesPage() {
             marginBottom: '-1.5px',
           }}
         >
-          Force Deployment & Budget
+          {lang === 'kn' ? 'ಪೊಲೀಸ್ ನಿಯೋಜನೆ ಮತ್ತು ಬಜೆಟ್' : 'Force Deployment & Budget'}
         </button>
         <button
           onClick={() => setActiveTab('simulator')}
@@ -209,7 +212,7 @@ export default function ResourcesPage() {
             marginBottom: '-1.5px',
           }}
         >
-          AI Predictive Simulation Model
+          {lang === 'kn' ? 'AI ಪ್ರೆಡಿಕ್ಟಿವ್ ಸಿಮ್ಯುಲೇಶನ್ ಮಾಡೆಲ್' : 'AI Predictive Simulation Model'}
         </button>
       </div>
 
@@ -219,10 +222,10 @@ export default function ResourcesPage() {
       {/* Summary Metrics */}
       <div className="grid grid-cols-4 gap-4 mb-8">
         {[
-          { label: 'Total Police Force', value: totalOfficers.toLocaleString(), sub: 'Karnataka', color: '#0F6B5C', icon: Users },
-          { label: 'Active Patrol Units', value: totalDeployed.toLocaleString(), sub: 'Deployed', color: '#10b981', icon: Shield },
-          { label: 'Cyber Crime Units', value: totalCyber.toLocaleString(), sub: 'Specialized', color: '#8b5cf6', icon: Monitor },
-          { label: 'Pending Approvals', value: '3', sub: 'AI Recommendations', color: '#f59e0b', icon: Clock },
+          { label: lang === 'kn' ? t.stat_total_officers : 'Total Police Force', value: totalOfficers.toLocaleString(), sub: lang === 'kn' ? 'ಕರ್ನಾಟಕ' : 'Karnataka', color: '#0F6B5C', icon: Users },
+          { label: lang === 'kn' ? t.dashboard_active_patrol : 'Active Patrol Units', value: totalDeployed.toLocaleString(), sub: lang === 'kn' ? 'ನಿಯೋಜಿಸಲಾಗಿದೆ' : 'Deployed', color: '#10b981', icon: Shield },
+          { label: lang === 'kn' ? t.crime_cybercrime : 'Cyber Crime Units', value: totalCyber.toLocaleString(), sub: lang === 'kn' ? 'ವಿಶೇಷ ಘಟಕಗಳು' : 'Specialized', color: '#8b5cf6', icon: Monitor },
+          { label: lang === 'kn' ? 'ಬಾಕಿ ಇರುವ ಅನುಮೋದನೆಗಳು' : 'Pending Approvals', value: '3', sub: lang === 'kn' ? 'AI ಶಿಫಾರಸುಗಳು' : 'AI Recommendations', color: '#f59e0b', icon: Clock },
         ].map((metric, i) => (
           <div key={i} className="glass-card p-5">
             <div className="flex items-center justify-between mb-3">
@@ -244,8 +247,8 @@ export default function ResourcesPage() {
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-5">
           <div className="section-header-line" />
-          <h2 className="section-title">AI Deployment Recommendations</h2>
-          <span className="badge badge-cyan ml-2" style={{ fontSize: '10px' }}>6 ACTIVE</span>
+          <h2 className="section-title">{lang === 'kn' ? 'AI ನಿಯೋಜನೆ ಶಿಫಾರಸುಗಳು' : 'AI Deployment Recommendations'}</h2>
+          <span className="badge badge-cyan ml-2" style={{ fontSize: '10px' }}>6 {lang === 'kn' ? 'ಸಕ್ರಿಯ' : 'ACTIVE'}</span>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -281,7 +284,7 @@ export default function ResourcesPage() {
                             fontSize: '10px',
                           }}
                         >
-                          {rec.priority.toUpperCase()}
+                          {lang === 'kn' ? (rec.priority === 'Critical' ? t.priority_critical : rec.priority === 'High' ? t.priority_high : rec.priority === 'Medium' ? t.priority_medium : 'ಕಡಿಮೆ') : rec.priority.toUpperCase()}
                         </span>
                         <span
                           className="badge"
@@ -292,7 +295,7 @@ export default function ResourcesPage() {
                             fontSize: '10px',
                           }}
                         >
-                          {rec.status.toUpperCase()}
+                          {lang === 'kn' ? (rec.status === 'Approved' ? 'ಅನುಮೋದಿಸಲಾಗಿದೆ' : rec.status === 'Deployed' ? 'ನಿಯೋಜಿಸಲಾಗಿದೆ' : 'ಪರಿಶೀಲನೆಯಲ್ಲಿದೆ') : rec.status.toUpperCase()}
                         </span>
                       </div>
                       <h3 className="font-bold" style={{ color: 'var(--text-primary)', fontSize: '15px' }}>{rec.action}</h3>
@@ -319,16 +322,16 @@ export default function ResourcesPage() {
                   >
                     <div className="grid grid-cols-2 gap-3 mb-3">
                       <div>
-                        <div style={{ color: '#64748b', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>Units Required</div>
-                        <div style={{ color: '#0F6B5C', fontSize: '18px', fontWeight: 800 }}>{rec.units}</div>
+                        <div style={{ color: 'var(--text-muted)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>{lang === 'kn' ? 'ಅಗತ್ಯವಿರುವ ಘಟಕಗಳು' : 'Units Required'}</div>
+                        <div style={{ color: 'var(--primary-navy)', fontSize: '18px', fontWeight: 800 }}>{rec.units}</div>
                       </div>
                       <div>
-                        <div style={{ color: '#64748b', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>Timeline</div>
+                        <div style={{ color: 'var(--text-muted)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>{lang === 'kn' ? t.time : 'Timeline'}</div>
                         <div style={{ color: 'var(--text-primary)', fontSize: '14px', fontWeight: 600 }}>{rec.timeline}</div>
                       </div>
                     </div>
-                    <div style={{ color: '#64748b', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>Expected Impact</div>
-                    <div style={{ color: '#10b981', fontSize: '13px' }}>{rec.impact}</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>{lang === 'kn' ? 'ನಿರೀಕ್ಷಿತ ಪರಿಣಾಮ' : 'Expected Impact'}</div>
+                    <div style={{ color: 'var(--brand-forest)', fontSize: '13px', fontWeight: 600 }}>{rec.impact}</div>
                   </div>
                 )}
 
@@ -387,7 +390,7 @@ export default function ResourcesPage() {
               >
                 <div style={{ color: cell.color, fontSize: '10px', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '8px' }}>{cell.label}</div>
                 {cell.items.map((item, j) => (
-                  <div key={j} style={{ color: '#94a3b8', fontSize: '12px', marginBottom: '2px' }}>• {item}</div>
+                  <div key={j} style={{ color: 'var(--text-secondary)', fontSize: '12px', marginBottom: '2px', fontWeight: 600 }}>• {item}</div>
                 ))}
               </div>
             ))}
@@ -399,7 +402,7 @@ export default function ResourcesPage() {
           <div className="flex items-center gap-2 mb-5">
             <div className="section-header-line" />
             <h2 className="section-title">Budget Allocation — FY 2025-26</h2>
-            <span style={{ color: '#64748b', fontSize: '12px' }}>(₹ in Crores)</span>
+            <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>(₹ in Crores)</span>
           </div>
           <div className="flex items-center gap-6">
             <div style={{ width: 220, height: 220, flexShrink: 0 }}>
@@ -431,7 +434,7 @@ export default function ResourcesPage() {
                       <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>{item.category}</span>
                       <div className="flex gap-3">
                         <span style={{ color: 'var(--text-primary)', fontSize: '13px', fontWeight: 700 }}>₹{item.amount}Cr</span>
-                        <span style={{ color: '#64748b', fontSize: '12px' }}>{item.percentage}%</span>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: 600 }}>{item.percentage}%</span>
                       </div>
                     </div>
                     <div className="risk-bar-track">
@@ -474,7 +477,7 @@ export default function ResourcesPage() {
                 <tr key={i}>
                   <td>
                     <div className="flex items-center gap-2">
-                      <MapPin size={12} style={{ color: '#64748b' }} />
+                      <MapPin size={12} style={{ color: 'var(--text-muted)' }} />
                       <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{d.district}</span>
                     </div>
                   </td>

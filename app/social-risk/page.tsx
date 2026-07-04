@@ -16,7 +16,7 @@ const CustomTooltip = ({ active, payload }: any) => {
         background: '#FFFFFF', border: '1px solid rgba(30, 58, 95,0.25)',
         borderRadius: 8, padding: '10px 14px', fontSize: 13, color: 'var(--text-primary)',
       }}>
-        <div style={{ fontWeight: 700, color: '#0F6B5C', marginBottom: 4 }}>{d?.district}</div>
+        <div style={{ fontWeight: 700, color: 'var(--primary-navy)', marginBottom: 4 }}>{d?.district}</div>
         {payload.map((p: any) => (
           <div key={p.name} style={{ color: 'var(--text-secondary)' }}>
             {p.name}: <strong style={{ color: 'var(--text-primary)' }}>{typeof p.value === 'number' ? p.value.toFixed(1) : p.value}</strong>
@@ -75,9 +75,9 @@ export default function SocialRiskPage() {
         borderRadius: 12, padding: '16px 20px', marginBottom: 28,
         display: 'flex', gap: 14, alignItems: 'flex-start',
       }}>
-        <Info size={20} color="#0F6B5C" style={{ marginTop: 2, flexShrink: 0 }} />
+        <Info size={20} color="var(--primary-navy)" style={{ marginTop: 2, flexShrink: 0 }} />
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#0F6B5C', marginBottom: 4 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--primary-navy)', marginBottom: 4 }}>
             HACKATHON PROBLEM STATEMENT ALIGNMENT
           </div>
           <div style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
@@ -116,8 +116,8 @@ export default function SocialRiskPage() {
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
-                  <span className={`badge ${isPositive ? 'badge-red' : 'badge-green'}`} style={{ fontSize: '10px', fontWeight: 700 }}>
-                    {isPositive ? '↑ Crime Risk' : '↓ Crime Risk'}
+                  <span className={`badge ${isPositive ? 'badge-red' : 'badge-green'}`} style={{ fontSize: '10px', fontWeight: 800 }}>
+                    {strengthLabel} {isPositive ? '↑ CRIME RISK' : '↓ CRIME RISK'}
                   </span>
                 </div>
                 <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{cor.interpretation}</p>
@@ -130,7 +130,7 @@ export default function SocialRiskPage() {
       {/* SCATTER CHARTS 2x2 */}
       <div style={{ marginBottom: 28 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-          <div style={{ width: 3, height: 22, background: '#0F6B5C', borderRadius: 2 }} />
+          <div style={{ width: 3, height: 22, background: 'var(--primary-navy)', borderRadius: 2 }} />
           <h2 className="section-title">Scatter Plot Analysis — Districts</h2>
         </div>
         <div className="responsive-grid-2">
@@ -144,21 +144,26 @@ export default function SocialRiskPage() {
               <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 14 }}>{chart.title}</div>
               <ResponsiveContainer width="100%" height={280}>
                 <ScatterChart margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                   <XAxis
-                    dataKey={chart.x} type="number" name={chart.xLabel}
-                    tick={{ fill: '#94a3b8', fontSize: 10 }}
-                    label={{ value: chart.xLabel, position: 'insideBottom', offset: -10, fill: '#64748b', fontSize: 10 }}
+                    type="number"
+                    dataKey={chart.x}
+                    name={chart.xLabel}
+                    tick={{ fill: 'var(--text-muted)', fontSize: 10 }}
+                    label={{ value: chart.xLabel, position: 'insideBottom', offset: -10, fill: 'var(--text-muted)', fontSize: 10 }}
                   />
                   <YAxis
-                    dataKey={chart.y} type="number" name={chart.yLabel}
-                    tick={{ fill: '#94a3b8', fontSize: 10 }}
-                    label={{ value: chart.yLabel, angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 10 }}
+                    type="number"
+                    dataKey={chart.y}
+                    name={chart.yLabel}
+                    tick={{ fill: 'var(--text-muted)', fontSize: 10 }}
+                    label={{ value: chart.yLabel, angle: -90, position: 'insideLeft', fill: 'var(--text-muted)', fontSize: 10 }}
                   />
                   <Tooltip content={<CustomTooltip />} />
                   <Scatter
+                    name="Districts"
                     data={SOCIOECONOMIC_DATA}
-                    fill="#0F6B5C"
+                    fill="var(--primary-navy)"
                     fillOpacity={0.7}
                     r={6}
                   />
@@ -172,9 +177,9 @@ export default function SocialRiskPage() {
       {/* DISTRICT TABLE */}
       <div className="glass-card" style={{ padding: 24, marginBottom: 28 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-          <div style={{ width: 3, height: 22, background: '#f59e0b', borderRadius: 2 }} />
-          <h2 className="section-title">District Socio-Economic Profile</h2>
-          <span style={{ fontSize: 12, color: '#64748b', marginLeft: 'auto' }}>Click columns to sort</span>
+          <div style={{ width: 3, height: 22, background: 'var(--primary-navy)', borderRadius: 2 }} />
+          <h2 className="section-title">Districts Correlation Dataset</h2>
+          <span style={{ fontSize: 12, color: 'var(--text-muted)', marginLeft: 'auto' }}>Click columns to sort</span>
         </div>
         <div style={{ overflowX: 'auto' }}>
           <table className="cyber-table" style={{ minWidth: 900 }}>
@@ -196,7 +201,7 @@ export default function SocialRiskPage() {
                     style={{
                       cursor: col.key !== 'district' && col.key !== 'risk' ? 'pointer' : 'default',
                       userSelect: 'none',
-                      color: sortCol === col.key ? '#0F6B5C' : undefined,
+                      color: sortCol === col.key ? 'var(--primary-navy)' : undefined,
                     }}
                   >
                     {col.label} {sortCol === col.key ? '▼' : ''}

@@ -176,7 +176,7 @@ export default function CommissionerPage() {
               <div key={s.district} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 10px', background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 8 }}>
                 <div>
                   <div style={{ fontSize: 12, fontWeight: 'bold', color: 'var(--text-primary)' }}>{s.district}</div>
-                  <div style={{ fontSize: 10, color: '#64748b' }}>Short: <span style={{ color: s.color, fontWeight: 'bold' }}>{s.shortage}</span></div>
+                  <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Short: <span style={{ color: s.color, fontWeight: 'bold' }}>{s.shortage}</span></div>
                 </div>
                 <div style={{ textAlign: 'right', alignSelf: 'center' }}>
                   <span style={{ fontSize: 10, fontWeight: 'bold', color: s.color }}>{s.score}% Adequacy</span>
@@ -190,7 +190,7 @@ export default function CommissionerPage() {
       {/* ── EXECUTIVE STATS CARDS ROW ── */}
       <div className="responsive-grid-4">
         {[
-          { label: 'State YTD Crimes', value: COMMISSIONER_METRICS.totalCrimes.toLocaleString(), sub: 'Recorded Year-to-Date', color: '#0F6B5C', icon: BarChart3 },
+          { label: 'State YTD Crimes', value: COMMISSIONER_METRICS.totalCrimes.toLocaleString(), sub: 'Recorded Year-to-Date', color: 'var(--primary-navy)', icon: BarChart3 },
           { label: 'Active Case Registry', value: COMMISSIONER_METRICS.activeCases.toLocaleString(), sub: 'Across 31 Districts', color: '#f59e0b', icon: Users },
           { label: 'Force Clearance Index', value: `${COMMISSIONER_METRICS.clearanceRate}%`, sub: 'Cleared & closed rate', color: '#10b981', icon: ShieldCheck, badge: 'STABLE' },
           { label: 'Critical Risk Districts', value: COMMISSIONER_METRICS.criticalDistricts.toString(), sub: 'Immediate resource focus', color: '#ef4444', icon: ShieldAlert },
@@ -200,21 +200,21 @@ export default function CommissionerPage() {
             className="glass-card"
             style={{
               padding: '18px 20px',
-              border: `1px solid ${m.color}25`,
+              border: `1px solid ${m.color === 'var(--primary-navy)' ? 'rgba(139,30,30,0.15)' : m.color + '25'}`,
               background: '#FFFFFF',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{m.label}</span>
-              <m.icon size={16} color={m.color} />
+              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{m.label}</span>
+              <m.icon size={16} color={m.color === 'var(--primary-navy)' ? 'var(--primary-navy)' : m.color} />
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-              <div style={{ fontSize: '24px', fontWeight: 900, color: m.color, fontFamily: 'monospace' }}>{m.value}</div>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: m.color === 'var(--primary-navy)' ? 'var(--primary-navy)' : m.color, fontFamily: 'monospace' }}>{m.value}</div>
               {m.badge && (
                 <span className="badge badge-green" style={{ fontSize: 9 }}>{m.badge}</span>
               )}
             </div>
-            <div style={{ fontSize: 11, color: '#475569', marginTop: 4 }}>{m.sub}</div>
+            <div style={{ fontSize: 11, color: 'var(--text-faint)', marginTop: 4 }}>{m.sub}</div>
           </div>
         ))}
       </div>
@@ -222,7 +222,7 @@ export default function CommissionerPage() {
       {/* ── DISTRICT COMPARISON DASHBOARD ── */}
       <div className="glass-card" style={{ padding: 22 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-          <div className="section-header-line" style={{ background: '#0F6B5C' }} />
+          <div className="section-header-line" style={{ background: 'var(--primary-navy)' }} />
           <h2 className="section-title">District Comparison Dashboard</h2>
           <span className="badge badge-cyan" style={{ marginLeft: 'auto' }}>STATE INTEL PROFILE</span>
         </div>
@@ -256,7 +256,7 @@ export default function CommissionerPage() {
                   <tr key={d.name}>
                     <td style={{ fontWeight: 'bold' }}>{d.name}</td>
                     <td>{d.crimes.toLocaleString()}</td>
-                    <td style={{ color: d.risk > 80 ? '#ef4444' : d.risk > 60 ? '#f59e0b' : '#0F6B5C', fontWeight: 'bold' }}>{d.risk}/100</td>
+                    <td style={{ color: d.risk > 80 ? '#ef4444' : d.risk > 60 ? '#f59e0b' : 'var(--primary-navy)', fontWeight: 'bold' }}>{d.risk}/100</td>
                     <td>{d.active.toLocaleString()}</td>
                     <td>{d.clearance}%</td>
                     <td>{d.officers.toLocaleString()}</td>
@@ -321,10 +321,10 @@ export default function CommissionerPage() {
                     </span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, color: 'var(--text-secondary)' }}>
-                    <MapPin size={9} color="#64748b" />
+                    <MapPin size={9} color="var(--text-muted)" />
                     <span>Districts: <strong>{t.districts}</strong></span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 10, color: '#64748b', marginTop: 4 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>
                     <span>Status: <strong style={{ color: isCrit ? '#ef4444' : '#f59e0b' }}>{t.status}</strong></span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                       <Clock size={10} /> Active {t.since}
@@ -341,7 +341,7 @@ export default function CommissionerPage() {
       {/* ── AI RECOMMENDATIONS SECTION ── */}
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
-          <div className="section-header-line" style={{ background: '#0F6B5C' }} />
+          <div className="section-header-line" style={{ background: 'var(--primary-navy)' }} />
           <h2 className="section-title">AI Suggested Executive Decisions</h2>
           <span className="badge badge-cyan" style={{ marginLeft: 8 }}>PREVENTIVE ACTION LIST</span>
         </div>
@@ -363,9 +363,9 @@ export default function CommissionerPage() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                   <div style={{
                     width: 30, height: 30, borderRadius: '50%',
-                    background: 'rgba(30, 58, 95,0.08)', border: '1px solid rgba(30, 58, 95,0.2)',
+                    background: 'rgba(139, 30, 30, 0.08)', border: '1px solid rgba(139, 30, 30, 0.2)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 11, fontWeight: 900, color: '#0F6B5C'
+                    fontSize: 11, fontWeight: 900, color: 'var(--primary-navy)'
                   }}>
                     {rec.priority}
                   </div>
@@ -398,7 +398,7 @@ export default function CommissionerPage() {
                       </button>
                       <button
                         className="cyber-btn"
-                        style={{ flex: 1, fontSize: 11, padding: '7px 10px', justifyContent: 'center', background: '#FFFFFF', color: '#475569', border: '1px solid #D1D5DB' }}
+                        style={{ flex: 1, fontSize: 11, padding: '7px 10px', justifyContent: 'center', background: '#FFFFFF', color: 'var(--text-muted)', border: '1px solid var(--border-default)' }}
                       >
                         REVIEW INTEL
                       </button>
@@ -420,7 +420,7 @@ export default function CommissionerPage() {
         <div className="responsive-grid-4" style={{ marginBottom: 14 }}>
           {[
             { label: 'Deployed Officers', value: '28,450', color: '#10b981' },
-            { label: 'Active Cyber Units', value: '589 units', color: '#0F6B5C' },
+            { label: 'Active Cyber Units', value: '589 units', color: 'var(--primary-navy)' },
             { label: 'Active Investigations', value: '14,823', color: '#f59e0b' },
             { label: 'SIT Crime Teams', value: '6 active', color: '#8b5cf6' },
           ].map((item, idx) => (
@@ -429,12 +429,12 @@ export default function CommissionerPage() {
               padding: '10px 14px', borderRadius: 10, textAlign: 'center'
             }}>
               <div style={{ fontSize: 18, fontWeight: 900, color: item.color }}>{item.value}</div>
-              <div style={{ fontSize: 10, color: '#64748b', marginTop: 4, fontWeight: 600, textTransform: 'uppercase' }}>{item.label}</div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4, fontWeight: 600, textTransform: 'uppercase' }}>{item.label}</div>
             </div>
           ))}
         </div>
         <div style={{
-          background: 'rgba(30, 58, 95,0.04)', border: '1px solid rgba(30, 58, 95,0.15)',
+          background: 'rgba(139, 30, 30, 0.04)', border: '1px solid rgba(139, 30, 30, 0.15)',
           borderRadius: 8, padding: '12px 16px', fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6
         }}>
           🎯 <strong>Executive Security Summary:</strong> Response time indices indicate that redeploying 1,200 personnel from the low-activity southern corridor to northern districts (Raichur, Kalaburagi) will yield a <strong>23% increase in state-wide crime resolution efficiency</strong>. SIT Teams have successfully disrupted 3 nodes of the Ballari gang ring in the last 48 hours.

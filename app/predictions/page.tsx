@@ -393,7 +393,7 @@ function PredictionsPageContent() {
 
             <div style={{ textAlign: 'right', flex: '0 0 auto' }}>
               <div style={{ fontSize: 10, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>
-                Model Confidence
+                {lang === 'kn' ? 'ಮಾದರಿ ವಿಶ್ವಾಸಾರ್ಹತೆ' : 'Model Confidence'}
               </div>
               <div style={{ fontSize: 20, fontWeight: 800, color: '#2E8B57' }}>
                 {prediction.modelConfidence}%
@@ -416,7 +416,7 @@ function PredictionsPageContent() {
                   marginLeft: 'auto', fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 6,
                   background: '#FEF2F2', color: '#ef4444', border: '1px solid #FCA5A5',
                 }}>
-                  TOP {prediction.highRiskDistricts.length}
+                  {lang === 'kn' ? 'ಮುಖ್ಯ' : 'TOP'} {prediction.highRiskDistricts.length}
                 </span>
               </div>
 
@@ -440,18 +440,18 @@ function PredictionsPageContent() {
                           </div>
                           <div style={{ fontSize: 9, color: diff > 0 ? '#ef4444' : '#2E8B57', display: 'flex', alignItems: 'center', gap: 2, justifyContent: 'flex-end' }}>
                             <ChevronUp size={9} style={{ transform: diff < 0 ? 'rotate(180deg)' : 'none' }} />
-                            {diff > 0 ? '+' : ''}{diff} pts
+                            {diff > 0 ? '+' : ''}{diff} {lang === 'kn' ? 'ಅಂಕಗಳು' : 'pts'}
                           </div>
                         </div>
                       </div>
 
                       {/* Display explicit details required by prompt */}
                       <div style={{ display: 'flex', gap: 10, marginBottom: 8, fontSize: 10, color: '#475569', flexWrap: 'wrap' }}>
-                        <span><strong>Risk Score:</strong> {d.predictedRisk}/100</span>
+                        <span><strong>{lang === 'kn' ? 'ಅಪಾಯ ಸೂಚ್ಯಂಕ:' : 'Risk Score:'}</strong> {d.predictedRisk}/100</span>
                         <span>•</span>
-                        <span><strong>Threat Level:</strong> <span style={{ color: threatColors[threatLevel].text, fontWeight: 700 }}>{threatLevel}</span></span>
+                        <span><strong>{lang === 'kn' ? 'ಬೆದರಿಕೆ ಮಟ್ಟ:' : 'Threat Level:'}</strong> <span style={{ color: threatColors[threatLevel].text, fontWeight: 700 }}>{(lang === 'kn' ? (threatLevel.toUpperCase() === 'CRITICAL' ? t.priority_critical : threatLevel.toUpperCase() === 'HIGH' ? t.priority_high : t.priority_medium) : threatLevel)}</span></span>
                         <span>•</span>
-                        <span><strong>Confidence:</strong> {d.confidenceScore}%</span>
+                        <span><strong>{lang === 'kn' ? 'ವಿಶ್ವಾಸಾರ್ಹತೆ:' : 'Confidence:'}</strong> {d.confidenceScore}%</span>
                       </div>
 
                       {/* Risk bar */}
@@ -502,16 +502,26 @@ function PredictionsPageContent() {
                       background: '#FFFBEB', border: '1px solid #FDE68A',
                     }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: '#1F2937' }}>{spike.crimeType}</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: '#1F2937' }}>
+                          {lang === 'kn' ? (
+                            spike.crimeType.toLowerCase().includes('cyber') ? t.crime_cybercrime :
+                            spike.crimeType.toLowerCase().includes('theft') ? t.crime_theft :
+                            spike.crimeType.toLowerCase().includes('narcotics') ? t.crime_narcotics :
+                            spike.crimeType.toLowerCase().includes('assault') ? t.crime_assault :
+                            spike.crimeType.toLowerCase().includes('sand') ? t.crime_sand_mining :
+                            spike.crimeType.toLowerCase().includes('organized') ? t.crime_organized :
+                            spike.crimeType
+                          ) : spike.crimeType}
+                        </span>
                         <span style={{ fontSize: 13, fontWeight: 900, color: '#d97706' }}>{spike.expectedIncrease}</span>
                       </div>
                       <div style={{ fontSize: 10, color: '#475569', marginBottom: 6 }}>
-                        Peak: {spike.peakPeriod}
+                        {lang === 'kn' ? 'ಗರಿಷ್ಠ ಅವಧಿ:' : 'Peak:'} {spike.peakPeriod}
                         <span style={{ margin: '0 6px', color: '#D1D5DB' }}>·</span>
-                        Confidence: {spike.confidence}%
+                        {lang === 'kn' ? 'ವಿಶ್ವಾಸಾರ್ಹತೆ:' : 'Confidence:'} {spike.confidence}%
                       </div>
                       <div style={{ fontSize: 10, color: '#475569', marginBottom: 6 }}>
-                        Districts: {spike.affectedDistricts.join(', ')}
+                        {lang === 'kn' ? 'ಜಿಲ್ಲೆಗಳು:' : 'Districts:'} {spike.affectedDistricts.join(', ')}
                       </div>
                       <div style={{ fontSize: 11, color: '#059669', fontWeight: 600 }}>
                         ✓ {spike.preventiveMeasure}

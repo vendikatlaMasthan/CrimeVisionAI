@@ -88,49 +88,110 @@ export default function UserMenu({ user }: UserMenuProps) {
       {/* Dropdown Menu */}
       {isOpen && (
         <div
-          className="absolute right-0 mt-2 w-64 rounded-xl border shadow-2xl z-50 overflow-hidden backdrop-blur-md"
+          className="absolute right-0 mt-2 rounded-xl shadow-lg z-50 overflow-hidden"
           style={{
-            background: 'var(--bg-header)',
-            borderColor: 'var(--border-default)',
+            width: '280px',
+            background: '#FFFFFF',
+            border: '1px solid #E2E8F0',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
           }}
         >
-          {/* User Info Header */}
-          <div
-            className="p-4 border-b flex flex-col gap-1.5"
-            style={{ borderColor: 'var(--border-default)', background: 'rgba(0, 212, 255, 0.02)' }}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black text-[var(--text-primary)] tracking-wide">
+          {/* 1. Identity Header */}
+          <div style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {/* Circular avatar placeholder */}
+            <div
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: 'rgba(11, 31, 58, 0.05)',
+                border: '1px solid #E2E8F0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <User size={20} style={{ color: '#0B1F3A' }} />
+            </div>
+            {/* Officer info */}
+            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
+              <span style={{ fontSize: '15px', fontWeight: 700, color: '#0B1F3A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {user?.name ?? 'KSP Officer'}
               </span>
-              <span
-                className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full uppercase"
-                style={{ background: badge.color, color: badge.textCol, border: `1px solid ${badge.textCol}33` }}
-              >
-                {badge.text}
+              <span style={{ fontSize: '13px', color: '#64748B', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {user?.designation ?? 'Inspector'}
               </span>
             </div>
-            {user?.badgeNumber && (
-              <span className="text-[10px] font-mono text-[var(--text-muted)]">
-                Badge: {user.badgeNumber}
-              </span>
-            )}
-            <span className="text-[10px] text-[var(--text-muted)]">
-              Karnataka State Police Command
+            {/* Role Badge */}
+            <span
+              style={{
+                fontSize: '10px',
+                fontWeight: 800,
+                color: '#0B1F3A',
+                background: 'rgba(11, 31, 58, 0.08)',
+                padding: '2px 8px',
+                borderRadius: '12px',
+                textTransform: 'uppercase',
+                flexShrink: 0,
+              }}
+            >
+              {badge.text}
             </span>
           </div>
 
-          {/* Links/Actions */}
-          <div className="p-1.5 space-y-0.5">
+          {/* Divider */}
+          <div style={{ height: '1px', background: '#E2E8F0' }} />
+
+          {/* 3. Meta Info Block */}
+          <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div>
+              <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748B', marginBottom: '2px' }}>
+                Badge Number
+              </div>
+              <div style={{ fontSize: '13px', color: '#0B1F3A', fontWeight: 500 }}>
+                {user?.badgeNumber ?? 'KSP-94827'}
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748B', marginBottom: '2px' }}>
+                Command Center
+              </div>
+              <div style={{ fontSize: '13px', color: '#0B1F3A', fontWeight: 500 }}>
+                Karnataka Police HQ
+              </div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div style={{ height: '1px', background: '#E2E8F0' }} />
+
+          {/* 5. Action List */}
+          <div style={{ padding: '4px 0' }}>
             {/* Profile */}
             <button
               onClick={() => {
                 setIsOpen(false);
                 router.push('/settings#profile');
               }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-slate-500/5 transition-colors cursor-pointer text-left"
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px 16px',
+                fontSize: '14px',
+                color: '#0B1F3A',
+                border: 'none',
+                background: 'transparent',
+                cursor: 'pointer',
+                textAlign: 'left',
+                transition: 'background 150ms ease',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#F1F5F9'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
             >
-              <User size={13} className="text-[var(--accent-cyan)]" />
+              <User size={16} style={{ color: '#64748B' }} />
               <span>Profile</span>
             </button>
 
@@ -140,40 +201,87 @@ export default function UserMenu({ user }: UserMenuProps) {
                 setIsOpen(false);
                 router.push('/settings');
               }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-slate-500/5 transition-colors cursor-pointer text-left"
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px 16px',
+                fontSize: '14px',
+                color: '#0B1F3A',
+                border: 'none',
+                background: 'transparent',
+                cursor: 'pointer',
+                textAlign: 'left',
+                transition: 'background 150ms ease',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#F1F5F9'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
             >
-              <Settings size={13} className="text-[var(--accent-cyan)]" />
+              <Settings size={16} style={{ color: '#64748B' }} />
               <span>Settings</span>
             </button>
 
-            <hr className="my-1 opacity-10" style={{ borderColor: 'var(--border-default)' }} />
-
-
-
-            {/* Language */}
+            {/* Language Selection Row as an interactive control */}
             <button
               onClick={() => {
                 setLang(lang === 'en' ? 'kn' : 'en');
               }}
-              className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-lg hover:bg-slate-500/5 transition-colors cursor-pointer text-left"
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '12px 16px',
+                fontSize: '14px',
+                color: '#0B1F3A',
+                border: 'none',
+                background: 'transparent',
+                cursor: 'pointer',
+                textAlign: 'left',
+                transition: 'background 150ms ease',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#F1F5F9'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
             >
-              <div className="flex items-center gap-2.5">
-                <Globe size={13} className="text-[var(--accent-cyan)]" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+                <Globe size={16} style={{ color: '#64748B' }} />
                 <span>Language</span>
               </div>
-              <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-white/5 text-[var(--text-muted)]">
-                {lang === 'en' ? 'English' : 'ಕನ್ನಡ'}
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{ fontSize: '13px', color: '#64748B', fontWeight: 600 }}>
+                  {lang === 'en' ? 'English' : 'ಕನ್ನಡ'}
+                </span>
+                <ChevronDown size={14} style={{ color: '#64748B', transform: 'rotate(-90deg)' }} />
+              </div>
             </button>
+          </div>
 
-            <hr className="my-1 opacity-10" style={{ borderColor: 'var(--border-default)' }} />
+          {/* Divider */}
+          <div style={{ height: '1px', background: '#E2E8F0' }} />
 
-            {/* Logout */}
+          {/* 7. Logout */}
+          <div style={{ padding: '4px 0' }}>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-red-500 hover:text-red-400 rounded-lg hover:bg-red-500/5 transition-colors cursor-pointer text-left"
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px 16px',
+                fontSize: '14px',
+                color: '#EF4444',
+                border: 'none',
+                background: 'transparent',
+                cursor: 'pointer',
+                textAlign: 'left',
+                transition: 'background 150ms ease',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#FEF2F2'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
             >
-              <LogOut size={13} />
+              <LogOut size={16} style={{ color: '#EF4444' }} />
               <span>Logout</span>
             </button>
           </div>
