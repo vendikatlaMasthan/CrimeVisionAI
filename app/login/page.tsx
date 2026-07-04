@@ -789,27 +789,35 @@ export default function LoginPage() {
 
         .input-field-icon {
           position: absolute;
-          left: 14px;
+          left: 12px;
+          top: 50%;
+          transform: translateY(-50%);
           color: var(--text-muted);
+          pointer-events: none;
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .input-field {
           width: 100%;
           height: 42px;
           border-radius: 10px;
-          border: 1px solid var(--surface-border);
-          background: #F8FAFC;
-          padding: 0 14px 0 42px;
-          font-size: 13px;
-          color: var(--text-primary);
+          border: 1px solid var(--neutral-border) !important;
+          background: #F8FAFC !important;
+          padding-left: 44px !important;
+          padding-right: 44px !important;
+          font-size: 13px !important;
+          color: var(--text-primary) !important;
           outline: none;
           transition: all 150ms ease;
         }
 
         .input-field:focus {
-          border-color: var(--brand-crimson);
-          background: #FFFFFF;
-          box-shadow: 0 0 0 3px rgba(181, 52, 43, 0.08);
+          border-color: var(--brand-crimson) !important;
+          background: #FFFFFF !important;
+          box-shadow: 0 0 0 3px rgba(181, 52, 43, 0.08) !important;
         }
  
         .input-password-toggle {
@@ -821,7 +829,8 @@ export default function LoginPage() {
           cursor: pointer;
           display: flex;
           align-items: center;
-          justifyContent: center;
+          justify-content: center;
+          z-index: 10;
         }
  
         .input-password-toggle:hover {
