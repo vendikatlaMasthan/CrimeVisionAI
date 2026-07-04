@@ -21,6 +21,7 @@ import { PortalType } from '@/lib/rbac';
 interface SidebarProps {
   user?: DemoAccount | null;
   portalType: PortalType;
+  isOpen?: boolean;
 }
 
 interface SidebarItemProps {
@@ -99,7 +100,7 @@ function SectionLabel({ label }: { label: string }) {
   );
 }
 
-export default function Sidebar({ user, portalType }: SidebarProps) {
+export default function Sidebar({ user, portalType, isOpen = true }: SidebarProps) {
   const router = useRouter();
   const { lang } = useLanguage();
   const unreadAlertsCount = LIVE_ALERTS.filter(alert => !alert.acknowledged).length;
@@ -108,11 +109,13 @@ export default function Sidebar({ user, portalType }: SidebarProps) {
     <aside
       className="fixed left-0 top-0 h-screen flex flex-col z-50 select-none"
       style={{
-        width: '256px',
+        width: isOpen ? '256px' : '0px',
         background: '#FFFFFF',
-        borderRight: '1px solid #E5E7EB',
+        borderRight: isOpen ? '1px solid #E5E7EB' : 'none',
         top: '72px', // Below GovHeader
         height: 'calc(100vh - 72px)',
+        transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease',
+        overflow: 'hidden',
       }}
     >
       {/* ── Logo Block ─────────────────────────────────────────────── */}

@@ -5,7 +5,7 @@ import { PortalType } from '@/lib/rbac';
 import { 
   Bell, Search, Shield, X, FileText, User, MapPin, AlertTriangle, 
   Monitor, Sun, Moon, Menu, Mic, MicOff, Brain, Sparkles, 
-  TrendingUp, ChevronRight, Activity, ShieldAlert, ArrowRight, CornerDownLeft
+  TrendingUp, ChevronRight, Activity, ShieldAlert, ArrowRight, CornerDownLeft, Clock
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -22,15 +22,18 @@ import { DemoAccount } from '@/lib/crimeData';
 interface TopbarProps {
   user?: DemoAccount | null;
   portalType: PortalType;
+  onToggleSidebar?: () => void;
+  isSidebarOpen?: boolean;
 }
 
-export default function Topbar({ user, portalType }: TopbarProps) {
+export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpen = true }: TopbarProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [voiceSupported, setVoiceSupported] = useState(false);
+  const [liveTime, setLiveTime] = useState<string>('');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<any>(null);
@@ -48,6 +51,29 @@ export default function Topbar({ user, portalType }: TopbarProps) {
       const w = window as any;
       setVoiceSupported(!!(w.SpeechRecognition || w.webkitSpeechRecognition));
     }
+  }, []);
+
+  // Live time/clock updates every second
+  useEffect(() => {
+    const updateTime = () => {
+      const date = new Date();
+      const day = String(date.getDate()).padStart(2, '0');
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+      
+      let hours = date.getHours();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      
+      setLiveTime(`${day} ${month} ${year}, ${String(hours).padStart(2, '0')}:${minutes} ${ampm} IST`);
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   // Keyboard shortcut: Press "/" to focus, "ESC" to close
@@ -328,23 +354,27 @@ export default function Topbar({ user, portalType }: TopbarProps) {
       <header
         className="fixed top-0 right-0 flex items-center justify-between px-6 z-40"
         style={{
-          left: '256px',
+          left: isSidebarOpen ? '256px' : '0px',
           top: '72px',
           background: '#FFFFFF',
           borderBottom: '1px solid #E5E7EB',
           height: '64px',
+          transition: 'left 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
         {/* Left: Context Label & Mobile Hamburg Toggle */}
         <div className="flex items-center gap-3">
-          {/* Hamburger Menu Toggle (Mobile Only) */}
+          {/* Hamburger Menu Toggle */}
           <button
             onClick={() => {
               if (typeof document !== 'undefined') {
                 document.body.classList.toggle('sidebar-open');
               }
+              if (onToggleSidebar) {
+                onToggleSidebar();
+              }
             }}
-            className="hamburger-btn lg:hidden p-1.5 rounded-lg border cursor-pointer transition-colors"
+            className="hamburger-btn p-1.5 rounded-lg border cursor-pointer transition-colors"
             style={{
               borderColor: 'var(--border-default)',
               background: '#F3F4F6',
@@ -352,10 +382,13 @@ export default function Topbar({ user, portalType }: TopbarProps) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              width: '40px',
+              height: '40px',
+              cursor: 'pointer',
             }}
             title="Toggle Sidebar"
           >
-            <Menu size={16} />
+            <Menu size={20} />
           </button>
           
           <span className="hidden md:inline text-xs font-semibold text-[var(--text-muted)] tracking-widest uppercase">
@@ -894,8 +927,16 @@ export default function Topbar({ user, portalType }: TopbarProps) {
 
         {/* Right: Spaced Actions Row */}
         <div className="flex items-center gap-3 justify-end">
-
-
+          {/* Live Clock */}
+          {liveTime && (
+            <div 
+              className="hidden lg:flex items-center text-xs font-mono text-[var(--text-muted)] bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg h-9"
+              style={{ letterSpacing: '0.02em', boxSizing: 'border-box' }}
+            >
+              <Clock size={12} className="mr-1.5 text-slate-500" />
+              <span>{liveTime}</span>
+            </div>
+          )}
 
           {/* Language Toggle Link */}
           <div className="flex items-center gap-1 border border-[var(--border-default)] rounded-lg p-0.5 px-1.5 h-9">

@@ -41,6 +41,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<DemoAccount | null>(null);
   const [showIntro, setShowIntro] = useState(false);
   const [accessDenied, setAccessDenied] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const isLoginPage = PUBLIC_PATHS.some(p => pathname === p || pathname.startsWith('/login'));
   const portalType: PortalType = user ? getPortalForRole(user.role) : 'officer';
@@ -150,12 +151,23 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
       <div className="flex min-h-screen w-full overflow-hidden" style={{ paddingTop: `${GOV_HEADER_HEIGHT}px` }}>
         {/* Sidebar — starts below GovHeader */}
-        <Sidebar user={user} portalType={portalType} />
+        <Sidebar user={user} portalType={portalType} isOpen={isSidebarOpen} />
         <div className="mobile-sidebar-overlay" onClick={closeSidebar} />
 
         {/* Main content area */}
-        <main className="flex-1 min-h-screen min-w-0 flex flex-col" style={{ paddingLeft: `${SIDEBAR_WIDTH}px` }}>
-          <Topbar user={user} portalType={portalType} />
+        <main 
+          className="flex-1 min-h-screen min-w-0 flex flex-col" 
+          style={{ 
+            paddingLeft: isSidebarOpen ? `${SIDEBAR_WIDTH}px` : '0px',
+            transition: 'padding-left 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+          }}
+        >
+          <Topbar 
+            user={user} 
+            portalType={portalType} 
+            onToggleSidebar={() => setIsSidebarOpen(prev => !prev)} 
+            isSidebarOpen={isSidebarOpen} 
+          />
           <div className="flex-1 page-transition" key={pathname} style={{ paddingTop: `${TOPBAR_HEIGHT}px` }}>
             <GlobalSimulationBanner />
             {children}

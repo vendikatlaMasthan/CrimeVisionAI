@@ -1028,17 +1028,20 @@ html, body {
 ───────────────────────────────────────────── */
 .responsive-grid-4 {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 18px;
 }
-@media (max-width: 1200px) {
+@media (max-width: 480px) {
   .responsive-grid-4 {
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 12px;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
   }
-}
-@media (max-width: 680px) {
-  .responsive-grid-4 {
-    grid-template-columns: 1fr;
+  .responsive-grid-4 > * {
+    flex: 0 0 240px;
   }
 }
 

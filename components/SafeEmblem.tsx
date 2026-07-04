@@ -12,7 +12,12 @@ interface SafeEmblemProps {
 
 export default function SafeEmblem({ width = 50, height = 50, className, style }: SafeEmblemProps) {
   const [error, setError] = useState(false);
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  let basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  if (!basePath && typeof window !== 'undefined') {
+    if (window.location.pathname.startsWith('/CrimeVisionAI')) {
+      basePath = '/CrimeVisionAI';
+    }
+  }
 
   if (error) {
     return (
