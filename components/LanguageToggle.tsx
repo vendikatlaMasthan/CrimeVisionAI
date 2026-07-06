@@ -27,7 +27,7 @@ const LanguageContext = createContext<LanguageContextValue>({
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Language>('en');
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount and register chunk-error event listeners
   useEffect(() => {
     try {
       const stored = localStorage.getItem('ksp_lang') as Language | null;
@@ -36,6 +36,46 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       }
     } catch {
       // localStorage unavailable
+    }
+
+    // Chunk Load Error Auto-Recovery
+    if (typeof window !== 'undefined') {
+      const handleError = (event: ErrorEvent) => {
+        const isChunkError =
+          event?.message?.includes('ChunkLoadError') ||
+          event?.message?.includes('Loading chunk') ||
+          event?.message?.includes('Failed to fetch dynamically imported module');
+
+        if (isChunkError) {
+          const alreadyReloaded = sessionStorage.getItem('chunk-reload-attempted');
+          if (!alreadyReloaded) {
+            sessionStorage.setItem('chunk-reload-attempted', 'true');
+            window.location.reload();
+          }
+        }
+      };
+
+      const handleRejection = (event: PromiseRejectionEvent) => {
+        const isChunkError = String(event?.reason?.message || '').includes('ChunkLoadError');
+        if (isChunkError) {
+          const alreadyReloaded = sessionStorage.getItem('chunk-reload-attempted');
+          if (!alreadyReloaded) {
+            sessionStorage.setItem('chunk-reload-attempted', 'true');
+            window.location.reload();
+          }
+        }
+      };
+
+      window.addEventListener('error', handleError);
+      window.addEventListener('unhandledrejection', handleRejection);
+
+      // Clear the attempt flag on successful mount/load
+      sessionStorage.removeItem('chunk-reload-attempted');
+
+      return () => {
+        window.removeEventListener('error', handleError);
+        window.removeEventListener('unhandledrejection', handleRejection);
+      };
     }
   }, []);
 

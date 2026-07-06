@@ -23,6 +23,13 @@ export default function SafeEmblem({ width = 50, height = 50, className, style }
     }
   }
 
+  const [imgSrc, setImgSrc] = useState(`${basePath}/seal-karnataka.svg`);
+
+  // Synchronize with basePath on mount/change
+  useEffect(() => {
+    setImgSrc(`${basePath}/seal-karnataka.svg`);
+  }, [basePath]);
+
   if (!mounted || error) {
     return (
       <div
@@ -48,10 +55,14 @@ export default function SafeEmblem({ width = 50, height = 50, className, style }
 
   return (
     <img
-      src={`${basePath}/seal-karnataka.svg`}
+      src={imgSrc}
       onError={() => {
-        console.warn('Emblem failed to load, falling back to placeholder.');
-        setError(true);
+        if (basePath && imgSrc !== '/seal-karnataka.svg') {
+          setImgSrc('/seal-karnataka.svg');
+        } else {
+          console.warn('Emblem failed to load, falling back to placeholder.');
+          setError(true);
+        }
       }}
       alt="Official Emblem of the Government of Karnataka"
       width={width}
