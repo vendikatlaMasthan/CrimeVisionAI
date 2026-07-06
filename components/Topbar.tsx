@@ -33,7 +33,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [voiceSupported, setVoiceSupported] = useState(false);
-  const [liveTime, setLiveTime] = useState<string>('');
+
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<any>(null);
@@ -53,30 +53,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
     }
   }, []);
 
-  // Live time/clock updates every second
-  useEffect(() => {
-    const updateTime = () => {
-      const date = new Date();
-      const formatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: 'Asia/Kolkata',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-      });
-      const parts = formatter.formatToParts(date);
-      const hour = parts.find(p => p.type === 'hour')?.value || '';
-      const minute = parts.find(p => p.type === 'minute')?.value || '';
-      const second = parts.find(p => p.type === 'second')?.value || '';
-      const dayPeriod = (parts.find(p => p.type === 'dayPeriod')?.value || '').toUpperCase();
 
-      setLiveTime(`${hour}:${minute}:${second} ${dayPeriod} IST`);
-    };
-
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   // Keyboard shortcut: Press "/" to focus, "ESC" to close
   useEffect(() => {
@@ -355,9 +332,14 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
     <>
 
       <style>{`
+        .header > *:not(.search-bar-responsive) {
+          flex: 0 0 auto !important;
+        }
         @media (min-width: 1200px) {
           .search-bar-responsive {
-            width: 440px !important;
+            flex: 1 1 auto !important;
+            min-width: 320px !important;
+            max-width: 720px !important;
           }
           .kbd-shortcut-responsive {
             display: inline-block !important;
@@ -368,7 +350,9 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
         }
         @media (min-width: 1024px) and (max-width: 1199px) {
           .search-bar-responsive {
-            width: 320px !important;
+            flex: 1 1 auto !important;
+            min-width: 320px !important;
+            max-width: 720px !important;
           }
           .kbd-shortcut-responsive {
             display: none !important;
@@ -379,7 +363,9 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
         }
         @media (max-width: 1023px) {
           .search-bar-responsive {
+            flex: 0 0 auto !important;
             width: 220px !important;
+            min-width: 220px !important;
           }
           .kbd-shortcut-responsive {
             display: none !important;
@@ -390,7 +376,9 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
         }
         @media (max-width: 768px) {
           .search-bar-responsive {
+            flex: 0 0 auto !important;
             width: 180px !important;
+            min-width: 180px !important;
           }
           .kbd-shortcut-responsive {
             display: none !important;
@@ -764,67 +752,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
 
         {/* Right Section: Date, Live Time, Restricted Badge, Language Toggle, Bell Notifications & Profile */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginLeft: 'auto', flexShrink: 0 }}>
-          {/* Date Card */}
-          {(() => {
-            const date = new Date();
-            const formatter = new Intl.DateTimeFormat('en-US', {
-              timeZone: 'Asia/Kolkata',
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric'
-            });
-            const parts = formatter.formatToParts(date);
-            const day = parts.find(p => p.type === 'day')?.value || '';
-            const month = parts.find(p => p.type === 'month')?.value || '';
-            const year = parts.find(p => p.type === 'year')?.value || '';
-            return (
-              <div 
-                className="date-card hidden xl:flex"
-                style={{
-                  width: '130px',
-                  height: '40px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: '1px solid #E5E7EB',
-                  borderRadius: '12px',
-                  fontSize: '13.5px',
-                  color: '#374151',
-                  whiteSpace: 'nowrap',
-                  background: '#FFFFFF',
-                  boxSizing: 'border-box'
-                }}
-              >
-                {`${day} ${month} ${year}`}
-              </div>
-            );
-          })()}
 
-          {/* Live Time Card */}
-          {liveTime && (
-            <div 
-              className="time-card hidden lg:flex"
-              style={{
-                width: '150px',
-                height: '40px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-                border: '1px solid #E5E7EB',
-                borderRadius: '12px',
-                fontSize: '13.5px',
-                color: '#374151',
-                whiteSpace: 'nowrap',
-                fontVariantNumeric: 'tabular-nums',
-                background: '#FFFFFF',
-                boxSizing: 'border-box'
-              }}
-            >
-              <Clock size={14} className="icon-clock text-slate-500" />
-              <span>{liveTime}</span>
-            </div>
-          )}
 
           {/* Restricted Badge */}
           <div 
