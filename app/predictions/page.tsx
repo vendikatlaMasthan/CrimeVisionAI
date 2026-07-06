@@ -408,13 +408,14 @@ function PredictionsPageContent() {
             {/* ── High Risk Districts ───────────────────────────────── */}
             <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 16, padding: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                <MapPin size={15} color="#ef4444" />
+                <MapPin size={15} color="#ef4444" style={{ flexShrink: 0 }} />
                 <span style={{ fontSize: 12, fontWeight: 800, color: '#1F2937', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                  {t.pred_high_risk_districts}
+                  {lang === 'kn' ? 'ಮುಂದಿನ ೩೦ ದಿನಗಳಲ್ಲಿ ಹೆಚ್ಚಿನ ಅಪಾಯದಲ್ಲಿರುವ ಜಿಲ್ಲೆಗಳು' : 'Districts at High Risk in Next 30 Days'}
                 </span>
                 <span style={{
                   marginLeft: 'auto', fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 6,
                   background: '#FEF2F2', color: '#ef4444', border: '1px solid #FCA5A5',
+                  flexShrink: 0
                 }}>
                   {lang === 'kn' ? 'ಮುಖ್ಯ' : 'TOP'} {prediction.highRiskDistricts.length}
                 </span>
@@ -432,7 +433,9 @@ function PredictionsPageContent() {
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
                         <div>
                           <div style={{ fontSize: 13, fontWeight: 700, color: '#1F2937' }}>{d.district}</div>
-                          <div style={{ fontSize: 10, color: '#475569', marginTop: 1 }}>{d.primaryThreat} · {d.secondaryThreat}</div>
+                          <div style={{ fontSize: 10, color: '#475569', marginTop: 1 }}>
+                            <strong>Primary Threat:</strong> {d.primaryThreat} ({diff > 0 ? '+' : ''}{diff}% predicted risk surge)
+                          </div>
                         </div>
                         <div style={{ textAlign: 'right' }}>
                           <div style={{ fontSize: 18, fontWeight: 900, color: riskBarColor(d.predictedRisk) }}>

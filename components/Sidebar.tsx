@@ -114,7 +114,7 @@ export default function Sidebar({ user, portalType, isOpen = true }: SidebarProp
         borderRight: isOpen ? '1px solid #E5E7EB' : 'none',
         top: '72px', // Below GovHeader
         height: 'calc(100vh - 72px)',
-        transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease',
+        transition: 'all 250ms ease',
         overflow: 'hidden',
       }}
     >

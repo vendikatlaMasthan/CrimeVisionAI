@@ -14,6 +14,7 @@ import { useLanguage } from '@/components/LanguageToggle';
 import { RECENT_FIRS, TOP_SUSPECTS, DISTRICTS, type FIRRecord } from '@/lib/crimeData';
 import { hasAnyApiKey } from '@/lib/apiKey';
 import { generateText } from '@/lib/aiService';
+import { InputWithIcon } from '@/components/InputWithIcon';
 
 // ─── AI Case Summary ──────────────────────────────────────────────────────────
 
@@ -78,48 +79,90 @@ interface JsPDF {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const priorityColors: Record<string, { text: string; bg: string; border: string }> = {
-  Critical: { text: '#ef4444', bg: '#fee2e2', border: '#fca5a5' },
-  High:     { text: '#f59e0b', bg: '#fef3c7', border: '#fde68a' },
-  Medium:   { text: '#1976D2', bg: '#e0f2fe', border: '#bae6fd' },
-  Low:      { text: '#2E8B57', bg: '#d1fae5', border: '#a7f3d0' },
+  Critical: { text: 'var(--color-red)', bg: 'rgba(220, 38, 38, 0.08)', border: 'rgba(220, 38, 38, 0.15)' },
+  High:     { text: 'var(--color-red)', bg: 'rgba(220, 38, 38, 0.08)', border: 'rgba(220, 38, 38, 0.15)' },
+  Medium:   { text: 'var(--color-orange)', bg: 'rgba(245, 158, 11, 0.08)', border: 'rgba(245, 158, 11, 0.15)' }, // Fixed to orange
+  Low:      { text: 'var(--color-green)', bg: 'rgba(22, 163, 74, 0.08)', border: 'rgba(22, 163, 74, 0.15)' },
 };
 
 const statusColors: Record<string, string> = {
-  'Under Investigation': '#f59e0b',
-  'Arrested': '#2E8B57',
-  'Closed': '#64748b',
-  'Pending': '#ef4444',
-  'Absconding': '#ef4444',
+  'Under Investigation': 'var(--color-orange)',
+  'Arrested': 'var(--color-green)',
+  'Closed': 'var(--color-gray)',
+  'Pending': 'var(--color-red)',
+  'Absconding': 'var(--color-red)',
 };
 
 // ─── FIR Card ─────────────────────────────────────────────────────────────────
 
 function FIRCard({ fir, onClick, isSelected }: { fir: FIRRecord; onClick: () => void; isSelected: boolean }) {
+  const [isHovered, setIsHovered] = useState(false);
   const pc = priorityColors[fir.priority] ?? priorityColors.Low;
+
+  const cardStyle: React.CSSProperties = {
+    width: '100%',
+    textAlign: 'left',
+    padding: '16px',
+    borderRadius: 'var(--radius, 16px)',
+    cursor: 'pointer',
+    background: isSelected ? 'rgba(26, 43, 76, 0.05)' : '#FFFFFF',
+    border: '1px solid #E5E7EB',
+    borderLeft: isSelected ? '4px solid var(--color-navy)' : '1px solid #E5E7EB',
+    boxShadow: isHovered ? '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' : '0 1px 3px rgba(0,0,0,0.05)',
+    transform: isHovered ? 'translateY(-2px)' : 'none',
+    transition: 'all 250ms ease',
+    fontFamily: 'inherit',
+    outline: 'none',
+    boxSizing: 'border-box',
+    display: 'block',
+    marginBottom: '12px',
+  };
+
   return (
     <button
       onClick={onClick}
-      style={{
-        width: '100%', textAlign: 'left', padding: 16, borderRadius: 12, cursor: 'pointer',
-        background: isSelected ? 'rgba(15, 107, 92, 0.08)' : '#FFFFFF',
-        border: `1px solid ${isSelected ? '#0F6B5C' : '#E5E7EB'}`,
-        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-        transition: 'all 0.15s', fontFamily: 'inherit',
-      }}
-      onMouseEnter={e => { if (!isSelected) { (e.currentTarget as HTMLButtonElement).style.borderColor = '#0F6B5C'; }}}
-      onMouseLeave={e => { if (!isSelected) { (e.currentTarget as HTMLButtonElement).style.borderColor = '#E5E7EB'; }}}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={cardStyle}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-        <span style={{ fontSize: 12, fontFamily: 'monospace', fontWeight: 700, color: '#0F6B5C' }}>{fir.firNumber}</span>
-        <span style={{ fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 4,
-          background: pc.bg, color: pc.text, border: `1px solid ${pc.border}`, textTransform: 'uppercase' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, alignItems: 'center' }}>
+        <span style={{ fontSize: 12, fontFamily: 'monospace', fontWeight: 700, color: 'var(--color-navy)' }}>{fir.firNumber}</span>
+        <span style={{
+          fontSize: 9,
+          fontWeight: 800,
+          padding: '4px 10px',
+          borderRadius: '9999px',
+          background: pc.bg,
+          color: pc.text,
+          border: `1.5px solid ${pc.border}`,
+          textTransform: 'uppercase',
+          letterSpacing: '0.04em',
+          display: 'inline-flex',
+          alignItems: 'center',
+          height: '20px',
+        }}>
           {fir.priority}
         </span>
       </div>
-      <div style={{ fontSize: 13, fontWeight: 700, color: '#1F2937', marginBottom: 6 }}>{fir.crimeType}</div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#475569' }}>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={11} />{fir.district}</span>
-        <span style={{ color: statusColors[fir.status] ?? '#475569', fontWeight: 600 }}>{fir.status}</span>
+      <div style={{ fontSize: 13, fontWeight: 700, color: '#1F2937', marginBottom: 8 }}>{fir.crimeType}</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#475569', alignItems: 'center' }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={11} className="text-gray-400" />{fir.district}</span>
+        <span style={{
+          fontSize: 9,
+          fontWeight: 800,
+          padding: '4px 10px',
+          borderRadius: '9999px',
+          background: 'rgba(107, 114, 128, 0.08)',
+          color: statusColors[fir.status] ?? 'var(--color-gray)',
+          border: '1.5px solid rgba(107, 114, 128, 0.15)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.04em',
+          display: 'inline-flex',
+          alignItems: 'center',
+          height: '20px',
+        }}>
+          {fir.status}
+        </span>
       </div>
     </button>
   );
@@ -472,21 +515,31 @@ function FIRPageContent() {
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
           
           {/* Search Input */}
-          <div className="input-with-icon" style={{ flex: 1, minWidth: 260 }}>
-            <Search size={16} color="#6B7280" className="icon" />
-            <input
-              type="text"
+          <div style={{ flex: 1, minWidth: 260, position: 'relative' }}>
+            <InputWithIcon
+              icon={Search}
               placeholder="Search by FIR number, suspect, crime type, or district..."
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={setSearchQuery}
               style={{
-                width: '100%', padding: '10px 12px', borderRadius: 8,
-                border: '1px solid #D1D5DB', background: '#FFFFFF', color: '#1F2937',
-                fontSize: 13, outline: 'none', fontFamily: 'inherit',
+                background: '#FFFFFF',
               }}
             />
             {searchQuery && (
-              <button onClick={() => setSearchQuery('')} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'transparent', cursor: 'pointer', color: '#6B7280' }}>
+              <button 
+                onClick={() => setSearchQuery('')} 
+                style={{ 
+                  position: 'absolute', 
+                  right: 12, 
+                  top: '50%', 
+                  transform: 'translateY(-50%)', 
+                  border: 'none', 
+                  background: 'transparent', 
+                  cursor: 'pointer', 
+                  color: '#6B7280',
+                  zIndex: 20
+                }}
+              >
                 <X size={14} />
               </button>
             )}

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Camera } from 'lucide-react';
 import * as d3 from 'd3';
 import { 
   MapPin, AlertTriangle, Shield, Activity, Eye, Filter, Calendar, Users, 
@@ -190,6 +191,49 @@ const DISTRICT_DATA: Record<string, {
   }
 };
 
+const SOCIO_ECONOMIC_DATA: Record<string, { unemployment: number; density: number; urbanization: string }> = {
+  "Bidar": { unemployment: 7.2, density: 210, urbanization: "Medium" },
+  "Kalaburagi": { unemployment: 12.4, density: 160, urbanization: "Low" },
+  "Yadgir": { unemployment: 9.8, density: 140, urbanization: "Low" },
+  "Raichur": { unemployment: 11.2, density: 180, urbanization: "Low" },
+  "Koppal": { unemployment: 6.8, density: 190, urbanization: "Low" },
+  "Vijayapura": { unemployment: 8.5, density: 200, urbanization: "Medium" },
+  "Bagalkot": { unemployment: 7.6, density: 220, urbanization: "Medium" },
+  "Belagavi": { unemployment: 6.1, density: 360, urbanization: "Medium" },
+  "Dharwad": { unemployment: 5.8, density: 440, urbanization: "High" },
+  "Hubli-Dharwad": { unemployment: 5.6, density: 980, urbanization: "High" },
+  "Gadag": { unemployment: 6.4, density: 200, urbanization: "Low" },
+  "Uttara Kannada": { unemployment: 4.8, density: 130, urbanization: "Low" },
+  "Haveri": { unemployment: 5.9, density: 230, urbanization: "Low" },
+  "Ballari": { unemployment: 10.5, density: 390, urbanization: "High" },
+  "Vijayanagara": { unemployment: 6.2, density: 180, urbanization: "Low" },
+  "Davangere": { unemployment: 6.0, density: 310, urbanization: "Medium" },
+  "Chitradurga": { unemployment: 7.1, density: 190, urbanization: "Low" },
+  "Shivamogga": { unemployment: 5.2, density: 210, urbanization: "Medium" },
+  "Udupi": { unemployment: 3.8, density: 300, urbanization: "Medium" },
+  "Dakshina Kannada": { unemployment: 4.2, density: 450, urbanization: "High" },
+  "Chikkamagaluru": { unemployment: 5.0, density: 160, urbanization: "Low" },
+  "Hassan": { unemployment: 4.4, density: 280, urbanization: "Medium" },
+  "Tumakuru": { unemployment: 5.1, density: 250, urbanization: "Medium" },
+  "Chikkaballapur": { unemployment: 5.8, density: 310, urbanization: "Medium" },
+  "Kolar": { unemployment: 6.7, density: 380, urbanization: "Medium" },
+  "Bengaluru Rural": { unemployment: 4.9, density: 430, urbanization: "High" },
+  "Bengaluru Urban": { unemployment: 5.2, density: 4380, urbanization: "Critical" },
+  "Ramanagara": { unemployment: 5.4, density: 320, urbanization: "Medium" },
+  "Mandya": { unemployment: 4.6, density: 360, urbanization: "Medium" },
+  "Kodagu": { unemployment: 3.1, density: 130, urbanization: "Low" },
+  "Mysuru": { unemployment: 5.3, density: 470, urbanization: "High" },
+  "Chamarajanagar": { unemployment: 6.9, density: 180, urbanization: "Low" }
+};
+
+const getStationsForDistrict = (districtName: string) => {
+  return [
+    { name: `${districtName} Town Station`, latOffset: 0.12, lngOffset: -0.08, activeAlerts: 2, officers: 15 },
+    { name: `${districtName} Rural Station`, latOffset: -0.10, lngOffset: 0.12, activeAlerts: 0, officers: 8 },
+    { name: `${districtName} Industrial Zone Station`, latOffset: 0.04, lngOffset: 0.06, activeAlerts: 3, officers: 12 },
+  ];
+};
+
 // Map Projection helper
 const getCoords = (lat: number, lng: number) => {
   const w = 450;
@@ -203,6 +247,57 @@ const getCoords = (lat: number, lng: number) => {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+
+// Cache Karnataka GeoJSON globally to prevent reloading on navigations
+let cachedGeoJson: any = null;
+
+class MapErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error("Map rendering crash caught by Boundary:", error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{
+          padding: '40px',
+          textAlign: 'center',
+          background: 'rgba(239,68,68,0.05)',
+          border: '1.5px solid rgba(239,68,68,0.2)',
+          borderRadius: '16px',
+          margin: '20px 0',
+          width: '100%'
+        }}>
+          <AlertTriangle size={36} color="#ef4444" style={{ margin: '0 auto 12px' }} />
+          <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#ef4444', marginBottom: '8px' }}>
+            Map Visualizer Engine Failed
+          </h3>
+          <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+            The WebGL / SVG projection rendering encountered a temporary memory or browser context issue.
+          </p>
+          <button
+            onClick={() => this.setState({ hasError: false })}
+            style={{
+              padding: '8px 16px',
+              background: '#ef4444',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '8px',
+              fontWeight: 700,
+              fontSize: '12px',
+              cursor: 'pointer'
+            }}
+          >
+            Reset Engine
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function HeatmapPage() {
   const { t, lang } = useLanguage();
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>("Kalaburagi");
@@ -211,20 +306,48 @@ export default function HeatmapPage() {
   const [geoJson, setGeoJson] = useState<any>(null);
   const [loadingMap, setLoadingMap] = useState(true);
 
+  // New spatiotemporal drill-down, heatmap, and overlay states
+  const [viewLevel, setViewLevel] = useState<'state' | 'district' | 'station'>('state');
+  const [selectedStation, setSelectedStation] = useState<string | null>(null);
+  const [timeOfDay, setTimeOfDay] = useState<'morning' | 'afternoon' | 'night'>('night');
+  const [socialOverlay, setSocialOverlay] = useState<'none' | 'density' | 'unemployment'>('none');
+
   useEffect(() => {
-    fetch('https://raw.githubusercontent.com/inosaint/StatesOfIndia/master/karnataka.geojson')
+    let active = true;
+    if (cachedGeoJson) {
+      setGeoJson(cachedGeoJson);
+      setLoadingMap(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+    fetch('https://raw.githubusercontent.com/inosaint/StatesOfIndia/master/karnataka.geojson', { signal: controller.signal })
       .then(res => {
+        clearTimeout(timeoutId);
         if (!res.ok) throw new Error("Status " + res.status);
         return res.json();
       })
       .then(data => {
-        setGeoJson(data);
-        setLoadingMap(false);
+        if (active) {
+          cachedGeoJson = data;
+          setGeoJson(data);
+          setLoadingMap(false);
+        }
       })
       .catch(err => {
+        clearTimeout(timeoutId);
         console.error("Failed to load Karnataka GeoJSON, using schematic fallback:", err);
-        setLoadingMap(false);
+        if (active) {
+          setLoadingMap(false);
+        }
       });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
   }, []);
 
   const getDistrictKey = (name2: string) => {
@@ -266,7 +389,57 @@ export default function HeatmapPage() {
       {/* Simulation Banner */}
       <SimulationBanner />
 
-      {/* Floating Filter Bar */}
+      {/* Dynamic Drill-Down Breadcrumbs */}
+      <div 
+        className="glass-card" 
+        style={{ 
+          padding: '12px 20px', 
+          marginBottom: '16px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '8px', 
+          background: '#FFFFFF',
+          border: '1px solid #E5E7EB',
+          fontSize: '13px',
+          fontWeight: 600,
+        }}
+      >
+        <span 
+          style={{ color: '#2563EB', cursor: 'pointer' }} 
+          onClick={() => { setViewLevel('state'); setSelectedStation(null); }}
+        >
+          Karnataka State
+        </span>
+        
+        {viewLevel !== 'state' && selectedDistrict && (
+          <>
+            <span style={{ color: '#94A3B8' }}>/</span>
+            <span 
+              style={{ color: viewLevel === 'district' ? 'var(--text-primary)' : '#2563EB', cursor: 'pointer' }}
+              onClick={() => { setViewLevel('district'); setSelectedStation(null); }}
+            >
+              {selectedDistrict} District
+            </span>
+          </>
+        )}
+
+        {viewLevel === 'station' && selectedStation && (
+          <>
+            <span style={{ color: '#94A3B8' }}>/</span>
+            <span style={{ color: 'var(--text-primary)' }}>
+              {selectedStation}
+            </span>
+          </>
+        )}
+
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <span className="badge badge-gray text-[10px] uppercase font-bold">
+            Level: {viewLevel}
+          </span>
+        </div>
+      </div>
+
+      {/* Floating Controls Bar */}
       <div 
         className="glass-card" 
         style={{ 
@@ -277,40 +450,84 @@ export default function HeatmapPage() {
           gap: '14px', 
           flexWrap: 'wrap',
           background: '#FFFFFF',
-          border: '1px solid var(--cyber-border)',
+          border: '1px solid #E5E7EB',
         }}
       >
-        <Filter size={15} style={{ color: 'var(--cyber-cyan)' }} />
-        <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-          Interactive Map filters:
-        </span>
-        
-        <select style={{ background: 'var(--cyber-bg)', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)', fontSize: '12px', padding: '4px 10px', borderRadius: '4px', outline: 'none' }}>
-          <option>🗺 All Crime Types</option>
-          <option>Sand Mafia</option>
-          <option>Cyber Fraud</option>
-          <option>Narcotics</option>
-          <option>Vehicle Theft</option>
-        </select>
-
-        <select style={{ background: 'var(--cyber-bg)', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)', fontSize: '12px', padding: '4px 10px', borderRadius: '4px', outline: 'none' }}>
-          <option>📅 Date Range: 30 Days</option>
-          <option>Last 7 Days</option>
-          <option>This Quarter</option>
-        </select>
-
-        <select style={{ background: 'var(--cyber-bg)', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)', fontSize: '12px', padding: '4px 10px', borderRadius: '4px', outline: 'none' }}>
-          <option>⚡ All Severities</option>
-          <option>Critical Only</option>
-          <option>High & Critical</option>
-        </select>
-
-        {/* View toggles */}
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: '4px', background: 'var(--cyber-bg)', padding: '2px', borderRadius: '6px', border: '1px solid var(--cyber-border)' }}>
-          <button className="badge badge-cyan" style={{ fontSize: '10px', cursor: 'pointer', borderRadius: '4px' }}>Heatmap</button>
-          <button className="badge" style={{ fontSize: '10px', cursor: 'pointer', background: 'transparent', color: 'var(--text-dim)', border: 'none' }} onClick={() => alert('Switching to Network layer...')}>Network</button>
-          <button className="badge" style={{ fontSize: '10px', cursor: 'pointer', background: 'transparent', color: 'var(--text-dim)', border: 'none' }} onClick={() => alert('Switching to Deployment layer...')}>Deployment</button>
+        {/* Time of Day Heatmap Selector */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Clock size={14} className="text-slate-500" />
+          <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Time of Day:</span>
+          <div className="flex gap-1.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+            {(['morning', 'afternoon', 'night'] as const).map(time => (
+              <button
+                key={time}
+                onClick={() => setTimeOfDay(time)}
+                className="text-[10px] font-bold px-2 py-1 rounded-md transition-all cursor-pointer"
+                style={{
+                  background: timeOfDay === time ? 'var(--primary-navy)' : 'transparent',
+                  color: timeOfDay === time ? '#FFFFFF' : '#475569',
+                  border: 'none',
+                }}
+              >
+                {time.toUpperCase()}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {/* Divider */}
+        <div style={{ width: '1px', height: '24px', background: '#E5E7EB' }} />
+
+        {/* Socio-Economic Overlay Toggles */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Info size={14} className="text-slate-500" />
+          <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Social Overlay:</span>
+          <div className="flex gap-1.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+            {[
+              { id: 'none', label: 'None' },
+              { id: 'density', label: 'Pop. Density' },
+              { id: 'unemployment', label: 'Unemployment' }
+            ].map(overlay => (
+              <button
+                key={overlay.id}
+                onClick={() => setSocialOverlay(overlay.id as any)}
+                className="text-[10px] font-bold px-2 py-1 rounded-md transition-all cursor-pointer"
+                style={{
+                  background: socialOverlay === overlay.id ? 'var(--primary-navy)' : 'transparent',
+                  color: socialOverlay === overlay.id ? '#FFFFFF' : '#475569',
+                  border: 'none',
+                }}
+              >
+                {overlay.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Camera Export Snapshot Button */}
+        <button
+          onClick={() => {
+            alert(`Map snapshot exported! Current filters: Time=${timeOfDay.toUpperCase()}, SocioOverlay=${socialOverlay.toUpperCase()}, ViewLevel=${viewLevel.toUpperCase()}`);
+          }}
+          className="cyber-btn flex-shrink-0"
+          style={{
+            marginLeft: 'auto',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            fontSize: '11px',
+            fontWeight: 800,
+            background: 'rgba(15,107,92,0.08)',
+            border: '1px solid rgba(15,107,92,0.2)',
+            color: '#0F6B5C',
+            borderRadius: '8px',
+            padding: '6px 12px',
+            cursor: 'pointer'
+          }}
+        >
+          <Camera size={12} />
+          Export Snapshot
+        </button>
       </div>
 
       {/* Main Grid: SVG Map left, Slide-in Panel right */}
@@ -327,8 +544,8 @@ export default function HeatmapPage() {
             <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Active Alerts: <strong style={{ color: '#f59e0b' }}>34</strong></div>
           </div>
  
-          {/* SVG Map of Karnataka (Honeycomb representation centered on coordinates) */}
           {/* SVG Map of Karnataka (Real District Choropleth dynamically projected) */}
+          <MapErrorBoundary>
           <svg
             width="100%"
             height="100%"
@@ -351,11 +568,6 @@ export default function HeatmapPage() {
               let projection: any = null;
               let pathGenerator: any = null;
 
-              if (geoJson) {
-                projection = d3.geoMercator().fitSize([mapWidth - 40, mapHeight - 40], geoJson);
-                pathGenerator = d3.geoPath().projection(projection);
-              }
-
               if (loadingMap) {
                 return (
                   <g>
@@ -367,6 +579,20 @@ export default function HeatmapPage() {
                     </text>
                   </g>
                 );
+              }
+
+              if (geoJson) {
+                if ((viewLevel === 'district' || viewLevel === 'station') && selectedDistrict) {
+                  const selectedFeature = geoJson.features.find((f: any) => getDistrictKey(f.properties.NAME_2) === selectedDistrict);
+                  if (selectedFeature) {
+                    projection = d3.geoMercator().fitSize([mapWidth - 40, mapHeight - 40], selectedFeature);
+                  } else {
+                    projection = d3.geoMercator().fitSize([mapWidth - 40, mapHeight - 40], geoJson);
+                  }
+                } else {
+                  projection = d3.geoMercator().fitSize([mapWidth - 40, mapHeight - 40], geoJson);
+                }
+                pathGenerator = d3.geoPath().projection(projection);
               }
 
               if (!geoJson) {
@@ -396,6 +622,7 @@ export default function HeatmapPage() {
                         strokeWidth={isHovered ? 2.5 : isSelected ? 2 : 1}
                         style={{ cursor: 'pointer', transition: 'all 0.2s ease-in-out' }}
                         onClick={() => setSelectedDistrict(name)}
+                        onDoubleClick={() => { setSelectedDistrict(name); setViewLevel('district'); }}
                         onMouseEnter={() => setHoveredDistrict(name)}
                         onMouseLeave={() => setHoveredDistrict(null)}
                       />
@@ -416,66 +643,293 @@ export default function HeatmapPage() {
               }
 
               // REAL CHOROPLETH RENDERING
-              return geoJson.features.map((f: any, idx: number) => {
-                const districtName = f.properties.NAME_2;
-                const key = getDistrictKey(districtName);
-                const d = DISTRICT_DATA[key] || {
-                  score: 30, level: "LOW", color: "#27AE60",
-                  crimes: 1000, lat: 0, lng: 0, policeStations: 10, officers: 10, arrests: 10, solved: 10,
-                  breakdown: [], recommendations: ["General patrol reinforcement"]
-                };
-                const pathData = pathGenerator(f);
-                const centroid = pathGenerator.centroid(f);
-                const [cx, cy] = centroid || [0, 0];
-
-                const isSelected = selectedDistrict === key;
-                const isHovered = hoveredDistrict === key;
-
+              if (viewLevel === 'state') {
                 return (
-                  <g key={idx}>
-                    <path
-                      d={pathData}
-                      fill={d.color}
-                      fillOpacity={isHovered ? 0.85 : isSelected ? 0.8 : 0.45}
-                      stroke={isHovered || isSelected ? 'var(--primary-navy)' : 'rgba(11, 31, 58, 0.15)'}
-                      strokeWidth={isHovered ? 2 : isSelected ? 1.5 : 0.8}
-                      style={{ cursor: 'pointer', transition: 'all 0.15s ease-in-out' }}
-                      onClick={() => setSelectedDistrict(key)}
-                      onMouseEnter={() => setHoveredDistrict(key)}
-                      onMouseLeave={() => setHoveredDistrict(null)}
-                    />
-                    {cx && cy && (
-                      <text
-                        x={cx}
-                        y={cy + 3}
-                        fill={isHovered || isSelected ? '#FFFFFF' : 'var(--text-muted)'}
-                        fontSize="7px"
-                        fontWeight="900"
-                        textAnchor="middle"
-                        pointerEvents="none"
-                        style={{
-                          textShadow: isHovered || isSelected 
-                            ? '0px 0px 4px var(--primary-navy)' 
-                            : '0px 0px 3px rgba(255,255,255,0.95)',
-                          fontFamily: "'Inter', sans-serif",
-                          letterSpacing: '-0.02em',
+                  <>
+                    {geoJson.features.map((f: any, idx: number) => {
+                      const districtName = f.properties.NAME_2;
+                      const key = getDistrictKey(districtName);
+                      const d = DISTRICT_DATA[key] || {
+                        score: 30, level: "LOW", color: "#27AE60",
+                        crimes: 1000, lat: 0, lng: 0, policeStations: 10, officers: 10, arrests: 10, solved: 10,
+                        breakdown: [], recommendations: ["General patrol reinforcement"]
+                      };
+                      const pathData = pathGenerator(f);
+                      const centroid = pathGenerator.centroid(f);
+                      const [cx, cy] = centroid || [0, 0];
+
+                      const isSelected = selectedDistrict === key;
+                      const isHovered = hoveredDistrict === key;
+                      const hasSocialOverlay = socialOverlay !== 'none';
+
+                      // Pulsing Red-Zone spikes (Kalaburagi, Raichur, Bengaluru Urban)
+                      const hasCriticalSpike = key === 'Kalaburagi' || key === 'Raichur' || key === 'Bengaluru Urban';
+
+                      return (
+                        <g key={idx}>
+                          <path
+                            d={pathData}
+                            fill={d.color}
+                            fillOpacity={isHovered ? 0.85 : isSelected ? 0.8 : 0.45}
+                            stroke={isHovered || isSelected ? 'var(--primary-navy)' : 'rgba(11, 31, 58, 0.15)'}
+                            strokeWidth={isHovered ? 2 : isSelected ? 1.5 : 0.8}
+                            onClick={() => setSelectedDistrict(key)}
+                            onDoubleClick={() => { setSelectedDistrict(key); setViewLevel('district'); }}
+                            onMouseEnter={() => setHoveredDistrict(key)}
+                            onMouseLeave={() => setHoveredDistrict(null)}
+                            style={{ cursor: 'pointer' }}
+                          />
+                          {hasCriticalSpike && cx && cy && (
+                            <foreignObject x={cx - 15} y={cy - 15} width={30} height={30} style={{ pointerEvents: 'none' }}>
+                              <div 
+                                className="redzone-marker"
+                                style={{
+                                  width: '10px',
+                                  height: '10px',
+                                  borderRadius: '50%',
+                                  background: 'var(--color-red)',
+                                  margin: '10px',
+                                  boxShadow: '0 0 10px var(--color-red)'
+                                }}
+                              />
+                            </foreignObject>
+                          )}
+                          {/* Socio-Economic Overlay Visual Layer */}
+                          {hasSocialOverlay && cx && cy && (() => {
+                            const sDist = SOCIO_ECONOMIC_DATA[key] || { density: 100, unemployment: 5 };
+                            let overlayRadius = 0;
+                            let overlayColor = '';
+                            let overlayLabel = '';
+                            if (socialOverlay === 'density') {
+                              overlayRadius = Math.min(20, 6 + (sDist.density / 200));
+                              overlayColor = '#7c3AED'; // Purple
+                              overlayLabel = `${sDist.density}`;
+                            } else if (socialOverlay === 'unemployment') {
+                              overlayRadius = Math.min(20, 6 + (sDist.unemployment * 1.5));
+                              overlayColor = '#f59e0b'; // Orange
+                              overlayLabel = `${sDist.unemployment}%`;
+                            }
+                            return (
+                              <g style={{ pointerEvents: 'none' }}>
+                                <circle
+                                  cx={cx}
+                                  cy={cy + 18}
+                                  r={overlayRadius}
+                                  fill="none"
+                                  stroke={overlayColor}
+                                  strokeWidth={1.5}
+                                  strokeDasharray="3 2"
+                                  strokeOpacity={0.8}
+                                />
+                                <circle
+                                  cx={cx}
+                                  cy={cy + 18}
+                                  r={3}
+                                  fill={overlayColor}
+                                  fillOpacity={0.9}
+                                />
+                                <text
+                                  x={cx}
+                                  y={cy + 18 - overlayRadius - 3}
+                                  fill={overlayColor}
+                                  fontSize="6px"
+                                  fontWeight="900"
+                                  textAnchor="middle"
+                                >
+                                  {overlayLabel}
+                                </text>
+                              </g>
+                            );
+                          })()}
+                          {cx && cy && (
+                            <text
+                              x={cx}
+                              y={cy + 3}
+                              fill={isHovered || isSelected ? '#FFFFFF' : 'var(--text-muted)'}
+                              fontSize="7px"
+                              fontWeight="900"
+                              textAnchor="middle"
+                              pointerEvents="none"
+                              style={{
+                                textShadow: isHovered || isSelected 
+                                  ? '0px 0px 4px var(--primary-navy)' 
+                                  : '0px 0px 3px rgba(255,255,255,0.95)',
+                                fontFamily: "'Inter', sans-serif",
+                                letterSpacing: '-0.02em',
+                              }}
+                            >
+                              {key.substring(0, 5).toUpperCase()}
+                            </text>
+                          )}
+                        </g>
+                      );
+                    })}
+
+                    {/* Time of Day Heatmap Layer Overlay */}
+                    {(() => {
+                      const hotspots = [
+                        { district: 'Kalaburagi', lat: 17.33, lng: 76.82, radius: timeOfDay === 'night' ? 36 : timeOfDay === 'afternoon' ? 24 : 12, color: timeOfDay === 'night' ? '#ef4444' : timeOfDay === 'afternoon' ? '#f59e0b' : '#10b981', opacity: 0.6 },
+                        { district: 'Bengaluru Urban', lat: 12.97, lng: 77.59, radius: timeOfDay === 'night' ? 44 : timeOfDay === 'afternoon' ? 32 : 18, color: timeOfDay === 'night' ? '#ef4444' : timeOfDay === 'afternoon' ? '#f59e0b' : '#10b981', opacity: 0.55 },
+                        { district: 'Raichur', lat: 16.21, lng: 77.36, radius: timeOfDay === 'night' ? 30 : timeOfDay === 'afternoon' ? 20 : 10, color: timeOfDay === 'night' ? '#ef4444' : timeOfDay === 'afternoon' ? '#f59e0b' : '#10b981', opacity: 0.6 },
+                        { district: 'Vijayapura', lat: 16.83, lng: 75.72, radius: timeOfDay === 'night' ? 25 : timeOfDay === 'afternoon' ? 18 : 8, color: timeOfDay === 'night' ? '#ef4444' : timeOfDay === 'afternoon' ? '#f59e0b' : '#10b981', opacity: 0.5 },
+                      ];
+
+                      return hotspots.map((spot, i) => {
+                        const coords = projection([spot.lng, spot.lat]);
+                        if (!coords) return null;
+                        const [x, y] = coords;
+                        return (
+                          <g key={`hotspot-${i}`} style={{ pointerEvents: 'none' }}>
+                            <circle
+                              cx={x}
+                              cy={y}
+                              r={spot.radius}
+                              fill={spot.color}
+                              fillOpacity={spot.opacity}
+                            >
+                              <animate attributeName="fill-opacity" values={`${spot.opacity};${spot.opacity * 0.4};${spot.opacity}`} dur="2s" repeatCount="indefinite" />
+                            </circle>
+                            <circle
+                              cx={x}
+                              cy={y}
+                              r={spot.radius + 8}
+                              fill="none"
+                              stroke={spot.color}
+                              strokeWidth={1.5}
+                              strokeOpacity={0.4}
+                            >
+                              <animate attributeName="r" values={`${spot.radius};${spot.radius + 12}`} dur="2s" repeatCount="indefinite" />
+                              <animate attributeName="stroke-opacity" values="0.8;0" dur="2s" repeatCount="indefinite" />
+                            </circle>
+                          </g>
+                        );
+                      });
+                    })()}
+                  </>
+                );
+              }
+
+              // Otherwise render ONLY selected district at zoomed view!
+              const selectedFeature = geoJson.features.find((f: any) => getDistrictKey(f.properties.NAME_2) === selectedDistrict);
+              if (!selectedFeature) return null;
+
+              const pathData = pathGenerator(selectedFeature);
+              const centroid = pathGenerator.centroid(selectedFeature);
+              const [cx, cy] = centroid || [0, 0];
+              const d = DISTRICT_DATA[selectedDistrict!] || { color: '#27AE60' };
+
+              // Simulate police station coordinates around the centroid
+              const stations = getStationsForDistrict(selectedDistrict!).map((s) => {
+                const baseLng = selectedFeature.geometry.coordinates[0][0][0][0] || 76.8;
+                const baseLat = selectedFeature.geometry.coordinates[0][0][0][1] || 17.3;
+                const stationCoords = projection([
+                  baseLng + s.lngOffset,
+                  baseLat + s.latOffset
+                ]);
+                const [sx, sy] = stationCoords || [cx + s.lngOffset * 500, cy - s.latOffset * 500];
+                return { ...s, sx, sy };
+              });
+
+              return (
+                <g>
+                  {/* District Boundary Zoomed Outline */}
+                  <path
+                    d={pathData}
+                    fill={d.color}
+                    fillOpacity={0.2}
+                    stroke="var(--primary-navy)"
+                    strokeWidth={3}
+                  />
+
+                  {/* Title overlay */}
+                  <text
+                    x={cx}
+                    y={cy - 120}
+                    textAnchor="middle"
+                    fill="var(--primary-navy)"
+                    fontSize="18px"
+                    fontWeight="800"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    {selectedDistrict!.toUpperCase()} DISTRICT MAP
+                  </text>
+                  <text
+                    x={cx}
+                    y={cy - 100}
+                    textAnchor="middle"
+                    fill="var(--text-muted)"
+                    fontSize="11px"
+                    fontWeight="600"
+                  >
+                    POLICE STATION-LEVEL DISPATCH GRID
+                  </text>
+
+                  {/* Police Station Marker dots */}
+                  {stations.map((station, i) => {
+                    const isStationSelected = selectedStation === station.name;
+                    const isStationDimmed = viewLevel === 'station' && !isStationSelected;
+                    
+                    return (
+                      <g 
+                        key={i} 
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          setSelectedStation(station.name);
+                          setViewLevel('station');
                         }}
                       >
-                        {key.substring(0, 5).toUpperCase()}
-                      </text>
-                    )}
-                  </g>
-                );
-              });
+                        {/* Glow ring */}
+                        <circle
+                          cx={station.sx}
+                          cy={station.sy}
+                          r={14}
+                          fill="none"
+                          stroke={isStationSelected ? '#ef4444' : 'var(--primary-navy)'}
+                          strokeWidth={2}
+                          strokeOpacity={isStationDimmed ? 0.15 : 0.6}
+                        >
+                          <animate attributeName="r" values="8;18" dur="1.5s" repeatCount="indefinite" />
+                          <animate attributeName="stroke-opacity" values="1;0" dur="1.5s" repeatCount="indefinite" />
+                        </circle>
+                        {/* Center marker */}
+                        <circle
+                          cx={station.sx}
+                          cy={station.sy}
+                          r={7}
+                          fill={isStationSelected ? '#ef4444' : 'var(--primary-navy)'}
+                          fillOpacity={isStationDimmed ? 0.2 : 1}
+                        />
+                        {/* Label */}
+                        <text
+                          x={station.sx}
+                          y={station.sy + 20}
+                          textAnchor="middle"
+                          fill="var(--text-primary)"
+                          fontSize="9px"
+                          fontWeight="700"
+                          fillOpacity={isStationDimmed ? 0.3 : 1}
+                          style={{
+                            textShadow: '0px 0px 3px #FFFFFF',
+                          }}
+                        >
+                          {station.name.toUpperCase()}
+                        </text>
+                      </g>
+                    );
+                  })}
+                </g>
+              );
             })()}
           </svg>
+          </MapErrorBoundary>
 
           {/* Interactive Floating Tooltip HUD */}
           {hoveredDistrict && (() => {
             const hDist = DISTRICT_DATA[hoveredDistrict];
+            const sDist = SOCIO_ECONOMIC_DATA[hoveredDistrict] || { unemployment: 5.0, density: 200, urbanization: 'Medium' };
             return (
               <div
-                className="tooltip"
+                className="tooltip animate-fadeIn"
                 style={{
                   position: 'absolute',
                   left: tooltipPos.x + 15,
@@ -484,8 +938,11 @@ export default function HeatmapPage() {
                   transform: 'translateY(-100%)',
                   background: '#FFFFFF',
                   borderColor: hDist.color,
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
                   pointerEvents: 'none',
+                  borderRadius: '16px',
+                  padding: '16px',
+                  border: `1.5px solid ${hDist.color}`
                 }}
               >
                 <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '13px' }}>
@@ -497,6 +954,17 @@ export default function HeatmapPage() {
                 <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                   Active Cases: <strong>{hDist.crimes.toLocaleString()}</strong>
                 </div>
+                {/* Social Overlay stats */}
+                {socialOverlay === 'density' && (
+                  <div style={{ fontSize: '11px', color: '#7C3AED', marginTop: '4px', fontWeight: 600 }}>
+                    Pop. Density: <strong>{sDist.density}/km²</strong>
+                  </div>
+                )}
+                {socialOverlay === 'unemployment' && (
+                  <div style={{ fontSize: '11px', color: '#f97316', marginTop: '4px', fontWeight: 600 }}>
+                    Unemployment: <strong>{sDist.unemployment}%</strong>
+                  </div>
+                )}
               </div>
             );
           })()}
@@ -509,43 +977,115 @@ export default function HeatmapPage() {
               left: '20px', 
               zIndex: 10, 
               background: '#FFFFFF', 
-              border: '1px solid var(--cyber-border)', 
-              borderRadius: '12px', 
+              border: '1px solid #E5E7EB', 
+              borderRadius: '16px', 
               padding: '12px 16px', 
               display: 'flex', 
               flexDirection: 'column', 
-              gap: '6px' 
+              gap: '8px',
+              minWidth: '200px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
             }}
           >
-            <span style={{ fontSize: '9px', fontWeight: 900, color: 'var(--text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>LEGEND</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#f87171' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#8b0000', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }} />
-              🔴 CRITICAL (81-100)
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#fb923c' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FF3B3B', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }} />
-              🟠 HIGH (61-80)
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#fbbf24' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FFB300', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }} />
-              🟡 MEDIUM (41-60)
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#34d399' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#27AE60', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }} />
-              🟢 LOW (0-40)
+            <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>CRIME DENSITY SCALE</span>
+            <div style={{ height: '8px', borderRadius: '4px', background: 'linear-gradient(to right, var(--color-green), var(--color-gold), var(--color-red))' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)' }}>
+              <span>Low</span>
+              <span>Medium</span>
+              <span>High</span>
             </div>
           </div>
 
         </div>
 
         {/* RIGHT INTEL PANEL */}
-        {selectedDistrict && activeDistrict ? (
+        {viewLevel === 'station' && selectedStation ? (
+          <aside
+            className="glass-card flex flex-col justify-between animate-fadeInRight"
+            style={{
+              padding: '24px 20px',
+              background: '#FFFFFF',
+              borderLeft: '4px solid #ef4444',
+              height: '620px',
+              overflowY: 'auto',
+              borderRadius: '16px',
+              border: '1px solid #E5E7EB',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                <div>
+                  <h2 style={{ fontSize: '16px', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
+                    {selectedStation.toUpperCase()}
+                  </h2>
+                  <span className="badge badge-red text-[9px] mt-1.5 font-bold uppercase">
+                    STATION LEVEL INTEL
+                  </span>
+                </div>
+                <button
+                  onClick={() => { setSelectedStation(null); setViewLevel('district'); }}
+                  style={{ background: 'none', border: 'none', color: 'var(--text-dim)', cursor: 'pointer' }}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '20px' }}>
+                <div style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '10px' }}>
+                  <div style={{ fontSize: '9px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>Officers on Beat</div>
+                  <div style={{ fontSize: '18px', fontWeight: 800, color: '#2563EB', marginTop: '2px' }}>12 Active</div>
+                </div>
+                <div style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '10px' }}>
+                  <div style={{ fontSize: '9px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>Clearance MTD</div>
+                  <div style={{ fontSize: '18px', fontWeight: 800, color: '#16A34A', marginTop: '2px' }}>87.5%</div>
+                </div>
+              </div>
+
+              {/* Active Patrol Teams */}
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{ fontSize: '10px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+                  Active Beat Patrols
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12px' }}>
+                  <div style={{ border: '1px solid #E5E7EB', borderRadius: '12px', padding: '10px', background: '#F9FAFB' }}>
+                    <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Patrol Team Alpha</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '11px', marginTop: '2px' }}>Sector 3 Sand Quarries · Active Route NH-50</div>
+                  </div>
+                  <div style={{ border: '1px solid #E5E7EB', borderRadius: '12px', padding: '10px', background: '#F9FAFB' }}>
+                    <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Patrol Team Beta</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '11px', marginTop: '2px' }}>Town Checkpost 4 · Border Route</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Localized AI Recommendations */}
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '10px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+                  LOCAL STATION DIRECTIVE
+                </div>
+                <p style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                  🚨 <strong>Patrol Priority:</strong> Increase presence at Sector 3 docks during 10 PM - 2 AM. AI model detects a 45% spike risk of unauthorized extractions.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <button
+                onClick={() => alert(`Station logs exported for ${selectedStation}`)}
+                className="cyber-btn"
+                style={{ width: '100%', justifyContent: 'center', borderRadius: '16px', fontSize: '12px', background: '#E2E8F0', color: '#475569', border: 'none', padding: '8px', cursor: 'pointer', fontWeight: 700 }}
+              >
+                Export Station Logs
+              </button>
+            </div>
+          </aside>
+        ) : selectedDistrict && activeDistrict ? (
           <aside
             className="glass-card flex flex-col justify-between animate-fadeInRight"
             style={{
               padding: '24px 20px',
               background: 'var(--cyber-surface)',
-              borderLeft: `2.5px solid ${activeDistrict.color}`,
+              borderLeft: `4px solid ${activeDistrict.color}`,
               height: '620px',
               overflowY: 'auto',
             }}
@@ -598,13 +1138,96 @@ export default function HeatmapPage() {
                   { label: lang === 'kn' ? t.stat_total_officers : 'Officers Deployed', val: activeDistrict.officers }
                 ].map((stat, idx) => (
                   <div key={idx} style={{ background: 'rgba(0,0,0,0.05)', border: '1px solid var(--cyber-border)', borderRadius: '8px', padding: '10px' }}>
-                    <div style={{ fontSize: '10px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>{stat.label}</div>
-                    <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'JetBrains Mono, monospace', marginTop: '2px' }}>
-                      <CountUp end={stat.val} />
-                    </div>
+                     <div style={{ fontSize: '10px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>{stat.label}</div>
+                     <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'JetBrains Mono, monospace', marginTop: '2px' }}>
+                       <CountUp end={stat.val} />
+                     </div>
                   </div>
                 ))}
               </div>
+
+              {/* Proactive Deployment Suggestion Badge */}
+              {selectedDistrict === 'Kalaburagi' && (
+                <div style={{
+                  background: 'rgba(245,158,11,0.08)',
+                  border: '1.5px solid rgba(245,158,11,0.25)',
+                  borderRadius: '12px',
+                  padding: '10px 14px',
+                  marginBottom: '16px',
+                  fontSize: '11px',
+                  lineHeight: '1.5',
+                  color: '#b45309',
+                  fontWeight: 700
+                }}>
+                  💡 <strong>Proactive Suggestion:</strong> Recommend dispatching +8 officers between 10 PM - 2 AM near river banks.
+                </div>
+              )}
+
+              {/* Police Station List/Table */}
+              <div style={{ marginBottom: '20px', borderTop: '1px solid #E5E7EB', paddingTop: '16px' }}>
+                <div style={{ fontSize: '11px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+                  Police Stations in {selectedDistrict}
+                </div>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', textAlign: 'left' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid #E2E8F0', color: 'var(--text-dim)' }}>
+                        <th style={{ padding: '6px 4px', fontWeight: 800 }}>Station Name</th>
+                        <th style={{ padding: '6px 4px', fontWeight: 800, textAlign: 'center' }}>Active Cases</th>
+                        <th style={{ padding: '6px 4px', fontWeight: 800, textAlign: 'center' }}>Risk Score</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {getStationsForDistrict(selectedDistrict).map((station, sIdx) => {
+                        const stationRisk = activeDistrict.score - (sIdx * 10);
+                        return (
+                          <tr 
+                            key={sIdx} 
+                            style={{ 
+                              borderBottom: '1px solid #F1F5F9', 
+                              cursor: 'pointer',
+                              background: selectedStation === station.name ? 'rgba(37,99,235,0.05)' : 'transparent'
+                            }}
+                            onClick={() => {
+                              setSelectedStation(station.name);
+                              setViewLevel('station');
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'}
+                            onMouseLeave={e => e.currentTarget.style.background = selectedStation === station.name ? 'rgba(37,99,235,0.05)' : 'transparent'}
+                          >
+                            <td style={{ padding: '8px 4px', fontWeight: 700, color: 'var(--text-primary)' }}>{station.name}</td>
+                            <td style={{ padding: '8px 4px', textAlign: 'center', fontWeight: 700 }}>{station.activeAlerts + 4}</td>
+                            <td style={{ padding: '8px 4px', textAlign: 'center', fontWeight: 700, color: activeDistrict.score - (sIdx * 10) > 80 ? '#ef4444' : activeDistrict.score - (sIdx * 10) > 60 ? '#f59e0b' : '#0F6B5C' }}>{stationRisk}/100</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Socio-Economic Factors Overlay analysis */}
+              {selectedDistrict && SOCIO_ECONOMIC_DATA[selectedDistrict] && (
+                <div style={{ marginBottom: '20px', borderTop: '1px solid #E5E7EB', paddingTop: '16px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+                    Socio-Economic Overlay
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '12px' }}>
+                    <div style={{ background: '#F9FAFB', padding: '8px 10px', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
+                      <span style={{ fontSize: '9px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>Unemployment</span>
+                      <div style={{ fontSize: '14px', fontWeight: 800, color: '#f97316', marginTop: '2px' }}>
+                        {SOCIO_ECONOMIC_DATA[selectedDistrict].unemployment}%
+                      </div>
+                    </div>
+                    <div style={{ background: '#F9FAFB', padding: '8px 10px', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
+                      <span style={{ fontSize: '9px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>Pop. Density</span>
+                      <div style={{ fontSize: '14px', fontWeight: 800, color: '#7C3AED', marginTop: '2px' }}>
+                        {SOCIO_ECONOMIC_DATA[selectedDistrict].density}/km²
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Breakdown Bars */}
               <div style={{ marginBottom: '20px' }}>
@@ -663,6 +1286,16 @@ export default function HeatmapPage() {
                 priority={1}
               />
               
+              {viewLevel === 'state' && (
+                <button
+                  onClick={() => setViewLevel('district')}
+                  className="cyber-btn cyber-btn-cyan animate-pulse"
+                  style={{ width: '100%', justifyContent: 'center', borderRadius: '16px', fontSize: '13px', padding: '10px', fontWeight: 700, marginTop: '12px', background: '#2563EB', color: '#FFFFFF', border: 'none', cursor: 'pointer' }}
+                >
+                  🔍 DRILL DOWN TO {selectedDistrict.toUpperCase()} DISTRICT
+                </button>
+              )}
+
               <div style={{ display: 'flex', gap: '8px', marginTop: '14px' }}>
                 <button
                   onClick={() => alert(`District dossier generated for ${selectedDistrict}`)}

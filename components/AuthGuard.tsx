@@ -159,7 +159,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
           className="flex-1 min-h-screen min-w-0 flex flex-col" 
           style={{ 
             paddingLeft: isSidebarOpen ? `${SIDEBAR_WIDTH}px` : '0px',
-            transition: 'padding-left 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+            transition: 'all 250ms ease',
           }}
         >
           <Topbar 

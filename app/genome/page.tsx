@@ -5,7 +5,8 @@ import {
   MapPin, Shield, Link2, Fingerprint, Target, Activity, User
 } from 'lucide-react';
 import { FIR_RECORDS, CRIMINAL_PROFILES, FIRRecord } from '@/lib/mockData';
-import { SearchInput } from '@/components/SearchInput';
+import { InputWithIcon } from '@/components/InputWithIcon';
+import StatCard from '@/components/StatCard';
 
 // ─────────────────────────────────────────────
 // DNA COMPUTATION UTILITIES
@@ -131,54 +132,6 @@ const CLUSTER_NAMES: Record<string, string> = {
 
 const HIGH_RISK_METHODS: MethodCode[] = ['CY', 'NA', 'OR', 'MR'];
 
-// ─────────────────────────────────────────────
-// STAT CARD COMPONENT
-// ─────────────────────────────────────────────
-
-function StatCard({ label, value, color }: { label: string; value: string | number; color: string }) {
-  return (
-    <div 
-      style={{
-        background: '#FFFFFF',
-        border: '1px solid #E5E7EB',
-        borderRadius: '16px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02)',
-        padding: '16px 20px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        height: '95px',
-        boxSizing: 'border-box',
-        flex: 1,
-      }}
-    >
-      <span 
-        style={{ 
-          fontSize: '30px', 
-          fontWeight: 800, 
-          color: color, 
-          lineHeight: '1',
-          marginBottom: '6px'
-        }}
-      >
-        {value}
-      </span>
-      <span 
-        style={{ 
-          fontSize: '12px', 
-          textTransform: 'uppercase', 
-          color: '#6B7280', 
-          fontWeight: 500,
-          letterSpacing: '0.02em',
-          lineHeight: '1.2'
-        }}
-      >
-        {label}
-      </span>
-    </div>
-  );
-}
 
 // ─────────────────────────────────────────────
 // DNA BADGE
@@ -464,10 +417,10 @@ export default function GenomePage() {
             marginBottom: '24px'
           }}
         >
-          <StatCard label="Total Cases Analyzed" value={55} color="#0F6B5C" />
-          <StatCard label="Genome Matches Found" value={23} color="#10b981" />
-          <StatCard label="Pattern Clusters" value={8} color="#8b5cf6" />
-          <StatCard label="Accuracy" value="94.7%" color="#f59e0b" />
+          <StatCard label="Total Cases Analyzed" value={55} />
+          <StatCard label="Genome Matches Found" value={23} />
+          <StatCard label="Pattern Clusters" value={8} />
+          <StatCard label="Accuracy" value="94.7%" />
         </div>
       </div>
 
@@ -485,33 +438,33 @@ export default function GenomePage() {
             <Fingerprint size={18} className="neon-cyan" />
             <span className="section-title text-sm">GENOME DNA FORMULA</span>
           </div>
-          <div className="flex items-center gap-2 font-mono text-sm">
+          <div className="flex items-center gap-2 text-xs font-semibold">
             <span
-              className="px-3 py-1 rounded"
-              style={{ background: '#8b5cf620', border: '1px solid #8b5cf660', color: '#a78bfa' }}
+              className="px-3 py-1.5 rounded-full"
+              style={{ background: 'rgba(26, 43, 76, 0.08)', border: '1px solid rgba(26, 43, 76, 0.15)', color: 'var(--color-navy)' }}
             >
-              TIME_CODE
+              Time
             </span>
-            <span className="text-slate-500">+</span>
+            <span className="text-slate-400">+</span>
             <span
-              className="px-3 py-1 rounded"
-              style={{ background: '#3b82f620', border: '1px solid #3b82f660', color: '#60a5fa' }}
+              className="px-3 py-1.5 rounded-full"
+              style={{ background: 'rgba(212, 160, 23, 0.08)', border: '1px solid rgba(212, 160, 23, 0.15)', color: 'var(--color-gold)' }}
             >
-              LOCATION_CODE
+              Location
             </span>
-            <span className="text-slate-500">+</span>
+            <span className="text-slate-400">+</span>
             <span
-              className="px-3 py-1 rounded"
-              style={{ background: '#ef444420', border: '1px solid #ef444460', color: '#f87171' }}
+              className="px-3 py-1.5 rounded-full"
+              style={{ background: 'rgba(220, 38, 38, 0.08)', border: '1px solid rgba(220, 38, 38, 0.15)', color: 'var(--color-red)' }}
             >
-              METHOD_CODE
+              Method
             </span>
-            <span className="text-slate-500">+</span>
+            <span className="text-slate-400">+</span>
             <span
-              className="px-3 py-1 rounded"
-              style={{ background: '#f59e0b20', border: '1px solid #f59e0b60', color: '#fcd34d' }}
+              className="px-3 py-1.5 rounded-full"
+              style={{ background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.15)', color: 'var(--color-orange)' }}
             >
-              TARGET_CODE
+              Target
             </span>
           </div>
           <div className="ml-auto flex items-center gap-2">
@@ -540,7 +493,8 @@ export default function GenomePage() {
 
             {/* Search */}
             <div className="px-4 py-3" style={{ borderBottom: '1.5px solid var(--border-default)' }}>
-              <SearchInput
+              <InputWithIcon
+                icon={Search}
                 placeholder="Search FIR, category, district, DNA..."
                 value={filterText}
                 onChange={setFilterText}

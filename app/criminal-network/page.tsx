@@ -16,7 +16,8 @@ import * as d3 from 'd3';
 interface NetworkNode extends d3.SimulationNodeDatum {
   id: string;
   name: string;
-  rank: 'Kingpin' | 'Lieutenant' | 'Operative' | 'Associate';
+  type: 'Suspect' | 'Victim' | 'Location';
+  rank: 'Kingpin' | 'Lieutenant' | 'Operative' | 'Associate' | 'None';
   district: string;
   category: string;
   threatScore: number;
@@ -26,35 +27,51 @@ interface NetworkNode extends d3.SimulationNodeDatum {
   aiMatch: number;
   aiReason: string;
   status: 'Active' | 'Inactive';
+  mo: string;
+  timeline: { year: string; event: string }[];
 }
 
 interface NetworkLink extends d3.SimulationLinkDatum<NetworkNode> {
   source: string | NetworkNode;
   target: string | NetworkNode;
-  type: 'Commands' | 'Supplies' | 'Associates';
+  type: 'Co-Accused' | 'Family' | 'Associate' | 'Same MO';
 }
 
 // ─── Datasets ─────────────────────────────────────────────────────────────────
 
 const INITIAL_NODES: NetworkNode[] = [
-  { id: "1", name: "Raju Naik", rank: "Kingpin", district: "Kalaburagi", category: "Sand Mafia", threatScore: 95, priorArrests: 6, activeCases: 3, networkSize: 12, aiMatch: 94, aiReason: "Direct communication patterns and financial transaction overlap.", status: "Active" },
-  { id: "2", name: "Venkat Reddy", rank: "Lieutenant", district: "Kalaburagi", category: "Sand Mafia", threatScore: 82, priorArrests: 4, activeCases: 2, networkSize: 8, aiMatch: 88, aiReason: "CCTV facial matching at NH-50 checkpoints with primary suspect.", status: "Active" },
-  { id: "3", name: "Imran Khan", rank: "Operative", district: "Kalaburagi", category: "Sand Mafia", threatScore: 64, priorArrests: 2, activeCases: 1, networkSize: 4, aiMatch: 72, aiReason: "Identified loading sand trucks under direct orders of Venkat Reddy.", status: "Active" },
-  { id: "4", name: "Suresh Patil", rank: "Associate", district: "Kalaburagi", category: "Sand Mafia", threatScore: 48, priorArrests: 1, activeCases: 1, networkSize: 2, aiMatch: 65, aiReason: "Associated vehicle registration records link directly to Raju Naik.", status: "Active" },
-  { id: "5", name: "Arjun Gowda", rank: "Kingpin", district: "Bengaluru Urban", category: "Cyber Fraud", threatScore: 89, priorArrests: 3, activeCases: 5, networkSize: 15, aiMatch: 91, aiReason: "Coordinates gateway servers used in statewide OTP phishing campaign.", status: "Active" },
-  { id: "6", name: "Meera Devi", rank: "Associate", district: "Bengaluru Urban", category: "Cyber Fraud", threatScore: 52, priorArrests: 0, activeCases: 1, networkSize: 3, aiMatch: 79, aiReason: "Bank accounts registered under name used as mule accounts.", status: "Active" },
-  { id: "7", name: "Dawood S", rank: "Lieutenant", district: "Raichur", category: "Narcotics", threatScore: 86, priorArrests: 5, activeCases: 4, networkSize: 9, aiMatch: 89, aiReason: "Cross-border logistics logs overlap with prior NDPS seizures.", status: "Active" },
-  { id: "8", name: "Kiran Kumar", rank: "Operative", district: "Mysuru", category: "Vehicle Theft", threatScore: 71, priorArrests: 3, activeCases: 2, networkSize: 5, aiMatch: 92, aiReason: "RF sniffer fob triggers match relay attack signatures in database.", status: "Active" },
+  // Suspects
+  { id: "1", name: "Raju Naik", type: "Suspect", rank: "Kingpin", district: "Kalaburagi", category: "Sand Mafia", threatScore: 95, priorArrests: 6, activeCases: 3, networkSize: 12, aiMatch: 94, aiReason: "Direct communication patterns and financial transaction overlap.", status: "Active", mo: "Bypasses state borders via unregistered tractors, bribing checkpost guards.", timeline: [{ year: "2024", event: "Arrested at Kalaburagi for illegal quarrying." }, { year: "2025", event: "Named prime suspect in extortion syndicate." }, { year: "2026", event: "Indicted for interstate sand smuggling." }] },
+  { id: "2", name: "Venkat Reddy", type: "Suspect", rank: "Lieutenant", district: "Kalaburagi", category: "Sand Mafia", threatScore: 82, priorArrests: 4, activeCases: 2, networkSize: 8, aiMatch: 88, aiReason: "CCTV facial matching at NH-50 checkpoints with primary suspect.", status: "Active", mo: "Manages field operations and logistics coordination.", timeline: [{ year: "2024", event: "Detained for checkpost obstruction." }, { year: "2025", event: "Charged with illicit transport loading." }] },
+  { id: "3", name: "Imran Khan", type: "Suspect", rank: "Operative", district: "Kalaburagi", category: "Sand Mafia", threatScore: 64, priorArrests: 2, activeCases: 1, networkSize: 4, aiMatch: 72, aiReason: "Identified loading sand trucks under direct orders of Venkat Reddy.", status: "Active", mo: "Truck fleet dispatching and driver intimidation.", timeline: [{ year: "2025", event: "Arrested for vehicle registration fraud." }] },
+  { id: "4", name: "Suresh Patil", type: "Suspect", rank: "Associate", district: "Kalaburagi", category: "Sand Mafia", threatScore: 48, priorArrests: 1, activeCases: 1, networkSize: 2, aiMatch: 65, aiReason: "Associated vehicle registration records link directly to Raju Naik.", status: "Active", mo: "Provides legal coverage and bail finances for drivers.", timeline: [{ year: "2026", event: "Fined for facilitating suspect flight." }] },
+  { id: "5", name: "Arjun Gowda", type: "Suspect", rank: "Kingpin", district: "Bengaluru Urban", category: "Cyber Fraud", threatScore: 89, priorArrests: 3, activeCases: 5, networkSize: 15, aiMatch: 91, aiReason: "Coordinates gateway servers used in statewide OTP phishing campaign.", status: "Active", mo: "Rents cloud VPS through stolen identity papers, routes calls.", timeline: [{ year: "2024", event: "Indicted in Bangalore Tech Park phishing scam." }, { year: "2026", event: "Acquired network center in Hubli." }] },
+  { id: "6", name: "Meera Devi", type: "Suspect", rank: "Associate", district: "Bengaluru Urban", category: "Cyber Fraud", threatScore: 52, priorArrests: 0, activeCases: 1, networkSize: 3, aiMatch: 79, aiReason: "Bank accounts registered under name used as mule accounts.", status: "Active", mo: "Mule account generation and money withdrawal.", timeline: [{ year: "2025", event: "Warned for unusual bank transfers." }] },
+  { id: "7", name: "Dawood S", type: "Suspect", rank: "Lieutenant", district: "Raichur", category: "Narcotics", threatScore: 86, priorArrests: 5, activeCases: 4, networkSize: 9, aiMatch: 89, aiReason: "Cross-border logistics logs overlap with prior NDPS seizures.", status: "Active", mo: "Smuggles contraband across borders hidden in agricultural yields.", timeline: [{ year: "2024", event: "Detained at state border checkpost." }] },
+  { id: "8", name: "Kiran Kumar", type: "Suspect", rank: "Operative", district: "Mysuru", category: "Vehicle Theft", threatScore: 71, priorArrests: 3, activeCases: 2, networkSize: 5, aiMatch: 92, aiReason: "RF sniffer fob triggers match relay attack signatures in database.", status: "Active", mo: "Uses high-tech relay tools to unlock smart vehicles.", timeline: [{ year: "2025", event: "Arrested in car theft ring sweep." }] },
+  
+  // Victims
+  { id: "V1", name: "K. S. Narayanan", type: "Victim", rank: "None", district: "Kalaburagi", category: "Sand Mafia", threatScore: 0, priorArrests: 0, activeCases: 0, networkSize: 0, aiMatch: 100, aiReason: "Landowner who refused extraction access on riverside estate.", status: "Active", mo: "", timeline: [] },
+  { id: "V2", name: "Pooja Hegde", type: "Victim", rank: "None", district: "Bengaluru Urban", category: "Cyber Fraud", threatScore: 0, priorArrests: 0, activeCases: 0, networkSize: 0, aiMatch: 100, aiReason: "Phishing victim defrauded of ₹8.4 Lakhs via OTP spoofing.", status: "Active", mo: "", timeline: [] },
+  
+  // Locations
+  { id: "L1", name: "NH-50 Sand Quarry", type: "Location", rank: "None", district: "Kalaburagi", category: "Sand Mafia", threatScore: 0, priorArrests: 0, activeCases: 0, networkSize: 0, aiMatch: 100, aiReason: "Primary illicit loading and extraction point.", status: "Active", mo: "", timeline: [] },
+  { id: "L2", name: "Bengaluru Tech Hub", type: "Location", rank: "None", district: "Bengaluru Urban", category: "Cyber Fraud", threatScore: 0, priorArrests: 0, activeCases: 0, networkSize: 0, aiMatch: 100, aiReason: "Server hosting and IP relay operations center.", status: "Active", mo: "", timeline: [] }
 ];
 
 const INITIAL_LINKS: NetworkLink[] = [
-  { source: "1", target: "2", type: "Commands" },
-  { source: "2", target: "3", type: "Commands" },
-  { source: "1", target: "4", type: "Associates" },
-  { source: "5", target: "6", type: "Supplies" },
-  { source: "7", target: "1", type: "Supplies" },
-  { source: "8", target: "1", type: "Associates" },
-  { source: "7", target: "2", type: "Associates" }
+  { source: "1", target: "2", type: "Co-Accused" },
+  { source: "2", target: "3", type: "Co-Accused" },
+  { source: "1", target: "4", type: "Associate" },
+  { source: "1", target: "V1", type: "Co-Accused" },
+  { source: "2", target: "L1", type: "Same MO" },
+  { source: "3", target: "L1", type: "Same MO" },
+  { source: "5", target: "V2", type: "Same MO" },
+  { source: "5", target: "L2", type: "Same MO" },
+  { source: "2", target: "4", type: "Family" },
+  { source: "7", target: "1", type: "Associate" },
+  { source: "8", target: "1", type: "Associate" },
+  { source: "7", target: "2", type: "Associate" }
 ];
 
 const DISTRICTS = ["All Districts", "Kalaburagi", "Bengaluru Urban", "Raichur", "Mysuru"];
@@ -72,6 +89,7 @@ export default function CriminalNetworkPage() {
   const [selectedDistrict, setSelectedDistrict] = useState("All Districts");
   const [selectedThreatLevel, setSelectedThreatLevel] = useState("All Threat Levels");
   const [statusActiveOnly, setStatusActiveOnly] = useState(true);
+  const [activeRelations, setActiveRelations] = useState<string[]>(['Co-Accused', 'Family', 'Associate', 'Same MO']);
 
   // Selected Node
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>("1");
@@ -111,6 +129,10 @@ export default function CriminalNetworkPage() {
   const filteredLinks = INITIAL_LINKS.filter(link => {
     const srcId = typeof link.source === 'object' ? link.source.id : link.source;
     const tgtId = typeof link.target === 'object' ? link.target.id : link.target;
+    // Check relationship type filter
+    if (!activeRelations.includes(link.type)) {
+      return false;
+    }
     return filteredNodes.some(n => n.id === srcId) && filteredNodes.some(n => n.id === tgtId);
   });
 
@@ -159,10 +181,41 @@ export default function CriminalNetworkPage() {
       .selectAll("line")
       .data(linksData)
       .join("line")
-      .attr("stroke", d => d.type === 'Commands' ? '#ef4444' : d.type === 'Supplies' ? '#f59e0b' : '#6b8cae')
-      .attr("stroke-width", d => d.type === 'Commands' ? 3.5 : d.type === 'Supplies' ? 2 : 1)
-      .attr("stroke-opacity", d => d.type === 'Commands' ? 0.8 : d.type === 'Supplies' ? 0.75 : 0.5)
-      .attr("stroke-dasharray", d => d.type === 'Supplies' ? '4 4' : 'none');
+      .attr("stroke", d => {
+        if (d.type === 'Co-Accused') return 'var(--color-navy)';
+        if (d.type === 'Family') return 'var(--color-orange)';
+        if (d.type === 'Associate') return 'var(--color-green)';
+        return 'var(--color-red)'; // Same MO
+      })
+      .attr("stroke-width", d => d.type === 'Co-Accused' ? 2.5 : d.type === 'Family' ? 2.0 : 1.5)
+      .attr("stroke-dasharray", d => d.type === 'Family' ? '4 4' : 'none');
+
+    const highlightedNodeIds = new Set<string>();
+    const highlightedLinkKeys = new Set<string>();
+
+    if (selectedNodeId) {
+      highlightedNodeIds.add(selectedNodeId);
+      linksData.forEach(l => {
+        const srcId = typeof l.source === 'object' ? (l.source as any).id : l.source;
+        const tgtId = typeof l.target === 'object' ? (l.target as any).id : l.target;
+        if (srcId === selectedNodeId) {
+          highlightedNodeIds.add(tgtId);
+          highlightedLinkKeys.add(`${srcId}-${tgtId}`);
+        } else if (tgtId === selectedNodeId) {
+          highlightedNodeIds.add(srcId);
+          highlightedLinkKeys.add(`${srcId}-${tgtId}`);
+        }
+      });
+    }
+
+    // Apply link highlighting opacity
+    link
+      .attr("stroke-opacity", l => {
+        if (!selectedNodeId) return 0.6;
+        const srcId = typeof l.source === 'object' ? (l.source as any).id : l.source;
+        const tgtId = typeof l.target === 'object' ? (l.target as any).id : l.target;
+        return highlightedLinkKeys.has(`${srcId}-${tgtId}`) ? 1.0 : 0.1;
+      });
 
     // Render Nodes Group
     const node = g.append("g")
@@ -170,6 +223,10 @@ export default function CriminalNetworkPage() {
       .data(nodesData)
       .join("g")
       .style("cursor", "pointer")
+      .style("opacity", d => {
+        if (!selectedNodeId) return 1.0;
+        return highlightedNodeIds.has(d.id) ? 1.0 : 0.15;
+      })
       .call(d3.drag<any, any>()
         .on("start", dragstarted)
         .on("drag", dragged)
@@ -179,16 +236,38 @@ export default function CriminalNetworkPage() {
         setSelectedNodeId(d.id);
       });
 
-    // Nodes circle
-    node.append("circle")
+    // Nodes shapes - Suspects: Circles
+    node.filter(d => d.type === 'Suspect')
+      .append("circle")
       .attr("r", d => d.rank === 'Kingpin' ? 22 : d.rank === 'Lieutenant' ? 17 : d.rank === 'Operative' ? 13 : 10)
-      .attr("fill", d => d.rank === 'Kingpin' ? '#ef4444' : d.rank === 'Lieutenant' ? '#f59e0b' : d.rank === 'Operative' ? '#1A6FFF' : '#6B8CAE')
+      .attr("fill", d => d.rank === 'Kingpin' ? 'var(--color-red)' : d.rank === 'Lieutenant' ? 'var(--color-orange)' : d.rank === 'Operative' ? '#1A6FFF' : '#6B8CAE')
       .attr("stroke", d => selectedNodeId === d.id ? '#00D4FF' : '#020617')
       .attr("stroke-width", d => selectedNodeId === d.id ? 3 : 1.5)
-      .style("filter", d => d.rank === 'Kingpin' ? 'drop-shadow(0 0 8px rgba(239,68,68,0.75))' : d.rank === 'Lieutenant' ? 'drop-shadow(0 0 5px rgba(245,158,11,0.5))' : 'none');
+      .style("filter", d => d.rank === 'Kingpin' ? 'drop-shadow(0 0 8px rgba(220,38,38,0.75))' : d.rank === 'Lieutenant' ? 'drop-shadow(0 0 5px rgba(245,158,11,0.5))' : 'none');
 
-    // Mini icon/symbol in center
-    node.append("circle")
+    // Nodes shapes - Locations: Squares (rect)
+    node.filter(d => d.type === 'Location')
+      .append("rect")
+      .attr("width", 30)
+      .attr("height", 30)
+      .attr("x", -15)
+      .attr("y", -15)
+      .attr("rx", 4)
+      .attr("fill", 'var(--color-gold)')
+      .attr("stroke", d => selectedNodeId === d.id ? '#00D4FF' : '#020617')
+      .attr("stroke-width", d => selectedNodeId === d.id ? 3 : 1.5);
+
+    // Nodes shapes - Victims: Triangles (polygon)
+    node.filter(d => d.type === 'Victim')
+      .append("polygon")
+      .attr("points", "0,-16 14,11 -14,11")
+      .attr("fill", 'var(--color-green)')
+      .attr("stroke", d => selectedNodeId === d.id ? '#00D4FF' : '#020617')
+      .attr("stroke-width", d => selectedNodeId === d.id ? 3 : 1.5);
+
+    // Mini icon/symbol in center of suspects
+    node.filter(d => d.type === 'Suspect')
+      .append("circle")
       .attr("r", 4)
       .attr("fill", "#ffffff")
       .attr("opacity", 0.4);
@@ -266,7 +345,7 @@ export default function CriminalNetworkPage() {
       const srcId = typeof l.source === 'object' ? l.source.id : l.source;
       const matchedNode = INITIAL_NODES.find(n => n.id === srcId);
       if (matchedNode) {
-        connections.push({ type: l.type === 'Commands' ? 'Under Command of' : l.type === 'Supplies' ? 'Supplied by' : 'Associate of', name: matchedNode.name });
+        connections.push({ type: l.type === 'Co-Accused' ? 'Co-Accused' : l.type === 'Family' ? 'Family Member' : l.type === 'Same MO' ? 'Shares MO' : 'Associate', name: matchedNode.name });
       }
     });
 
@@ -274,7 +353,7 @@ export default function CriminalNetworkPage() {
       const tgtId = typeof l.target === 'object' ? l.target.id : l.target;
       const matchedNode = INITIAL_NODES.find(n => n.id === tgtId);
       if (matchedNode) {
-        connections.push({ type: l.type === 'Commands' ? 'Commands' : l.type === 'Supplies' ? 'Supplies' : 'Associate of', name: matchedNode.name });
+        connections.push({ type: l.type === 'Co-Accused' ? 'Co-Accused' : l.type === 'Family' ? 'Family Member' : l.type === 'Same MO' ? 'Shares MO' : 'Associate', name: matchedNode.name });
       }
     });
 
@@ -446,15 +525,52 @@ export default function CriminalNetworkPage() {
           {/* Edge Color Legend Top-Left */}
           <div style={{ position: 'absolute', top: '15px', left: '15px', zIndex: 10, background: '#FFFFFF', border: '1px solid var(--cyber-border)', borderRadius: '8px', padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
             <span style={{ fontSize: '9px', fontWeight: 950, color: 'var(--text-dim)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Relationship Map</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: '#f87171' }}>
-              <div style={{ width: '12px', height: '3px', background: '#ef4444' }} /> COMMANDS
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: 'var(--color-navy)' }}>
+              <div style={{ width: '12px', height: '3px', background: 'var(--color-navy)' }} /> CO-ACCUSED
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: '#fb923c' }}>
-              <div style={{ width: '12px', height: '3.5px', borderBottom: '2.5px dashed #f59e0b' }} /> SUPPLIES
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: 'var(--color-orange)' }}>
+              <div style={{ width: '12px', height: '3.5px', borderBottom: '2.5px dashed var(--color-orange)' }} /> FAMILY
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: '#94a3b8' }}>
-              <div style={{ width: '12px', height: '1.5px', background: '#6B8CAE' }} /> ASSOCIATES
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: 'var(--color-green)' }}>
+              <div style={{ width: '12px', height: '1.5px', background: 'var(--color-green)' }} /> ASSOCIATE
             </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: 'var(--color-red)' }}>
+              <div style={{ width: '12px', height: '1.5px', background: 'var(--color-red)' }} /> SAME MO
+            </div>
+          </div>
+
+          {/* Relationship Filter Chips Row */}
+          <div style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 10, display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <span style={{ fontSize: '10px', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase' }}>Relationship Filter:</span>
+            {[
+              { type: 'Co-Accused', color: 'var(--color-navy)' },
+              { type: 'Family', color: 'var(--color-orange)' },
+              { type: 'Associate', color: 'var(--color-green)' },
+              { type: 'Same MO', color: 'var(--color-red)' }
+            ].map(chip => {
+              const isActive = activeRelations.includes(chip.type);
+              return (
+                <button
+                  key={chip.type}
+                  onClick={() => {
+                    setActiveRelations(prev => 
+                      prev.includes(chip.type) 
+                        ? prev.filter(t => t !== chip.type) 
+                        : [...prev, chip.type]
+                    );
+                  }}
+                  className="text-[10px] font-bold px-3 py-1 rounded-full cursor-pointer transition-all border"
+                  style={{
+                    background: isActive ? chip.color : '#FFFFFF',
+                    color: isActive ? '#FFFFFF' : '#475569',
+                    borderColor: isActive ? chip.color : '#E5E7EB',
+                    boxShadow: isActive ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                  }}
+                >
+                  {chip.type}
+                </button>
+              );
+            })}
           </div>
 
           {/* D3 Canvas Element */}
@@ -574,7 +690,7 @@ export default function CriminalNetworkPage() {
               </div>
 
               {/* Connections relationships lists */}
-              <div>
+              <div style={{ marginBottom: '18px' }}>
                 <div style={{ fontSize: '11px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '6px' }}>
                   DIRECT CONNECTIONS
                 </div>
@@ -591,6 +707,45 @@ export default function CriminalNetworkPage() {
                   )}
                 </div>
               </div>
+
+              {/* Modus Operandi (MO) Summary Section */}
+              {activeNode.mo && (
+                <div style={{ marginBottom: '18px', borderTop: '1px solid #E5E7EB', paddingTop: '14px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '6px' }}>
+                    MODUS OPERANDI (MO)
+                  </div>
+                  <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-primary)', lineHeight: 1.5, fontStyle: 'italic' }}>
+                    &ldquo;{activeNode.mo}&rdquo;
+                  </p>
+                </div>
+              )}
+
+              {/* Incident Timeline Section */}
+              {activeNode.timeline && activeNode.timeline.length > 0 && (
+                <div style={{ marginBottom: '18px', borderTop: '1px solid #E5E7EB', paddingTop: '14px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+                    INCIDENT TIMELINE
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderLeft: '1.5px solid var(--border-default)', paddingLeft: '12px', marginLeft: '6px' }}>
+                    {activeNode.timeline.map((event, idx) => (
+                      <div key={idx} style={{ position: 'relative' }}>
+                        <div style={{
+                          position: 'absolute',
+                          left: '-17px',
+                          top: '3px',
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          background: 'var(--color-navy)',
+                          border: '1.5px solid #FFFFFF',
+                        }} />
+                        <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--color-navy)' }}>{event.year}</div>
+                        <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>{event.event}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
             </div>
 

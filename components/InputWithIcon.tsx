@@ -1,32 +1,33 @@
 import React, { forwardRef, useState } from 'react';
-import { Search } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
-interface SearchInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+interface InputWithIconProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   value: string;
   onChange: (val: string) => void;
-  id?: string;
+  icon: LucideIcon;
 }
 
-export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
-  ({ value, onChange, style, className, placeholder, onFocus, onBlur, ...props }, ref) => {
+export const InputWithIcon = forwardRef<HTMLInputElement, InputWithIconProps>(
+  ({ value, onChange, icon: Icon, style, className = '', placeholder, onFocus, onBlur, ...props }, ref) => {
     const [isFocused, setIsFocused] = useState(false);
 
     return (
-      <div className="input-with-icon relative w-full h-full flex items-center">
-        <Search
-          size={16}
-          className="icon"
-          style={{
-            color: '#94A3B8',
-            transition: 'color 0.2s ease',
-            position: 'absolute',
-            left: '16px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            pointerEvents: 'none',
-            zIndex: 10,
-          }}
-        />
+      <div className={`input-with-icon relative w-full flex items-center ${className}`} style={{ position: 'relative' }}>
+        {Icon && (
+          <Icon
+            size={16}
+            className="icon"
+            style={{
+              position: 'absolute',
+              left: '16px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              pointerEvents: 'none',
+              zIndex: 10,
+              color: '#94A3B8',
+            }}
+          />
+        )}
         <input
           ref={ref}
           type="text"
@@ -47,12 +48,12 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             border: isFocused ? '1.5px solid var(--primary-navy)' : '1px solid var(--border-default)',
             background: 'var(--bg-card)',
             color: 'var(--text-primary)',
-            borderRadius: '16px',
+            borderRadius: 'var(--radius, 16px)',
             outline: 'none',
             transition: 'all 0.2s ease',
             fontSize: '12px',
             width: '100%',
-            height: '100%',
+            height: '40px',
             ...style,
           }}
           {...props}
@@ -62,4 +63,4 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   }
 );
 
-SearchInput.displayName = 'SearchInput';
+InputWithIcon.displayName = 'InputWithIcon';

@@ -52,10 +52,18 @@ export default function UserMenu({ user }: UserMenuProps) {
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 p-1.5 rounded-lg border transition-all cursor-pointer"
+        className="flex items-center transition-all cursor-pointer"
         style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: '10px',
+          padding: '4px 10px',
+          borderRadius: '16px',
+          border: '1px solid var(--border-default)',
           background: '#F3F4F6',
-          borderColor: 'var(--border-default)',
+          height: '40px',
+          boxSizing: 'border-box'
         }}
         onMouseEnter={e => {
           e.currentTarget.style.borderColor = 'var(--accent-cyan)';
@@ -65,24 +73,26 @@ export default function UserMenu({ user }: UserMenuProps) {
         }}
       >
         <div
-          className="w-8 h-8 rounded-full flex items-center justify-center font-black text-xs"
+          className="rounded-full flex items-center justify-center font-black text-xs flex-shrink-0"
           style={{
+            width: '36px',
+            height: '36px',
             background: 'linear-gradient(135deg, rgba(30,58,95,0.08), rgba(139,92,246,0.1))',
             border: `1px solid ${badge.textCol}44`,
             color: badge.textCol,
           }}
         >
-           <User size={14} />
+           <User size={16} />
         </div>
-        <div className="hidden sm:flex flex-col items-start text-left">
-          <span className="text-xs font-bold leading-none text-[var(--text-primary)]">
+        <div className="hidden sm:flex flex-col items-start justify-center text-left" style={{ lineHeight: '1.3' }}>
+          <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>
             {user?.name ?? 'KSP Officer'}
           </span>
-          <span className="text-[9px] font-semibold text-[var(--text-muted)] mt-0.5">
-            {user?.designation ?? 'Inspector'}
+          <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 500 }}>
+            {user?.designation ?? 'Inspector'} · {user?.district ?? 'Bengaluru'}
           </span>
         </div>
-        <ChevronDown size={12} className="text-[var(--text-muted)]" />
+        <ChevronDown size={12} className="text-[var(--text-muted)] flex-shrink-0" />
       </button>
 
       {/* Dropdown Menu */}

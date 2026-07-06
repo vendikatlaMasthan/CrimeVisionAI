@@ -1,73 +1,67 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
 
 /* ─────────────────────────────────────────────
-   DESIGN TOKENS
+   DESIGN TOKENS INTEGRATION
    ───────────────────────────────────────────── */
 :root {
-  /* Karnataka State branding theme colors */
-  --primary-navy:     #8B1E1E;   /* Maroon as Primary UI color */
-  --brand-crimson:    #8B1E1E;   /* Maroon buttons/borders */
-  --brand-gold:       #D4A017;   /* Gold secondary accent */
-  --brand-forest:     #2E8B57;   /* Success green */
-  --brand-charcoal:   #1A2332;   /* Dark Panel Background (macOS Cmd Center Look) */
-  --brand-plum:       #0F1520;   /* Partner gradient color for login page */
+  /* Karnataka State branding theme colors mapped to standardized tokens */
+  --primary-navy:     var(--color-navy);      /* Standardized Navy */
+  --brand-crimson:    var(--color-navy);
+  --brand-gold:       var(--color-gold);
+  --brand-forest:     var(--color-green);
+  --brand-charcoal:   #1A2332;
+  --brand-plum:       #0F1520;
 
   /* Strict 5-Color System (Karnataka Prototype) */
-  --alert-red:        #D32F2F;   /* Critical/Alert states ONLY */
-  --warning-amber:    #F59E0B;   /* Warning/Pending states */
-  --success-green:    #2E8B57;   /* Success/Resolved/Deployed states */
+  --alert-red:        var(--color-red);
+  --warning-amber:    var(--color-orange);
+  --success-green:    var(--color-green);
   
   /* Neutral Gray Scale */
-  --neutral-dark:     #1A2332;   /* High-contrast body text */
-  --neutral-medium:   #3F4E64;   /* Muted text/labels (passes 4.5:1 ratio on light bg) */
-  --neutral-light:    #F8FAFC;   /* Light background surfaces, input fields */
-  --neutral-border:   #E2E8F0;   /* Clean grid borders */
-  --neutral-white:    #FFFFFF;   /* Card backgrounds, clean surfaces */
+  --neutral-dark:     #1A2332;
+  --neutral-medium:   var(--color-gray);
+  --neutral-light:    #F8FAFC;
+  --neutral-border:   #E2E8F0;
+  --neutral-white:    #FFFFFF;
 
   /* Semantic Mappings */
   --bg-app: var(--neutral-light);
   --bg-sidebar: var(--primary-navy);
   --bg-header: var(--primary-navy);
   --bg-card: var(--neutral-white);
-  --bg-card-hover: rgba(139, 30, 30, 0.03); /* Maroon-tinted soft hover */
+  --bg-card-hover: rgba(26, 43, 76, 0.03);
   --bg-input: var(--neutral-light);
 
   --border-default: var(--neutral-border);
-  --border-subtle: rgba(139, 30, 30, 0.08);
+  --border-subtle: rgba(26, 43, 76, 0.08);
 
   --accent-cyan: var(--brand-gold);
   --accent-cyan-dim: rgba(212, 160, 23, 0.05);
   --accent-cyan-border: rgba(212, 160, 23, 0.15);
   --accent-cyan-text-on-fill: var(--neutral-white);
 
-  --priority-critical: var(--alert-red);
-  --priority-high: var(--warning-amber);
-  --priority-medium: var(--neutral-medium); /* Kept gray to stay under 5 colors */
-  --priority-low: var(--neutral-medium);
+  --priority-critical: var(--color-red);
+  --priority-high: var(--color-red);
+  --priority-medium: var(--color-orange); /* Corrected: Medium risk must render orange */
+  --priority-low: var(--color-green);
 
-  --status-approved: var(--success-green);
-  --status-pending: var(--warning-amber);
-  --status-deployed: var(--success-green);
-  --status-progress: var(--primary-navy);
+  --status-approved: var(--color-green);
+  --status-pending: var(--color-orange);
+  --status-deployed: var(--color-green);
+  --status-progress: var(--color-navy);
 
-  /* Contrast-compliant text colors (at least 4.5:1 ratio minimum) */
+  /* Contrast-compliant text colors */
   --text-primary: var(--neutral-dark);
   --text-secondary: #2D3748;
   --text-muted: var(--neutral-medium);
   --text-faint: #556275;
 
-  --threat-high: var(--alert-red);
-  --threat-medium: var(--warning-amber);
-  --threat-low: var(--success-green);
+  --threat-high: var(--color-red);
+  --threat-medium: var(--color-orange);
+  --threat-low: var(--color-green);
 
-  --shadow-card: 0 4px 12px rgba(139, 30, 30, 0.03);
-
-  /* Font scale defaults */
-  --font-base: 14px;
-  --font-card-title: 18px;
-  --font-section-title: 22px;
-  --font-page-title: 28px;
-  --font-label: 12px;
+  --shadow-card: 0 4px 12px rgba(26, 43, 76, 0.03);
 
   /* Legacy variables mapped to new system to avoid compilation breaks */
   --cyber-bg: var(--bg-app);
@@ -97,9 +91,31 @@
   letter-spacing: -0.01em;
 }
 
-h1, h2, h3, h4, h5, h6, .page-title, .section-title, .card-title {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
-  font-weight: 700;
+/* Typography Pass using tokens scale */
+h1, .page-title, .text-page-title {
+  font: var(--text-page-title) !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+h2, .section-title, .text-section-heading {
+  font: var(--text-section-heading) !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+h3, .card-title, .text-card-heading {
+  font: var(--text-card-heading) !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+body, p, .text-body {
+  font: var(--text-body) !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.caption, .text-caption {
+  font: var(--text-caption) !important;
+  color: var(--color-caption) !important;
+  font-family: 'Inter', sans-serif !important;
 }
 
 /* Distinct Badge Styles */
@@ -705,14 +721,14 @@ html, body {
   text-transform: uppercase;
 }
 
-.badge-red    { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
-.badge-amber  { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
-.badge-green  { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
-.badge-cyan   { background: #E6F4F1; color: #084037; border: 1px solid #B2DFDB; }
-.badge-purple { background: #EDE9FE; color: #5B21B6; border: 1px solid #DDD6FE; }
-.badge-orange { background: #FFEDD5; color: #9A3412; border: 1px solid #FED7AA; }
-.badge-pink   { background: #FCE7F3; color: #9D174D; border: 1px solid #FBCFE8; }
-.badge-gray   { background: #F3F4F6; color: #374151; border: 1px solid #E5E7EB; }
+.badge-red    { background: rgba(220, 38, 38, 0.08); color: var(--color-red); border: 1px solid rgba(220, 38, 38, 0.15); }
+.badge-amber  { background: rgba(245, 158, 11, 0.08); color: var(--color-orange); border: 1px solid rgba(245, 158, 11, 0.15); }
+.badge-green  { background: rgba(22, 163, 74, 0.08); color: var(--color-green); border: 1px solid rgba(22, 163, 74, 0.15); }
+.badge-cyan   { background: rgba(26, 43, 76, 0.08); color: var(--color-navy); border: 1px solid rgba(26, 43, 76, 0.15); }
+.badge-purple { background: rgba(124, 58, 237, 0.08); color: #7c3AED; border: 1px solid rgba(124, 58, 237, 0.15); }
+.badge-orange { background: rgba(245, 158, 11, 0.08); color: var(--color-orange); border: 1px solid rgba(245, 158, 11, 0.15); }
+.badge-pink   { background: rgba(236, 72, 153, 0.08); color: #ec4899; border: 1px solid rgba(236, 72, 153, 0.15); }
+.badge-gray   { background: rgba(107, 114, 128, 0.08); color: var(--color-gray); border: 1px solid rgba(107, 114, 128, 0.15); }
 
 /* ─────────────────────────────────────────────
    BUTTONS
@@ -1303,14 +1319,14 @@ body {
 }
 
 .hamburger-btn {
-  display: none;
+  display: flex !important;
 }
 
 /* ── Global Input Icon Overlap Fix ──────────────────────── */
 .input-with-icon {
-  position: relative;
-  display: flex;
-  align-items: center;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
   width: 100%;
 }
 
@@ -1318,14 +1334,28 @@ body {
   padding-left: 44px !important; /* ensures text starts after the icon with spacing */
 }
 
-.input-with-icon .icon {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none; /* icon shouldn't block clicking into the input */
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.input-with-icon .icon,
+.input-with-icon .input-field-icon {
+  position: absolute !important;
+  left: 16px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  pointer-events: none !important; /* icon shouldn't block clicking into the input */
+  z-index: 10 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* ── Border Radius Consistency (16px) ─────────────────── */
+.glass-card,
+.input-field-wrapper input.input-field,
+.input-with-icon input,
+.input-field,
+.input-with-icon,
+.search-bar-container,
+select,
+.cyber-btn,
+button:not(.input-password-toggle):not(.hamburger-btn):not(.remember-checkbox-input) {
+  border-radius: 16px !important;
 }

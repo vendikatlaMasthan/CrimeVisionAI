@@ -1,7 +1,5 @@
-'use client';
-
 import { Shield } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface SafeEmblemProps {
   width?: number;
@@ -12,6 +10,12 @@ interface SafeEmblemProps {
 
 export default function SafeEmblem({ width = 50, height = 50, className, style }: SafeEmblemProps) {
   const [error, setError] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   let basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
   if (!basePath && typeof window !== 'undefined') {
     if (window.location.pathname.startsWith('/CrimeVisionAI')) {
@@ -19,7 +23,7 @@ export default function SafeEmblem({ width = 50, height = 50, className, style }
     }
   }
 
-  if (error) {
+  if (!mounted || error) {
     return (
       <div
         className={className}

@@ -6,6 +6,7 @@ import { Shield, Lock, Eye, EyeOff, Fingerprint, CreditCard, Loader, FileText, T
 import { DEMO_ACCOUNTS, DemoAccount } from '@/lib/crimeData';
 import GlobalSimulationBanner from '@/components/GlobalSimulationBanner';
 import CountUp from '@/components/CountUp';
+import { InputWithIcon } from '@/components/InputWithIcon';
 
 const LOADING_STEPS = [
   'Checking Credentials…',
@@ -365,18 +366,14 @@ export default function LoginPage() {
               {/* Badge ID Input */}
               <div className="input-group">
                 <label className="input-label">BADGE / SERVICE ID</label>
-                <div className="input-field-wrapper input-with-icon">
-                  <User className="input-field-icon icon" size={15} />
-                  <input
-                    type="text"
-                    value={badgeId}
-                    onChange={(e) => { setBadgeId(e.target.value); setError(''); }}
-                    placeholder="Enter badge number..."
-                    className="input-field"
-                    disabled={loading || bioScanning}
-                    required
-                  />
-                </div>
+                <InputWithIcon
+                  icon={User}
+                  value={badgeId}
+                  onChange={(val) => { setBadgeId(val); setError(''); }}
+                  placeholder="Enter badge number..."
+                  disabled={loading || bioScanning}
+                  required
+                />
               </div>
 
               {/* Password Input */}

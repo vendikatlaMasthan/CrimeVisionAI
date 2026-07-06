@@ -24,6 +24,7 @@ import { TranslationSet } from '@/lib/translations';
 import CountUp from '@/components/CountUp';
 import Card from '@/components/Card';
 import Table, { TableColumn } from '@/components/Table';
+import StatCard from '@/components/StatCard';
 
 // ── Custom Tooltip ─────────────────────────────────────────────
 function CustomTooltip({ active, payload, label }: any) {
@@ -51,10 +52,10 @@ function CustomTooltip({ active, payload, label }: any) {
 
 // ── Helpers ────────────────────────────────────────────────────
 function alertSeverityColor(severity: string) {
-  if (severity === 'critical') return '#ef4444';
-  if (severity === 'high') return '#f59e0b';
-  if (severity === 'medium') return '#1976D2';
-  return '#2E8B57';
+  if (severity === 'critical') return '#dc2626';
+  if (severity === 'high') return '#dc2626';
+  if (severity === 'medium') return '#f59e0b'; // Fixed: MEDIUM risk must render orange
+  return '#16a34a';
 }
 
 function getAlertSeverityText(severity: string, t: any) {
@@ -188,104 +189,72 @@ export default function DashboardPage() {
       </div>
 
       {/* ── BLOCK 1: OVERALL STATISTICS (Row 1) ───────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: '24px' }}>
-        
-        {/* Active Cases */}
-        <Card variant="warning" style={{ display: 'flex', flexDirection: 'column', minHeight: '140px', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                {t.stat_active_cases || 'Active Investigations'}
-              </span>
-              <div style={{ fontSize: '32px', fontWeight: 800, color: '#1F2937', marginTop: '6px', lineHeight: 1 }}>
-                <CountUp end={SUMMARY_METRICS.activeCases} />
-              </div>
-            </div>
-            <div style={{
-              width: '36px', height: '36px', borderRadius: '8px',
-              background: '#FFFBEB', border: '1px solid #FDE68A',
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}>
-              <Activity size={18} color="#D97706" />
-            </div>
-          </div>
-          <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '8px' }}>
-            {t.dashboard_cases_description || 'Cases under active KSP investigation'}
-          </div>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[20px]" style={{ marginBottom: '24px' }}>
+        <StatCard
+          label={t.stat_active_cases || 'Active Investigations'}
+          value={<CountUp end={SUMMARY_METRICS.activeCases} />}
+          icon={<Activity size={18} color="var(--color-orange)" />}
+          description={t.dashboard_cases_description || 'Cases under active KSP investigation'}
+        />
+        <StatCard
+          label={t.stat_total_officers || 'Total Officers'}
+          value={<CountUp end={SUMMARY_METRICS.totalOfficers} />}
+          icon={<Users size={18} color="var(--color-navy)" />}
+          description={t.dashboard_officers_description || 'Active duty personnel across districts'}
+        />
+        <StatCard
+          label={t.stat_accuracy || 'AI Accuracy'}
+          value={<CountUp end={SUMMARY_METRICS.accuracyScore} decimals={1} suffix="%" />}
+          icon={<Target size={18} color="var(--color-green)" />}
+          description={t.dashboard_accuracy_description || 'Confidence score on predictive grids'}
+        />
+        <StatCard
+          label={t.state_threat || 'STATE THREAT LEVEL'}
+          value={t.priority_high?.toUpperCase() || 'HIGH'}
+          icon={<ShieldAlert size={18} color="var(--color-red)" />}
+          description={t.dashboard_threat_description || 'Statewide alert index status'}
+          style={{ borderLeft: '4px solid var(--color-red)' }}
+        />
+      </div>
 
-        {/* Officers Deployed */}
-        <Card variant="info" style={{ display: 'flex', flexDirection: 'column', minHeight: '140px', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                {t.stat_total_officers || 'Total Officers'}
-              </span>
-              <div style={{ fontSize: '32px', fontWeight: 800, color: '#1F2937', marginTop: '6px', lineHeight: 1 }}>
-                <CountUp end={SUMMARY_METRICS.totalOfficers} />
-              </div>
-            </div>
-            <div style={{
-              width: '36px', height: '36px', borderRadius: '8px',
-              background: '#E0F2FE', border: '1px solid #BAE6FD',
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}>
-              <Users size={18} color="#1E3A5F" />
+      {/* ── PROACTIVE POLICING CALLOUT: RECOMMENDED ACTIONS ───────────────── */}
+      <div className="glass-card" style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 'var(--radius, 16px)', padding: '20px', marginBottom: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+          <Brain size={20} color="var(--color-navy)" />
+          <h2 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+            Proactive Deployment Suggestions / Recommended Actions
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[16px]">
+          <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(245, 158, 11, 0.04)', border: '1.5px solid rgba(245, 158, 11, 0.15)', display: 'flex', gap: '12px', minHeight: '100px' }}>
+            <span style={{ fontSize: '20px' }}>🚨</span>
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#b45309', marginBottom: '4px' }}>Increase patrol in Kalaburagi, 10 PM – 2 AM</div>
+              <p style={{ fontSize: '11px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected Narcotics hotspot trend (+34% vs. 90-day average).</p>
             </div>
           </div>
-          <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '8px' }}>
-            {t.dashboard_officers_description || 'Active duty personnel across districts'}
-          </div>
-        </Card>
-
-        {/* AI Accuracy */}
-        <Card variant="success" style={{ display: 'flex', flexDirection: 'column', minHeight: '140px', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                {t.stat_accuracy || 'AI Accuracy'}
-              </span>
-              <div style={{ fontSize: '32px', fontWeight: 800, color: '#1F2937', marginTop: '6px', lineHeight: 1 }}>
-                <CountUp end={SUMMARY_METRICS.accuracyScore} decimals={1} suffix="%" />
-              </div>
-            </div>
-            <div style={{
-              width: '36px', height: '36px', borderRadius: '8px',
-              background: '#D1FAE5', border: '1px solid #A7F3D0',
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}>
-              <Target size={18} color="#2E8B57" />
+          <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(245, 158, 11, 0.04)', border: '1.5px solid rgba(245, 158, 11, 0.15)', display: 'flex', gap: '12px', minHeight: '100px' }}>
+            <span style={{ fontSize: '20px' }}>🛡️</span>
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#b45309', marginBottom: '4px' }}>Audit payment gateways in Bengaluru Urban</div>
+              <p style={{ fontSize: '11px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected Cybercrime/OTP Phishing spike (+243% vs. 90-day average).</p>
             </div>
           </div>
-          <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '8px' }}>
-            {t.dashboard_accuracy_description || 'Confidence score on predictive grids'}
-          </div>
-        </Card>
-
-        {/* State Threat Level */}
-        <Card variant="danger" style={{ display: 'flex', flexDirection: 'column', minHeight: '140px', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                {t.state_threat || 'STATE THREAT LEVEL'}
-              </span>
-              <div style={{ fontSize: '32px', fontWeight: 800, color: '#ef4444', marginTop: '6px', lineHeight: 1 }}>
-                {t.priority_high?.toUpperCase() || 'HIGH'}
-              </div>
-            </div>
-            <div style={{
-              width: '36px', height: '36px', borderRadius: '8px',
-              background: '#FEE2E2', border: '1px solid #FCA5A5',
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}>
-              <ShieldAlert size={18} color="#ef4444" />
+          <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(220, 38, 38, 0.04)', border: '1.5px solid rgba(220, 38, 38, 0.15)', display: 'flex', gap: '12px', minHeight: '100px' }}>
+            <span style={{ fontSize: '20px' }}>🔒</span>
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#b91c1c', marginBottom: '4px' }}>Reinforce checkposts in Ballari town perimeter</div>
+              <p style={{ fontSize: '11px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected Organized Crime spike (+500% vs. 90-day average).</p>
             </div>
           </div>
-          <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '8px' }}>
-            {t.dashboard_threat_description || 'Statewide alert index status'}
+          <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(22, 163, 74, 0.04)', border: '1.5px solid rgba(22, 163, 74, 0.15)', display: 'flex', gap: '12px', minHeight: '100px' }}>
+            <span style={{ fontSize: '20px' }}>🚗</span>
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#15803d', marginBottom: '4px' }}>Deploy auto-theft decoy units in Mysuru</div>
+              <p style={{ fontSize: '11px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected relay-attack vehicle theft surge near college zones.</p>
+            </div>
           </div>
-        </Card>
-
+        </div>
       </div>
 
       {/* ── BLOCK 2 & 3: CRIME TREND & CRIME DISTRIBUTION (Row 2 - 65/35 Split) ── */}

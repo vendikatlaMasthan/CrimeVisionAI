@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from './LanguageToggle';
 import { useTheme } from './ThemeContext';
 import { usePresentation } from './PresentationContext';
-import { SearchInput } from './SearchInput';
+import { InputWithIcon } from './InputWithIcon';
 import AlertPanel from './AlertPanel';
 import UserMenu from './UserMenu';
 import { FIR_RECORDS, CRIMINAL_PROFILES, CRIME_CATEGORIES, LIVE_ALERTS, CRIMINAL_NETWORK } from '@/lib/mockData';
@@ -57,18 +57,20 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
   useEffect(() => {
     const updateTime = () => {
       const date = new Date();
-      const day = String(date.getDate()).padStart(2, '0');
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const month = months[date.getMonth()];
-      const year = date.getFullYear();
-      
-      let hours = date.getHours();
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12; // the hour '0' should be '12'
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      
-      setLiveTime(`${day} ${month} ${year}, ${String(hours).padStart(2, '0')}:${minutes} ${ampm} IST`);
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Kolkata',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      });
+      const parts = formatter.formatToParts(date);
+      const hour = parts.find(p => p.type === 'hour')?.value || '';
+      const minute = parts.find(p => p.type === 'minute')?.value || '';
+      const second = parts.find(p => p.type === 'second')?.value || '';
+      const dayPeriod = (parts.find(p => p.type === 'dayPeriod')?.value || '').toUpperCase();
+
+      setLiveTime(`${hour}:${minute}:${second} ${dayPeriod} IST`);
     };
 
     updateTime();
@@ -351,20 +353,73 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
 
   return (
     <>
+
+      <style>{`
+        @media (min-width: 1200px) {
+          .search-bar-responsive {
+            width: 440px !important;
+          }
+          .kbd-shortcut-responsive {
+            display: inline-block !important;
+          }
+          .input-responsive {
+            padding-right: 96px !important;
+          }
+        }
+        @media (min-width: 1024px) and (max-width: 1199px) {
+          .search-bar-responsive {
+            width: 320px !important;
+          }
+          .kbd-shortcut-responsive {
+            display: none !important;
+          }
+          .input-responsive {
+            padding-right: 48px !important;
+          }
+        }
+        @media (max-width: 1023px) {
+          .search-bar-responsive {
+            width: 220px !important;
+          }
+          .kbd-shortcut-responsive {
+            display: none !important;
+          }
+          .input-responsive {
+            padding-right: 48px !important;
+          }
+        }
+        @media (max-width: 768px) {
+          .search-bar-responsive {
+            width: 180px !important;
+          }
+          .kbd-shortcut-responsive {
+            display: none !important;
+          }
+          .input-responsive {
+            padding-right: 48px !important;
+          }
+        }
+      `}</style>
+
       <header
-        className="fixed top-0 right-0 flex items-center justify-between px-6 z-40"
+        className="fixed top-0 right-0 z-40 header"
         style={{
           left: isSidebarOpen ? '256px' : '0px',
           top: '72px',
           background: '#FFFFFF',
           borderBottom: '1px solid #E5E7EB',
-          height: '64px',
-          transition: 'left 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+          height: '72px',
+          padding: '0 24px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '24px',
+          flexWrap: 'nowrap',
+          transition: 'all 250ms ease',
         }}
       >
-        {/* Left: Context Label & Mobile Hamburg Toggle */}
-        <div className="flex items-center gap-3">
-          {/* Hamburger Menu Toggle */}
+        {/* Left Section: Sidebar toggle, Logo & Officer Badge */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 }}>
+          {/* Hamburger Sidebar Toggle */}
           <button
             onClick={() => {
               if (typeof document !== 'undefined') {
@@ -374,112 +429,202 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                 onToggleSidebar();
               }
             }}
-            className="hamburger-btn p-1.5 rounded-lg border cursor-pointer transition-colors"
+            className="hamburger-btn"
             style={{
-              borderColor: 'var(--border-default)',
-              background: '#F3F4F6',
-              color: 'var(--text-muted)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               width: '40px',
               height: '40px',
+              borderRadius: '8px',
+              border: '1px solid var(--border-default)',
+              background: '#F3F4F6',
+              color: 'var(--text-muted)',
               cursor: 'pointer',
+              transition: 'background 200ms',
             }}
             title="Toggle Sidebar"
           >
             <Menu size={20} />
           </button>
-          
-          <span className="hidden md:inline text-xs font-semibold text-[var(--text-muted)] tracking-widest uppercase">
-            AI INTELLIGENCE PLATFORM
-          </span>
+
+          {/* Logo Block */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '8px',
+              background: 'rgba(30, 58, 95, 0.08)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--primary-navy)',
+            }}>
+              <Shield size={20} />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', lineHeight: '1.2' }}>
+              <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--primary-navy)', whiteSpace: 'nowrap' }}>
+                CrimeVision AI
+              </span>
+              <span style={{ fontSize: '9px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>
+                AI Intelligence Platform
+              </span>
+            </div>
+          </div>
+
+          {/* Officer Badge */}
           <span
-            className="hidden md:inline"
             style={{
-              fontSize: '10px',
+              fontSize: '11px',
               fontWeight: 700,
-              letterSpacing: '0.06em',
+              letterSpacing: '0.04em',
               textTransform: 'uppercase',
-              padding: '3px 10px',
+              padding: '4px 12px',
               borderRadius: '999px',
-              background: portalType === 'admin'
-                ? 'rgba(166, 25, 46, 0.08)'
-                : 'rgba(15, 107, 92, 0.08)',
-              color: portalType === 'admin' ? '#A6192E' : '#0F6B5C',
-              border: `1px solid ${portalType === 'admin' ? 'rgba(166, 25, 46, 0.15)' : 'rgba(15, 107, 92, 0.15)'}`,
-              marginLeft: '8px',
+              background: portalType === 'admin' ? 'rgba(166, 25, 46, 0.08)' : '#ECFDF5',
+              color: portalType === 'admin' ? '#A6192E' : '#047857',
+              border: `1px solid ${portalType === 'admin' ? 'rgba(166, 25, 46, 0.15)' : '#A7F3D0'}`,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '24px',
+              boxSizing: 'border-box',
+              whiteSpace: 'nowrap',
             }}
           >
             {portalType === 'admin' ? 'Admin' : 'Officer'}
           </span>
         </div>
 
-        {/* Center: Global Search */}
-        <div className="relative ml-6 mr-3" ref={dropdownRef} style={{ flex: '1 1 auto', maxWidth: '420px', minWidth: '150px', height: '40px' }}>
-          <div className="relative flex items-center w-full h-full">
-            <SearchInput
-              ref={inputRef}
-              id="global-search-input"
-              placeholder={lang === 'kn' 
-                ? "ಹುಡುಕಿ FIRಗಳು, ಶಂಕಿತರು... (Press /)"
-                : "Search FIRs, Suspects, Districts, Crime IDs... (Press /)"
-              }
-              value={searchQuery}
-              onChange={val => { setSearchQuery(val); setShowDropdown(true); setActiveIdx(-1); }}
-              onFocus={() => setShowDropdown(true)}
-              onKeyDown={handleKeyDown}
-              style={{
-                background: 'var(--bg-input)',
-                paddingLeft: '36px',
-                paddingRight: '48px',
-              }}
-            />
+        {/* Center Section: Search Bar */}
+        <div className="relative search-bar-responsive" ref={dropdownRef} style={{
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          height: '48px',
+          borderRadius: '12px',
+          border: '1px solid #D1D5DB',
+          background: '#FFFFFF',
+          flexShrink: 1,
+          transition: 'all 200ms ease',
+        }}>
+          <input
+            ref={inputRef}
+            id="global-search-input"
+            type="text"
+            placeholder={lang === 'kn' ? "ಹುಡುಕಿ..." : "Search FIRs, Suspects, Districts..."}
+            value={searchQuery}
+            onChange={e => { setSearchQuery(e.target.value); setShowDropdown(true); setActiveIdx(-1); }}
+            onFocus={() => setShowDropdown(true)}
+            onKeyDown={handleKeyDown}
+            className="input-responsive"
+            style={{
+              width: '100%',
+              height: '100%',
+              border: 'none',
+              outline: 'none',
+              background: 'transparent',
+              paddingLeft: '48px',
+              fontSize: '15px',
+              color: '#374151',
+            }}
+          />
+          <Search size={18} className="text-slate-400 icon-search" style={{
+            position: 'absolute',
+            left: '16px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            pointerEvents: 'none',
+          }} />
 
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
-              {searchQuery && (
-                <button 
-                  onClick={handleClearSearch}
-                  type="button"
-                  className="p-1 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
-                >
-                  <X size={13} />
-                </button>
-              )}
-              {voiceSupported && (
-                <button
-                  onClick={handleVoiceSearch}
-                  type="button"
-                  title={isVoiceActive ? "Listening... Click to stop" : "Voice Search (EN/KN)"}
-                  className="p-1 rounded-full cursor-pointer transition-colors duration-200 flex items-center justify-center"
-                  style={{
-                    background: isVoiceActive ? 'rgba(239,68,68,0.15)' : 'transparent',
-                    color: isVoiceActive ? '#ef4444' : 'var(--text-muted)',
-                  }}
-                >
-                  {isVoiceActive ? (
-                    <div className="relative">
-                      <span className="absolute -inset-1 rounded-full bg-red-500/20 animate-ping" />
-                      <MicOff size={13} className="relative text-red-500 animate-pulse" />
-                    </div>
-                  ) : (
-                    <Mic size={13} className="hover:text-[var(--text-primary)]" />
-                  )}
-                </button>
-              )}
-              {!searchQuery && !isVoiceActive && (
-                <div className="pointer-events-none text-[10px] font-semibold text-[var(--text-faint)] font-mono px-1">
-                  ⌘K
-                </div>
-              )}
-            </div>
+          {/* Shortcut badge */}
+          <div className="kbd-shortcut-responsive" style={{
+            position: 'absolute',
+            right: '58px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            background: '#F3F4F6',
+            border: '1px solid #D1D5DB',
+            borderRadius: '8px',
+            padding: '4px 8px',
+            fontSize: '12px',
+            fontWeight: 600,
+            color: '#6B7280',
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+          }}>
+            Ctrl+K
           </div>
+
+          {/* Voice Mic Button */}
+          {voiceSupported && (
+            <button
+              onClick={handleVoiceSearch}
+              type="button"
+              title={isVoiceActive ? "Listening... Click to stop" : "Voice Search (EN/KN)"}
+              className="mic-button-responsive"
+              style={{
+                position: 'absolute',
+                right: '4px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: isVoiceActive ? 'rgba(239,68,68,0.1)' : 'transparent',
+                color: isVoiceActive ? '#ef4444' : '#6B7280',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'background 200ms',
+              }}
+              onMouseEnter={e => {
+                if (!isVoiceActive) e.currentTarget.style.background = '#F3F4F6';
+              }}
+              onMouseLeave={e => {
+                if (!isVoiceActive) e.currentTarget.style.background = 'transparent';
+              }}
+            >
+              {isVoiceActive ? (
+                <div className="relative">
+                  <span className="absolute -inset-1 rounded-full bg-red-500/20 animate-ping" />
+                  <MicOff size={16} className="relative text-red-500 animate-pulse" />
+                </div>
+              ) : (
+                <Mic size={16} />
+              )}
+            </button>
+          )}
+
+          {/* Clear button if text exists */}
+          {searchQuery && (
+            <button 
+              onClick={handleClearSearch}
+              type="button"
+              style={{
+                position: 'absolute',
+                right: '46px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'transparent',
+                border: 'none',
+                color: '#6B7280',
+                cursor: 'pointer',
+              }}
+            >
+              <X size={16} />
+            </button>
+          )}
 
           {/* Search Dropdown with Premium Police Command Center Look */}
           {showDropdown && (
             <div
               className="absolute top-14 left-0 right-0 rounded-2xl z-50 border overflow-hidden"
               style={{
+                width: '100%',
+                minWidth: '320px',
                 background: 'var(--topbar-bg)',
                 borderColor: 'var(--cyber-border)',
                 boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
@@ -537,13 +682,13 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                           <Mic size={12} className="text-[var(--cyber-cyan)]" /> Voice Recognition Active
                         </div>
                         <p className="text-[11px] text-[var(--text-muted)] leading-relaxed m-0">
-                          Click the mic button and state your query in English or Kannada (e.g. <span className="text-[var(--cyber-cyan)] font-mono">"show cybercrime cases"</span> or <span className="text-[var(--cyber-cyan)] font-mono">"ಸಂದೀಪ್ ನಾಯಕ್"</span>).
+                          Click the mic button and state your query in English or Kannada.
                         </p>
                       </div>
                     )}
                   </div>
 
-                  {/* Right Column: Search Analytics (Palantir Gotham Style) */}
+                  {/* Right Column: Search Analytics */}
                   <div className="space-y-4 border-l pl-5" style={{ borderColor: 'var(--cyber-border)' }}>
                     <div>
                       <div className="text-[10px] font-black text-[var(--text-dim)] uppercase tracking-widest mb-3 flex items-center gap-1.5">
@@ -566,24 +711,6 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                         </div>
                       </div>
 
-                      {/* Most Accessed FIRs */}
-                      <div className="mb-4">
-                        <div className="text-[10px] text-[var(--text-dim)] uppercase font-semibold mb-2">Most Accessed FIRs:</div>
-                        <div className="flex flex-col gap-2">
-                          {[
-                            { id: 'KA-2025-047823', type: 'Cybercrime', dist: 'Bengaluru' },
-                            { id: 'KA-2025-047801', type: 'Narcotics', dist: 'Kalaburagi' }
-                          ].map(f => (
-                            <div key={f.id} className="flex justify-between items-center text-xs">
-                              <Link href={`/fir?id=${f.id}`} className="font-mono text-[var(--cyber-cyan)] hover:underline font-bold" onClick={() => setShowDropdown(false)}>
-                                {f.id}
-                              </Link>
-                              <span className="text-[11px] text-[var(--text-muted)]">{f.type} · {f.dist}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
                       {/* Most Wanted Suspects */}
                       <div>
                         <div className="text-[10px] text-[var(--text-dim)] uppercase font-semibold mb-2">Most Wanted Suspects:</div>
@@ -593,10 +720,8 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                             { name: 'Imran Sheikh', risk: '96%' }
                           ].map(s => (
                             <div key={s.name} className="flex justify-between items-center text-xs">
-                              <Link href={`/search?query=${encodeURIComponent(s.name)}`} className="text-[var(--text-primary)] hover:underline font-bold" onClick={() => setShowDropdown(false)}>
-                                {s.name}
-                              </Link>
-                              <span className="text-[10px] text-red-500 font-bold bg-red-500/10 px-1.5 py-0.5 rounded">RISK: {s.risk}</span>
+                              <span className="font-semibold text-[var(--text-primary)]">{s.name}</span>
+                              <span className="text-[11px] font-black text-red-500">{s.risk} Risk</span>
                             </div>
                           ))}
                         </div>
@@ -605,315 +730,27 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                   </div>
                 </div>
               )}
-
-              {/* No results */}
-              {q && allResults.length === 0 && (
-                <div className="text-center py-6 text-xs text-[var(--text-muted)] flex flex-col items-center justify-center gap-2">
-                  <AlertTriangle size={20} className="text-amber-500" />
-                  <span>No records found for &ldquo;<span className="text-[var(--cyber-cyan)] font-bold">{searchQuery}</span>&rdquo;</span>
-                </div>
-              )}
-
-              {/* Natural Language Resolve Header */}
-              {nlpResult && (
-                <div className="mb-4 p-3.5 rounded-xl border border-[var(--accent-cyan)]/35" style={{ background: 'rgba(15,107,92,0.03)' }}>
-                  <div className="flex justify-between items-center mb-1.5">
-                    <span className="text-[10px] font-black text-[var(--cyber-cyan)] uppercase tracking-wider flex items-center gap-1.5">
-                      <Brain size={11} className="animate-pulse" /> AI Natural Language Resolution
-                    </span>
-                    <span className="text-[9px] font-mono text-[var(--cyber-cyan)] bg-[var(--cyber-cyan)]/15 px-1.5 py-0.5 rounded font-black">SOLVER ACTIVE</span>
-                  </div>
-                  <div className="text-xs text-[var(--text-primary)] font-semibold mb-2">
-                    {nlpResult.message}
-                  </div>
-                  <div className="flex gap-2">
-                    {nlpResult.links.map((link: any, idx: number) => (
-                      <Link 
-                        key={idx} 
-                        href={link.url}
-                        onClick={() => { setShowDropdown(false); setSearchQuery(''); }}
-                        className="px-2.5 py-1 text-[11px] rounded-lg bg-[var(--cyber-cyan)]/10 border border-[var(--cyber-cyan)]/25 text-[var(--cyber-cyan)] font-bold hover:bg-[var(--cyber-cyan)]/25 transition-colors"
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Categorized Dropdown Results */}
-              {q && allResults.length > 0 && (
-                <div style={{ maxHeight: 380, overflowY: 'auto' }} className="space-y-4 pr-1">
-                  
-                  {/* FIRs */}
-                  {matchedFIRs.length > 0 && (
-                    <div>
-                      <div className="text-[10px] font-black text-[var(--cyber-cyan)] uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                        <FileText size={10} /> 📄 FIR Cases ({matchedFIRs.length})
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        {matchedFIRs.map((fir, idx) => {
-                          const flatIdx = getFlatIndex('fir', idx);
-                          return (
-                            <div key={fir.id}
-                              className="p-3 rounded-xl border transition-all duration-200 text-left"
-                              style={{
-                                background: activeIdx === flatIdx ? 'rgba(0,240,255,0.06)' : 'var(--cyber-bg)',
-                                borderColor: activeIdx === flatIdx ? 'var(--cyber-cyan)' : 'var(--cyber-border)',
-                                borderLeft: '4px solid var(--cyber-cyan)',
-                              }}
-                            >
-                              <div className="flex justify-between items-center">
-                                <span className="text-xs font-mono font-bold text-[var(--cyber-cyan)]">{fir.firNumber}</span>
-                                <span className="text-[9px] font-black bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded">{fir.priority?.toUpperCase()}</span>
-                              </div>
-                              <div className="flex justify-between items-center text-[11px] text-[var(--text-muted)] mt-1.5">
-                                <span>{fir.crimeType} · Accused: {fir.suspectName}</span>
-                                <span>📍 {fir.district}</span>
-                              </div>
-                              {/* Quick Actions */}
-                              <div className="flex gap-2 mt-2 pt-2 border-t border-[var(--cyber-border)]/50">
-                                <Link href={`/fir?id=${fir.id}`} className="text-[10px] text-[var(--cyber-cyan)] font-bold hover:underline" onClick={() => setShowDropdown(false)}>View FIR</Link>
-                                <span className="text-[var(--text-dim)]">·</span>
-                                <Link href={`/copilot?id=${fir.id}`} className="text-[10px] text-amber-500 font-bold hover:underline" onClick={() => setShowDropdown(false)}>Investigate</Link>
-                                <span className="text-[var(--text-dim)]">·</span>
-                                <Link href="/reports" className="text-[10px] text-purple-500 font-bold hover:underline" onClick={() => setShowDropdown(false)}>Generate Report</Link>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Suspects */}
-                  {matchedSuspects.length > 0 && (
-                    <div>
-                      <div className="text-[10px] font-black text-red-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                        <User size={10} /> 👤 Suspect Dossiers ({matchedSuspects.length})
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        {matchedSuspects.map((s, idx) => {
-                          const flatIdx = getFlatIndex('suspect', idx);
-                          return (
-                            <div key={s.id}
-                              className="p-3 rounded-xl border transition-all duration-200 text-left"
-                              style={{
-                                background: activeIdx === flatIdx ? 'rgba(239,68,68,0.05)' : 'var(--cyber-bg)',
-                                borderColor: activeIdx === flatIdx ? 'rgba(239,68,68,0.3)' : 'var(--cyber-border)',
-                                borderLeft: '4px solid #ef4444',
-                              }}
-                            >
-                              <div className="flex justify-between items-center">
-                                <span className="text-xs font-bold text-[var(--text-primary)]">{s.name} ({s.alias})</span>
-                                <span className="text-[9px] font-bold text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded">Risk: {s.riskLevel}</span>
-                              </div>
-                              <div className="flex justify-between items-center text-[11px] text-[var(--text-muted)] mt-1.5">
-                                <span>Primary Crime: {s.crimeType}</span>
-                                <span>📍 {s.district}</span>
-                              </div>
-                              {/* Quick Actions */}
-                              <div className="flex gap-2 mt-2 pt-2 border-t border-[var(--cyber-border)]/50">
-                                <Link href={`/detective?suspect=${encodeURIComponent(s.name)}`} className="text-[10px] text-red-500 font-bold hover:underline" onClick={() => setShowDropdown(false)}>Investigate Dossier</Link>
-                                <span className="text-[var(--text-dim)]">·</span>
-                                <Link href="/network" className="text-[10px] text-green-500 font-bold hover:underline" onClick={() => setShowDropdown(false)}>View Network</Link>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Districts */}
-                  {matchedDistricts.length > 0 && (
-                    <div>
-                      <div className="text-[10px] font-black text-purple-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                        <MapPin size={10} /> 📍 Districts Intelligence ({matchedDistricts.length})
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        {matchedDistricts.map((d, idx) => {
-                          const flatIdx = getFlatIndex('district', idx);
-                          return (
-                            <div key={d.id}
-                              className="p-3 rounded-xl border transition-all duration-200 text-left"
-                              style={{
-                                background: activeIdx === flatIdx ? 'rgba(167,139,250,0.06)' : 'var(--cyber-bg)',
-                                borderColor: activeIdx === flatIdx ? 'rgba(167,139,250,0.3)' : 'var(--cyber-border)',
-                                borderLeft: '4px solid #8b5cf6',
-                              }}
-                            >
-                              <div className="flex justify-between items-center">
-                                <span className="text-xs font-bold text-[var(--text-primary)]">{d.name} ({d.code})</span>
-                                <span className="text-[9px] font-bold" style={{ color: riskColor(d.riskScore) }}>Risk Score: {d.riskScore}</span>
-                              </div>
-                              <div className="flex justify-between items-center text-[11px] text-[var(--text-muted)] mt-1.5">
-                                <span>{d.crimeCount.toLocaleString()} incidents · {d.activeCases} active</span>
-                                <span>Top Crime: {d.topCrimeType}</span>
-                              </div>
-                              {/* Quick Actions */}
-                              <div className="flex gap-2 mt-2 pt-2 border-t border-[var(--cyber-border)]/50">
-                                <Link href={`/heatmap?district=${encodeURIComponent(d.name)}`} className="text-[10px] text-purple-500 font-bold hover:underline" onClick={() => setShowDropdown(false)}>Open District</Link>
-                                <span className="text-[var(--text-dim)]">·</span>
-                                <Link href="/network" className="text-[10px] text-green-500 font-bold hover:underline" onClick={() => setShowDropdown(false)}>View Network</Link>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Crime Categories */}
-                  {matchedCategories.length > 0 && (
-                    <div>
-                      <div className="text-[10px] font-black text-amber-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                        <AlertTriangle size={10} /> ⚠ Crime Types ({matchedCategories.length})
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        {matchedCategories.map((c, idx) => {
-                          const flatIdx = getFlatIndex('category', idx);
-                          return (
-                            <div key={c.name}
-                              className="p-3 rounded-xl border transition-all duration-200 text-left"
-                              style={{
-                                background: activeIdx === flatIdx ? 'rgba(245,158,11,0.06)' : 'var(--cyber-bg)',
-                                borderColor: activeIdx === flatIdx ? 'rgba(245,158,11,0.3)' : 'var(--cyber-border)',
-                                borderLeft: '4px solid #f59e0b',
-                              }}
-                            >
-                              <div className="flex justify-between items-center">
-                                <span className="text-xs font-bold text-[var(--text-primary)]">{c.name}</span>
-                                <span className="text-[9px] font-bold text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded">{c.trend} Trend</span>
-                              </div>
-                              <div className="flex justify-between items-center text-[11px] text-[var(--text-muted)] mt-1.5">
-                                <span>{c.count.toLocaleString()} cases total</span>
-                                <span>State distribution: {c.percentage}%</span>
-                              </div>
-                              {/* Quick Actions */}
-                              <div className="flex gap-2 mt-2 pt-2 border-t border-[var(--cyber-border)]/50">
-                                <Link href={`/investigator?query=Show+cases+of+${encodeURIComponent(c.name)}`} className="text-[10px] text-amber-500 font-bold hover:underline" onClick={() => setShowDropdown(false)}>Investigate Category</Link>
-                                <span className="text-[var(--text-dim)]">·</span>
-                                <Link href="/reports" className="text-[10px] text-purple-500 font-bold hover:underline" onClick={() => setShowDropdown(false)}>Generate Report</Link>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Alerts */}
-                  {matchedAlerts.length > 0 && (
-                    <div>
-                      <div className="text-[10px] font-black text-orange-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                        <ShieldAlert size={10} /> 🚨 Live Intelligence Alerts ({matchedAlerts.length})
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        {matchedAlerts.map((a, idx) => {
-                          const flatIdx = getFlatIndex('alert', idx);
-                          return (
-                            <div key={a.id}
-                              className="p-3 rounded-xl border transition-all duration-200 text-left"
-                              style={{
-                                background: activeIdx === flatIdx ? 'rgba(249,115,22,0.06)' : 'var(--cyber-bg)',
-                                borderColor: activeIdx === flatIdx ? 'rgba(249,115,22,0.3)' : 'var(--cyber-border)',
-                                borderLeft: '4px solid #f97316',
-                              }}
-                            >
-                              <div className="flex justify-between items-center">
-                                <span className="text-xs font-bold text-[var(--text-primary)]">{a.title}</span>
-                                <span className="text-[9px] font-mono text-orange-500">{a.timestamp}</span>
-                              </div>
-                              <div className="flex justify-between items-center text-[11px] text-[var(--text-muted)] mt-1.5">
-                                <span>{a.description}</span>
-                                <span>📍 {a.district}</span>
-                              </div>
-                              {/* Quick Actions */}
-                              <div className="flex gap-2 mt-2 pt-2 border-t border-[var(--cyber-border)]/50">
-                                <Link href="/alerts" className="text-[10px] text-red-500 font-bold hover:underline" onClick={() => setShowDropdown(false)}>Dispatch Tactical</Link>
-                                <span className="text-[var(--text-dim)]">·</span>
-                                <Link href="/alerts" className="text-[10px] text-amber-500 font-bold hover:underline" onClick={() => setShowDropdown(false)}>Acknowledge Alert</Link>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Criminal Networks */}
-                  {matchedNetworks.length > 0 && (
-                    <div>
-                      <div className="text-[10px] font-black text-green-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                        <Activity size={10} /> 🧬 Criminal Networks & Genome Nodes ({matchedNetworks.length})
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        {matchedNetworks.map((n, idx) => {
-                          const flatIdx = getFlatIndex('network', idx);
-                          return (
-                            <div key={n.id}
-                              className="p-3 rounded-xl border transition-all duration-200 text-left"
-                              style={{
-                                background: activeIdx === flatIdx ? 'rgba(34,197,94,0.06)' : 'var(--cyber-bg)',
-                                borderColor: activeIdx === flatIdx ? 'rgba(34,197,94,0.3)' : 'var(--cyber-border)',
-                                borderLeft: '4px solid #22c55e',
-                              }}
-                            >
-                              <div className="flex justify-between items-center">
-                                <span className="text-xs font-bold text-[var(--text-primary)]">{n.label}</span>
-                                <span className="text-[9px] font-mono text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded">{n.type?.toUpperCase()}</span>
-                              </div>
-                              <div className="flex justify-between items-center text-[11px] text-[var(--text-muted)] mt-1.5">
-                                <span>{n.district || 'State-wide'} · {n.status || 'Active Node'}</span>
-                                {n.risk && <span className="text-red-500 font-bold">Risk: {n.risk}</span>}
-                              </div>
-                              {/* Quick Actions */}
-                              <div className="flex gap-2 mt-2 pt-2 border-t border-[var(--cyber-border)]/50">
-                                <Link href="/network" className="text-[10px] text-green-500 font-bold hover:underline" onClick={() => setShowDropdown(false)}>Inspect Node</Link>
-                                <span className="text-[var(--text-dim)]">·</span>
-                                <Link href="/genome" className="text-[10px] text-[var(--cyber-cyan)] font-bold hover:underline" onClick={() => setShowDropdown(false)}>Analyze Genome</Link>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Ask Copilot Integration */}
-                  <div 
-                    onClick={() => {
-                      router.push(`/investigator?query=${encodeURIComponent(searchQuery)}`);
-                      setShowDropdown(false);
-                      setSearchQuery('');
-                    }}
-                    className="mt-4 p-3 rounded-xl border border-dashed flex items-center justify-between cursor-pointer transition-colors hover:bg-[var(--cyber-cyan)]/5"
-                    style={{ borderColor: 'var(--cyber-cyan)' }}
-                  >
-                    <div className="flex items-center gap-2 text-xs text-[var(--text-primary)]">
-                      <Brain size={15} className="text-[var(--cyber-cyan)] animate-pulse" />
-                      <span>Ask **CrimeNet AI Assistant** about &ldquo;<span className="text-[var(--cyber-cyan)] font-bold">{searchQuery}</span>&rdquo;</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-[var(--cyber-cyan)] text-[10px] font-bold">
-                      <span>RUN INTEL</span>
-                      <CornerDownLeft size={10} />
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </div>
 
-        {/* Presentation Mode Toggle - placed as a sibling flex item after the search bar */}
+        {/* Presentation Mode Toggle */}
         <button
           onClick={togglePresentationMode}
           title={isPresentationMode ? "Exit Projector View" : "Presentation Mode (Projector)"}
-          className="w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition-colors flex-shrink-0 mr-3"
+          className="flex-shrink-0"
           style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            border: 'none',
             background: isPresentationMode ? 'var(--accent-cyan-dim)' : 'transparent',
             color: isPresentationMode ? 'var(--accent-cyan)' : 'var(--text-muted)',
+            transition: 'all 200ms ease',
           }}
           onMouseEnter={e => {
             e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
@@ -922,67 +759,197 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
             e.currentTarget.style.background = isPresentationMode ? 'var(--accent-cyan-dim)' : 'transparent';
           }}
         >
-          <Monitor size={15} />
+          <Monitor size={18} />
         </button>
 
-        {/* Right: Spaced Actions Row */}
-        <div className="flex items-center gap-3 justify-end">
-          {/* Live Clock */}
+        {/* Right Section: Date, Live Time, Restricted Badge, Language Toggle, Bell Notifications & Profile */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginLeft: 'auto', flexShrink: 0 }}>
+          {/* Date Card */}
+          {(() => {
+            const date = new Date();
+            const formatter = new Intl.DateTimeFormat('en-US', {
+              timeZone: 'Asia/Kolkata',
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric'
+            });
+            const parts = formatter.formatToParts(date);
+            const day = parts.find(p => p.type === 'day')?.value || '';
+            const month = parts.find(p => p.type === 'month')?.value || '';
+            const year = parts.find(p => p.type === 'year')?.value || '';
+            return (
+              <div 
+                className="date-card hidden xl:flex"
+                style={{
+                  width: '130px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '1px solid #E5E7EB',
+                  borderRadius: '12px',
+                  fontSize: '13.5px',
+                  color: '#374151',
+                  whiteSpace: 'nowrap',
+                  background: '#FFFFFF',
+                  boxSizing: 'border-box'
+                }}
+              >
+                {`${day} ${month} ${year}`}
+              </div>
+            );
+          })()}
+
+          {/* Live Time Card */}
           {liveTime && (
             <div 
-              className="hidden lg:flex items-center text-xs font-mono text-[var(--text-muted)] bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg h-9"
-              style={{ letterSpacing: '0.02em', boxSizing: 'border-box' }}
+              className="time-card hidden lg:flex"
+              style={{
+                width: '150px',
+                height: '40px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                border: '1px solid #E5E7EB',
+                borderRadius: '12px',
+                fontSize: '13.5px',
+                color: '#374151',
+                whiteSpace: 'nowrap',
+                fontVariantNumeric: 'tabular-nums',
+                background: '#FFFFFF',
+                boxSizing: 'border-box'
+              }}
             >
-              <Clock size={12} className="mr-1.5 text-slate-500" />
+              <Clock size={14} className="icon-clock text-slate-500" />
               <span>{liveTime}</span>
             </div>
           )}
 
+          {/* Restricted Badge */}
+          <div 
+            className="restricted-badge hidden sm:flex"
+            style={{
+              background: '#FFFFFF',
+              border: '1px solid #DC2626',
+              color: '#DC2626',
+              borderRadius: '999px',
+              padding: '4px 14px',
+              fontSize: '12px',
+              fontWeight: 700,
+              whiteSpace: 'nowrap',
+              height: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxSizing: 'border-box'
+            }}
+          >
+            RESTRICTED
+          </div>
+
           {/* Language Toggle Link */}
-          <div className="flex items-center gap-1 border border-[var(--border-default)] rounded-lg p-0.5 px-1.5 h-9">
+          <div 
+            className="flex-shrink-0"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              border: '1px solid #E5E7EB',
+              borderRadius: '16px',
+              padding: '2px 4px',
+              height: '40px',
+              background: '#FFFFFF',
+              boxSizing: 'border-box'
+            }}
+          >
             <button
               onClick={() => setLang('en')}
               style={{
-                background: lang === 'en' ? 'var(--accent-cyan)' : 'transparent',
-                color: lang === 'en' ? 'var(--accent-cyan-text-on-fill)' : 'var(--text-muted)',
+                background: lang === 'en' ? 'var(--primary-navy)' : 'transparent',
+                color: lang === 'en' ? '#FFFFFF' : '#475569',
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '11px',
+                fontWeight: 700,
+                width: '44px',
+                height: '32px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 200ms ease',
               }}
-              className="text-[10px] font-bold px-2 py-1 rounded cursor-pointer transition-colors"
             >
               EN
             </button>
-            <span className="text-[10px] text-[var(--border-default)]">|</span>
             <button
               onClick={() => setLang('kn')}
               style={{
-                background: lang === 'kn' ? 'var(--accent-cyan)' : 'transparent',
-                color: lang === 'kn' ? 'var(--accent-cyan-text-on-fill)' : 'var(--text-muted)',
+                background: lang === 'kn' ? 'var(--primary-navy)' : 'transparent',
+                color: lang === 'kn' ? '#FFFFFF' : '#475569',
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '11px',
+                fontWeight: 700,
+                width: '54px',
+                height: '32px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 200ms ease',
               }}
-              className="text-[10px] font-bold px-2 py-1 rounded cursor-pointer transition-colors"
             >
               ಕನ್ನಡ
             </button>
           </div>
 
           {/* Notifications Bell */}
-          <div className="relative">
+          <div className="relative flex-shrink-0">
             <button
               onClick={() => setIsAlertOpen(true)}
-              className="w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition-colors relative"
+              className="notification-button"
               style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: 'none',
                 background: 'transparent',
                 color: 'var(--text-muted)',
+                cursor: 'pointer',
+                position: 'relative',
+                transition: 'all 200ms ease',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+                e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.background = 'transparent';
               }}
             >
-              <Bell size={15} />
+              <Bell size={18} />
               {unreadAlertsCount > 0 && (
                 <span
-                  className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[var(--priority-critical)] text-[8px] font-black text-white flex items-center justify-center animate-pulse"
+                  style={{
+                    position: 'absolute',
+                    top: '2px',
+                    right: '2px',
+                    minWidth: '18px',
+                    height: '18px',
+                    borderRadius: '50%',
+                    background: '#DC2626',
+                    color: 'white',
+                    fontSize: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 700,
+                  }}
+                  className="badge-count animate-pulse"
                 >
                   {unreadAlertsCount}
                 </span>

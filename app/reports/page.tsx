@@ -11,6 +11,8 @@ import {
   DISTRICTS, CRIME_CATEGORIES, SUMMARY_METRICS,
   RECENT_FIRS, TOP_SUSPECTS, ANOMALY_DISTRICTS,
 } from '@/lib/crimeData';
+import StatCard from '@/components/StatCard';
+import { Activity, Users, ShieldAlert } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -431,6 +433,7 @@ export default function ReportsPage() {
   const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [generatingAll, setGeneratingAll] = useState(false);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState<'briefing' | 'pdfs'>('briefing');
 
   const REPORT_CARDS: ReportCard[] = [
     {
