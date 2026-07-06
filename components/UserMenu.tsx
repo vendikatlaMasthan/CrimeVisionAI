@@ -14,6 +14,17 @@ interface UserMenuProps {
 export default function UserMenu({ user }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen && menuRef.current) {
+      const rect = menuRef.current.getBoundingClientRect();
+      if (rect.right > window.innerWidth) {
+        menuRef.current.style.right = '0px';
+        menuRef.current.style.left = 'auto';
+      }
+    }
+  }, [isOpen]);
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
   const { lang, setLang, t } = useLanguage();
@@ -50,9 +61,15 @@ export default function UserMenu({ user }: UserMenuProps) {
   return (
     <div className="relative no-print" ref={dropdownRef}>
       {/* Trigger Button */}
+      <style>{`
+        .profile-trigger:focus-visible {
+          outline: 2px solid var(--primary-navy) !important;
+          outline-offset: 2px !important;
+        }
+      `}</style>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center transition-all cursor-pointer"
+        className="flex items-center transition-all cursor-pointer profile-trigger"
         style={{
           display: 'flex',
           flexDirection: 'row',
@@ -63,7 +80,8 @@ export default function UserMenu({ user }: UserMenuProps) {
           border: '1px solid var(--border-default)',
           background: '#F3F4F6',
           height: '40px',
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
+          outline: 'none'
         }}
         onMouseEnter={e => {
           e.currentTarget.style.borderColor = 'var(--accent-cyan)';
@@ -98,12 +116,19 @@ export default function UserMenu({ user }: UserMenuProps) {
       {/* Dropdown Menu */}
       {isOpen && (
         <div
-          className="absolute right-0 mt-2 rounded-xl shadow-lg z-50 overflow-hidden"
+          ref={menuRef}
+          className="absolute rounded-xl shadow-lg z-50 profile-dropdown"
           style={{
+            position: 'absolute',
+            top: 'calc(100% + 8px)',
+            right: '0px',
+            left: 'auto',
+            minWidth: '260px',
+            maxWidth: '320px',
             width: '280px',
             background: '#FFFFFF',
-            border: '1px solid #E2E8F0',
-            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+            border: '1px solid #E5E7EB',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
           }}
         >
           {/* 1. Identity Header */}
@@ -154,20 +179,20 @@ export default function UserMenu({ user }: UserMenuProps) {
           <div style={{ height: '1px', background: '#E2E8F0' }} />
 
           {/* 3. Meta Info Block */}
-          <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <div>
-              <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748B', marginBottom: '2px' }}>
-                Badge Number
+          <div className="profile-dropdown-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div className="field-row" style={{ display: 'flex', flexDirection: 'column', padding: '12px 16px 6px', gap: '2px' }}>
+              <div className="field-label" style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.04em', color: '#9CA3AF', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+                Badge ID
               </div>
-              <div style={{ fontSize: '13px', color: '#0B1F3A', fontWeight: 500 }}>
+              <div className="field-value" style={{ fontSize: '14px', fontWeight: 600, color: '#111827', whiteSpace: 'normal', overflowWrap: 'break-word' }}>
                 {user?.badgeNumber ?? 'KSP-94827'}
               </div>
             </div>
-            <div>
-              <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748B', marginBottom: '2px' }}>
-                Command Center
+            <div className="field-row" style={{ display: 'flex', flexDirection: 'column', padding: '6px 16px 12px', gap: '2px' }}>
+              <div className="field-label" style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.04em', color: '#9CA3AF', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+                Command
               </div>
-              <div style={{ fontSize: '13px', color: '#0B1F3A', fontWeight: 500 }}>
+              <div className="field-value" style={{ fontSize: '14px', fontWeight: 600, color: '#111827', whiteSpace: 'normal', overflowWrap: 'break-word' }}>
                 Karnataka Police HQ
               </div>
             </div>

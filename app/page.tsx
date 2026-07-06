@@ -193,25 +193,25 @@ export default function DashboardPage() {
         <StatCard
           label={t.stat_active_cases || 'Active Investigations'}
           value={<CountUp end={SUMMARY_METRICS.activeCases} />}
-          icon={<Activity size={18} color="var(--color-orange)" />}
+          icon={<Activity size={20} strokeWidth={1.75} color="var(--color-orange)" />}
           description={t.dashboard_cases_description || 'Cases under active KSP investigation'}
         />
         <StatCard
           label={t.stat_total_officers || 'Total Officers'}
           value={<CountUp end={SUMMARY_METRICS.totalOfficers} />}
-          icon={<Users size={18} color="var(--color-navy)" />}
+          icon={<Users size={20} strokeWidth={1.75} color="var(--color-navy)" />}
           description={t.dashboard_officers_description || 'Active duty personnel across districts'}
         />
         <StatCard
           label={t.stat_accuracy || 'AI Accuracy'}
           value={<CountUp end={SUMMARY_METRICS.accuracyScore} decimals={1} suffix="%" />}
-          icon={<Target size={18} color="var(--color-green)" />}
+          icon={<Target size={20} strokeWidth={1.75} color="var(--color-green)" />}
           description={t.dashboard_accuracy_description || 'Confidence score on predictive grids'}
         />
         <StatCard
           label={t.state_threat || 'STATE THREAT LEVEL'}
           value={t.priority_high?.toUpperCase() || 'HIGH'}
-          icon={<ShieldAlert size={18} color="var(--color-red)" />}
+          icon={<ShieldAlert size={20} strokeWidth={1.75} color="var(--color-red)" />}
           description={t.dashboard_threat_description || 'Statewide alert index status'}
           style={{ borderLeft: '4px solid var(--color-red)' }}
         />

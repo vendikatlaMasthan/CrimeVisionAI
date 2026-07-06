@@ -58,7 +58,11 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
   // Keyboard shortcut: Press "/" to focus, "ESC" to close
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+      const isSearchShortcut = 
+        (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') ||
+        ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k');
+
+      if (isSearchShortcut) {
         e.preventDefault();
         inputRef.current?.focus();
         setShowDropdown(true);
@@ -335,6 +339,10 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
         .header > *:not(.search-bar-responsive) {
           flex: 0 0 auto !important;
         }
+        .search-bar-responsive:focus-within {
+          border-color: var(--primary-navy) !important;
+          box-shadow: 0 0 0 2px rgba(30, 58, 95, 0.15) !important;
+        }
         @media (min-width: 1200px) {
           .search-bar-responsive {
             flex: 1 1 auto !important;
@@ -345,7 +353,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
             display: inline-block !important;
           }
           .input-responsive {
-            padding-right: 96px !important;
+            padding-right: 100px !important;
           }
         }
         @media (min-width: 1024px) and (max-width: 1199px) {
@@ -433,7 +441,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
             }}
             title="Toggle Sidebar"
           >
-            <Menu size={20} />
+            <Menu size={20} strokeWidth={1.75} />
           </button>
 
           {/* Logo Block */}
@@ -448,7 +456,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
               justifyContent: 'center',
               color: 'var(--primary-navy)',
             }}>
-              <Shield size={20} />
+              <Shield size={20} strokeWidth={1.75} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', lineHeight: '1.2' }}>
               <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--primary-navy)', whiteSpace: 'nowrap' }}>
@@ -462,10 +470,11 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
 
           {/* Officer Badge */}
           <span
+            className="pill-label"
             style={{
-              fontSize: '11px',
-              fontWeight: 700,
-              letterSpacing: '0.04em',
+              fontSize: '12px',
+              fontWeight: 600,
+              letterSpacing: '0.02em',
               textTransform: 'uppercase',
               padding: '4px 12px',
               borderRadius: '999px',
@@ -500,7 +509,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
             ref={inputRef}
             id="global-search-input"
             type="text"
-            placeholder={lang === 'kn' ? "ಹುಡುಕಿ..." : "Search FIRs, Suspects, Districts..."}
+            placeholder={lang === 'kn' ? "ಹುಡುಕಿ..." : "Search cases, suspects..."}
             value={searchQuery}
             onChange={e => { setSearchQuery(e.target.value); setShowDropdown(true); setActiveIdx(-1); }}
             onFocus={() => setShowDropdown(true)}
@@ -512,12 +521,12 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
               border: 'none',
               outline: 'none',
               background: 'transparent',
-              paddingLeft: '48px',
+              paddingLeft: '44px',
               fontSize: '15px',
               color: '#374151',
             }}
           />
-          <Search size={18} className="text-slate-400 icon-search" style={{
+          <Search size={20} strokeWidth={1.75} className="text-slate-400 icon-search" style={{
             position: 'absolute',
             left: '16px',
             top: '50%',
@@ -578,10 +587,10 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
               {isVoiceActive ? (
                 <div className="relative">
                   <span className="absolute -inset-1 rounded-full bg-red-500/20 animate-ping" />
-                  <MicOff size={16} className="relative text-red-500 animate-pulse" />
+                  <MicOff size={20} strokeWidth={1.75} className="relative text-red-500 animate-pulse" />
                 </div>
               ) : (
-                <Mic size={16} />
+                <Mic size={20} strokeWidth={1.75} />
               )}
             </button>
           )}
@@ -747,34 +756,14 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
             e.currentTarget.style.background = isPresentationMode ? 'var(--accent-cyan-dim)' : 'transparent';
           }}
         >
-          <Monitor size={18} />
+          <Monitor size={20} strokeWidth={1.75} />
         </button>
 
         {/* Right Section: Date, Live Time, Restricted Badge, Language Toggle, Bell Notifications & Profile */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginLeft: 'auto', flexShrink: 0 }}>
 
 
-          {/* Restricted Badge */}
-          <div 
-            className="restricted-badge hidden sm:flex"
-            style={{
-              background: '#FFFFFF',
-              border: '1px solid #DC2626',
-              color: '#DC2626',
-              borderRadius: '999px',
-              padding: '4px 14px',
-              fontSize: '12px',
-              fontWeight: 700,
-              whiteSpace: 'nowrap',
-              height: '24px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxSizing: 'border-box'
-            }}
-          >
-            RESTRICTED
-          </div>
+
 
           {/* Language Toggle Link */}
           <div 
@@ -793,14 +782,16 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
           >
             <button
               onClick={() => setLang('en')}
+              className="pill-label"
               style={{
                 background: lang === 'en' ? 'var(--primary-navy)' : 'transparent',
                 color: lang === 'en' ? '#FFFFFF' : '#475569',
                 border: 'none',
-                borderRadius: '12px',
-                fontSize: '11px',
-                fontWeight: 700,
-                width: '44px',
+                borderRadius: '999px',
+                fontSize: '12px',
+                fontWeight: 600,
+                letterSpacing: '0.02em',
+                width: '56px',
                 height: '32px',
                 cursor: 'pointer',
                 display: 'flex',
@@ -813,14 +804,16 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
             </button>
             <button
               onClick={() => setLang('kn')}
+              className="pill-label"
               style={{
                 background: lang === 'kn' ? 'var(--primary-navy)' : 'transparent',
                 color: lang === 'kn' ? '#FFFFFF' : '#475569',
                 border: 'none',
-                borderRadius: '12px',
-                fontSize: '11px',
-                fontWeight: 700,
-                width: '54px',
+                borderRadius: '999px',
+                fontSize: '12px',
+                fontWeight: 600,
+                letterSpacing: '0.02em',
+                width: '64px',
                 height: '32px',
                 cursor: 'pointer',
                 display: 'flex',
@@ -859,7 +852,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                 e.currentTarget.style.background = 'transparent';
               }}
             >
-              <Bell size={18} />
+              <Bell size={20} strokeWidth={1.75} />
               {unreadAlertsCount > 0 && (
                 <span
                   style={{

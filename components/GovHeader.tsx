@@ -109,25 +109,13 @@ export default function GovHeader() {
         </div>
       </div>
 
-      {/* Right: Restricted Label & Home Minister Office */}
+      {/* Right: Home Minister Office */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         gap: 16,
         flex: '0 0 auto',
       }}>
-        <div style={{
-          fontSize: '10px',
-          color: 'var(--alert-red)',
-          fontWeight: 800,
-          border: '1.5px solid var(--alert-red)',
-          padding: '3px 8px',
-          borderRadius: '4px',
-          textTransform: 'uppercase',
-          letterSpacing: '0.08em',
-        }}>
-          Restricted
-        </div>
 
         <div style={{
           display: 'flex',
