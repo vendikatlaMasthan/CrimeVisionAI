@@ -22,14 +22,19 @@ export default function StatCard({
 
   return (
     <div
-      className={`bg-white border border-[#E5E7EB] shadow-[0_1px_3px_rgba(0,0,0,0.08)] rounded-[var(--radius,16px)] flex flex-col justify-between w-full relative ${className}`}
+      className={`bg-white border border-[#E5E7EB] shadow-[0_1px_3px_rgba(0,0,0,0.08)] rounded-[var(--radius,16px)] flex flex-col justify-center w-full relative ${className}`}
       style={{
         borderRadius: 'var(--radius, 16px)',
         fontFamily: "'Inter', sans-serif",
         boxSizing: 'border-box',
-        padding: hasLeftAccent ? '20px 20px 20px 24px' : '20px',
-        minHeight: '100px',
+        minHeight: '140px',
         height: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+        justifyContent: 'center',
+        padding: hasLeftAccent ? '20px 24px 20px 28px' : '20px 24px',
+        paddingRight: icon ? '48px' : '24px',
         ...cleanStyle
       }}
     >
@@ -38,33 +43,45 @@ export default function StatCard({
           style={{
             position: 'absolute',
             left: 0,
-            top: '16px',
-            bottom: '16px',
-            width: '4px',
-            borderRadius: '2px',
+            top: '20px',
+            bottom: '20px',
+            width: '3px',
+            borderRadius: '1.5px',
             background: typeof borderLeft === 'string' && borderLeft.includes('solid') ? borderLeft.split(' ').pop() : 'var(--color-red)'
           }}
         />
       )}
-      <div className="flex justify-between items-start w-full gap-4">
-        <div className="flex flex-col min-w-0 flex-1">
-          <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider block" title={label}>
-            {label}
-          </span>
-          <div className="text-[28px] font-extrabold text-gray-900 leading-none mt-1.5 truncate">
-            {value}
-          </div>
+
+      {icon && (
+        <div 
+          className="flex-shrink-0"
+          style={{
+            position: 'absolute',
+            top: '20px',
+            right: '20px',
+            pointerEvents: 'none'
+          }}
+        >
+          {icon}
         </div>
-        {icon && (
-          <div className="flex-shrink-0">
-            {icon}
-          </div>
-        )}
+      )}
+
+      <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider block" title={label}>
+        {label}
+      </span>
+
+      <div className="text-[28px] font-extrabold text-gray-900 leading-none truncate">
+        {value}
       </div>
+
       {description && (
         <div 
-          className="text-[12px] text-gray-500 mt-1 block" 
-          style={{ whiteSpace: 'normal', overflow: 'visible', textOverflow: 'clip' }}
+          className="text-[12px] text-gray-500 block" 
+          style={{
+            whiteSpace: 'normal',
+            lineHeight: '1.4',
+            overflowWrap: 'break-word'
+          }}
           title={description}
         >
           {description}
