@@ -23,11 +23,11 @@ export default function SafeEmblem({ width = 50, height = 50, className, style }
     }
   }
 
-  const [imgSrc, setImgSrc] = useState(`${basePath}/seal-karnataka.svg`);
+  const [imgSrc, setImgSrc] = useState(`${basePath}/ksp-emblem.png`);
 
   // Synchronize with basePath on mount/change
   useEffect(() => {
-    setImgSrc(`${basePath}/seal-karnataka.svg`);
+    setImgSrc(`${basePath}/ksp-emblem.png`);
   }, [basePath]);
 
   if (!mounted || error) {
@@ -46,7 +46,7 @@ export default function SafeEmblem({ width = 50, height = 50, className, style }
           flexShrink: 0,
           ...style,
         }}
-        title="Official Seal of Karnataka (Placeholder)"
+        title="Karnataka State Police (Placeholder)"
       >
         <Shield size={width * 0.5} style={{ color: '#9CA3AF' }} />
       </div>
@@ -57,14 +57,14 @@ export default function SafeEmblem({ width = 50, height = 50, className, style }
     <img
       src={imgSrc}
       onError={() => {
-        if (basePath && imgSrc !== '/seal-karnataka.svg') {
-          setImgSrc('/seal-karnataka.svg');
+        if (basePath && imgSrc !== '/ksp-emblem.png') {
+          setImgSrc('/ksp-emblem.png');
         } else {
-          console.warn('Emblem failed to load, falling back to placeholder.');
+          console.warn('Karnataka State Police logo failed to load, falling back to placeholder.');
           setError(true);
         }
       }}
-      alt="Official Emblem of the Government of Karnataka"
+      alt="Karnataka State Police Logo"
       width={width}
       height={height}
       className={className}

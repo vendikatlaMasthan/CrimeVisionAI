@@ -22,12 +22,14 @@ export default function StatCard({
 
   return (
     <div
-      className={`bg-white border border-[#E5E7EB] shadow-[0_1px_3px_rgba(0,0,0,0.08)] rounded-[var(--radius,16px)] flex flex-col justify-between h-[100px] min-h-[90px] w-full relative ${className}`}
+      className={`bg-white border border-[#E5E7EB] shadow-[0_1px_3px_rgba(0,0,0,0.08)] rounded-[var(--radius,16px)] flex flex-col justify-between w-full relative ${className}`}
       style={{
         borderRadius: 'var(--radius, 16px)',
         fontFamily: "'Inter', sans-serif",
         boxSizing: 'border-box',
         padding: hasLeftAccent ? '20px 20px 20px 24px' : '20px',
+        minHeight: '100px',
+        height: 'auto',
         ...cleanStyle
       }}
     >
@@ -46,7 +48,7 @@ export default function StatCard({
       )}
       <div className="flex justify-between items-start w-full gap-4">
         <div className="flex flex-col min-w-0 flex-1">
-          <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider truncate block" title={label}>
+          <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider block" title={label}>
             {label}
           </span>
           <div className="text-[28px] font-extrabold text-gray-900 leading-none mt-1.5 truncate">
@@ -60,7 +62,11 @@ export default function StatCard({
         )}
       </div>
       {description && (
-        <div className="text-[12px] text-gray-500 mt-1 truncate block" title={description}>
+        <div 
+          className="text-[12px] text-gray-500 mt-1 block" 
+          style={{ whiteSpace: 'normal', overflow: 'visible', textOverflow: 'clip' }}
+          title={description}
+        >
           {description}
         </div>
       )}

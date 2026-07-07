@@ -290,13 +290,6 @@ export default function Sidebar({ user, portalType, isOpen = true }: SidebarProp
           </div>
         </div>
 
-        {/* Simulation notice */}
-        <div style={{
-          textAlign: 'center', fontSize: 9, fontWeight: 600, color: '#94A3B8',
-          padding: '4px 0', letterSpacing: '0.02em',
-        }}>
-          ⚠️ SIMULATION MODE · Synthetic Demo Data
-        </div>
       </div>
     </aside>
   );

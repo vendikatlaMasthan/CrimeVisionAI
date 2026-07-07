@@ -1,8 +1,8 @@
 'use client';
-
+ 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, Shield, Settings, Moon, Sun, Globe, LogOut, ChevronDown } from 'lucide-react';
+import { User, Shield, Settings, Moon, Sun, Globe, LogOut, ChevronDown, X } from 'lucide-react';
 import { DemoAccount } from '@/lib/crimeData';
 import { useTheme } from './ThemeContext';
 import { useLanguage } from './LanguageToggle';
@@ -16,15 +16,6 @@ export default function UserMenu({ user }: UserMenuProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (isOpen && menuRef.current) {
-      const rect = menuRef.current.getBoundingClientRect();
-      if (rect.right > window.innerWidth) {
-        menuRef.current.style.right = '0px';
-        menuRef.current.style.left = 'auto';
-      }
-    }
-  }, [isOpen]);
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
   const { lang, setLang, t } = useLanguage();
@@ -39,15 +30,6 @@ export default function UserMenu({ user }: UserMenuProps) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  const handleLogout = () => {
-    try {
-      sessionStorage.removeItem('ksp_user');
-    } catch {
-      // ignore
-    }
-    router.replace('/login');
-  };
 
   const getRoleBadge = (role?: string) => {
     if (!role) return { text: 'Officer', color: 'rgba(30,58,95,0.1)', textCol: '#1E3A5F' };
@@ -79,7 +61,8 @@ export default function UserMenu({ user }: UserMenuProps) {
           borderRadius: '16px',
           border: '1px solid var(--border-default)',
           background: '#F3F4F6',
-          height: '40px',
+          minHeight: '40px',
+          height: 'auto',
           boxSizing: 'border-box',
           outline: 'none'
         }}
@@ -102,7 +85,14 @@ export default function UserMenu({ user }: UserMenuProps) {
         >
            <User size={16} />
         </div>
-        <div className="hidden sm:flex flex-col items-start justify-center text-left" style={{ lineHeight: '1.3' }}>
+        <div 
+          className="hidden sm:flex flex-col items-start justify-center text-left" 
+          style={{ 
+            lineHeight: '1.3', 
+            opacity: isOpen ? 0 : 1, 
+            transition: 'opacity 150ms ease' 
+          }}
+        >
           <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>
             {user?.name ?? 'KSP Officer'}
           </span>
@@ -112,6 +102,22 @@ export default function UserMenu({ user }: UserMenuProps) {
         </div>
         <ChevronDown size={12} className="text-[var(--text-muted)] flex-shrink-0" />
       </button>
+
+      {/* Backdrop Overlay */}
+      {isOpen && (
+        <div 
+          onClick={() => setIsOpen(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.4)',
+            zIndex: 45,
+          }}
+        />
+      )}
 
       {/* Dropdown Menu */}
       {isOpen && (
@@ -132,7 +138,7 @@ export default function UserMenu({ user }: UserMenuProps) {
           }}
         >
           {/* 1. Identity Header */}
-          <div style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ padding: '16px 40px 16px 16px', display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
             {/* Circular avatar placeholder */}
             <div
               style={{
@@ -151,10 +157,10 @@ export default function UserMenu({ user }: UserMenuProps) {
             </div>
             {/* Officer info */}
             <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
-              <span style={{ fontSize: '15px', fontWeight: 700, color: '#0B1F3A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <span style={{ fontSize: '15px', fontWeight: 700, color: '#0B1F3A', whiteSpace: 'normal', overflowWrap: 'break-word' }}>
                 {user?.name ?? 'KSP Officer'}
               </span>
-              <span style={{ fontSize: '13px', color: '#64748B', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <span style={{ fontSize: '13px', color: '#64748B', whiteSpace: 'normal', overflowWrap: 'break-word' }}>
                 {user?.designation ?? 'Inspector'}
               </span>
             </div>
@@ -173,6 +179,30 @@ export default function UserMenu({ user }: UserMenuProps) {
             >
               {badge.text}
             </span>
+            {/* Close Button */}
+            <button
+              onClick={() => setIsOpen(false)}
+              style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                background: 'transparent',
+                border: 'none',
+                color: '#64748B',
+                cursor: 'pointer',
+                padding: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                transition: 'background 150ms ease',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#F1F5F9'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+              title="Close Menu"
+            >
+              <X size={16} />
+            </button>
           </div>
 
           {/* Divider */}
@@ -230,33 +260,6 @@ export default function UserMenu({ user }: UserMenuProps) {
               <span>Profile</span>
             </button>
 
-            {/* Settings */}
-            <button
-              onClick={() => {
-                setIsOpen(false);
-                router.push('/settings');
-              }}
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '12px 16px',
-                fontSize: '14px',
-                color: '#0B1F3A',
-                border: 'none',
-                background: 'transparent',
-                cursor: 'pointer',
-                textAlign: 'left',
-                transition: 'background 150ms ease',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.background = '#F1F5F9'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-            >
-              <Settings size={16} style={{ color: '#64748B' }} />
-              <span>Settings</span>
-            </button>
-
             {/* Language Selection Row as an interactive control */}
             <button
               onClick={() => {
@@ -289,35 +292,6 @@ export default function UserMenu({ user }: UserMenuProps) {
                 </span>
                 <ChevronDown size={14} style={{ color: '#64748B', transform: 'rotate(-90deg)' }} />
               </div>
-            </button>
-          </div>
-
-          {/* Divider */}
-          <div style={{ height: '1px', background: '#E2E8F0' }} />
-
-          {/* 7. Logout */}
-          <div style={{ padding: '4px 0' }}>
-            <button
-              onClick={handleLogout}
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '12px 16px',
-                fontSize: '14px',
-                color: '#EF4444',
-                border: 'none',
-                background: 'transparent',
-                cursor: 'pointer',
-                textAlign: 'left',
-                transition: 'background 150ms ease',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.background = '#FEF2F2'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-            >
-              <LogOut size={16} style={{ color: '#EF4444' }} />
-              <span>Logout</span>
             </button>
           </div>
         </div>

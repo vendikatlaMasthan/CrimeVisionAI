@@ -11,7 +11,8 @@ import {
 } from 'recharts';
 import {
   Shield, Activity, Users, FileText, MapPin, ChevronRight,
-  Target, Bell, ShieldAlert, Sliders, Cpu, Search, RefreshCw, CheckCircle, Brain
+  Target, Bell, ShieldAlert, Sliders, Cpu, Search, RefreshCw, CheckCircle, Brain,
+  Lock, Car
 } from 'lucide-react';
 import {
   MONTHLY_CRIME_TRENDS, AI_ALERTS, FIR_RECORDS,
@@ -227,30 +228,30 @@ export default function DashboardPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[16px]">
           <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(245, 158, 11, 0.04)', border: '1.5px solid rgba(245, 158, 11, 0.15)', display: 'flex', gap: '12px', minHeight: '100px' }}>
-            <span style={{ fontSize: '20px' }}>🚨</span>
+            <ShieldAlert size={20} color="#b45309" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
               <div style={{ fontSize: '13px', fontWeight: 700, color: '#b45309', marginBottom: '4px' }}>Increase patrol in Kalaburagi, 10 PM – 2 AM</div>
               <p style={{ fontSize: '11px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected Narcotics hotspot trend (+34% vs. 90-day average).</p>
             </div>
           </div>
           <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(245, 158, 11, 0.04)', border: '1.5px solid rgba(245, 158, 11, 0.15)', display: 'flex', gap: '12px', minHeight: '100px' }}>
-            <span style={{ fontSize: '20px' }}>🛡️</span>
+            <Shield size={20} color="#b45309" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
               <div style={{ fontSize: '13px', fontWeight: 700, color: '#b45309', marginBottom: '4px' }}>Audit payment gateways in Bengaluru Urban</div>
               <p style={{ fontSize: '11px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected Cybercrime/OTP Phishing spike (+243% vs. 90-day average).</p>
             </div>
           </div>
           <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(220, 38, 38, 0.04)', border: '1.5px solid rgba(220, 38, 38, 0.15)', display: 'flex', gap: '12px', minHeight: '100px' }}>
-            <span style={{ fontSize: '20px' }}>🔒</span>
+            <Lock size={20} color="#b91c1c" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
               <div style={{ fontSize: '13px', fontWeight: 700, color: '#b91c1c', marginBottom: '4px' }}>Reinforce checkposts in Ballari town perimeter</div>
               <p style={{ fontSize: '11px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected Organized Crime spike (+500% vs. 90-day average).</p>
             </div>
           </div>
-          <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(22, 163, 74, 0.04)', border: '1.5px solid rgba(22, 163, 74, 0.15)', display: 'flex', gap: '12px', minHeight: '100px' }}>
-            <span style={{ fontSize: '20px' }}>🚗</span>
+          <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(245, 158, 11, 0.04)', border: '1.5px solid rgba(245, 158, 11, 0.15)', display: 'flex', gap: '12px', minHeight: '100px' }}>
+            <Car size={20} color="#b45309" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#15803d', marginBottom: '4px' }}>Deploy auto-theft decoy units in Mysuru</div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#b45309', marginBottom: '4px' }}>Deploy auto-theft decoy units in Mysuru</div>
               <p style={{ fontSize: '11px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected relay-attack vehicle theft surge near college zones.</p>
             </div>
           </div>

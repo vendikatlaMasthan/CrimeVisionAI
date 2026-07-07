@@ -343,6 +343,18 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
           border-color: var(--primary-navy) !important;
           box-shadow: 0 0 0 2px rgba(30, 58, 95, 0.15) !important;
         }
+        .input-responsive {
+          padding-left: 40px !important;
+          border: none !important;
+          outline: none !important;
+          background: transparent !important;
+          box-shadow: none !important;
+        }
+        .input-responsive:focus {
+          border: none !important;
+          outline: none !important;
+          box-shadow: none !important;
+        }
         @media (min-width: 1200px) {
           .search-bar-responsive {
             flex: 1 1 auto !important;
@@ -521,7 +533,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
               border: 'none',
               outline: 'none',
               background: 'transparent',
-              paddingLeft: '44px',
+              paddingLeft: '48px',
               fontSize: '15px',
               color: '#374151',
             }}
