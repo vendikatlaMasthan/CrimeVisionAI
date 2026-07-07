@@ -362,10 +362,10 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
             max-width: 720px !important;
           }
           .kbd-shortcut-responsive {
-            display: inline-block !important;
+            display: inline-flex !important;
           }
           .input-responsive {
-            padding-right: 100px !important;
+            padding-right: 120px !important;
           }
         }
         @media (min-width: 1024px) and (max-width: 1199px) {
@@ -378,7 +378,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
             display: none !important;
           }
           .input-responsive {
-            padding-right: 48px !important;
+            padding-right: 56px !important;
           }
         }
         @media (max-width: 1023px) {
@@ -391,7 +391,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
             display: none !important;
           }
           .input-responsive {
-            padding-right: 48px !important;
+            padding-right: 56px !important;
           }
         }
         @media (max-width: 768px) {
@@ -404,7 +404,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
             display: none !important;
           }
           .input-responsive {
-            padding-right: 48px !important;
+            padding-right: 56px !important;
           }
         }
       `}</style>
@@ -510,7 +510,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
           position: 'relative',
           display: 'flex',
           alignItems: 'center',
-          height: '48px',
+          height: '44px',
           borderRadius: '12px',
           border: '1px solid #D1D5DB',
           background: '#FFFFFF',
@@ -533,99 +533,104 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
               border: 'none',
               outline: 'none',
               background: 'transparent',
-              paddingLeft: '48px',
+              paddingLeft: '40px',
               fontSize: '15px',
               color: '#374151',
             }}
           />
           <Search size={20} strokeWidth={1.75} className="text-slate-400 icon-search" style={{
             position: 'absolute',
-            left: '16px',
+            left: '14px',
             top: '50%',
             transform: 'translateY(-50%)',
             pointerEvents: 'none',
           }} />
 
-          {/* Shortcut badge */}
-          <div className="kbd-shortcut-responsive" style={{
+          {/* Right Flex Widgets: Clear button, Ctrl+K and Mic aligned and spaced */}
+          <div className="right-widgets-container" style={{
             position: 'absolute',
-            right: '58px',
+            right: '16px',
             top: '50%',
             transform: 'translateY(-50%)',
-            background: '#F3F4F6',
-            border: '1px solid #D1D5DB',
-            borderRadius: '8px',
-            padding: '4px 8px',
-            fontSize: '12px',
-            fontWeight: 600,
-            color: '#6B7280',
-            pointerEvents: 'none',
-            whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            pointerEvents: 'auto',
           }}>
-            Ctrl+K
+            {/* Clear button if text exists */}
+            {searchQuery && (
+              <button 
+                onClick={handleClearSearch}
+                type="button"
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#6B7280',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <X size={16} />
+              </button>
+            )}
+
+            {/* Shortcut badge */}
+            <div className="kbd-shortcut-responsive" style={{
+              background: '#F3F4F6',
+              border: '1px solid #D1D5DB',
+              borderRadius: '8px',
+              padding: '4px 8px',
+              fontSize: '12px',
+              fontWeight: 600,
+              color: '#6B7280',
+              pointerEvents: 'none',
+              whiteSpace: 'nowrap',
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}>
+              Ctrl+K
+            </div>
+
+            {/* Voice Mic Button */}
+            {voiceSupported && (
+              <button
+                onClick={handleVoiceSearch}
+                type="button"
+                title={isVoiceActive ? "Listening... Click to stop" : "Voice Search (EN/KN)"}
+                className="mic-button-responsive"
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: isVoiceActive ? 'rgba(239,68,68,0.1)' : 'transparent',
+                  color: isVoiceActive ? '#ef4444' : '#6B7280',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'background 200ms',
+                }}
+                onMouseEnter={e => {
+                  if (!isVoiceActive) e.currentTarget.style.background = '#F3F4F6';
+                }}
+                onMouseLeave={e => {
+                  if (!isVoiceActive) e.currentTarget.style.background = 'transparent';
+                }}
+              >
+                {isVoiceActive ? (
+                  <div className="relative">
+                    <span className="absolute -inset-1 rounded-full bg-red-500/20 animate-ping" />
+                    <MicOff size={16} strokeWidth={1.75} className="relative text-red-500 animate-pulse" />
+                  </div>
+                ) : (
+                  <Mic size={16} strokeWidth={1.75} />
+                )}
+              </button>
+            )}
           </div>
-
-          {/* Voice Mic Button */}
-          {voiceSupported && (
-            <button
-              onClick={handleVoiceSearch}
-              type="button"
-              title={isVoiceActive ? "Listening... Click to stop" : "Voice Search (EN/KN)"}
-              className="mic-button-responsive"
-              style={{
-                position: 'absolute',
-                right: '4px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: isVoiceActive ? 'rgba(239,68,68,0.1)' : 'transparent',
-                color: isVoiceActive ? '#ef4444' : '#6B7280',
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'background 200ms',
-              }}
-              onMouseEnter={e => {
-                if (!isVoiceActive) e.currentTarget.style.background = '#F3F4F6';
-              }}
-              onMouseLeave={e => {
-                if (!isVoiceActive) e.currentTarget.style.background = 'transparent';
-              }}
-            >
-              {isVoiceActive ? (
-                <div className="relative">
-                  <span className="absolute -inset-1 rounded-full bg-red-500/20 animate-ping" />
-                  <MicOff size={20} strokeWidth={1.75} className="relative text-red-500 animate-pulse" />
-                </div>
-              ) : (
-                <Mic size={20} strokeWidth={1.75} />
-              )}
-            </button>
-          )}
-
-          {/* Clear button if text exists */}
-          {searchQuery && (
-            <button 
-              onClick={handleClearSearch}
-              type="button"
-              style={{
-                position: 'absolute',
-                right: '46px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'transparent',
-                border: 'none',
-                color: '#6B7280',
-                cursor: 'pointer',
-              }}
-            >
-              <X size={16} />
-            </button>
-          )}
 
           {/* Search Dropdown with Premium Police Command Center Look */}
           {showDropdown && (
