@@ -344,16 +344,21 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
           box-shadow: 0 0 0 2px rgba(30, 58, 95, 0.15) !important;
         }
         .input-responsive {
-          padding-left: 40px !important;
           border: none !important;
           outline: none !important;
           background: transparent !important;
           box-shadow: none !important;
+          padding: 0 !important;
+          margin: 0 !important;
         }
         .input-responsive:focus {
           border: none !important;
           outline: none !important;
           box-shadow: none !important;
+        }
+        .input-responsive::placeholder {
+          color: #9CA3AF;
+          opacity: 1;
         }
         @media (min-width: 1200px) {
           .search-bar-responsive {
@@ -363,9 +368,6 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
           }
           .kbd-shortcut-responsive {
             display: inline-flex !important;
-          }
-          .input-responsive {
-            padding-right: 120px !important;
           }
         }
         @media (min-width: 1024px) and (max-width: 1199px) {
@@ -377,9 +379,6 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
           .kbd-shortcut-responsive {
             display: none !important;
           }
-          .input-responsive {
-            padding-right: 56px !important;
-          }
         }
         @media (max-width: 1023px) {
           .search-bar-responsive {
@@ -390,9 +389,6 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
           .kbd-shortcut-responsive {
             display: none !important;
           }
-          .input-responsive {
-            padding-right: 56px !important;
-          }
         }
         @media (max-width: 768px) {
           .search-bar-responsive {
@@ -402,9 +398,6 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
           }
           .kbd-shortcut-responsive {
             display: none !important;
-          }
-          .input-responsive {
-            padding-right: 56px !important;
           }
         }
       `}</style>
@@ -505,18 +498,34 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
           </span>
         </div>
 
-        {/* Center Section: Search Bar */}
-        <div className="relative search-bar-responsive" ref={dropdownRef} style={{
-          position: 'relative',
+        {/* Center Section: Search Bar Rebuilt using pure Flexbox structure */}
+        <div className="search-bar-responsive" ref={dropdownRef} style={{
+          position: 'relative', // ONLY for absolute positioning of dropdown menu, not children
           display: 'flex',
           alignItems: 'center',
           height: '44px',
           borderRadius: '12px',
           border: '1px solid #D1D5DB',
           background: '#FFFFFF',
+          paddingLeft: '16px',
+          paddingRight: '16px',
+          boxSizing: 'border-box',
           flexShrink: 1,
           transition: 'all 200ms ease',
         }}>
+          {/* Left Section: Search Icon fixed width */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '24px',
+            marginRight: '12px',
+            flexShrink: 0,
+          }}>
+            <Search size={20} strokeWidth={1.75} className="text-slate-400" />
+          </div>
+
+          {/* Center Section: Input occupies remaining width */}
           <input
             ref={inputRef}
             id="global-search-input"
@@ -528,34 +537,29 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
             onKeyDown={handleKeyDown}
             className="input-responsive"
             style={{
-              width: '100%',
+              flex: '1 1 auto',
               height: '100%',
               border: 'none',
               outline: 'none',
               background: 'transparent',
-              paddingLeft: '40px',
-              fontSize: '15px',
+              padding: 0,
+              margin: 0,
+              fontSize: '16px',
+              lineHeight: '1',
               color: '#374151',
+              minWidth: 0,
+              display: 'flex',
+              alignItems: 'center',
             }}
           />
-          <Search size={20} strokeWidth={1.75} className="text-slate-400 icon-search" style={{
-            position: 'absolute',
-            left: '14px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            pointerEvents: 'none',
-          }} />
 
-          {/* Right Flex Widgets: Clear button, Ctrl+K and Mic aligned and spaced */}
+          {/* Right Section: Flex Widgets aligned, gaps, and margins */}
           <div className="right-widgets-container" style={{
-            position: 'absolute',
-            right: '16px',
-            top: '50%',
-            transform: 'translateY(-50%)',
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
-            pointerEvents: 'auto',
+            flexShrink: 0,
+            marginLeft: '12px',
           }}>
             {/* Clear button if text exists */}
             {searchQuery && (
@@ -570,6 +574,8 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  padding: 0,
+                  margin: 0,
                 }}
               >
                 <X size={16} />
@@ -612,6 +618,8 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                   border: 'none',
                   cursor: 'pointer',
                   transition: 'background 200ms',
+                  padding: 0,
+                  margin: 0,
                 }}
                 onMouseEnter={e => {
                   if (!isVoiceActive) e.currentTarget.style.background = '#F3F4F6';
