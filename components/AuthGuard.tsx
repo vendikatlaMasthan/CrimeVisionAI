@@ -46,33 +46,72 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const isLoginPage = PUBLIC_PATHS.some(p => pathname === p || pathname.startsWith('/login'));
   const portalType: PortalType = user ? getPortalForRole(user.role) : 'officer';
 
+  // 1. Initial boot and auth check — run exactly once on mount
   useEffect(() => {
-    const stored = getStoredUser();
-    setUser(stored);
-    setAccessDenied(false);
+    console.log('AuthGuard: Initial app mount check starting...');
+    try {
+      const stored = getStoredUser();
+      setUser(stored);
+      setAccessDenied(false);
 
-    if (!stored && !isLoginPage) {
-      router.replace('/login');
-    } else if (stored && !isLoginPage) {
-      if (!canAccessRoute(stored.role, pathname)) {
-        setAccessDenied(true);
-        setTimeout(() => {
-          router.replace('/');
-          setAccessDenied(false);
-        }, 1500);
-        setChecked(true);
-        return;
+      if (!stored && !isLoginPage) {
+        console.log('AuthGuard: Guest user detected. Redirecting to login.');
+        router.replace('/login');
+      } else if (stored && !isLoginPage) {
+        const seen = sessionStorage.getItem('ksp_intro_seen');
+        if (!seen) {
+          console.log('AuthGuard: Showing intro sequence.');
+          setShowIntro(true);
+        }
       }
-      const seen = sessionStorage.getItem('ksp_intro_seen');
-      if (!seen) {
-        setShowIntro(true);
-      }
+    } catch (error) {
+      console.error('AuthGuard: Initialization check error:', error);
+    } finally {
+      // Always set checked to true so the app is not stuck in a blank loader screen
       setChecked(true);
-    } else {
-      setChecked(true);
+      console.log('AuthGuard: Initial loading completed.');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  }, [router, isLoginPage]);
+
+  // 2. Timeout fallback to guarantee loader is dismissed
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!checked) {
+        console.warn('AuthGuard: Initialization timeout fallback triggered after 3s.');
+        setChecked(true);
+      }
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [checked]);
+
+  // 3. Page navigation and RBAC route guard
+  useEffect(() => {
+    if (isLoginPage) return;
+
+    const stored = getStoredUser();
+    if (!stored) {
+      console.log('AuthGuard: Route changed but no session found. Forcing login.');
+      router.replace('/login');
+      return;
+    }
+
+    // Refresh state if user logged in or updated
+    if (!user || user.username !== stored.username) {
+      setUser(stored);
+    }
+
+    if (!canAccessRoute(stored.role, pathname)) {
+      console.warn(`AuthGuard: Access denied for ${stored.role} to route ${pathname}`);
+      setAccessDenied(true);
+      const redirectTimer = setTimeout(() => {
+        router.replace('/');
+        setAccessDenied(false);
+      }, 1500);
+      return () => clearTimeout(redirectTimer);
+    } else {
+      setAccessDenied(false);
+    }
+  }, [pathname, isLoginPage, router, user]);
 
   const handleIntroComplete = useCallback(() => {
     sessionStorage.setItem('ksp_intro_seen', '1');
