@@ -5,6 +5,7 @@ import {
   Package, Shield, Users, Monitor, Anchor, Moon,
   CheckCircle, Clock, Zap,
   BarChart3, MapPin, Sliders, Target, Activity, TrendingUp,
+  Download, Cpu, AlertTriangle, ArrowUpRight,
 } from 'lucide-react';
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -16,6 +17,7 @@ import {
 import { KARNATAKA_DISTRICTS } from '@/lib/mockData';
 import { useLanguage } from '@/components/LanguageToggle';
 import { TranslationSet } from '@/lib/translations';
+import Modal from '@/components/Modal';
 
 const PRIORITY_COLORS: Record<string, string> = {
   Critical: '#ef4444',
@@ -87,6 +89,8 @@ export default function ResourcesPage() {
   const [selectedRec, setSelectedRec] = useState<number | null>(null);
   const [actionStatus, setActionStatus] = useState<Record<number, string>>({});
   const [activeTab, setActiveTab] = useState<'deployment' | 'simulator'>('deployment');
+  const [showAllocationModal, setShowAllocationModal] = useState(false);
+  const [showAIOptimizeModal, setShowAIOptimizeModal] = useState(false);
 
   // Simulator state
   const [patrolUnits, setPatrolUnits] = useState(450);
@@ -167,11 +171,19 @@ export default function ResourcesPage() {
           <p className="page-subtitle">{lang === 'kn' ? 'ಕರ್ನಾಟಕದಾದ್ಯಂತ AI ಚಾಲಿತ ಪೊಲೀಸ್ ಬಲ ನಿಯೋಜನೆ ಮತ್ತು ಸಂಪನ್ಮೂಲ ಹಂಚಿಕೆ ಶಿಫಾರಸುಗಳು' : 'AI-powered force allocation and deployment recommendations across Karnataka'}</p>
         </div>
         <div className="flex gap-3">
-          <button className="cyber-btn cyber-btn-amber">
+          <button
+            type="button"
+            className="cyber-btn cyber-btn-muted"
+            onClick={() => setShowAllocationModal(true)}
+          >
             <BarChart3 size={14} />
             {lang === 'kn' ? 'ಹಂಚಿಕೆ ವರದಿ' : 'ALLOCATION REPORT'}
           </button>
-          <button className="cyber-btn cyber-btn-cyan">
+          <button
+            type="button"
+            className="cyber-btn cyber-btn-navy"
+            onClick={() => setShowAIOptimizeModal(true)}
+          >
             <Zap size={14} />
             {lang === 'kn' ? 'AI ಆಪ್ಟಿಮೈಸ್' : 'AI OPTIMIZE'}
           </button>
@@ -251,17 +263,17 @@ export default function ResourcesPage() {
           <span className="badge badge-cyan ml-2" style={{ fontSize: '10px' }}>6 {lang === 'kn' ? 'ಸಕ್ರಿಯ' : 'ACTIVE'}</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-5">
           {RESOURCE_RECOMMENDATIONS.map((rec) => {
             const IconComp = ICON_MAP[rec.icon] || Shield;
             const statusAction = actionStatus[rec.id];
+            const priorityColor = PRIORITY_COLORS[rec.priority] || '#64748b';
             return (
               <div
                 key={rec.id}
-                className="glass-card p-5 cursor-pointer"
+                className="glass-card p-6 cursor-pointer"
                 style={{
-                  borderLeft: `3px solid ${PRIORITY_COLORS[rec.priority] || '#64748b'}`,
-                  borderLeftWidth: '4px',
+                  borderLeft: `4px solid ${priorityColor}`,
                 }}
                 onClick={() => setSelectedRec(selectedRec === rec.id ? null : rec.id)}
               >
@@ -269,9 +281,9 @@ export default function ResourcesPage() {
                   <div className="flex items-center gap-3">
                     <div
                       className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-                      style={{ background: `${rec.color}15`, border: `1px solid ${rec.color}30` }}
+                      style={{ background: `${priorityColor}15`, border: `1px solid ${priorityColor}30` }}
                     >
-                      <IconComp size={18} style={{ color: rec.color }} />
+                      <IconComp size={18} style={{ color: priorityColor }} />
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-1">
@@ -289,9 +301,9 @@ export default function ResourcesPage() {
                         <span
                           className="badge"
                           style={{
-                            background: `${STATUS_COLORS[rec.status] || '#64748b'}18`,
-                            color: STATUS_COLORS[rec.status] || '#64748b',
-                            border: `1px solid ${STATUS_COLORS[rec.status] || '#64748b'}35`,
+                            background: 'rgba(100,116,139,0.08)',
+                            color: '#64748b',
+                            border: '1px solid rgba(100,116,139,0.2)',
                             fontSize: '10px',
                           }}
                         >
@@ -677,6 +689,141 @@ export default function ResourcesPage() {
       </div>
     </>
     )}
+
+      {/* Allocation Report Modal */}
+      <Modal
+        isOpen={showAllocationModal}
+        onClose={() => setShowAllocationModal(false)}
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <BarChart3 size={18} style={{ color: '#1a2b4c' }} />
+            <span>Force Allocation Report — FY 2025-26</span>
+          </div>
+        }
+        size="lg"
+        footer={
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <span style={{ fontSize: 12, color: '#6b7280', flex: 1 }}>Generated: {new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })} · Karnataka State Police HQ</span>
+            <button
+              type="button"
+              className="cyber-btn cyber-btn-navy"
+              style={{ fontSize: 12, padding: '7px 16px' }}
+              onClick={() => setShowAllocationModal(false)}
+            >
+              <Download size={13} /> Export PDF
+            </button>
+          </div>
+        }
+      >
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 20 }}>
+            {[
+              { label: 'Total State Force', value: DISTRICT_RESOURCES.reduce((s, d) => s + d.totalOfficers, 0).toLocaleString(), color: '#1a2b4c' },
+              { label: 'Patrol Deployed', value: DISTRICT_RESOURCES.reduce((s, d) => s + d.deployedPatrol, 0).toLocaleString(), color: '#16a34a' },
+              { label: 'Coverage Avg.', value: `${Math.round(DISTRICT_RESOURCES.reduce((s, d) => s + d.coverage, 0) / DISTRICT_RESOURCES.length)}%`, color: '#f59e0b' },
+            ].map((m) => (
+              <div key={m.label} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 8, padding: '12px 16px' }}>
+                <div style={{ fontSize: 11, color: '#6b7280', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{m.label}</div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: m.color, fontFamily: 'monospace' }}>{m.value}</div>
+              </div>
+            ))}
+          </div>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr style={{ borderBottom: '2px solid #E5E7EB' }}>
+                {['District', 'Total Officers', 'Patrol', 'Cyber Units', 'Detectives', 'Coverage'].map(h => (
+                  <th key={h} style={{ textAlign: 'left', padding: '8px 10px', fontSize: 11, fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {DISTRICT_RESOURCES.map((d, i) => (
+                <tr key={i} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                  <td style={{ padding: '10px 10px', fontWeight: 600, color: '#111827', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <MapPin size={11} style={{ color: '#9ca3af' }} />{d.district}
+                  </td>
+                  <td style={{ padding: '10px 10px', color: '#374151' }}>{d.totalOfficers.toLocaleString()}</td>
+                  <td style={{ padding: '10px 10px', color: '#374151' }}>{d.deployedPatrol.toLocaleString()}</td>
+                  <td style={{ padding: '10px 10px', color: '#374151' }}>{d.cyberUnits}</td>
+                  <td style={{ padding: '10px 10px', color: '#374151' }}>{d.detectives}</td>
+                  <td style={{ padding: '10px 10px' }}>
+                    <span style={{
+                      fontSize: 12, fontWeight: 700,
+                      color: d.coverage >= 80 ? '#16a34a' : d.coverage >= 60 ? '#f59e0b' : '#dc2626',
+                    }}>{d.coverage}%</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Modal>
+
+      {/* AI Optimize Modal */}
+      <Modal
+        isOpen={showAIOptimizeModal}
+        onClose={() => setShowAIOptimizeModal(false)}
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Cpu size={18} style={{ color: '#1a2b4c' }} />
+            <span>AI Resource Optimisation — Recommendations</span>
+          </div>
+        }
+        size="md"
+        footer={
+          <button
+            type="button"
+            className="cyber-btn cyber-btn-navy"
+            style={{ fontSize: 12, padding: '7px 16px' }}
+            onClick={() => setShowAIOptimizeModal(false)}
+          >
+            Close
+          </button>
+        }
+      >
+        <div>
+          <div style={{ padding: '10px 14px', background: 'rgba(26,43,76,0.04)', border: '1px solid rgba(26,43,76,0.1)', borderRadius: 8, marginBottom: 16, fontSize: 13, color: '#374151', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+            <Cpu size={14} style={{ color: '#1a2b4c', flexShrink: 0, marginTop: 2 }} />
+            <span>AI analysis of crime pattern data, officer deployment, and district risk scores. Suggestions are generated from predictive models and require DGP approval before action.</span>
+          </div>
+          {[
+            {
+              district: 'Kalaburagi', action: 'Reallocate 60 patrol officers from administration to field duty', impact: 'Coverage ↑ 54% → 68%',
+              urgency: 'High', icon: ArrowUpRight,
+            },
+            {
+              district: 'Raichur', action: 'Deploy 2 additional cyber units; rural cybercrime +18% YoY', impact: 'Cyber detection rate ↑ ~22%',
+              urgency: 'High', icon: ArrowUpRight,
+            },
+            {
+              district: 'Ballari', action: 'Merge 3 understaffed outposts into consolidated hub — Hospet', impact: 'Response time ↓ ~8 min avg.',
+              urgency: 'Medium', icon: ArrowUpRight,
+            },
+            {
+              district: 'Bengaluru Urban', action: 'Increase night patrol density in BBMP Zone 4 (10PM–4AM)', impact: 'Vehicle theft incidents ↓ ~35%',
+              urgency: 'Medium', icon: AlertTriangle,
+            },
+            {
+              district: 'Belagavi', action: 'Coordinate joint border patrol with Maharashtra — NH-48 corridor', impact: 'Cross-border trafficking ↓ ~40%',
+              urgency: 'Critical', icon: AlertTriangle,
+            },
+          ].map((item, i) => (
+            <div key={i} style={{
+              display: 'flex', gap: 12, padding: '12px 14px',
+              borderLeft: `3px solid ${ item.urgency === 'Critical' ? '#dc2626' : item.urgency === 'High' ? '#f59e0b' : '#1a2b4c' }`,
+              background: '#F8FAFC', borderRadius: '0 8px 8px 0',
+              marginBottom: 10,
+            }}>
+              <item.icon size={15} style={{ color: item.urgency === 'Critical' ? '#dc2626' : item.urgency === 'High' ? '#f59e0b' : '#1a2b4c', flexShrink: 0, marginTop: 2 }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>{item.district} · {item.urgency}</div>
+                <div style={{ fontSize: 13, color: '#111827', fontWeight: 500, marginBottom: 4 }}>{item.action}</div>
+                <div style={{ fontSize: 12, color: '#16a34a', fontWeight: 600 }}>{item.impact}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Modal>
   </div>
   );
 }

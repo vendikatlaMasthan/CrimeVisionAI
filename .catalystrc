@@ -3,7 +3,7 @@
     "project": 1
   },
   "actives": {
-    "project": 1,
+    "project": 2,
     "env": 1
   },
   "projects": [
@@ -21,7 +21,41 @@
           "idx": 1,
           "id": "60072985440",
           "name": "Development",
-          "type": 3
+          "type": 3,
+          "env_status": "Active",
+          "project_details": {
+            "project_name": "AI-CRIMEVISION",
+            "id": "42352000000020001",
+            "project_type": "Live"
+          },
+          "is_default": false,
+          "action_required": false
+        }
+      ]
+    },
+    {
+      "idx": 2,
+      "id": "42352000000083009",
+      "name": "crimevision",
+      "domain": {
+        "id": "50043808824",
+        "name": "crimevision-60072985440.development"
+      },
+      "timezone": "Asia/Kolkata",
+      "env": [
+        {
+          "idx": 1,
+          "id": "60072985440",
+          "name": "Development",
+          "type": 3,
+          "env_status": "Active",
+          "project_details": {
+            "project_name": "crimevision",
+            "id": "42352000000083009",
+            "project_type": "Live"
+          },
+          "is_default": true,
+          "action_required": false
         }
       ]
     }

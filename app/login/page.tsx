@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Shield, Lock, Eye, EyeOff, Fingerprint, CreditCard, Loader, FileText, Target, ShieldAlert, Search, Award, Settings, Users, User } from 'lucide-react';
 import { DEMO_ACCOUNTS, DemoAccount } from '@/lib/crimeData';
-import GlobalSimulationBanner from '@/components/GlobalSimulationBanner';
+
 import CountUp from '@/components/CountUp';
 import { InputWithIcon } from '@/components/InputWithIcon';
 
@@ -140,9 +140,7 @@ export default function LoginPage() {
 
   return (
     <div className="login-wrapper">
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 100 }}>
-        <GlobalSimulationBanner />
-      </div>
+
       
       {/* ── SUCCESS LOADING SCREEN OVERLAY ──────────────────────── */}
       {isSuccess && (
@@ -287,12 +285,7 @@ export default function LoginPage() {
             </svg>
           </div>
 
-          {/* Simulation mode disclosure bottom-left */}
-          <div className="left-panel-footer">
-            <div className="simulation-pill">
-              ⚠️ SIMULATION MODE | Synthetic Demonstration Data
-            </div>
-          </div>
+
 
         </div>
 
@@ -491,7 +484,6 @@ export default function LoginPage() {
           overflow-y: auto;
           background: #F5F7FA;
           position: relative;
-          padding-top: 28px; /* Safe space for top simulation banner */
         }
 
         .login-container {
@@ -1214,12 +1206,12 @@ export default function LoginPage() {
         /* RESPONSIVE LAYOUT */
         @media (max-width: 1024px) {
           .login-wrapper {
-            padding-top: 28px;
+            padding-top: 0;
             overflow-y: auto;
           }
           .login-container {
             flex-direction: column-reverse;
-            min-height: calc(100vh - 28px);
+            min-height: 100vh;
           }
           .left-panel {
             width: 100%;
@@ -1229,7 +1221,7 @@ export default function LoginPage() {
           .right-panel {
             width: 100%;
             height: auto;
-            min-height: calc(100vh - 28px);
+            min-height: 100vh;
             padding: 40px 24px;
           }
           .stats-grid {

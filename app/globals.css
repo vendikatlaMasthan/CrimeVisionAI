@@ -5,6 +5,7 @@
    DESIGN TOKENS INTEGRATION
    ───────────────────────────────────────────── */
 :root {
+  --text-scale: 1.0;
   /* Karnataka State branding theme colors mapped to standardized tokens */
   --primary-navy:     var(--color-navy);      /* Standardized Navy */
   --brand-crimson:    var(--color-navy);
@@ -94,29 +95,45 @@
 /* Typography Pass using tokens scale */
 h1, .page-title, .text-page-title {
   font: var(--text-page-title) !important;
+  font-size: calc(36px * var(--text-scale, 1.0)) !important;
   font-family: 'Inter', sans-serif !important;
 }
 
 h2, .section-title, .text-section-heading {
   font: var(--text-section-heading) !important;
+  font-size: calc(22px * var(--text-scale, 1.0)) !important;
   font-family: 'Inter', sans-serif !important;
 }
 
 h3, .card-title, .text-card-heading {
   font: var(--text-card-heading) !important;
+  font-size: calc(17px * var(--text-scale, 1.0)) !important;
   font-family: 'Inter', sans-serif !important;
 }
 
 body, p, .text-body {
   font: var(--text-body) !important;
+  font-size: calc(14.5px * var(--text-scale, 1.0)) !important;
   font-family: 'Inter', sans-serif !important;
 }
 
 .caption, .text-caption {
   font: var(--text-caption) !important;
+  font-size: calc(12.5px * var(--text-scale, 1.0)) !important;
   color: var(--color-caption) !important;
   font-family: 'Inter', sans-serif !important;
 }
+
+/* Scale standard Tailwind typography classes */
+.text-xs { font-size: calc(0.75rem * var(--text-scale, 1.0)) !important; }
+.text-sm { font-size: calc(0.875rem * var(--text-scale, 1.0)) !important; }
+.text-base { font-size: calc(1rem * var(--text-scale, 1.0)) !important; }
+.text-lg { font-size: calc(1.125rem * var(--text-scale, 1.0)) !important; }
+.text-xl { font-size: calc(1.25rem * var(--text-scale, 1.0)) !important; }
+.text-2xl { font-size: calc(1.5rem * var(--text-scale, 1.0)) !important; }
+.text-3xl { font-size: calc(1.875rem * var(--text-scale, 1.0)) !important; }
+.text-4xl { font-size: calc(2.25rem * var(--text-scale, 1.0)) !important; }
+.text-5xl { font-size: calc(3rem * var(--text-scale, 1.0)) !important; }
 
 /* Distinct Badge Styles */
 .badge-category {
@@ -223,7 +240,7 @@ input[disabled], select[disabled], textarea[disabled] {
 }
 
 *, *::before, *::after {
-  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease, box-shadow 200ms ease;
+  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease, box-shadow 200ms ease, font-size 180ms ease-in-out;
 }
 
 body.presentation-mode {
@@ -242,6 +259,10 @@ body.presentation-mode .presentation-hidden {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+html {
+  transition: font-size 180ms ease-in-out;
 }
 
 html, body {
@@ -287,8 +308,8 @@ html, body {
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--brand-gold) 0%, #FFFFFF 50%, var(--brand-gold) 100%);
+  height: 2px;
+  background: linear-gradient(90deg, rgba(26,43,76,0.18) 0%, rgba(26,43,76,0.04) 50%, rgba(26,43,76,0.18) 100%);
   background-size: 200% 100%;
   background-position: 100% 0;
   transition: opacity 0.3s ease;
@@ -791,6 +812,26 @@ html, body {
 }
 .cyber-btn-green:hover {
   background: #047857;
+}
+
+.cyber-btn-muted {
+  background: #F1F5F9;
+  color: #334155;
+  border: 1px solid #CBD5E1;
+}
+.cyber-btn-muted:hover {
+  background: #E2E8F0;
+  border-color: #94A3B8;
+}
+
+.cyber-btn-navy {
+  background: rgba(26,43,76,0.08);
+  color: #1a2b4c;
+  border: 1px solid rgba(26,43,76,0.2);
+}
+.cyber-btn-navy:hover {
+  background: rgba(26,43,76,0.14);
+  border-color: rgba(26,43,76,0.35);
 }
 
 /* ─────────────────────────────────────────────

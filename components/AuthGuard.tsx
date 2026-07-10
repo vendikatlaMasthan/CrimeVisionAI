@@ -26,7 +26,7 @@ function getStoredUser(): DemoAccount | null {
 
 const PUBLIC_PATHS = ['/login', '/login/'];
 
-import GlobalSimulationBanner from './GlobalSimulationBanner';
+
 
 // Layout constants
 const GOV_HEADER_HEIGHT = 72;
@@ -208,7 +208,6 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
             isSidebarOpen={isSidebarOpen} 
           />
           <div className="flex-1 page-transition" key={pathname} style={{ paddingTop: `${TOPBAR_HEIGHT}px` }}>
-            <GlobalSimulationBanner />
             {children}
           </div>
           <GovFooter />

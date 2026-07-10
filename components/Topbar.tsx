@@ -33,6 +33,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [voiceSupported, setVoiceSupported] = useState(false);
+  const [liveTime, setLiveTime] = useState('');
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -51,6 +52,17 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
       const w = window as any;
       setVoiceSupported(!!(w.SpeechRecognition || w.webkitSpeechRecognition));
     }
+  }, []);
+
+  // Live clock — updates every second
+  useEffect(() => {
+    const tick = () => {
+      const now = new Date();
+      setLiveTime(now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }));
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
   }, []);
 
 
@@ -494,7 +506,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
               whiteSpace: 'nowrap',
             }}
           >
-            {portalType === 'admin' ? 'Admin' : 'Officer'}
+            {portalType === 'admin' ? (lang === 'kn' ? 'ಅಡ್ಮಿನ್' : 'Admin') : (lang === 'kn' ? 'ಅಧಿಕಾರಿ' : 'Officer')}
           </span>
         </div>
 
@@ -654,7 +666,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                 padding: '20px',
               }}
             >
-              {/* Empty state / Smart Suggestions & Search Analytics */}
+              {/* ── When query is empty: show smart suggestions panel ── */}
               {!q && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Left Column: Smart Suggestions */}
@@ -714,7 +726,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                   <div className="space-y-4 border-l pl-5" style={{ borderColor: 'var(--cyber-border)' }}>
                     <div>
                       <div className="text-[10px] font-black text-[var(--text-dim)] uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                        <TrendingUp size={11} className="text-amber-500" /> Search Analytics & Intel
+                        <TrendingUp size={11} className="text-amber-500" /> Search Analytics &amp; Intel
                       </div>
                       
                       {/* Trending Searches */}
@@ -752,6 +764,245 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                   </div>
                 </div>
               )}
+
+              {/* ── When query has text: show live search results ── */}
+              {q && (
+                <div>
+                  {/* NLP result hint */}
+                  {nlpResult && (
+                    <div style={{ marginBottom: 12, padding: '10px 12px', background: 'rgba(30,58,95,0.06)', borderRadius: 8, border: '1px solid rgba(30,58,95,0.12)' }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--primary-navy)', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <Brain size={12} /> {nlpResult.message}
+                      </div>
+                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                        {nlpResult.links.map((l, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onMouseDown={() => { router.push(l.url); setShowDropdown(false); setSearchQuery(''); }}
+                            style={{ fontSize: 11, fontWeight: 600, color: 'var(--primary-navy)', background: 'rgba(30,58,95,0.08)', border: '1px solid rgba(30,58,95,0.18)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+                          >
+                            {l.label} <ArrowRight size={10} />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Results or empty state */}
+                  {allResults.length === 0 ? (
+                    <div style={{ padding: '28px 0', textAlign: 'center' }}>
+                      <Search size={24} style={{ color: '#CBD5E1', margin: '0 auto 10px' }} />
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 4 }}>No matches found for &ldquo;{searchQuery}&rdquo;</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Try searching by FIR number, district, suspect name, or crime type</div>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+
+                      {/* FIR Results */}
+                      {matchedFIRs.length > 0 && (
+                        <>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '4px 8px 2px', marginTop: 2 }}>
+                            <FileText size={10} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />FIR Records
+                          </div>
+                          {matchedFIRs.map((f, i) => {
+                            const flatIdx = getFlatIndex('fir', i);
+                            return (
+                              <button
+                                key={f.id}
+                                type="button"
+                                onMouseDown={() => { router.push(`/fir?id=${f.id}`); setShowDropdown(false); setSearchQuery(''); setActiveIdx(-1); }}
+                                style={{
+                                  display: 'flex', alignItems: 'center', gap: 10, width: '100%', textAlign: 'left',
+                                  padding: '8px 10px', borderRadius: 8, cursor: 'pointer', border: 'none',
+                                  background: activeIdx === flatIdx ? 'rgba(30,58,95,0.08)' : 'transparent',
+                                  transition: 'background 100ms',
+                                }}
+                                onMouseEnter={e => e.currentTarget.style.background = 'rgba(30,58,95,0.06)'}
+                                onMouseLeave={e => e.currentTarget.style.background = activeIdx === flatIdx ? 'rgba(30,58,95,0.08)' : 'transparent'}
+                              >
+                                <div style={{ width: 28, height: 28, borderRadius: 6, background: 'rgba(30,58,95,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                  <FileText size={13} style={{ color: 'var(--primary-navy)' }} />
+                                </div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'monospace' }}>{f.firNumber}</div>
+                                  <div style={{ fontSize: 11, color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {f.crimeType} · {f.district} · {f.assignedOfficer}
+                                  </div>
+                                </div>
+                                <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: f.priority === 'Critical' ? 'rgba(239,68,68,0.1)' : f.priority === 'High' ? 'rgba(245,158,11,0.1)' : 'rgba(100,116,139,0.08)', color: f.priority === 'Critical' ? '#ef4444' : f.priority === 'High' ? '#f59e0b' : '#64748b', flexShrink: 0 }}>
+                                  {f.priority}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </>
+                      )}
+
+                      {/* Suspect Results */}
+                      {matchedSuspects.length > 0 && (
+                        <>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '8px 8px 2px', marginTop: 2 }}>
+                            <User size={10} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />Suspects
+                          </div>
+                          {matchedSuspects.map((s, i) => {
+                            const flatIdx = getFlatIndex('suspect', i);
+                            return (
+                              <button
+                                key={s.id}
+                                type="button"
+                                onMouseDown={() => { router.push(`/detective?suspect=${encodeURIComponent(s.name)}`); setShowDropdown(false); setSearchQuery(''); setActiveIdx(-1); }}
+                                style={{
+                                  display: 'flex', alignItems: 'center', gap: 10, width: '100%', textAlign: 'left',
+                                  padding: '8px 10px', borderRadius: 8, cursor: 'pointer', border: 'none',
+                                  background: activeIdx === flatIdx ? 'rgba(239,68,68,0.06)' : 'transparent',
+                                  transition: 'background 100ms',
+                                }}
+                                onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.04)'}
+                                onMouseLeave={e => e.currentTarget.style.background = activeIdx === flatIdx ? 'rgba(239,68,68,0.06)' : 'transparent'}
+                              >
+                                <div style={{ width: 28, height: 28, borderRadius: 6, background: 'rgba(239,68,68,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                  <User size={13} style={{ color: '#ef4444' }} />
+                                </div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>{s.name}</div>
+                                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{s.crimeType} · {s.district} · {s.status}</div>
+                                </div>
+                                <span style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', flexShrink: 0 }}>{s.riskScore}%</span>
+                              </button>
+                            );
+                          })}
+                        </>
+                      )}
+
+                      {/* District Results */}
+                      {matchedDistricts.length > 0 && (
+                        <>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '8px 8px 2px', marginTop: 2 }}>
+                            <MapPin size={10} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />Districts
+                          </div>
+                          {matchedDistricts.map((d, i) => {
+                            const flatIdx = getFlatIndex('district', i);
+                            return (
+                              <button
+                                key={d.id}
+                                type="button"
+                                onMouseDown={() => { router.push(`/heatmap?district=${encodeURIComponent(d.name)}`); setShowDropdown(false); setSearchQuery(''); setActiveIdx(-1); }}
+                                style={{
+                                  display: 'flex', alignItems: 'center', gap: 10, width: '100%', textAlign: 'left',
+                                  padding: '8px 10px', borderRadius: 8, cursor: 'pointer', border: 'none',
+                                  background: activeIdx === flatIdx ? 'rgba(30,58,95,0.08)' : 'transparent',
+                                  transition: 'background 100ms',
+                                }}
+                                onMouseEnter={e => e.currentTarget.style.background = 'rgba(30,58,95,0.06)'}
+                                onMouseLeave={e => e.currentTarget.style.background = activeIdx === flatIdx ? 'rgba(30,58,95,0.08)' : 'transparent'}
+                              >
+                                <div style={{ width: 28, height: 28, borderRadius: 6, background: 'rgba(30,58,95,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                  <MapPin size={13} style={{ color: 'var(--primary-navy)' }} />
+                                </div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>{d.name}</div>
+                                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{d.crimeCount.toLocaleString()} crimes · Risk {d.riskScore}/100</div>
+                                </div>
+                                <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: d.riskScore > 80 ? 'rgba(239,68,68,0.1)' : d.riskScore > 60 ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.1)', color: d.riskScore > 80 ? '#ef4444' : d.riskScore > 60 ? '#f59e0b' : '#10b981', flexShrink: 0 }}>
+                                  {d.code}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </>
+                      )}
+
+                      {/* Crime Category Results */}
+                      {matchedCategories.length > 0 && (
+                        <>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '8px 8px 2px', marginTop: 2 }}>
+                            <AlertTriangle size={10} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />Crime Categories
+                          </div>
+                          {matchedCategories.map((c, i) => {
+                            const flatIdx = getFlatIndex('category', i);
+                            return (
+                              <button
+                                key={c.name}
+                                type="button"
+                                onMouseDown={() => { router.push(`/search?query=${encodeURIComponent(c.name)}`); setShowDropdown(false); setSearchQuery(''); setActiveIdx(-1); }}
+                                style={{
+                                  display: 'flex', alignItems: 'center', gap: 10, width: '100%', textAlign: 'left',
+                                  padding: '8px 10px', borderRadius: 8, cursor: 'pointer', border: 'none',
+                                  background: activeIdx === flatIdx ? 'rgba(30,58,95,0.08)' : 'transparent',
+                                  transition: 'background 100ms',
+                                }}
+                                onMouseEnter={e => e.currentTarget.style.background = 'rgba(30,58,95,0.06)'}
+                                onMouseLeave={e => e.currentTarget.style.background = activeIdx === flatIdx ? 'rgba(30,58,95,0.08)' : 'transparent'}
+                              >
+                                <div style={{ width: 28, height: 28, borderRadius: 6, background: `${c.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                  <Activity size={13} style={{ color: c.color }} />
+                                </div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>{c.name}</div>
+                                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{c.count.toLocaleString()} reported · {c.percentage}% of total</div>
+                                </div>
+                                <span style={{ fontSize: 11, color: c.trend.startsWith('+') ? '#ef4444' : '#10b981', fontWeight: 700, flexShrink: 0 }}>{c.trend}</span>
+                              </button>
+                            );
+                          })}
+                        </>
+                      )}
+
+                      {/* Alert Results */}
+                      {matchedAlerts.length > 0 && (
+                        <>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '8px 8px 2px', marginTop: 2 }}>
+                            <ShieldAlert size={10} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />Live Alerts
+                          </div>
+                          {matchedAlerts.map((a, i) => {
+                            const flatIdx = getFlatIndex('alert', i);
+                            return (
+                              <button
+                                key={a.id}
+                                type="button"
+                                onMouseDown={() => { router.push('/alerts'); setShowDropdown(false); setSearchQuery(''); setActiveIdx(-1); }}
+                                style={{
+                                  display: 'flex', alignItems: 'center', gap: 10, width: '100%', textAlign: 'left',
+                                  padding: '8px 10px', borderRadius: 8, cursor: 'pointer', border: 'none',
+                                  background: activeIdx === flatIdx ? 'rgba(239,68,68,0.06)' : 'transparent',
+                                  transition: 'background 100ms',
+                                }}
+                                onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.04)'}
+                                onMouseLeave={e => e.currentTarget.style.background = activeIdx === flatIdx ? 'rgba(239,68,68,0.06)' : 'transparent'}
+                              >
+                                <div style={{ width: 28, height: 28, borderRadius: 6, background: 'rgba(239,68,68,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                  <ShieldAlert size={13} style={{ color: '#ef4444' }} />
+                                </div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{a.title}</div>
+                                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{a.district} · {a.category}</div>
+                                </div>
+                                <CornerDownLeft size={11} style={{ color: 'var(--text-dim)', flexShrink: 0 }} />
+                              </button>
+                            );
+                          })}
+                        </>
+                      )}
+
+                      {/* Footer hint */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8, paddingTop: 8, borderTop: '1px solid var(--border-default)' }}>
+                        <span style={{ fontSize: 10, color: 'var(--text-dim)' }}>
+                          {allResults.length} result{allResults.length !== 1 ? 's' : ''} · ↑↓ navigate · Enter to open · Esc to close
+                        </span>
+                        <button
+                          type="button"
+                          onMouseDown={() => { router.push(`/search?query=${encodeURIComponent(searchQuery)}`); setShowDropdown(false); setSearchQuery(''); }}
+                          style={{ fontSize: 11, fontWeight: 600, color: 'var(--primary-navy)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+                        >
+                          View all results <ArrowRight size={11} />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
             </div>
           )}
         </div>
@@ -787,8 +1038,27 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
         {/* Right Section: Date, Live Time, Restricted Badge, Language Toggle, Bell Notifications & Profile */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginLeft: 'auto', flexShrink: 0 }}>
 
+          {/* Live Date + Time */}
+          <div
+            className="date-time-responsive"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-end',
+              gap: '1px',
+              flexShrink: 0,
+            }}
+          >
+            <span style={{ fontSize: '12px', fontWeight: 700, color: '#111827', letterSpacing: '0.01em', lineHeight: 1.2, fontVariantNumeric: 'tabular-nums' }}>
+              {liveTime || '--:--:-- --'}
+            </span>
+            <span style={{ fontSize: '10px', fontWeight: 500, color: '#6B7280', whiteSpace: 'nowrap', lineHeight: 1.2 }}>
+              {new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+            </span>
+          </div>
 
-
+          {/* Divider */}
+          <div style={{ width: '1px', height: '24px', background: '#E5E7EB', flexShrink: 0 }} />
 
           {/* Language Toggle Link */}
           <div 
