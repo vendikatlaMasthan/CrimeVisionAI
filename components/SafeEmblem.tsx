@@ -47,7 +47,7 @@ export default function SafeEmblem({ width = 50, height = 50, className, style }
         }}
         title="Karnataka State Police (Placeholder)"
       >
-        <img src="/crimevision_logo.png" alt="Fallback Logo" style={{ width: '60%', height: '60%', objectFit: 'contain' }} />
+        <img src={`${basePath}/crimevision_logo.png`} alt="Fallback Logo" style={{ width: '60%', height: '60%', objectFit: 'contain' }} />
       </div>
     );
   }

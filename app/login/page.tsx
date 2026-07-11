@@ -21,6 +21,13 @@ export default function LoginPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
+  let basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  if (!basePath && typeof window !== 'undefined') {
+    if (window.location.pathname.startsWith('/CrimeVisionAI')) {
+      basePath = '/CrimeVisionAI';
+    }
+  }
+
   // Form states
   const [selectedRole, setSelectedRole] = useState<'Officer_Commissioner' | 'Admin_Investigator'>('Officer_Commissioner');
   const [badgeId, setBadgeId] = useState('PI2026001');
@@ -156,7 +163,7 @@ export default function LoginPage() {
               justifyContent: 'center',
               animation: 'logoPulse 2s infinite ease-in-out',
             }}>
-              <img src="/crimevision_logo.png" alt="CrimeVision AI Logo" style={{ width: '72px', height: '72px', objectFit: 'contain' }} />
+              <img src={`${basePath}/crimevision_logo.png`} alt="CrimeVision AI Logo" style={{ width: '72px', height: '72px', objectFit: 'contain' }} />
             </div>
             <h2 className="success-title">{LOADING_STEPS[stepIdx].toUpperCase()}</h2>
             <p className="success-subtitle">CrimeVision Secure Authorization Protocol</p>
@@ -177,7 +184,7 @@ export default function LoginPage() {
           {/* Logo Block (circular gold-bordered shield emblem) */}
           <div className="brand-header">
             <div style={{ width: '64px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <img src="/crimevision_logo.png" alt="CrimeVision AI Logo" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
+              <img src={`${basePath}/crimevision_logo.png`} alt="CrimeVision AI Logo" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
             </div>
             <div>
               <h1 className="brand-title">CRIMEVISION AI</h1>
@@ -304,7 +311,7 @@ export default function LoginPage() {
           {/* Mobile-only logo */}
           <div className="mobile-header">
             <div style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <img src="/crimevision_logo.png" alt="CrimeVision AI Logo" style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
+              <img src={`${basePath}/crimevision_logo.png`} alt="CrimeVision AI Logo" style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
             </div>
             <div style={{ textAlign: 'left' }}>
               <h2 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--brand-crimson)', margin: 0 }}>CRIMEVISION AI</h2>
@@ -472,7 +479,7 @@ export default function LoginPage() {
 
             {/* Portal Footer */}
             <div className="form-portal-footer">
-              <img src="/crimevision_logo.png" alt="Logo" style={{ width: '12px', height: '12px', marginRight: '6px', objectFit: 'contain' }} />
+              <img src={`${basePath}/crimevision_logo.png`} alt="Logo" style={{ width: '12px', height: '12px', marginRight: '6px', objectFit: 'contain' }} />
               <span>Karnataka State Police · Government of Karnataka · Est. 1963</span>
             </div>
 

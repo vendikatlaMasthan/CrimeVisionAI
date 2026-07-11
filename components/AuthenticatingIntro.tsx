@@ -20,6 +20,13 @@ export default function AuthenticatingIntro({ onComplete }: { onComplete: () => 
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState<'loading' | 'done'>('loading');
 
+  let basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  if (!basePath && typeof window !== 'undefined') {
+    if (window.location.pathname.startsWith('/CrimeVisionAI')) {
+      basePath = '/CrimeVisionAI';
+    }
+  }
+
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
     const stepDuration = 600;
@@ -58,7 +65,7 @@ export default function AuthenticatingIntro({ onComplete }: { onComplete: () => 
     >
       {/* CrimeVision AI Logo */}
       <div style={{ marginBottom: 24, width: 96, height: 96, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <img src="/crimevision_logo.png" alt="CrimeVision AI Logo" style={{ width: 96, height: 96, objectFit: 'contain' }} />
+        <img src={`${basePath}/crimevision_logo.png`} alt="CrimeVision AI Logo" style={{ width: 96, height: 96, objectFit: 'contain' }} />
       </div>
 
       {/* Title */}

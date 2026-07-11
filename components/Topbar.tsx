@@ -28,6 +28,13 @@ interface TopbarProps {
 
 export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpen = true }: TopbarProps) {
   const [searchQuery, setSearchQuery] = useState('');
+
+  let basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  if (!basePath && typeof window !== 'undefined') {
+    if (window.location.pathname.startsWith('/CrimeVisionAI')) {
+      basePath = '/CrimeVisionAI';
+    }
+  }
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -471,7 +478,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
               justifyContent: 'center',
               flexShrink: 0,
             }}>
-              <img src="/crimevision_logo.png" alt="CrimeVision AI Logo" style={{ width: '34px', height: '34px', objectFit: 'contain' }} />
+              <img src={`${basePath}/crimevision_logo.png`} alt="CrimeVision AI Logo" style={{ width: '34px', height: '34px', objectFit: 'contain' }} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', lineHeight: '1.2' }}>
               <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--primary-navy)', whiteSpace: 'nowrap' }}>

@@ -105,6 +105,13 @@ export default function Sidebar({ user, portalType, isOpen = true }: SidebarProp
   const { lang } = useLanguage();
   const unreadAlertsCount = LIVE_ALERTS.filter(alert => !alert.acknowledged).length;
 
+  let basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  if (!basePath && typeof window !== 'undefined') {
+    if (window.location.pathname.startsWith('/CrimeVisionAI')) {
+      basePath = '/CrimeVisionAI';
+    }
+  }
+
   return (
     <aside
       className="fixed left-0 top-0 h-screen flex flex-col z-50 select-none"
@@ -130,7 +137,7 @@ export default function Sidebar({ user, portalType, isOpen = true }: SidebarProp
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           flexShrink: 0,
         }}>
-          <img src="/crimevision_logo.png" alt="CrimeVision AI Logo" style={{ width: '34px', height: '34px', objectFit: 'contain' }} />
+          <img src={`${basePath}/crimevision_logo.png`} alt="CrimeVision AI Logo" style={{ width: '34px', height: '34px', objectFit: 'contain' }} />
         </div>
         <div>
           <div className="logo-wordmark" style={{ fontSize: 15, color: 'var(--primary-navy)', letterSpacing: '-0.01em', lineHeight: 1 }}>
