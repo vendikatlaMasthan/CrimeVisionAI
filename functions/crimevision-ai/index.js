@@ -63,45 +63,70 @@ RESPONSE STYLE RULES:
 8. Always end complex analyses with a "RECOMMENDED ACTIONS" section`;
 
 app.post(['/', '/api/crimevision-ai'], async (req, res) => {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY || process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    console.error('Error: ANTHROPIC_API_KEY environment variable is not configured.');
-    return res.status(500).json({ error: 'ANTHROPIC_API_KEY environment variable is not configured on Catalyst.' });
+    console.error('Error: GEMINI_API_KEY environment variable is not configured.');
+    return res.status(500).json({ error: 'GEMINI_API_KEY environment variable is not configured on Catalyst.' });
   }
 
-  const { messages, systemPrompt, stream } = req.body;
-  if (!messages || !Array.isArray(messages)) {
-    return res.status(400).json({ error: 'Missing or invalid "messages" parameter.' });
+  // Handle both Gemini payload format (contents) and legacy messages format (translating if needed)
+  let { contents, systemInstruction, generationConfig, stream, messages, systemPrompt } = req.body;
+  const isStream = stream === true || req.query.alt === 'sse';
+
+  // Translate legacy messages format to Gemini format if client used old format
+  if (!contents && messages && Array.isArray(messages)) {
+    contents = messages.map(m => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }]
+    }));
   }
 
-  const system = systemPrompt || DEFAULT_SYSTEM_PROMPT;
+  if (!contents || !Array.isArray(contents)) {
+    return res.status(400).json({ error: 'Missing or invalid "contents" or "messages" parameter.' });
+  }
+
+  // Translate legacy system prompt if present
+  if (!systemInstruction) {
+    const sysPromptText = systemPrompt || DEFAULT_SYSTEM_PROMPT;
+    systemInstruction = {
+      parts: [{ text: sysPromptText }]
+    };
+  }
+
+  if (!generationConfig) {
+    generationConfig = {
+      maxOutputTokens: 2048,
+      temperature: 0.2,
+    };
+  }
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash';
+    const url = isStream 
+      ? `${baseUrl}:streamGenerateContent?key=${apiKey}&alt=sse`
+      : `${baseUrl}:generateContent?key=${apiKey}`;
+
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 3000,
-        system: system,
-        messages: messages,
-        stream: stream === true,
+        contents,
+        systemInstruction,
+        generationConfig
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('Anthropic API error response:', errorData);
+      console.error('Gemini API error response:', errorData);
       return res.status(response.status).json({
-        error: errorData.error?.message || `Anthropic API responded with status ${response.status}`,
+        error: errorData.error?.message || `Gemini API responded with status ${response.status}`,
       });
     }
 
-    if (stream === true) {
+    if (isStream) {
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache');
       res.setHeader('Connection', 'keep-alive');
@@ -116,7 +141,7 @@ app.post(['/', '/api/crimevision-ai'], async (req, res) => {
       res.status(200).json(data);
     }
   } catch (err) {
-    console.error('Error proxying request to Anthropic:', err);
+    console.error('Error proxying request to Gemini:', err);
     res.status(500).json({ error: err.message || 'Internal Server Error' });
   }
 });

@@ -6,7 +6,7 @@ This guide provides step-by-step instructions to configure, run locally, and dep
 
 ## 1. Environment Variables Setup
 
-To secure the AI Investigator chat and prevent exposing API keys in the browser, the Anthropic API is proxied through a serverless Catalyst Advanced I/O function (`crimevision-ai`).
+To secure the AI Investigator chat and prevent exposing API keys in the browser, the Gemini API is proxied through a serverless Catalyst Advanced I/O function (`crimevision-ai`).
 
 ### Local Development (`.env.local`)
 Create or update your `/Users/masthan/Desktop/CrimeVisionAI/crimevisionai/.env.local` file with the following variables:
@@ -14,21 +14,18 @@ Create or update your `/Users/masthan/Desktop/CrimeVisionAI/crimevisionai/.env.l
 ```ini
 # Google Gemini API Key (Client-side, optional settings fallback)
 NEXT_PUBLIC_GEMINI_API_KEY=your_google_gemini_key
-
-# DO NOT add NEXT_PUBLIC_ANTHROPIC_API_KEY here.
-# Anthropic Claude API Key is handled secure-only by the serverless function.
 ```
 
 ### Zoho Catalyst Console (Production)
-You must configure the Anthropic API Key in your Zoho Catalyst Project console:
+You must configure the Gemini API Key in your Zoho Catalyst Project console:
 
 1. Open the **Zoho Catalyst Console** and navigate to your Project.
 2. Under **Serverless**, click **Functions**.
 3. Select the `crimevision-ai` function.
 4. Navigate to **Environment Variables** (or Configuration).
 5. Add the following key-value pair:
-   - **Key**: `ANTHROPIC_API_KEY`
-   - **Value**: `YOUR_ANTHROPIC_API_KEY` (e.g. `sk-ant-api03-...`)
+   - **Key**: `GEMINI_API_KEY`
+   - **Value**: `YOUR_GEMINI_API_KEY`
 6. Save and apply the changes.
 
 ---
@@ -124,5 +121,5 @@ After deploying to Zoho Catalyst, perform the following verification:
 4. **AI Investigator**:
    - Navigate to `/investigator/`.
    - Submit a test query (e.g., "Show cybercrime hotspots").
-   - If the backend is running and `ANTHROPIC_API_KEY` is configured, it will stream the Claude 3.5 Sonnet response with a blinking block typing cursor.
+   - If the backend is running and `GEMINI_API_KEY` is configured, it will stream the Gemini 2.0 Flash response with a blinking block typing cursor.
    - If the backend is offline or the environment variable is missing, it will display a warning: *"⚠️ CrimeNet Intelligence Server Offline..."* and show the **Retry Query** button.

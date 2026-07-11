@@ -1,6 +1,6 @@
 /**
  * CrimeVision AI — AI Intelligence Service
- * Handles unified browser-side API calls to Gemini and Anthropic (Claude)
+ * Handles unified browser-side API calls to Gemini
  * with real-time text streaming support.
  */
 
@@ -61,20 +61,12 @@ export async function generateTextStream(params: {
   onChunk: (text: string) => void;
   signal?: AbortSignal;
 }): Promise<string> {
-  const provider = getActiveProvider();
-  const apiKey = provider === 'gemini' ? getActiveApiKey() : 'placeholder';
-  const hasKey = provider === 'gemini' ? !!apiKey : true;
+  const apiKey = getActiveApiKey();
 
-  if (hasKey) {
-    try {
-      if (provider === 'gemini') {
-        return await runGeminiStream(apiKey!, params);
-      } else {
-        return await runAnthropicStream(params);
-      }
-    } catch (err) {
-      // Fall through to local fallback on any failure
-    }
+  try {
+    return await runGeminiStream(apiKey, params);
+  } catch (err) {
+    // Fall through to local fallback on any failure
   }
 
   // Simulate local stream chunking
@@ -119,22 +111,23 @@ async function runGeminiStream(
     };
   }
 
-  // Use alt=sse for standard server-sent events stream format
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?key=${apiKey}&alt=sse`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-      signal,
-    }
-  );
+  // If apiKey is available, query Gemini directly. Otherwise, proxy through Catalyst serverless.
+  const url = apiKey
+    ? `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?key=${apiKey}&alt=sse`
+    : `${getApiEndpoint()}?alt=sse`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+    signal,
+  });
 
   if (!response.ok) {
     const errData = await response.json().catch(() => ({}));
-    throw new Error(errData.error?.message || `Gemini API Error ${response.status}`);
+    throw new Error(errData.error?.message || `Gemini Proxy Error ${response.status}`);
   }
 
   const reader = response.body?.getReader();
@@ -151,7 +144,7 @@ async function runGeminiStream(
       buffer += chunk;
       
       const lines = buffer.split('\n');
-      buffer = lines.pop() || ''; // Keep the last partial line in the buffer
+      buffer = lines.pop() || '';
 
       for (const line of lines) {
         const cleaned = line.trim();
@@ -172,7 +165,6 @@ async function runGeminiStream(
     }
   }
 
-  // Handle final residue in buffer
   if (buffer) {
     const cleaned = buffer.trim();
     if (cleaned.startsWith('data: ')) {
@@ -204,135 +196,51 @@ export function getApiEndpoint(): string {
   return '/api/crimevision-ai/';
 }
 
-// ── Anthropic REST Streaming Implementation via Catalyst Proxy ───────────────
-async function runAnthropicStream(
-  params: { systemPrompt?: string; messages: ChatMessage[]; onChunk: (text: string) => void; signal?: AbortSignal }
-): Promise<string> {
-  const { systemPrompt, messages, onChunk, signal } = params;
-  const endpoint = getApiEndpoint();
-
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      messages,
-      systemPrompt,
-      stream: true,
-    }),
-    signal,
-  });
-
-  if (!response.ok) {
-    const errData = await response.json().catch(() => ({}));
-    throw new Error(errData.error || `Claude Proxy Error ${response.status}`);
-  }
-
-  const reader = response.body?.getReader();
-  const decoder = new TextDecoder();
-  let fullText = '';
-
-  if (reader) {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      const chunk = decoder.decode(value, { stream: true });
-      for (const line of chunk.split('\n')) {
-        if (line.startsWith('data: ')) {
-          const data = line.slice(6).trim();
-          if (data === '[DONE]' || data === '') continue;
-          try {
-            const parsed = JSON.parse(data);
-            if (parsed.type === 'content_block_delta' && parsed.delta?.type === 'text_delta') {
-              const deltaText = parsed.delta.text;
-              fullText += deltaText;
-              onChunk(deltaText);
-            }
-          } catch {
-            // skip malformed lines
-          }
-        }
-      }
-    }
-  }
-
-  return fullText;
-}
-
 export async function generateText(params: {
   systemPrompt?: string;
   messages: ChatMessage[];
 }): Promise<string> {
-  const provider = getActiveProvider();
-  const apiKey = provider === 'gemini' ? getActiveApiKey() : 'placeholder';
-  const hasKey = provider === 'gemini' ? !!apiKey : true;
+  const apiKey = getActiveApiKey();
 
-  if (hasKey) {
-    try {
-      if (provider === 'gemini') {
-        const contents = params.messages.map(m => ({
-          role: m.role === 'assistant' ? 'model' : 'user',
-          parts: [{ text: m.content }]
-        }));
-        
-        const body: any = {
-          contents,
-          generationConfig: {
-            maxOutputTokens: 3000,
-            temperature: 0.1,
-          }
-        };
-        
-        if (params.systemPrompt) {
-          body.systemInstruction = {
-            parts: [{ text: params.systemPrompt }]
-          };
-        }
-        
-        const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
-          }
-        );
-        
-        if (!response.ok) {
-          const err = await response.json().catch(() => ({}));
-          throw new Error(err.error?.message || `Gemini Error ${response.status}`);
-        }
-        
-        const data = await response.json();
-        return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      } else {
-        // Anthropic - secure proxy call to backend
-        const endpoint = getApiEndpoint();
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            messages: params.messages,
-            systemPrompt: params.systemPrompt,
-            stream: false,
-          }),
-        });
-
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.error || `Claude Proxy Error ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data.content?.[0]?.text || '';
+  try {
+    const contents = params.messages.map(m => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }]
+    }));
+    
+    const body: any = {
+      contents,
+      generationConfig: {
+        maxOutputTokens: 3000,
+        temperature: 0.1,
       }
-    } catch (err) {
-      // Fall through to local fallback on any network/API failure
+    };
+    
+    if (params.systemPrompt) {
+      body.systemInstruction = {
+        parts: [{ text: params.systemPrompt }]
+      };
     }
+    
+    const url = apiKey
+      ? `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`
+      : getApiEndpoint();
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error?.message || `Gemini Error ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  } catch (err) {
+    // Fall through to local fallback on any network/API failure
   }
 
   return generateLocalFallbackResponse(params.systemPrompt || '', params.messages);

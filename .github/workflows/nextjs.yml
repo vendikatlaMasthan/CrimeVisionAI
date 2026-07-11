@@ -43,10 +43,10 @@ jobs:
           # ── CRITICAL: inject API key from GitHub Repository Secret ──────────
           # Go to: GitHub repo → Settings → Secrets and variables → Actions
           # Click "New repository secret"
-          # Name:  NEXT_PUBLIC_ANTHROPIC_API_KEY
-          # Value: your full sk-ant-api03-... key
+          # Name:  NEXT_PUBLIC_GEMINI_API_KEY
+          # Value: your full Gemini API key
           # ────────────────────────────────────────────────────────────────────
-          NEXT_PUBLIC_ANTHROPIC_API_KEY: ${{ secrets.NEXT_PUBLIC_ANTHROPIC_API_KEY }}
+          NEXT_PUBLIC_GEMINI_API_KEY: ${{ secrets.NEXT_PUBLIC_GEMINI_API_KEY }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

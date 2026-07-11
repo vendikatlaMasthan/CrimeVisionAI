@@ -1,24 +1,8 @@
 /**
  * CrimeVision AI — API Key Manager
- * Handles API key retrieval for both Gemini and Anthropic (Claude),
+ * Handles API key retrieval for Gemini,
  * falling back to localStorage if env is not defined (crucial for GitHub Pages).
  */
-
-export function getAnthropicApiKey(): string {
-  return '';
-}
-
-export function setAnthropicApiKey(key: string): void {
-  // Client-side Anthropic API key storage is disabled for security
-}
-
-export function clearAnthropicApiKey(): void {
-  // Disabled
-}
-
-export function hasAnthropicApiKey(): boolean {
-  return false;
-}
 
 export function getGeminiApiKey(): string {
   if (typeof window === 'undefined') {
@@ -45,18 +29,14 @@ export function hasGeminiApiKey(): boolean {
   return !!getGeminiApiKey();
 }
 
-export function getActiveProvider(): 'gemini' | 'anthropic' {
-  if (hasGeminiApiKey()) return 'gemini';
-  return 'anthropic';
+export function getActiveProvider(): 'gemini' {
+  return 'gemini';
 }
 
 export function getActiveApiKey(): string {
-  const provider = getActiveProvider();
-  if (provider === 'gemini') return getGeminiApiKey();
-  return '';
+  return getGeminiApiKey();
 }
 
 export function hasAnyApiKey(): boolean {
-  // Since Anthropic uses the secure serverless proxy, we always have a provider available
-  return true;
+  return hasGeminiApiKey();
 }

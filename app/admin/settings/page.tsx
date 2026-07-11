@@ -19,7 +19,7 @@ export default function PlatformSettingsPage() {
   const [showSimBanner, setShowSimBanner] = useState(true);
   
   // AI
-  const [aiModel, setAiModel] = useState('claude-3-5-sonnet');
+  const [aiModel, setAiModel] = useState('gemini-2.0-flash');
   const [temperature, setTemperature] = useState(0.2);
   const [confidenceThreshold, setConfidenceThreshold] = useState(70);
   const [sysPrompt, setSysPrompt] = useState('You are the KSP Intelligence Platform Assistant...');
@@ -179,9 +179,9 @@ export default function PlatformSettingsPage() {
                     onChange={e => setAiModel(e.target.value)}
                     style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #D1D5DB', fontSize: 13, background: '#FFFFFF' }}
                   >
-                    <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (Recommended)</option>
-                    <option value="gemini-1-5-pro">Gemini 1.5 Pro</option>
-                    <option value="gpt-4o">GPT-4o</option>
+                    <option value="gemini-2.0-flash">Gemini 2.0 Flash (Recommended)</option>
+                    <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                    <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
                   </select>
                 </div>
 
