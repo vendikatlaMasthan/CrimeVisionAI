@@ -10,7 +10,7 @@ import {
   PieChart, Pie, Cell
 } from 'recharts';
 import {
-  Shield, Activity, Users, FileText, MapPin, ChevronRight,
+  Activity, Users, FileText, MapPin, ChevronRight,
   Target, Bell, ShieldAlert, Sliders, Cpu, Search, RefreshCw, CheckCircle, Brain,
   Lock, Car
 } from 'lucide-react';
@@ -235,7 +235,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(245, 158, 11, 0.04)', border: '1.5px solid rgba(245, 158, 11, 0.15)', display: 'flex', gap: '12px', minHeight: '100px' }}>
-            <Shield size={20} color="#b45309" style={{ flexShrink: 0, marginTop: '2px' }} />
+            <Activity size={20} color="#b45309" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
               <div style={{ fontSize: '13px', fontWeight: 700, color: '#b45309', marginBottom: '4px' }}>Audit payment gateways in Bengaluru Urban</div>
               <p style={{ fontSize: '11px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected Cybercrime/OTP Phishing spike (+243% vs. 90-day average).</p>

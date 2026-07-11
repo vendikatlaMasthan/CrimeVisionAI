@@ -2,7 +2,7 @@
  
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, Shield, Settings, Moon, Sun, Globe, LogOut, ChevronDown, X } from 'lucide-react';
+import { User, Settings, Moon, Sun, Globe, LogOut, ChevronDown, X } from 'lucide-react';
 import { DemoAccount } from '@/lib/crimeData';
 import { useTheme } from './ThemeContext';
 import { useLanguage } from './LanguageToggle';

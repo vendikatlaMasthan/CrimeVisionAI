@@ -7,7 +7,7 @@ import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   FileText, Brain, Download, Search, X, ChevronRight,
-  AlertTriangle, Clock, MapPin, User, Shield, Zap,
+  AlertTriangle, Clock, MapPin, User, Zap,
   CheckCircle, Activity, Loader, Copy, Check, Eye
 } from 'lucide-react';
 import { useLanguage } from '@/components/LanguageToggle';
@@ -15,6 +15,7 @@ import { RECENT_FIRS, TOP_SUSPECTS, DISTRICTS, type FIRRecord } from '@/lib/crim
 import { hasAnyApiKey } from '@/lib/apiKey';
 import { generateText } from '@/lib/aiService';
 import { InputWithIcon } from '@/components/InputWithIcon';
+import { localAI } from '@/lib/localAiEngine';
 
 // ─── AI Case Summary ──────────────────────────────────────────────────────────
 
@@ -22,7 +23,9 @@ async function generateAICaseSummary(fir: FIRRecord): Promise<string> {
   const suspect = TOP_SUSPECTS.find(s => s.name === fir.suspectName);
   const district = DISTRICTS.find(d => d.name === fir.district);
 
-  const prompt = `You are the Karnataka State Police Intelligence AI. Generate a concise professional case summary for this FIR:
+  if (hasAnyApiKey()) {
+    try {
+      const prompt = `You are the Karnataka State Police Intelligence AI. Generate a concise professional case summary for this FIR:
 
 FIR Number: ${fir.firNumber}
 Crime Type: ${fir.crimeType}
@@ -42,9 +45,17 @@ Write a 3-4 paragraph professional intelligence summary covering:
 
 Use formal KSP intelligence report style. Be specific and actionable.`;
 
-  return generateText({
-    messages: [{ role: 'user', content: prompt }]
-  });
+      const result = await generateText({
+        messages: [{ role: 'user', content: prompt }]
+      });
+      if (result) return result;
+    } catch (err) {
+      // Fall through to local fallback
+    }
+  }
+
+  // Local fallback engine
+  return localAI.generateCaseSummary(fir);
 }
 
 // ─── jsPDF loader ─────────────────────────────────────────────────────────────
@@ -180,14 +191,13 @@ function FIRDetailPanel({ fir }: { fir: FIRRecord }) {
   const pc = priorityColors[fir.priority] ?? priorityColors.Low;
 
   const handleGenerateSummary = useCallback(async () => {
-    if (!hasAnyApiKey()) { setAiSummary('⚠️ API key not configured. Please enter your API key in the Investigator page first.'); return; }
     setIsGenerating(true);
     setAiSummary('');
     try {
       const summary = await generateAICaseSummary(fir);
       setAiSummary(summary);
     } catch (err) {
-      setAiSummary(`⚠️ Error: ${(err as Error).message}`);
+      setAiSummary(`Error: ${(err as Error).message}`);
     } finally {
       setIsGenerating(false);
     }
@@ -324,7 +334,7 @@ function FIRDetailPanel({ fir }: { fir: FIRRecord }) {
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 12, color: '#475569' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={12} />{fir.district}</span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} />{fir.date}</span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Shield size={12} />{fir.assignedOfficer}</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><User size={12} />{fir.assignedOfficer}</span>
         </div>
       </div>
 

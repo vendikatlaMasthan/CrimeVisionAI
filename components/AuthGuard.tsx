@@ -13,6 +13,7 @@ import GovFooter from './GovFooter';
 import AuthenticatingIntro from './AuthenticatingIntro';
 import { DemoAccount } from '@/lib/crimeData';
 import { canAccessRoute, getPortalForRole, PortalType } from '@/lib/rbac';
+import { Lock } from 'lucide-react';
 
 function getStoredUser(): DemoAccount | null {
   if (typeof window === 'undefined') return null;
@@ -118,8 +119,18 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     setShowIntro(false);
   }, []);
 
+  const storedUser = typeof window !== 'undefined' ? getStoredUser() : null;
+  const introSeen = typeof window !== 'undefined' ? sessionStorage.getItem('ksp_intro_seen') : null;
+  const showIntroLoader = storedUser && !isLoginPage && !introSeen;
+
   // Loading state
   if (!checked) {
+    if (isLoginPage) {
+      return <>{children}</>;
+    }
+    if (showIntroLoader) {
+      return <AuthenticatingIntro onComplete={handleIntroComplete} />;
+    }
     return (
       <div style={{
         minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -158,10 +169,12 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         <div style={{
           width: 56, height: 56, borderRadius: '50%',
           background: 'rgba(220, 38, 38, 0.08)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24,
-        }}>🚫</div>
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <Lock size={24} color="#ef4444" />
+        </div>
         <div style={{ fontSize: 18, fontWeight: 700, color: '#1F2937' }}>Access Denied</div>
-        <div style={{ fontSize: 13, color: '#6B7280', textAlign: 'center', maxWidth: 320 }}>
+        <div style={{ fontSize: 13, color: '#475569', textAlign: 'center', maxWidth: 320 }}>
           You do not have permission to access this page. Redirecting to your dashboard...
         </div>
         <div style={{ marginTop: 8, width: 200, height: 4, background: '#E5E7EB', borderRadius: 2, overflow: 'hidden' }}>

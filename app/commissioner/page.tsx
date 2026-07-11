@@ -5,7 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import {
-  ShieldAlert, ShieldCheck, Users, MapPin, BarChart3, Clock,
+  ShieldAlert, Users, MapPin, BarChart3, Clock,
   CheckCircle, Radio, Sparkles, FileDown, Printer, AlertTriangle, RefreshCw, Zap
 } from 'lucide-react';
 import {
@@ -192,7 +192,7 @@ export default function CommissionerPage() {
         {[
           { label: 'State YTD Crimes', value: COMMISSIONER_METRICS.totalCrimes.toLocaleString(), sub: 'Recorded Year-to-Date', color: 'var(--primary-navy)', icon: BarChart3 },
           { label: 'Active Case Registry', value: COMMISSIONER_METRICS.activeCases.toLocaleString(), sub: 'Across 31 Districts', color: '#f59e0b', icon: Users },
-          { label: 'Force Clearance Index', value: `${COMMISSIONER_METRICS.clearanceRate}%`, sub: 'Cleared & closed rate', color: '#10b981', icon: ShieldCheck, badge: 'STABLE' },
+          { label: 'Force Clearance Index', value: `${COMMISSIONER_METRICS.clearanceRate}%`, sub: 'Cleared & closed rate', color: '#10b981', icon: CheckCircle, badge: 'STABLE' },
           { label: 'Critical Risk Districts', value: COMMISSIONER_METRICS.criticalDistricts.toString(), sub: 'Immediate resource focus', color: '#ef4444', icon: ShieldAlert },
         ].map((m, i) => (
           <div
@@ -385,7 +385,7 @@ export default function CommissionerPage() {
                 <div style={{ display: 'flex', gap: 8, borderTop: '1px solid #E5E7EB', paddingTop: 10 }}>
                   {isApproved ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#10b981', fontSize: 11, fontWeight: 700, margin: '6px auto 0' }}>
-                      <CheckCircle size={13} /> APPROVED &amp; DISPATCHED ✓
+                      <CheckCircle size={13} /> APPROVED &amp; DISPATCHED
                     </div>
                   ) : (
                     <>
@@ -437,7 +437,7 @@ export default function CommissionerPage() {
           background: 'rgba(139, 30, 30, 0.04)', border: '1px solid rgba(139, 30, 30, 0.15)',
           borderRadius: 8, padding: '12px 16px', fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6
         }}>
-          🎯 <strong>Executive Security Summary:</strong> Response time indices indicate that redeploying 1,200 personnel from the low-activity southern corridor to northern districts (Raichur, Kalaburagi) will yield a <strong>23% increase in state-wide crime resolution efficiency</strong>. SIT Teams have successfully disrupted 3 nodes of the Ballari gang ring in the last 48 hours.
+          <strong>Executive Security Summary:</strong> Response time indices indicate that redeploying 1,200 personnel from the low-activity southern corridor to northern districts (Raichur, Kalaburagi) will yield a <strong>23% increase in state-wide crime resolution efficiency</strong>. SIT Teams have successfully disrupted 3 nodes of the Ballari gang ring in the last 48 hours.
         </div>
       </div>
 
@@ -451,9 +451,9 @@ export default function CommissionerPage() {
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 14 }}>
           {[
-            '📹 CCTV Network', '🚁 Drone Feed', '🚦 Traffic Cameras',
-            '📞 Emergency 112', '🗄 CCTNS Database', '📊 NCRB Portal',
-            '👤 Face Recognition', '🚗 Vehicle ANPR', '📡 IoT Sensors'
+            'CCTV Network', 'Drone Feed', 'Traffic Cameras',
+            'Emergency 112', 'CCTNS Database', 'NCRB Portal',
+            'Face Recognition', 'Vehicle ANPR', 'IoT Sensors'
           ].map((item, idx) => (
             <div key={idx} style={{
               background: '#F9FAFB', border: '1px solid #E5E7EB',

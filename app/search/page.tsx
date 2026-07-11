@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import {
-  Search, Filter, Clock, MapPin, User, Shield, Activity,
+  Search, Filter, Clock, MapPin, User, Activity,
   CheckCircle2, Calendar, Zap, AlertTriangle, X, ChevronRight,
   ShieldCheck, ArrowRight, Eye, UserCheck, ShieldAlert
 } from 'lucide-react';
@@ -403,7 +403,7 @@ export default function CaseSearchPage() {
             </div>
           ) : (
             <div className="glass-card flex flex-col items-center justify-center text-center py-24 text-slate-500">
-              <Shield size={36} className="text-slate-700 mb-3" />
+              <Search size={36} className="text-slate-700 mb-3" />
               <div className="text-sm font-bold">No Case Selected</div>
               <p className="text-xs text-slate-600 mt-1 max-w-[240px]">Select any investigation row on the left panel to review its timeline and suspect intelligence profile.</p>
             </div>

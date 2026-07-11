@@ -89,7 +89,7 @@ export default function AuditLogPage() {
               onChange={e => setFilterOfficer(e.target.value)}
               style={{ width: '100%' }}
             >
-              <option value="">👤 Filter by Officer (All)</option>
+              <option value="">Filter by Officer (All)</option>
               {uniqueOfficers.map(officer => (
                 <option key={officer} value={officer}>{officer}</option>
               ))}

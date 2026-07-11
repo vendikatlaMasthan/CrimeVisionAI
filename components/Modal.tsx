@@ -56,9 +56,9 @@ export default function Modal({
     >
       <div
         style={{
-          background: '#FFFFFF',
-          borderRadius: '12px',
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+          background: 'var(--bg-card)',
+          borderRadius: 'var(--radius, 16px)',
+          boxShadow: 'var(--shadow-card)',
           width: '100%',
           maxWidth: sizeWidths[size],
           maxHeight: 'calc(100vh - 32px)',
@@ -76,10 +76,10 @@ export default function Modal({
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '16px 20px',
-            borderBottom: '1px solid #E5E7EB',
+            borderBottom: '1px solid var(--border-default)',
           }}
         >
-          <div style={{ fontSize: '16px', fontWeight: 700, color: '#111827' }}>
+          <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)' }}>
             {title}
           </div>
           <button
@@ -88,7 +88,7 @@ export default function Modal({
               background: 'transparent',
               border: 'none',
               cursor: 'pointer',
-              color: '#9CA3AF',
+              color: 'var(--text-muted)',
               transition: 'color 150ms ease',
               display: 'flex',
               alignItems: 'center',
@@ -96,8 +96,8 @@ export default function Modal({
               padding: '4px',
               borderRadius: '4px',
             }}
-            onMouseEnter={(e) => e.currentTarget.style.color = '#374151'}
-            onMouseLeave={(e) => e.currentTarget.style.color = '#9CA3AF'}
+            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
           >
             <X size={18} />
           </button>
@@ -113,8 +113,8 @@ export default function Modal({
           <div
             style={{
               padding: '14px 20px',
-              borderTop: '1px solid #E5E7EB',
-              background: '#F9FAFB',
+              borderTop: '1px solid var(--border-default)',
+              background: 'var(--neutral-light)',
               display: 'flex',
               justifyContent: 'flex-end',
               gap: '10px',

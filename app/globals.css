@@ -1,11 +1,28 @@
 @import "tailwindcss";
 @import "../styles/tokens.css";
 
+@theme {
+  --color-slate-300: #64748b;
+  --color-slate-400: #475569;
+  --color-slate-500: #1e293b;
+  --color-gray-300: #64748b;
+  --color-gray-400: #475569;
+  --color-gray-500: #1e293b;
+  --color-neutral-300: #64748b;
+  --color-neutral-400: #475569;
+  --color-neutral-500: #1e293b;
+}
+
 /* ─────────────────────────────────────────────
    DESIGN TOKENS INTEGRATION
    ───────────────────────────────────────────── */
 :root {
-  --text-scale: 1.0;
+  --text-scale: 1.0; /* Controlled by GovHeader A−/A+ buttons. Range: 0.7–1.4 */
+  --font-base: calc(14.5px * var(--text-scale, 1.0));
+  --font-card-title: calc(17px * var(--text-scale, 1.0));
+  --font-section-title: calc(22px * var(--text-scale, 1.0));
+  --font-page-title: calc(32px * var(--text-scale, 1.0));
+  --font-label: calc(12.5px * var(--text-scale, 1.0));
   /* Karnataka State branding theme colors mapped to standardized tokens */
   --primary-navy:     var(--color-navy);      /* Standardized Navy */
   --brand-crimson:    var(--color-navy);
@@ -20,8 +37,8 @@
   --success-green:    var(--color-green);
   
   /* Neutral Gray Scale */
-  --neutral-dark:     #1A2332;
-  --neutral-medium:   var(--color-gray);
+  --neutral-dark:     #1E293B;
+  --neutral-medium:   #475569;
   --neutral-light:    #F8FAFC;
   --neutral-border:   #E2E8F0;
   --neutral-white:    #FFFFFF;
@@ -53,10 +70,10 @@
   --status-progress: var(--color-navy);
 
   /* Contrast-compliant text colors */
-  --text-primary: var(--neutral-dark);
-  --text-secondary: #2D3748;
-  --text-muted: var(--neutral-medium);
-  --text-faint: #556275;
+  --text-primary: #1E293B;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-faint: #64748B;
 
   --threat-high: var(--color-red);
   --threat-medium: var(--color-orange);
@@ -92,7 +109,14 @@
   letter-spacing: -0.01em;
 }
 
-/* Typography Pass using tokens scale */
+/* ── Typography Scale ─────────────────────────────────────────────────────
+   --text-scale is set on :root by GovHeader.tsx.
+   All font sizes below multiply by this variable so every single text
+   element scales together with one CSS variable change.
+   Scale range: 0.70 (70% / A−) → 1.0 (default) → 1.40 (140% / A+)
+   ─────────────────────────────────────────────────────────────────────── */
+
+/* Semantic heading classes */
 h1, .page-title, .text-page-title {
   font: var(--text-page-title) !important;
   font-size: calc(36px * var(--text-scale, 1.0)) !important;
@@ -124,23 +148,38 @@ body, p, .text-body {
   font-family: 'Inter', sans-serif !important;
 }
 
+/* Broaden coverage: labels, inputs, table cells, list items, navigation */
+label, .label,
+th, td,
+li, dt, dd,
+a, .link,
+span.nav-label,
+.sidebar-nav-item,
+.sidebar-section-label,
+.metric-label, .metric-sub,
+.page-subtitle,
+input, textarea, select,
+.cyber-btn {
+  font-size: calc(var(--element-font-size, 13px) * var(--text-scale, 1.0));
+}
+
 /* Scale standard Tailwind typography classes */
-.text-xs { font-size: calc(0.75rem * var(--text-scale, 1.0)) !important; }
-.text-sm { font-size: calc(0.875rem * var(--text-scale, 1.0)) !important; }
-.text-base { font-size: calc(1rem * var(--text-scale, 1.0)) !important; }
-.text-lg { font-size: calc(1.125rem * var(--text-scale, 1.0)) !important; }
-.text-xl { font-size: calc(1.25rem * var(--text-scale, 1.0)) !important; }
-.text-2xl { font-size: calc(1.5rem * var(--text-scale, 1.0)) !important; }
-.text-3xl { font-size: calc(1.875rem * var(--text-scale, 1.0)) !important; }
-.text-4xl { font-size: calc(2.25rem * var(--text-scale, 1.0)) !important; }
-.text-5xl { font-size: calc(3rem * var(--text-scale, 1.0)) !important; }
+.text-xs   { font-size: calc(0.75rem   * var(--text-scale, 1.0)) !important; }
+.text-sm   { font-size: calc(0.875rem  * var(--text-scale, 1.0)) !important; }
+.text-base { font-size: calc(1rem      * var(--text-scale, 1.0)) !important; }
+.text-lg   { font-size: calc(1.125rem  * var(--text-scale, 1.0)) !important; }
+.text-xl   { font-size: calc(1.25rem   * var(--text-scale, 1.0)) !important; }
+.text-2xl  { font-size: calc(1.5rem    * var(--text-scale, 1.0)) !important; }
+.text-3xl  { font-size: calc(1.875rem  * var(--text-scale, 1.0)) !important; }
+.text-4xl  { font-size: calc(2.25rem   * var(--text-scale, 1.0)) !important; }
+.text-5xl  { font-size: calc(3rem      * var(--text-scale, 1.0)) !important; }
 
 /* Distinct Badge Styles */
 .badge-category {
   display: inline-flex;
   align-items: center;
   padding: 3px 8px;
-  font-size: 10px;
+  font-size: calc(10px * var(--text-scale, 1.0));
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -155,7 +194,7 @@ body, p, .text-body {
   align-items: center;
   gap: 6px;
   padding: 3px 10px;
-  font-size: 10px;
+  font-size: calc(10px * var(--text-scale, 1.0));
   font-weight: 700;
   text-transform: uppercase;
   border-radius: 9999px;
@@ -196,7 +235,7 @@ body, p, .text-body {
   height: 32px;
   border-radius: 50%;
   border: 2px.5 solid;
-  font-size: 11px;
+  font-size: calc(11px * var(--text-scale, 1.0));
   font-weight: 900;
   background: var(--neutral-light);
 }
@@ -239,8 +278,9 @@ input[disabled], select[disabled], textarea[disabled] {
   cursor: not-allowed !important;
 }
 
-*, *::before, *::after {
-  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease, box-shadow 200ms ease, font-size 180ms ease-in-out;
+html, *, *::before, *::after {
+  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease,
+              box-shadow 200ms ease, font-size 150ms ease-in-out;
 }
 
 body.presentation-mode {
@@ -262,7 +302,10 @@ body.presentation-mode .presentation-hidden {
 }
 
 html {
-  transition: font-size 180ms ease-in-out;
+  /* Base font-size is overridden by GovHeader.tsx to implement A−/A+ scaling.
+     Default: 16px. Range: 11.2px (70%) → 16px (100%) → 22.4px (140%). */
+  font-size: 16px;
+  transition: font-size 150ms ease-in-out;
 }
 
 html, body {

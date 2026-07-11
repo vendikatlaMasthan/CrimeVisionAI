@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Shield, Lock, Eye, EyeOff, Fingerprint, CreditCard, Loader, FileText, Target, ShieldAlert, Search, Award, Settings, Users, User } from 'lucide-react';
+import { Lock, Eye, EyeOff, Fingerprint, CreditCard, Loader, FileText, Target, ShieldAlert, Search, Award, Settings, Users, User } from 'lucide-react';
 import { DEMO_ACCOUNTS, DemoAccount } from '@/lib/crimeData';
 
 import CountUp from '@/components/CountUp';
@@ -65,6 +65,7 @@ export default function LoginPage() {
   // Success flow
   const executeSuccessFlow = (matchedAccount: DemoAccount) => {
     sessionStorage.setItem('ksp_user', JSON.stringify(matchedAccount));
+    sessionStorage.setItem('ksp_intro_seen', '1');
     setIsSuccess(true);
 
     // Cycle steps
@@ -109,7 +110,7 @@ export default function LoginPage() {
       executeSuccessFlow(matched);
     } else {
       setLoading(false);
-      setError('⚠ Invalid credentials. Access denied.');
+      setError('Invalid credentials. Access denied.');
       setShake(true);
       setTimeout(() => setShake(false), 500);
     }
@@ -130,7 +131,7 @@ export default function LoginPage() {
       executeSuccessFlow(matched);
     } else {
       setBioScanning(false);
-      setError('⚠ Biometric verification failed. Enrolled prints not found.');
+      setError('Biometric verification failed. Enrolled prints not found.');
       setShake(true);
       setTimeout(() => setShake(false), 500);
     }
@@ -146,8 +147,16 @@ export default function LoginPage() {
       {isSuccess && (
         <div className="success-overlay">
           <div className="success-content">
-            <div className="success-shield-box">
-              <Shield size={38} style={{ color: '#A6192E' }} />
+            <div style={{
+              width: '72px',
+              height: '72px',
+              marginBottom: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              animation: 'logoPulse 2s infinite ease-in-out',
+            }}>
+              <img src="/crimevision_logo.png" alt="CrimeVision AI Logo" style={{ width: '72px', height: '72px', objectFit: 'contain' }} />
             </div>
             <h2 className="success-title">{LOADING_STEPS[stepIdx].toUpperCase()}</h2>
             <p className="success-subtitle">CrimeVision Secure Authorization Protocol</p>
@@ -167,8 +176,8 @@ export default function LoginPage() {
           
           {/* Logo Block (circular gold-bordered shield emblem) */}
           <div className="brand-header">
-            <div className="emblem-container">
-              <Shield size={24} className="text-[#FFFFFF]" style={{ fill: 'var(--brand-gold)' }} />
+            <div style={{ width: '64px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src="/crimevision_logo.png" alt="CrimeVision AI Logo" style={{ width: '64px', height: '64px', objectFit: 'contain' }} />
             </div>
             <div>
               <h1 className="brand-title">CRIMEVISION AI</h1>
@@ -294,8 +303,8 @@ export default function LoginPage() {
           
           {/* Mobile-only logo */}
           <div className="mobile-header">
-            <div className="emblem-container" style={{ width: '36px', height: '36px', border: '1px solid var(--brand-gold)' }}>
-              <Shield size={16} style={{ color: 'var(--brand-gold)', fill: 'var(--brand-gold)' }} />
+            <div style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src="/crimevision_logo.png" alt="CrimeVision AI Logo" style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
             </div>
             <div style={{ textAlign: 'left' }}>
               <h2 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--brand-crimson)', margin: 0 }}>CRIMEVISION AI</h2>
@@ -323,7 +332,7 @@ export default function LoginPage() {
                   onClick={() => handleRoleChange('Officer_Commissioner')}
                   className={`role-card-btn ${selectedRole === 'Officer_Commissioner' ? 'active' : ''}`}
                 >
-                  <Shield size={16} className="role-card-icon" />
+                  <User size={16} className="role-card-icon" />
                   <div className="role-card-text">
                     <span className="role-card-title">Officer / Commissioner</span>
                     <span className="role-card-sub">Field Operations & Command</span>
@@ -463,7 +472,7 @@ export default function LoginPage() {
 
             {/* Portal Footer */}
             <div className="form-portal-footer">
-              <Shield size={12} style={{ color: 'var(--brand-crimson)', fill: 'var(--brand-gold)', marginRight: '6px' }} />
+              <img src="/crimevision_logo.png" alt="Logo" style={{ width: '12px', height: '12px', marginRight: '6px', objectFit: 'contain' }} />
               <span>Karnataka State Police · Government of Karnataka · Est. 1963</span>
             </div>
 
@@ -474,6 +483,11 @@ export default function LoginPage() {
       </div>
 
       <style>{`
+        @keyframes logoPulse {
+          0%, 100% { transform: scale(1); opacity: 0.9; }
+          50% { transform: scale(1.08); opacity: 1; }
+        }
+
         .login-wrapper {
           min-height: 100vh;
           width: 100%;

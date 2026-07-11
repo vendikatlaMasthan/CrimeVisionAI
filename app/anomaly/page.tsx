@@ -7,7 +7,7 @@ import {
 } from 'recharts';
 import {
   AlertTriangle, ShieldAlert, CheckCircle2, Eye, MapPin, Clock,
-  RefreshCw, BarChart2, Shield, Activity, HelpCircle
+  RefreshCw, BarChart2, Activity, HelpCircle
 } from 'lucide-react';
 import { ANOMALIES, ANOMALY_TIMELINE } from '@/lib/mockData';
 

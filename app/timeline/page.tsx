@@ -356,7 +356,7 @@ export default function TimelinePage() {
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(9);
         doc.setTextColor(0, 80, 160);
-        doc.text(`🕐 ${ev.time} — ${ev.title}`, 15, y);
+        doc.text(`${ev.time} — ${ev.title}`, 15, y);
         y += 4.5;
 
         doc.setFont('helvetica', 'normal');

@@ -1,4 +1,3 @@
-import { Shield } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface SafeEmblemProps {
@@ -48,7 +47,7 @@ export default function SafeEmblem({ width = 50, height = 50, className, style }
         }}
         title="Karnataka State Police (Placeholder)"
       >
-        <Shield size={width * 0.5} style={{ color: '#9CA3AF' }} />
+        <img src="/crimevision_logo.png" alt="Fallback Logo" style={{ width: '60%', height: '60%', objectFit: 'contain' }} />
       </div>
     );
   }

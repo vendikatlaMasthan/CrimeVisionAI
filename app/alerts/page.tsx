@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import {
-  Bell, AlertTriangle, Shield, CheckCircle, Radio, Zap,
+  Bell, AlertTriangle, CheckCircle, Radio, Zap,
   ChevronRight, Clock, MapPin, X, RefreshCw, Send,
   Users, Phone, Eye, Activity, Filter, Trash2, ArrowUpRight, UserCheck,
   Car, User, FileText, AlertCircle
@@ -55,8 +55,8 @@ const QUICK_ACTIONS = [
 
 // Build ticker text from alerts
 const tickerItems = LIVE_ALERTS.map(a => {
-  const emoji = a.severity === 'critical' ? '🔴' : a.severity === 'high' ? '🟠' : a.severity === 'medium' ? '🟡' : '🔵';
-  return `${emoji} ${a.severity.toUpperCase()}: ${a.title} — ${a.district}`;
+  const prefix = a.severity === 'critical' ? '[CRITICAL]' : a.severity === 'high' ? '[HIGH]' : a.severity === 'medium' ? '[MEDIUM]' : '[LOW]';
+  return `${prefix} ${a.severity.toUpperCase()}: ${a.title} — ${a.district}`;
 });
 const TICKER_TEXT = tickerItems.join('    ·    ') + '    ·    ' + tickerItems.join('    ·    ');
 
@@ -355,7 +355,7 @@ export default function AlertsPage() {
       <div className="responsive-grid-4" style={{ marginBottom: 22 }}>
         {[
           { label: t.stat_critical_alerts, value: criticalCount, color: '#ef4444', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.25)', pulse: true, icon: AlertTriangle },
-          { label: t.stat_high_priority, value: highCount, color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)', pulse: false, icon: Shield },
+          { label: t.stat_high_priority, value: highCount, color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)', pulse: false, icon: AlertCircle },
           { label: t.stat_under_response, value: underResponse, color: '#0F6B5C', bg: 'rgba(30, 58, 95,0.06)', border: 'rgba(30, 58, 95,0.2)', pulse: false, icon: Activity },
           { label: t.stat_resolved_today, value: 47, color: '#10b981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.2)', pulse: false, icon: CheckCircle },
         ].map((s) => {
@@ -556,7 +556,7 @@ export default function AlertsPage() {
                       onClick={(e) => handleDispatch(alert.id, e)}
                       disabled={isDispatched}
                     >
-                      <Send size={11} /> {isDispatched ? (lang === 'kn' ? 'ನಿಯೋಜಿಸಲಾಗಿದೆ ✓' : 'Dispatched ✓') : t.btn_dispatch}
+                      <Send size={11} /> {isDispatched ? (lang === 'kn' ? 'ನಿಯೋಜಿಸಲಾಗಿದೆ' : 'Dispatched') : t.btn_dispatch}
                     </button>
                     <button
                       className="cyber-btn cyber-btn-amber"
@@ -564,7 +564,7 @@ export default function AlertsPage() {
                       onClick={(e) => handleAcknowledge(alert.id, e)}
                       disabled={isAcked}
                     >
-                      <CheckCircle size={11} /> {isAcked ? (lang === 'kn' ? 'ಸ್ವೀಕರಿಸಲಾಗಿದೆ ✓' : 'Acknowledged ✓') : t.btn_acknowledge}
+                      <CheckCircle size={11} /> {isAcked ? (lang === 'kn' ? 'ಸ್ವೀಕರಿಸಲಾಗಿದೆ' : 'Acknowledged') : t.btn_acknowledge}
                     </button>
                     <button
                       className="cyber-btn cyber-btn-purple"
@@ -572,7 +572,7 @@ export default function AlertsPage() {
                       onClick={(e) => handleEscalate(alert.id, e)}
                       disabled={isEscalated}
                     >
-                      <ChevronRight size={11} /> {isEscalated ? (lang === 'kn' ? 'ತೀವ್ರಗೊಳಿಸಲಾಗಿದೆ ✓' : 'Escalated ✓') : t.btn_escalate}
+                      <ChevronRight size={11} /> {isEscalated ? (lang === 'kn' ? 'ತೀವ್ರಗೊಳಿಸಲಾಗಿದೆ' : 'Escalated') : t.btn_escalate}
                     </button>
                     <button
                       className="cyber-btn"
@@ -874,7 +874,7 @@ export default function AlertsPage() {
 
               {/* ASSIGNED OFFICER */}
               <div className="pb-4 border-b border-[#E2E8F0]">
-                {sectionLabel(t.detail_assigned_officer, Shield, "#1E3A5F")}
+                {sectionLabel(t.detail_assigned_officer, User, "#1E3A5F")}
                 <div style={{ marginTop: '4px' }}>
                   <select
                     value={assignedOfficers[selectedAlert.id] || ""}
@@ -1005,7 +1005,7 @@ export default function AlertsPage() {
                 onClick={(e) => handleDispatch(selectedAlert.id, e)}
                 disabled={dispatched.has(selectedAlert.id)}
               >
-                <Send size={12} /> {dispatched.has(selectedAlert.id) ? (lang === 'kn' ? 'ನಿಯೋಜಿಸಲಾಗಿದೆ ✓' : 'Dispatched ✓') : t.btn_dispatch}
+                <Send size={12} /> {dispatched.has(selectedAlert.id) ? (lang === 'kn' ? 'ನಿಯೋಜಿಸಲಾಗಿದೆ' : 'Dispatched') : t.btn_dispatch}
               </button>
               <button
                 className="flex-1 justify-center py-2 px-3 text-xs font-bold transition-all flex items-center justify-center gap-1.5"

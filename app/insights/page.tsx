@@ -7,7 +7,7 @@ import {
 } from 'recharts';
 import {
   Brain, ChevronDown, ChevronUp, Clock,
-  MapPin, Network, TrendingUp, Shield, Activity,
+  MapPin, Network, TrendingUp, Activity,
   Calculator, Info, Layers,
 } from 'lucide-react';
 import { AI_ALERTS, AI_INSIGHTS_SUMMARY, KARNATAKA_DISTRICTS } from '@/lib/mockData';
@@ -47,7 +47,7 @@ const patternCards = [
   { icon: MapPin,     title: 'Geographic Spread',     value: 'Urban to Semi-Urban', desc: 'Cybercrime expanding from metro zones to semi-urban districts at 34% p.a.',    color: '#0F6B5C' },
   { icon: Network,    title: 'Network Growth',        value: '14 Clusters (+3)',    desc: '14 active criminal clusters monitored. 3 new clusters identified this week.',   color: '#8b5cf6' },
   { icon: TrendingUp, title: 'Financial Indicators',  value: 'Rs 42 Cr Economy',   desc: 'Estimated Rs 42 Crore suspected criminal economy active across the state.',     color: '#f59e0b' },
-  { icon: Shield,     title: 'Cross-District Links',  value: '8 Active Networks',   desc: '8 inter-district criminal networks operating across district boundaries.',       color: '#e879f9' },
+  { icon: Layers,     title: 'Cross-District Links',  value: '8 Active Networks',   desc: '8 inter-district criminal networks operating across district boundaries.',       color: '#e879f9' },
   { icon: Activity,   title: 'Seasonal Prediction',   value: 'Oct-Dec Risk',        desc: 'Festival season risk window: Dasara-Diwali period projects +28% spike.',        color: '#f97316' },
 ];
 

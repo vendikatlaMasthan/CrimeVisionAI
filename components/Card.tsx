@@ -17,11 +17,11 @@ export default function Card({
   ...props
 }: CardProps) {
   const borderStyles: Record<string, React.CSSProperties> = {
-    default: { border: '1px solid #E5E7EB', borderLeft: '1px solid #E5E7EB' },
-    info: { border: '1px solid #E5E7EB', borderLeft: '4px solid #2563EB' },
-    success: { border: '1px solid #E5E7EB', borderLeft: '4px solid #16A34A' },
-    warning: { border: '1px solid #E5E7EB', borderLeft: '4px solid #D97706' },
-    danger: { border: '1px solid #E5E7EB', borderLeft: '4px solid #DC2626' },
+    default: { border: '1px solid var(--border-default)', borderLeft: '1px solid var(--border-default)' },
+    info: { border: '1px solid var(--border-default)', borderLeft: '4px solid var(--primary-navy)' },
+    success: { border: '1px solid var(--border-default)', borderLeft: '4px solid var(--success-green)' },
+    warning: { border: '1px solid var(--border-default)', borderLeft: '4px solid var(--warning-amber)' },
+    danger: { border: '1px solid var(--border-default)', borderLeft: '4px solid var(--alert-red)' },
   };
 
   const paddingStyles: Record<string, string> = {
@@ -32,9 +32,9 @@ export default function Card({
   };
 
   const baseStyle: React.CSSProperties = {
-    background: '#FFFFFF',
-    borderRadius: '12px',
-    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+    background: 'var(--bg-card)',
+    borderRadius: 'var(--radius, 16px)',
+    boxShadow: 'var(--shadow-card)',
     padding: paddingStyles[padding],
     transition: 'all 0.2s ease',
     ...borderStyles[variant],

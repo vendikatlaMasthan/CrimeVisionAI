@@ -24,11 +24,11 @@ export default function NotificationCenter() {
 
   useEffect(() => {
     const alerts = [
-      '🚨 New cybercrime spike reported in Bengaluru Urban',
-      '🚔 Team Alpha dispatched to Mangaluru Harbor',
-      '🔴 Suspect Suresh Nayak identified near Raichur toll gate',
-      '⚠️ High risk score calculated for FIR/2026/BLR/102',
-      '🎯 SIT Team successfully arrested associate of Imran Sheikh'
+      'New cybercrime spike reported in Bengaluru Urban',
+      'Team Alpha dispatched to Mangaluru Harbor',
+      'Suspect Suresh Nayak identified near Raichur toll gate',
+      'High risk score calculated for FIR/2026/BLR/102',
+      'SIT Team successfully arrested associate of Imran Sheikh'
     ];
     const types: ('alert' | 'info' | 'success')[] = ['alert', 'info', 'alert', 'info', 'success'];
 

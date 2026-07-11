@@ -1,7 +1,7 @@
 'use client';
 import { useState, useMemo } from 'react';
 import {
-  Brain, Search, Network, AlertTriangle, Eye, Shield, Users, Phone,
+  Brain, Search, Network, AlertTriangle, Eye, Users, Phone,
   Car, Building2, FileText, Zap, CheckCircle, Clock, MapPin, ArrowRight,
   ChevronRight, Crosshair, Star, Lock, Radio
 } from 'lucide-react';
@@ -79,7 +79,7 @@ function buildReasoningSteps(p: CriminalProfile): ReasoningStep[] {
     {
       num: 1,
       title: 'IDENTITY ESTABLISHED',
-      icon: <Shield size={16} />,
+      icon: <CheckCircle size={16} />,
       iconColor: '#10b981',
       evidence: `Subject identified in police database as ${p.name}. ${p.arrestCount} prior arrest${p.arrestCount > 1 ? 's' : ''} on record across ${p.crimeHistory.length} documented crime categor${p.crimeHistory.length > 1 ? 'ies' : 'y'}.`,
       confidence: 98,

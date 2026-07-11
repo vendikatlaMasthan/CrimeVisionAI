@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from 'react';
-import { ScrollText, Shield, Clock, Search, Download, Trash } from 'lucide-react';
+import { ScrollText, Clock, Search, Download, Trash } from 'lucide-react';
 
 const SAMPLE_LOGS = [
   { time: '2026-07-03 13:12:45', user: 'DGP Sandeep Nayak', action: 'Viewed State Overview Dashboard', category: 'Navigation', level: 'info', ip: '10.150.12.33' },

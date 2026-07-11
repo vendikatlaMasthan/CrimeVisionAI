@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { 
   Users, Search, Filter, ShieldAlert, Sparkles, MapPin, Clipboard, FileText, 
-  RefreshCw, Plus, Minus, Camera, User, ExternalLink, Shield, X, HelpCircle
+  RefreshCw, Plus, Minus, Camera, User, ExternalLink, X, HelpCircle
 } from 'lucide-react';
 import { useLanguage } from '@/components/LanguageToggle';
 import CountUp from '@/components/CountUp';

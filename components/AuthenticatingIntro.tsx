@@ -5,7 +5,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState, useEffect } from 'react';
-import SafeEmblem from './SafeEmblem';
 
 const LOADING_STEPS = [
   'Connecting to Karnataka State Police Database…',
@@ -57,9 +56,9 @@ export default function AuthenticatingIntro({ onComplete }: { onComplete: () => 
         fontFamily: "'Inter', sans-serif",
       }}
     >
-      {/* KSP Emblem */}
-      <div style={{ marginBottom: 24, width: 72, height: 72 }}>
-        <SafeEmblem width={72} height={72} />
+      {/* CrimeVision AI Logo */}
+      <div style={{ marginBottom: 24, width: 96, height: 96, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <img src="/crimevision_logo.png" alt="CrimeVision AI Logo" style={{ width: 96, height: 96, objectFit: 'contain' }} />
       </div>
 
       {/* Title */}

@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { PortalType } from '@/lib/rbac';
 import { 
-  Bell, Search, Shield, X, FileText, User, MapPin, AlertTriangle, 
+  Bell, Search, X, FileText, User, MapPin, AlertTriangle, 
   Monitor, Sun, Moon, Menu, Mic, MicOff, Brain, Sparkles, 
   TrendingUp, ChevronRight, Activity, ShieldAlert, ArrowRight, CornerDownLeft, Clock
 } from 'lucide-react';
@@ -464,16 +464,14 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
           {/* Logo Block */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '8px',
-              background: 'rgba(30, 58, 95, 0.08)',
+              width: '34px',
+              height: '34px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--primary-navy)',
+              flexShrink: 0,
             }}>
-              <Shield size={20} strokeWidth={1.75} />
+              <img src="/crimevision_logo.png" alt="CrimeVision AI Logo" style={{ width: '34px', height: '34px', objectFit: 'contain' }} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', lineHeight: '1.2' }}>
               <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--primary-navy)', whiteSpace: 'nowrap' }}>

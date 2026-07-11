@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from 'react';
-import { Database, Upload, Search, Shield, FileText, Users, AlertTriangle, Package, Check, RefreshCw } from 'lucide-react';
+import { Database, Upload, Search, FileText, Users, AlertTriangle, Package, Check, RefreshCw } from 'lucide-react';
 import { RECENT_FIRS, TOP_SUSPECTS } from '@/lib/crimeData';
 
 interface EvidenceItem {

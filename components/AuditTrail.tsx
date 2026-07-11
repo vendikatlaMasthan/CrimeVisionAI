@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
-import { ClipboardList, X, Clock, Shield } from 'lucide-react';
+import { ClipboardList, X, Clock, Lock, Download } from 'lucide-react';
 
 interface AuditEntry {
   path: string;
@@ -12,25 +12,25 @@ interface AuditEntry {
 }
 
 const PAGE_NAMES: Record<string, string> = {
-  '/': '📊 Command Dashboard',
-  '/heatmap': '🗺️ Karnataka Crime Map',
-  '/network': '🕸️ Criminal Network',
-  '/alerts': '🚨 Live Alerts',
-  '/anomaly': '⚡ Anomaly Detection',
-  '/investigator': '🤖 AI Investigator',
-  '/genome': '🧬 Crime Pattern Genome',
-  '/detective': '🔍 AI Detective Engine',
-  '/copilot': '✈️ Investigation Copilot',
-  '/insights': '💡 AI Insights',
-  '/timeline': '📅 Crime Timeline',
-  '/social-risk': '🌐 Social Risk Factors',
-  '/predictions': '🔮 Risk Prediction',
-  '/resources': '📦 Resource Allocation',
-  '/reports': '📋 Reports',
-  '/commissioner': '👔 Commissioner View',
-  '/fir': '📄 FIR Search',
-  '/search': '🔎 Case Search',
-  '/settings': '⚙️ Settings',
+  '/': 'Command Dashboard',
+  '/heatmap': 'Karnataka Crime Map',
+  '/network': 'Criminal Network',
+  '/alerts': 'Live Alerts',
+  '/anomaly': 'Anomaly Detection',
+  '/investigator': 'AI Investigator',
+  '/genome': 'Crime Pattern Genome',
+  '/detective': 'AI Detective Engine',
+  '/copilot': 'Investigation Copilot',
+  '/insights': 'AI Insights',
+  '/timeline': 'Crime Timeline',
+  '/social-risk': 'Social Risk Factors',
+  '/predictions': 'Risk Prediction',
+  '/resources': 'Resource Allocation',
+  '/reports': 'Reports',
+  '/commissioner': 'Commissioner View',
+  '/fir': 'FIR Search',
+  '/search': 'Case Search',
+  '/settings': 'Settings',
 };
 
 function getOrCreateSessionId(): string {
@@ -189,7 +189,7 @@ export default function AuditTrail() {
           padding: '8px 20px', background: 'rgba(16,185,129,0.05)',
           borderBottom: '1px solid var(--cyber-border)', display: 'flex', alignItems: 'center', gap: 8,
         }}>
-          <Shield size={12} style={{ color: '#10b981' }} />
+          <Lock size={12} style={{ color: '#10b981' }} />
           <span style={{ fontSize: 11, color: '#10b981' }}>Audit log encrypted · GDPR compliant · Session-scoped</span>
         </div>
 
@@ -238,7 +238,10 @@ export default function AuditTrail() {
               border: '1px solid rgba(30,58,95,0.15)', borderRadius: 8, cursor: 'pointer',
             }}
           >
-            📥 Export Audit Log (CSV)
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, justifyContent: 'center', width: '100%' }}>
+              <Download size={13} />
+              Export Audit Log (CSV)
+            </span>
           </button>
         </div>
       </div>

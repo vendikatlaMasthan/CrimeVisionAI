@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from 'react';
-import { Users, Plus, Search, Shield, UserCheck, UserX, Trash2, Key, X, Copy, CheckCircle2 } from 'lucide-react';
+import { Users, Plus, Search, UserCheck, UserX, Trash2, Key, X, Copy, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { DISTRICTS } from '@/lib/crimeData';
 import Modal from '@/components/Modal';
 
@@ -311,7 +311,7 @@ export default function OfficerManagementPage() {
               placeholder="e.g. Sandeep Nayak"
               style={inputBase(!!formErrors.name)}
             />
-            {formErrors.name && <div style={errMsg}>⚠ {formErrors.name}</div>}
+            {formErrors.name && <div style={errMsg}><AlertTriangle size={11} /> {formErrors.name}</div>}
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -340,7 +340,7 @@ export default function OfficerManagementPage() {
               placeholder="e.g. Koramangala PS"
               style={inputBase(!!formErrors.station)}
             />
-            {formErrors.station && <div style={errMsg}>⚠ {formErrors.station}</div>}
+            {formErrors.station && <div style={errMsg}><AlertTriangle size={11} /> {formErrors.station}</div>}
           </div>
 
           <div>
@@ -355,7 +355,7 @@ export default function OfficerManagementPage() {
               style={inputBase(!!formErrors.email)}
             />
             {formErrors.email
-              ? <div style={errMsg}>⚠ {formErrors.email}</div>
+              ? <div style={errMsg}><AlertTriangle size={11} /> {formErrors.email}</div>
               : <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4 }}>Must be an official @ksp.gov.in address</div>
             }
           </div>
@@ -438,8 +438,9 @@ export default function OfficerManagementPage() {
               </div>
             </div>
 
-            <div style={{ padding: '10px 12px', background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 8, fontSize: 12, color: '#92400E' }}>
-              ⚠ Share these credentials securely. The officer must change their password on first login. This dialog cannot be reopened.
+            <div style={{ display: 'flex', alignItems: 'start', gap: 8, padding: '10px 12px', background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 8, fontSize: 12, color: '#92400E' }}>
+              <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
+              <span>Share these credentials securely. The officer must change their password on first login. This dialog cannot be reopened.</span>
             </div>
           </div>
         )}
@@ -451,7 +452,7 @@ export default function OfficerManagementPage() {
         onClose={() => setShowPasswordResetModal(null)}
         title={
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Shield size={20} color="#D97706" />
+            <Key size={20} color="#D97706" />
             <span>Password Reset Completed</span>
           </div>
         }

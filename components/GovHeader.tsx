@@ -10,50 +10,155 @@ import { User } from 'lucide-react';
 import SafeEmblem from './SafeEmblem';
 
 export default function GovHeader() {
-  const [textSize, setTextSize] = useState<'small' | 'default' | 'large'>('default');
+  // Numeric scale levels: 70 → 80 → 90 → 100 → 110 → 120 → 130 → 140
+  const SCALES = [70, 80, 90, 100, 110, 120, 130, 140];
+  const DEFAULT_SCALE = 100;
+  const [scale, setScale] = useState<number>(DEFAULT_SCALE);
 
   useEffect(() => {
+    // 1. Initial scale setup
     try {
-      const saved = localStorage.getItem('ksp_text_size') as 'small' | 'default' | 'large' | null;
-      if (saved === 'small' || saved === 'default' || saved === 'large') {
-        setTextSize(saved);
-        applyTextSize(saved);
-      }
+      const saved = localStorage.getItem('ksp_text_scale_v2');
+      const parsed = saved ? parseInt(saved, 10) : NaN;
+      const resolved = SCALES.includes(parsed) ? parsed : DEFAULT_SCALE;
+      setScale(resolved);
+      applyScale(resolved);
     } catch {
-      // Ignore localStorage block
+      // Ignore localStorage errors
     }
+
+    // 2. Setup MutationObserver to dynamically scale inline styles (fontSize)
+    if (typeof document === 'undefined') return;
+
+    let observer: MutationObserver | null = null;
+
+    const processElement = (el: HTMLElement) => {
+      // Skip SVG elements or Lucide icons to prevent scaling issues with icons
+      if (el.tagName === 'svg' || el.tagName === 'path' || el.closest('svg')) {
+        return;
+      }
+
+      const styleAttr = el.getAttribute('style');
+      if (styleAttr && styleAttr.includes('font-size')) {
+        const fontSizeVal = el.style.fontSize;
+        if (fontSizeVal && !fontSizeVal.includes('var(--text-scale)')) {
+          if (!el.hasAttribute('data-orig-font-size')) {
+            el.setAttribute('data-orig-font-size', fontSizeVal);
+          }
+          
+          const origSize = el.getAttribute('data-orig-font-size') || fontSizeVal;
+          if (origSize.includes('px') || /^[0-9.]+$/.test(origSize)) {
+            const num = parseFloat(origSize);
+            if (!isNaN(num)) {
+              el.style.fontSize = `calc(${num}px * var(--text-scale, 1.0))`;
+            }
+          } else if (origSize.includes('rem')) {
+            const num = parseFloat(origSize);
+            if (!isNaN(num)) {
+              el.style.fontSize = `calc(${num}rem * var(--text-scale, 1.0))`;
+            }
+          } else if (origSize.includes('em')) {
+            const num = parseFloat(origSize);
+            if (!isNaN(num)) {
+              el.style.fontSize = `calc(${num}em * var(--text-scale, 1.0))`;
+            }
+          } else if (origSize.includes('%')) {
+            const num = parseFloat(origSize);
+            if (!isNaN(num)) {
+              el.style.fontSize = `calc(${num}% * var(--text-scale, 1.0))`;
+            }
+          }
+        }
+      }
+    };
+
+    const processAll = () => {
+      if (observer) observer.disconnect();
+      
+      const elements = document.querySelectorAll('*');
+      elements.forEach(node => {
+        if (node instanceof HTMLElement) {
+          processElement(node);
+        }
+      });
+
+      if (observer) {
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['style'],
+        });
+      }
+    };
+
+    // Create observer
+    observer = new MutationObserver((mutations) => {
+      let needsProcessing = false;
+      for (const m of mutations) {
+        if (m.type === 'childList' && m.addedNodes.length > 0) {
+          needsProcessing = true;
+          break;
+        }
+        if (m.type === 'attributes' && m.attributeName === 'style') {
+          const el = m.target as HTMLElement;
+          const fs = el.style.fontSize;
+          if (fs && !fs.includes('var(--text-scale)')) {
+            needsProcessing = true;
+            break;
+          }
+        }
+      }
+      if (needsProcessing) {
+        processAll();
+      }
+    });
+
+    // Run initially
+    processAll();
+
+    // Start observing
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style'],
+    });
+
+    return () => {
+      if (observer) observer.disconnect();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const applyTextSize = (size: 'small' | 'default' | 'large') => {
-    if (typeof document !== 'undefined') {
-      const root = document.documentElement;
-      if (size === 'small') {
-        root.style.setProperty('--text-scale', '0.9');
-      } else if (size === 'default') {
-        root.style.setProperty('--text-scale', '1.0');
-      } else if (size === 'large') {
-        root.style.setProperty('--text-scale', '1.1');
-      }
-    }
+  const applyScale = (pct: number) => {
+    if (typeof document === 'undefined') return;
+    const factor = pct / 100;
+    // 1. Update CSS variable consumed by all utility overrides in globals.css
+    document.documentElement.style.setProperty('--text-scale', String(factor));
+    // 2. Set base font-size on <html> so rem units cascade application-wide.
+    //    16px is the browser default; we scale from that.
+    document.documentElement.style.fontSize = `${16 * factor}px`;
   };
 
   const handleDecrease = () => {
-    const nextSize = textSize === 'large' ? 'default' : 'small';
-    setTextSize(nextSize);
-    try {
-      localStorage.setItem('ksp_text_size', nextSize);
-    } catch {}
-    applyTextSize(nextSize);
+    const idx = SCALES.indexOf(scale);
+    if (idx <= 0) return;
+    const next = SCALES[idx - 1];
+    setScale(next);
+    try { localStorage.setItem('ksp_text_scale_v2', String(next)); } catch {}
+    applyScale(next);
   };
 
   const handleIncrease = () => {
-    const nextSize = textSize === 'small' ? 'default' : 'large';
-    setTextSize(nextSize);
-    try {
-      localStorage.setItem('ksp_text_size', nextSize);
-    } catch {}
-    applyTextSize(nextSize);
+    const idx = SCALES.indexOf(scale);
+    if (idx >= SCALES.length - 1) return;
+    const next = SCALES[idx + 1];
+    setScale(next);
+    try { localStorage.setItem('ksp_text_scale_v2', String(next)); } catch {}
+    applyScale(next);
   };
+
 
   return (
     <div style={{
@@ -116,7 +221,7 @@ export default function GovHeader() {
       </div>
 
       {/* Center: Karnataka State Police Logo */}
-      <div className="presentation-hidden" style={{
+      <div style={{
         display: 'flex',
         alignItems: 'center',
         gap: 14,
@@ -162,7 +267,6 @@ export default function GovHeader() {
         gap: 16,
         flex: '0 0 auto',
       }}>
-        {/* TEXT SIZE ADJUSTMENT CONTROL */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -179,12 +283,13 @@ export default function GovHeader() {
             letterSpacing: '0.06em',
             textTransform: 'uppercase',
             userSelect: 'none',
+            minWidth: 52,
           }}>
-            Text Size
+            Text {scale}%
           </span>
           <button
             onClick={handleDecrease}
-            disabled={textSize === 'small'}
+            disabled={scale === 70}
             aria-label="Decrease text size"
             style={{
               width: '26px',
@@ -195,23 +300,23 @@ export default function GovHeader() {
               color: '#374151',
               fontSize: '10px',
               fontWeight: 800,
-              cursor: textSize === 'small' ? 'not-allowed' : 'pointer',
+              cursor: scale === 70 ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              opacity: textSize === 'small' ? 0.4 : 1,
+              opacity: scale === 70 ? 0.4 : 1,
               transition: 'all 0.15s ease',
               outline: 'none',
               userSelect: 'none',
             }}
             onMouseEnter={e => {
-              if (textSize !== 'small') {
+              if (scale !== 70) {
                 e.currentTarget.style.background = '#F3F4F6';
                 e.currentTarget.style.borderColor = '#9CA3AF';
               }
             }}
             onMouseLeave={e => {
-              if (textSize !== 'small') {
+              if (scale !== 70) {
                 e.currentTarget.style.background = '#FFFFFF';
                 e.currentTarget.style.borderColor = '#D1D5DB';
               }
@@ -221,7 +326,7 @@ export default function GovHeader() {
           </button>
           <button
             onClick={handleIncrease}
-            disabled={textSize === 'large'}
+            disabled={scale === 140}
             aria-label="Increase text size"
             style={{
               width: '26px',
@@ -232,23 +337,23 @@ export default function GovHeader() {
               color: '#374151',
               fontSize: '10px',
               fontWeight: 800,
-              cursor: textSize === 'large' ? 'not-allowed' : 'pointer',
+              cursor: scale === 140 ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              opacity: textSize === 'large' ? 0.4 : 1,
+              opacity: scale === 140 ? 0.4 : 1,
               transition: 'all 0.15s ease',
               outline: 'none',
               userSelect: 'none',
             }}
             onMouseEnter={e => {
-              if (textSize !== 'large') {
+              if (scale !== 140) {
                 e.currentTarget.style.background = '#F3F4F6';
                 e.currentTarget.style.borderColor = '#9CA3AF';
               }
             }}
             onMouseLeave={e => {
-              if (textSize !== 'large') {
+              if (scale !== 140) {
                 e.currentTarget.style.background = '#FFFFFF';
                 e.currentTarget.style.borderColor = '#D1D5DB';
               }
@@ -257,6 +362,7 @@ export default function GovHeader() {
             A+
           </button>
         </div>
+
 
         <div style={{
           display: 'flex',

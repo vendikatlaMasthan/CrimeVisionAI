@@ -1,6 +1,6 @@
 'use client';
 
-import { X, Bell, ShieldAlert, ArrowRight, ShieldCheck } from 'lucide-react';
+import { X, Bell, ShieldAlert, ArrowRight, CheckCircle, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { LIVE_ALERTS } from '@/lib/mockData';
 
@@ -113,7 +113,7 @@ export default function AlertPanel({ isOpen, onClose }: AlertPanelProps) {
                       {alert.description}
                     </p>
                     <div className="mt-2.5 pt-2.5 border-t border-red-500/10 flex justify-between items-center text-[10px] text-red-400 font-semibold">
-                      <span>📍 {alert.district}</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><MapPin size={10} /> {alert.district}</span>
                       <span className="flex items-center gap-0.5">
                         DISPATCH <ArrowRight size={10} />
                       </span>
@@ -164,7 +164,7 @@ export default function AlertPanel({ isOpen, onClose }: AlertPanelProps) {
                       {alert.description}
                     </p>
                     <div className="mt-2.5 pt-2.5 border-t border-amber-500/10 flex justify-between items-center text-[10px] text-amber-400 font-semibold">
-                      <span>📍 {alert.district}</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><MapPin size={10} /> {alert.district}</span>
                       <span className="flex items-center gap-0.5">
                         MONITOR <ArrowRight size={10} />
                       </span>
@@ -179,7 +179,7 @@ export default function AlertPanel({ isOpen, onClose }: AlertPanelProps) {
           <div>
             <div className="flex items-center justify-between mb-3 px-1">
               <span className="text-xs font-bold text-green-500 uppercase tracking-widest flex items-center gap-1.5">
-                <ShieldCheck size={12} />
+                <CheckCircle size={12} />
                 Resolved Operations ({resolvedAlerts.length})
               </span>
             </div>
@@ -213,9 +213,9 @@ export default function AlertPanel({ isOpen, onClose }: AlertPanelProps) {
                       {alert.title}
                     </h4>
                     <div className="mt-2 pt-2 border-t border-green-500/5 flex justify-between items-center text-[10px] text-green-500/70 font-semibold">
-                      <span>📍 {alert.district}</span>
-                      <span className="flex items-center gap-1">
-                        ✓ SECURED
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><MapPin size={10} /> {alert.district}</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                        <CheckCircle size={10} /> SECURED
                       </span>
                     </div>
                   </Link>

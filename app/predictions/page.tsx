@@ -6,11 +6,12 @@
 import { useState, useCallback, useEffect, Suspense } from 'react';
 import {
   TrendingUp, Brain, RefreshCw, AlertTriangle, CheckCircle,
-  Shield, Zap, Clock, Activity, MapPin, ChevronUp,
+  Zap, Clock, Activity, MapPin, ChevronUp, Check
 } from 'lucide-react';
 import { useLanguage } from '@/components/LanguageToggle';
 import { hasAnyApiKey } from '@/lib/apiKey';
 import { generateText } from '@/lib/aiService';
+import { localAI, LocalPredictionResult } from '@/lib/localAiEngine';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -123,39 +124,55 @@ Rules:
 
 function PredictionsPageContent() {
   const { t, lang } = useLanguage();
-  const [prediction, setPrediction] = useState<PredictionResult | null>(null);
+  // Accept both local and external AI result shapes (they share the same key fields)
+  const [prediction, setPrediction] = useState<PredictionResult | LocalPredictionResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [apiKeyMissing, setApiKeyMissing] = useState(false);
+  const [usingLocalEngine, setUsingLocalEngine] = useState(false);
 
-  // Check API key on mount
-  useEffect(() => {
-    setApiKeyMissing(!hasAnyApiKey());
-  }, []);
-
+  /**
+   * Generate prediction — LOCAL engine is always the guaranteed fallback.
+   * External AI (Gemini/Claude) is attempted first ONLY if a key is configured;
+   * on any failure it falls back to the local engine silently.
+   * Page is NEVER blank — local result is always shown.
+   */
   const generatePrediction = useCallback(async () => {
-    if (!hasAnyApiKey()) { setApiKeyMissing(true); return; }
     setIsLoading(true);
     setError(null);
 
-    try {
-      const text = await generateText({
-        messages: [{ role: 'user', content: PREDICTION_PROMPT }]
-      });
-
-      // Extract JSON from response (handles extra text if any)
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('AI returned no valid JSON. Try again.');
-
-      const parsed = JSON.parse(jsonMatch[0]) as PredictionResult;
-      setPrediction(parsed);
-      setLastUpdated(new Date());
-    } catch (err) {
-      setError(`${(err as Error).message}. Please try again.`);
-    } finally {
-      setIsLoading(false);
+    // ── Try external AI first (optional enrichment) ──
+    if (hasAnyApiKey()) {
+      try {
+        const text = await generateText({
+          messages: [{ role: 'user', content: PREDICTION_PROMPT }]
+        });
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]) as PredictionResult;
+          setPrediction(parsed);
+          setLastUpdated(new Date());
+          setUsingLocalEngine(false);
+          setIsLoading(false);
+          return;
+        }
+      } catch {
+        // External AI failed — fall through to local engine silently
+      }
     }
+
+    // ── Local engine fallback (always works, no API key needed) ──
+    const localResult = localAI.generatePrediction();
+    setPrediction(localResult as unknown as PredictionResult);
+    setLastUpdated(new Date());
+    setUsingLocalEngine(true);
+    setIsLoading(false);
+  }, []);
+
+  // Auto-generate on page load — page is never blank
+  useEffect(() => {
+    generatePrediction();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Helpers ───────────────────────────────────────────────────────────────
@@ -238,29 +255,25 @@ function PredictionsPageContent() {
         </div>
       </div>
 
-      {/* ── API Key Error ─────────────────────────────────────────────── */}
-      {apiKeyMissing && (
+      {/* ── Local Engine Notice (shown when no external key configured) ── */}
+      {usingLocalEngine && prediction && (
         <div style={{
-          padding: '14px 18px', borderRadius: 12,
-          background: '#FEF2F2', border: '1px solid #FCA5A5',
-          display: 'flex', alignItems: 'flex-start', gap: 10,
+          padding: '10px 16px', borderRadius: 10,
+          background: 'rgba(15,107,92,0.06)', border: '1px solid rgba(15,107,92,0.2)',
+          display: 'flex', alignItems: 'center', gap: 10, fontSize: 12,
         }}>
-          <AlertTriangle size={16} color="#ef4444" style={{ flexShrink: 0, marginTop: 2 }} />
-          <div>
-            <p style={{ color: '#ef4444', fontSize: 13, fontWeight: 700, margin: '0 0 4px' }}>
-              {t.error_api_key_missing}
-            </p>
-            <p style={{ color: '#475569', fontSize: 12, margin: 0 }}>
-              {t.error_api_key_instructions}
-            </p>
-          </div>
+          <CheckCircle size={14} color="#0F6B5C" style={{ flexShrink: 0 }} />
+          <span style={{ color: '#0F6B5C', fontWeight: 600 }}>
+            Powered by Local AI Engine — computed from {' '}
+            <strong>82,089 Karnataka crime records</strong> across 31 districts. No external API required.
+          </span>
         </div>
       )}
 
-      {/* ── Error ─────────────────────────────────────────────────────── */}
+      {/* ── Error (non-blocking — local engine result still shown) ── */}
       {error && (
         <div style={{
-          padding: '14px 18px', borderRadius: 12,
+          padding: '10px 16px', borderRadius: 10,
           background: '#FEF2F2', border: '1px solid #FCA5A5',
           display: 'flex', alignItems: 'center', gap: 10,
         }}>
@@ -269,7 +282,17 @@ function PredictionsPageContent() {
         </div>
       )}
 
-      {/* ── Empty State ───────────────────────────────────────────────── */}
+      {/* ── Loading Spinner (brief — local engine is synchronous) ── */}
+      {!prediction && isLoading && (
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 300 }}>
+          <div style={{ textAlign: 'center' }}>
+            <RefreshCw size={32} color="#7C3AED" style={{ animation: 'spin 0.8s linear infinite', marginBottom: 16 }} />
+            <p style={{ color: '#475569', fontSize: 14, fontWeight: 600 }}>Generating 30-day forecast from Karnataka crime data...</p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Empty State (should never show — auto-load fires on mount) ── */}
       {!prediction && !isLoading && !error && (
         <div style={{
           flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -478,7 +501,7 @@ function PredictionsPageContent() {
                         fontSize: 11, color: '#5B21B6', padding: '6px 10px', borderRadius: 6,
                         background: '#F5F3FF', border: '1px solid #DDD6FE', fontWeight: 600
                       }}>
-                        💡 <strong>Recommended Action:</strong> {d.recommendation}
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Zap size={11} /> <strong>Recommended Action:</strong></span> {d.recommendation}
                       </div>
                     </div>
                   );
@@ -526,8 +549,8 @@ function PredictionsPageContent() {
                       <div style={{ fontSize: 10, color: '#475569', marginBottom: 6 }}>
                         {lang === 'kn' ? 'ಜಿಲ್ಲೆಗಳು:' : 'Districts:'} {spike.affectedDistricts.join(', ')}
                       </div>
-                      <div style={{ fontSize: 11, color: '#059669', fontWeight: 600 }}>
-                        ✓ {spike.preventiveMeasure}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: '#059669', fontWeight: 600 }}>
+                        <Check size={11} /> {spike.preventiveMeasure}
                       </div>
 
                       {/* Confidence bar */}
@@ -542,7 +565,7 @@ function PredictionsPageContent() {
               {/* Recommendations */}
               <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 16, padding: 20 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                  <Shield size={15} color="#0F6B5C" />
+                  <Brain size={15} color="#0F6B5C" />
                   <span style={{ fontSize: 12, fontWeight: 800, color: '#1F2937', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                     {t.pred_recommendations}
                   </span>

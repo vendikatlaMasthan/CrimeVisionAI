@@ -6,7 +6,7 @@
 import { useState, useRef, useEffect, useCallback, Suspense, useMemo } from 'react';
 import { 
   Brain, Send, Mic, MicOff, Search, FileText, Plus, ShieldAlert, Sparkles, User, MapPin, 
-  Clock, CheckCircle, RefreshCw, ChevronRight, AlertTriangle, HelpCircle, Eye, Clipboard, Share2, Shield, Zap, X,
+  Clock, CheckCircle, RefreshCw, ChevronRight, AlertTriangle, HelpCircle, Eye, Clipboard, Share2, Zap, X,
   Map, GitMerge, List, Calendar, Download, Printer, Percent, Play, Pause, ChevronDown, Lock, Landmark, Phone
 } from 'lucide-react';
 import { useLanguage } from '@/components/LanguageToggle';
@@ -327,17 +327,16 @@ const CASES_DATABASE: Record<string, CaseData> = {
   }
 };
 
-// ── REASONING ANIMATION STEPS ────────────────────────────────────────────────
 const REASONING_PIPELINE = [
-  { text: "Reading FIR...", icon: "🧠" },
-  { text: "Loading Case Files...", icon: "📂" },
-  { text: "Scanning Evidence...", icon: "📷" },
-  { text: "Cross-checking Phone Records...", icon: "📞" },
-  { text: "Analyzing Financial Transactions...", icon: "💰" },
-  { text: "Matching GPS Locations...", icon: "📍" },
-  { text: "Building Criminal Network...", icon: "🕸" },
-  { text: "Evaluating Risk...", icon: "⚖" },
-  { text: "Generating Investigation Report...", icon: "🤖" }
+  { text: "Reading FIR...", icon: <Brain size={14} /> },
+  { text: "Loading Case Files...", icon: <FileText size={14} /> },
+  { text: "Scanning Evidence...", icon: <Search size={14} /> },
+  { text: "Cross-checking Phone Records...", icon: <Phone size={14} /> },
+  { text: "Analyzing Financial Transactions...", icon: <Landmark size={14} /> },
+  { text: "Matching GPS Locations...", icon: <MapPin size={14} /> },
+  { text: "Building Criminal Network...", icon: <GitMerge size={14} /> },
+  { text: "Evaluating Risk...", icon: <Lock size={14} /> },
+  { text: "Generating Investigation Report...", icon: <FileText size={14} /> }
 ];
 
 // ── COMPONENT ROOT CONTENT ───────────────────────────────────────────────────
@@ -829,7 +828,7 @@ function AIInvestigatorPageContent() {
         {selectedNode && (
           <div style={{ position: 'absolute', bottom: 12, left: 12, right: 12, background: '#FFFFFF', border: '1px solid #1E3A5F', borderRadius: 8, padding: 12, zIndex: 10, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E2E8F0', paddingBottom: 6, marginBottom: 8 }}>
-              <span style={{ fontSize: 13, fontWeight: 900, color: '#1E3A5F' }}>🕵️ Target Dossier: {selectedNode.label}</span>
+              <span style={{ fontSize: 13, fontWeight: 900, color: '#1E3A5F' }}>Target Dossier: {selectedNode.label}</span>
               <button onClick={() => setSelectedNode(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280' }}><X size={14} /></button>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: 11 }}>
@@ -889,7 +888,7 @@ function AIInvestigatorPageContent() {
 
           {/* Interactive target radar indicator top-left */}
           <div style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(0, 212, 255, 0.4)', borderRadius: 4, padding: '4px 8px', fontSize: 10, color: '#00D4FF', fontFamily: 'monospace' }}>
-            🛰️ TARGET GPS TRACKER ACTIVE
+            TARGET GPS TRACKER ACTIVE
           </div>
         </div>
 
@@ -1016,11 +1015,11 @@ function AIInvestigatorPageContent() {
               const isCurrent = idx === thinkingIndex;
               return (
                 <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyItems: 'space-between', opacity: isPassed ? 1 : isCurrent ? 1 : 0.35 }}>
-                  <span style={{ fontSize: 16, marginRight: 10 }}>{step.icon}</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', marginRight: 10 }}>{step.icon}</span>
                   <span style={{ fontSize: 13, fontWeight: isCurrent ? 800 : 500, color: isCurrent ? '#1E3A5F' : '#475569', flex: 1 }}>
                     {step.text}
                   </span>
-                  {isPassed && <span style={{ color: '#065F46', fontWeight: 900 }}>✓</span>}
+                  {isPassed && <CheckCircle size={14} style={{ color: '#065F46' }} />}
                   {isCurrent && <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#1E3A5F', animation: 'pulse 1s infinite' }} />}
                 </div>
               );
@@ -1047,11 +1046,11 @@ function AIInvestigatorPageContent() {
         {/* Tabs Bar */}
         <div style={{ display: 'flex', background: '#F8FAFC', borderBottom: '1px solid #E5E7EB', padding: '0 12px' }}>
           {([
-            { id: 'chat', label: '🕵️ Investigative Copilot', icon: Brain },
-            { id: 'graph', label: '🕸️ Relationship Graph', icon: GitMerge },
-            { id: 'map', label: '📍 Tactical Map', icon: Map },
-            { id: 'timeline', label: '⏱️ Chronology', icon: List },
-            { id: 'report', label: '📋 Dossier Report', icon: FileText }
+            { id: 'chat', label: 'Investigative Copilot', icon: Brain },
+            { id: 'graph', label: 'Relationship Graph', icon: GitMerge },
+            { id: 'map', label: 'Tactical Map', icon: Map },
+            { id: 'timeline', label: 'Chronology', icon: List },
+            { id: 'report', label: 'Dossier Report', icon: FileText }
           ] as const).map(tab => {
             const isActive = activeTab === tab.id;
             return (
@@ -1166,7 +1165,7 @@ function AIInvestigatorPageContent() {
           {activeTab === 'graph' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E2E8F0', paddingBottom: 6, marginBottom: 12 }}>
-                <h3 style={{ fontSize: 14, fontWeight: 800, color: '#1E3A5F', margin: 0 }}>🕸️ Interactive Relationship Matrix</h3>
+                <h3 style={{ fontSize: 14, fontWeight: 800, color: '#1E3A5F', margin: 0 }}>Interactive Relationship Matrix</h3>
                 <span style={{ fontSize: 11, color: '#6B7280' }}>Click nodes to view full dossiers</span>
               </div>
               {renderNetworkGraphWidget(currentCase)}
@@ -1176,7 +1175,7 @@ function AIInvestigatorPageContent() {
           {activeTab === 'map' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E2E8F0', paddingBottom: 6, marginBottom: 12 }}>
-                <h3 style={{ fontSize: 14, fontWeight: 800, color: '#1E3A5F', margin: 0 }}>📍 Tactical Route Playback</h3>
+                <h3 style={{ fontSize: 14, fontWeight: 800, color: '#1E3A5F', margin: 0 }}>Tactical Route Playback</h3>
                 <span style={{ fontSize: 11, color: '#6B7280' }}>GPS Coordinates logged under tower registry</span>
               </div>
               {renderMapWidget(currentCase)}
@@ -1186,7 +1185,7 @@ function AIInvestigatorPageContent() {
           {activeTab === 'timeline' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E2E8F0', paddingBottom: 6, marginBottom: 12 }}>
-                <h3 style={{ fontSize: 14, fontWeight: 800, color: '#1E3A5F', margin: 0 }}>⏱️ Reconstructed Case Chronology</h3>
+                <h3 style={{ fontSize: 14, fontWeight: 800, color: '#1E3A5F', margin: 0 }}>Reconstructed Case Chronology</h3>
                 <span style={{ fontSize: 11, color: '#6B7280' }}>Logged triggers & handoffs</span>
               </div>
               {renderTimelineWidget(currentCase)}

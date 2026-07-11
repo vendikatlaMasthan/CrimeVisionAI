@@ -2,7 +2,7 @@
 import { useState, useMemo } from 'react';
 import {
   Dna, Search, Zap, Eye, ChevronRight, AlertTriangle, Clock,
-  MapPin, Shield, Link2, Fingerprint, Target, Activity, User
+  MapPin, Link2, Fingerprint, Target, Activity, User, Check, X, Lock
 } from 'lucide-react';
 import { FIR_RECORDS, CRIMINAL_PROFILES, FIRRecord } from '@/lib/mockData';
 import { InputWithIcon } from '@/components/InputWithIcon';
@@ -139,8 +139,8 @@ const HIGH_RISK_METHODS: MethodCode[] = ['CY', 'NA', 'OR', 'MR'];
 
 function DNABadge({ dna }: { dna: string }) {
   return (
-    <span className="font-mono text-amber-400 text-xs tracking-wider">
-      🧬 {dna}
+    <span className="font-mono text-amber-400 text-xs tracking-wider flex items-center gap-1">
+      <Dna size={12} /> {dna}
     </span>
   );
 }
@@ -396,8 +396,8 @@ export default function GenomePage() {
             <div>
               <h1 className="page-title flex items-center gap-3">
                 CRIME PATTERN GENOME
-                <span className="badge badge-red text-[11px] tracking-widest">
-                  🔒 CLASSIFIED SYSTEM
+                <span className="badge badge-red text-[11px] tracking-widest flex items-center gap-1">
+                  <Lock size={10} /> CLASSIFIED SYSTEM
                 </span>
               </h1>
               <p className="page-subtitle mt-0.5">
@@ -618,7 +618,7 @@ export default function GenomePage() {
                     <MapPin size={11} /> {selectedFIR.district}
                   </span>
                   <span className="flex items-center gap-1">
-                    <Shield size={11} /> {selectedFIR.assignedOfficer}
+                    <User size={11} /> {selectedFIR.assignedOfficer}
                   </span>
                   <span className="flex items-center gap-1">
                     <Target size={11} /> Category: {selectedFIR.crimeCategory}
@@ -881,17 +881,9 @@ export default function GenomePage() {
                                   },
                                 ] as { label: string; match: boolean }[]
                               ).map(({ label, match }) => (
-                                <div
-                                  key={label}
-                                  className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded"
-                                  style={{
-                                    background: match ? 'rgba(46, 139, 87, 0.08)' : 'rgba(211, 47, 47, 0.08)',
-                                    border: `1px solid ${match ? 'rgba(46, 139, 87, 0.2)' : 'rgba(211, 47, 47, 0.2)'}`,
-                                    color: match ? 'var(--success-green)' : 'var(--alert-red)',
-                                  }}
-                                >
-                                  {match ? '✓' : '✗'} {label}
-                                </div>
+                                  <span key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
+                                    {match ? <Check size={10} /> : <X size={10} />} {label}
+                                  </span>
                               ))}
                             </div>
                             {/* District + suspect */}
@@ -1016,7 +1008,7 @@ export default function GenomePage() {
                               boxShadow: 'var(--shadow-card)',
                             }}
                           >
-                            <Shield size={16} className="text-red-600 mb-1" />
+                            <User size={16} className="text-red-600 mb-1" />
                             <span className="text-[9px] font-bold text-red-600 leading-tight px-1 text-center">
                               {selectedFIR.suspectDetails.name.split(' ')[0]}
                             </span>

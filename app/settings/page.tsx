@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Shield, Lock, User, Key, Database, Cpu, Terminal, CheckCircle2, AlertTriangle, ShieldCheck, Server, Activity } from 'lucide-react';
+import { Lock, User, Key, Database, Cpu, Terminal, CheckCircle2, AlertTriangle, Server, Activity } from 'lucide-react';
 import { DEMO_ACCOUNTS, DemoAccount } from '@/lib/crimeData';
 
 interface SystemLog {
@@ -118,7 +118,7 @@ export default function SettingsPage() {
           {/* Card: Profile Credentials */}
           <div className="glass-card md:col-span-2 p-6 flex flex-col gap-6">
             <div className="flex items-center gap-2.5 border-b border-[var(--cyber-border)] pb-4">
-              <Shield className="text-[var(--cyber-cyan)]" size={18} />
+              <Lock className="text-[var(--cyber-cyan)]" size={18} />
               <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wider">Credential Overview</h3>
             </div>
 
@@ -203,7 +203,7 @@ export default function SettingsPage() {
               
               {/* 256-BIT SSL badge moved here! */}
               <div className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-green-500/30 bg-green-500/5 text-green-500 text-[10px] font-bold tracking-wider">
-                <ShieldCheck size={12} />
+                <CheckCircle2 size={12} />
                 <span>256-BIT SECURE</span>
               </div>
             </div>

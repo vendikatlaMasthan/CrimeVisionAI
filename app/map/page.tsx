@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Camera } from 'lucide-react';
 import * as d3 from 'd3';
 import { 
-  MapPin, AlertTriangle, Shield, Activity, Eye, Filter, Calendar, Users, 
-  Map, TrendingUp, Info, ChevronRight, X, Sparkles, Plus, Clock
+  MapPin, AlertTriangle, Activity, Eye, Filter, Calendar, Users, 
+  Map, TrendingUp, Info, ChevronRight, X, Sparkles, Plus, Clock, Search
 } from 'lucide-react';
 import { useLanguage } from '@/components/LanguageToggle';
 import { TranslationSet } from '@/lib/translations';
@@ -1064,7 +1064,7 @@ export default function HeatmapPage() {
                   LOCAL STATION DIRECTIVE
                 </div>
                 <p style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                  🚨 <strong>Patrol Priority:</strong> Increase presence at Sector 3 docks during 10 PM - 2 AM. AI model detects a 45% spike risk of unauthorized extractions.
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><AlertTriangle size={11} /> <strong>Patrol Priority:</strong></span> Increase presence at Sector 3 docks during 10 PM - 2 AM. AI model detects a 45% spike risk of unauthorized extractions.
                 </p>
               </div>
             </div>
@@ -1159,7 +1159,7 @@ export default function HeatmapPage() {
                   color: '#b45309',
                   fontWeight: 700
                 }}>
-                  💡 <strong>Proactive Suggestion:</strong> Recommend dispatching +8 officers between 10 PM - 2 AM near river banks.
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Sparkles size={11} /> <strong>Proactive Suggestion:</strong></span> Recommend dispatching +8 officers between 10 PM - 2 AM near river banks.
                 </div>
               )}
 
@@ -1292,7 +1292,10 @@ export default function HeatmapPage() {
                   className="cyber-btn cyber-btn-cyan animate-pulse"
                   style={{ width: '100%', justifyContent: 'center', borderRadius: '16px', fontSize: '13px', padding: '10px', fontWeight: 700, marginTop: '12px', background: '#2563EB', color: '#FFFFFF', border: 'none', cursor: 'pointer' }}
                 >
-                  🔍 DRILL DOWN TO {selectedDistrict.toUpperCase()} DISTRICT
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <Search size={13} />
+                    DRILL DOWN TO {selectedDistrict.toUpperCase()} DISTRICT
+                  </span>
                 </button>
               )}
 

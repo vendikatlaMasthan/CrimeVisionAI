@@ -25,7 +25,7 @@ const CASES = [
     steps: [
       {
         title: "Crime Reported",
-        details: "📍 Kalaburagi North · Tungabhadra riverbank",
+        details: "Kalaburagi North · Tungabhadra riverbank",
         time: "09:15 AM, 21 Jun 2026",
         meta: "Category: Sand Mafia | Severity: CRITICAL",
         extra: "Reported by: Anonymous Civilian helpline tip-off. Active mining operations detected on the riverbanks. Logged at District Command Center.",
@@ -33,7 +33,7 @@ const CASES = [
       },
       {
         title: "FIR Generated",
-        details: "📋 FIR #KA-2026-08821",
+        details: "FIR #KA-2026-08821",
         time: "09:30 AM",
         meta: "Registering Officer: SI Mahesh Kumar | Station: Kalaburagi North PS",
         extra: "Registered under Section 379 IPC (Theft) and Section 21 of Mines and Minerals Act. Assigned to Circle Inspector Mahesh.",
@@ -41,7 +41,7 @@ const CASES = [
       },
       {
         title: "Evidence Collection",
-        details: "📎 4 Photos · 2 Witness Statements · 1 Forensic Report",
+        details: "4 Photos · 2 Witness Statements · 1 Forensic Report",
         time: "10:45 AM",
         meta: "Uploaded by: HC Ramu Patil",
         extra: "Forensic soil sample collected from riverbank matches sand texture of stockpiled trucks. Witness statements confirm vehicle registration plates.",
@@ -49,7 +49,7 @@ const CASES = [
       },
       {
         title: "Suspect Analysis",
-        details: "👤 AI Match Score: 87% · Linked to 3 prior cases",
+        details: "AI Match Score: 87% · Linked to 3 prior cases",
         time: "12:10 PM",
         meta: "Network connections: 5 suspects",
         extra: "Facial match score of 87% with primary suspect Raju Naik. Identified in CCTV logs at NH-50 corridor. Social network matches 5 repeat associates.",
@@ -57,7 +57,7 @@ const CASES = [
       },
       {
         title: "AI Investigation",
-        details: "🤖 Pattern match in progress... Confidence building: 92%",
+        details: "Pattern match in progress... Confidence building: 92%",
         time: "13:20 PM",
         meta: "Intel matches Raichur Sand Mafia syndicate",
         extra: "Neural network models indicate 92% confidence of coordinated sand transport route towards Raichur sector. Recommended lookout alert deployment.",
@@ -65,7 +65,7 @@ const CASES = [
       },
       {
         title: "Risk Assessment",
-        details: "⏳ Expected recurrence rating: HIGH (78%)",
+        details: "Expected recurrence rating: HIGH (78%)",
         time: "Pending",
         meta: "Awaiting next dispatch threshold",
         extra: "Risk assessment model is waiting for deployment indicators to update risk metrics. Re-routing probability is elevated if checkpoints are left unmonitored.",
@@ -73,7 +73,7 @@ const CASES = [
       },
       {
         title: "Officer Assignment",
-        details: "⏳ PI Ravi Shankar designated for interception",
+        details: "PI Ravi Shankar designated for interception",
         time: "Pending",
         meta: "Deploy pending alert release",
         extra: "Tactical squad on standby at NH-50 checkpoint. Dispatch awaiting final signature from Commissioner.",
@@ -81,7 +81,7 @@ const CASES = [
       },
       {
         title: "Case Closed / Escalated",
-        details: "⏳ Incident resolution dossier compilation",
+        details: "Incident resolution dossier compilation",
         time: "Pending",
         meta: "Pending arrest verification",
         extra: "Case will be closed upon suspect booking and property recovery log verification. Legal cells notified.",
@@ -108,7 +108,7 @@ const CASES = [
     steps: [
       {
         title: "Crime Reported",
-        details: "📍 Bengaluru East · HSR Layout. Multiple OTP fraud complaints.",
+        details: "Bengaluru East · HSR Layout. Multiple OTP fraud complaints.",
         time: "10:05 AM, 21 Jun 2026",
         meta: "Category: Cyber Fraud | Severity: HIGH",
         extra: "Citizens reported fake KYC SMS links leading to account drainages. Technical cell deployed to monitor active towers.",
@@ -116,7 +116,7 @@ const CASES = [
       },
       {
         title: "FIR Generated",
-        details: "📋 FIR #KA-2026-08734",
+        details: "FIR #KA-2026-08734",
         time: "10:30 AM",
         meta: "Registering Officer: Inspector Anil K. | Station: Cyber Crime PS, Bengaluru",
         extra: "Registered under Section 66D IT Act and 420 IPC. Bank transaction logs subpoenaed.",
@@ -124,7 +124,7 @@ const CASES = [
       },
       {
         title: "Evidence Collection",
-        details: "📎 23 SMS Headers · 3 IP Logs · 1 Wallet Address",
+        details: "23 SMS Headers · 3 IP Logs · 1 Wallet Address",
         time: "11:45 AM",
         meta: "Active tracing on Gateway IPs",
         extra: "Gateway IP logs traced to virtual servers located out of state. API intercept logs created. Bank accounts frozen.",
@@ -132,7 +132,7 @@ const CASES = [
       },
       {
         title: "Suspect Analysis",
-        details: "👤 Sim Swap group flagged. Traced 2 bank accounts.",
+        details: "Sim Swap group flagged. Traced 2 bank accounts.",
         time: "Pending",
         meta: "Awaiting IMEI validation",
         extra: "Target list of active SIM numbers being compiled for provider tower trace. Linkages found with Arjun Gowda syndicate.",
@@ -140,7 +140,7 @@ const CASES = [
       },
       {
         title: "AI Investigation",
-        details: "🤖 Gateway trace pending review",
+        details: "Gateway trace pending review",
         time: "Pending",
         meta: "Awaiting logs",
         extra: "Awaiting server logs from foreign proxy servers to resolve true origin IPs.",
@@ -148,7 +148,7 @@ const CASES = [
       },
       {
         title: "Risk Assessment",
-        details: "⏳ Financial threat recurrence check",
+        details: "Financial threat recurrence check",
         time: "Pending",
         meta: "System scanning",
         extra: "Estimated threat of victim expansion rate: Moderate. Recommended firewall blocks.",
@@ -156,7 +156,7 @@ const CASES = [
       },
       {
         title: "Officer Assignment",
-        details: "⏳ Cyber Cell Team Alpha standby",
+        details: "Cyber Cell Team Alpha standby",
         time: "Pending",
         meta: "Team Alpha briefed",
         extra: "Raid team assigned on call to intercept secondary banking accounts cash out points.",
@@ -164,7 +164,7 @@ const CASES = [
       },
       {
         title: "Case Closed / Escalated",
-        details: "⏳ Final report logs",
+        details: "Final report logs",
         time: "Pending",
         meta: "Awaiting arrests",
         extra: "Case closure dossier requires arrest forms and escrow bank reversal approvals.",
@@ -191,7 +191,7 @@ const CASES = [
     steps: [
       {
         title: "Crime Reported",
-        details: "📍 Gokulam, Mysuru. High-end SUV stolen from driveway.",
+        details: "Gokulam, Mysuru. High-end SUV stolen from driveway.",
         time: "02:15 AM, 20 Jun 2026",
         meta: "Category: Vehicle Theft | Severity: MEDIUM",
         extra: "CCTV caught relay attack signature targeting keyless entry fob. Smart telemetry tracking initiated.",
@@ -199,7 +199,7 @@ const CASES = [
       },
       {
         title: "FIR Generated",
-        details: "📋 FIR #KA-2026-08612",
+        details: "FIR #KA-2026-08612",
         time: "03:00 AM",
         meta: "Registering Officer: SI Sunitha Patel | Station: Mysuru Central PS",
         extra: "Registered under Section 379 IPC. Broadcast sent to highway checkpoints.",
@@ -207,7 +207,7 @@ const CASES = [
       },
       {
         title: "Evidence Collection",
-        details: "📎 2 CCTV Footage · 1 RF Sniffer Log",
+        details: "2 CCTV Footage · 1 RF Sniffer Log",
         time: "04:30 AM",
         meta: "RF frequency log analyzed",
         extra: "Fob emulator frequency matched local gang MO flagged in Bengaluru last month. Toll booth pictures uploaded.",
@@ -215,7 +215,7 @@ const CASES = [
       },
       {
         title: "Suspect Analysis",
-        details: "👤 2 suspects identified on highway cameras.",
+        details: "2 suspects identified on highway cameras.",
         time: "06:15 AM",
         meta: "Accused: Kiran Kumar",
         extra: "Vehicle captured crossing NH-275 toll booth towards Bengaluru at 05:40 AM. Driver identified by database.",
@@ -223,7 +223,7 @@ const CASES = [
       },
       {
         title: "AI Investigation",
-        details: "🤖 Route estimation: 96% match to Nelamangala warehouse.",
+        details: "Route estimation: 96% match to Nelamangala warehouse.",
         time: "07:00 AM",
         meta: "Dismantling site threat estimated",
         extra: "Historical path analysis estimates vehicle transport to de-registration scrapyard in Nelamangala corridor.",
@@ -231,7 +231,7 @@ const CASES = [
       },
       {
         title: "Risk Assessment",
-        details: "⚡ Scrap yard raid planning complete",
+        details: "Scrap yard raid planning complete",
         time: "08:15 AM",
         meta: "Risk level: LOW",
         extra: "Syndicate storage yard mapped and surveillance camera feeds integrated. Off-road escape paths blocked.",
@@ -239,7 +239,7 @@ const CASES = [
       },
       {
         title: "Officer Assignment",
-        details: "👮 PI Mahesh Kumar deployed. Target site surrounded.",
+        details: "PI Mahesh Kumar deployed. Target site surrounded.",
         time: "09:30 AM",
         meta: "Operation active",
         extra: "Nelamangala division dispatched 2 patrol cars to intercept vehicle loading at scrapyard.",
@@ -247,7 +247,7 @@ const CASES = [
       },
       {
         title: "Case Closed / Escalated",
-        details: "⏳ Suspect arrest and vehicle recovery logging",
+        details: "Suspect arrest and vehicle recovery logging",
         time: "Pending",
         meta: "Awaiting raid output",
         extra: "Officer updates from scene indicate suspects surrounded. Pending booking reports to close case.",
@@ -274,7 +274,7 @@ const CASES = [
     steps: [
       {
         title: "Crime Reported",
-        details: "📍 Raichur Border Outpost. Informant tip regarding meth shipment.",
+        details: "Raichur Border Outpost. Informant tip regarding meth shipment.",
         time: "11:45 PM, 20 Jun 2026",
         meta: "Category: Narcotics | Severity: CRITICAL",
         extra: "Informant reports 8.2kg crystal meth smuggling transit via interstate cargo truck.",
@@ -282,7 +282,7 @@ const CASES = [
       },
       {
         title: "FIR Generated",
-        details: "📋 FIR #KA-2026-08590",
+        details: "FIR #KA-2026-08590",
         time: "00:15 AM, 21 Jun 2026",
         meta: "Registering Officer: SI Ramesh G. | Station: Raichur Rural PS",
         extra: "Registered under NDPS Act Section 22. Border checkpoints on high alert.",
@@ -290,7 +290,7 @@ const CASES = [
       },
       {
         title: "Evidence Collection",
-        details: "⏳ Border checkpost CCTV sweep pending",
+        details: "Border checkpost CCTV sweep pending",
         time: "Pending",
         meta: "Awaiting logs",
         extra: "Toll booth video logs from state border under review for suspect cargo vehicles.",
@@ -298,7 +298,7 @@ const CASES = [
       },
       {
         title: "Suspect Analysis",
-        details: "⏳ Tracing suspect Venkat Reddy",
+        details: "Tracing suspect Venkat Reddy",
         time: "Pending",
         meta: "Dossier audit pending",
         extra: "Cross-referencing network connections of Venkat Reddy to identify local dropoff points.",
@@ -306,7 +306,7 @@ const CASES = [
       },
       {
         title: "AI Investigation",
-        details: "⏳ Network graph correlation pending",
+        details: "Network graph correlation pending",
         time: "Pending",
         meta: "System matching",
         extra: "Neural network maps awaiting node updates on border carriers.",
@@ -314,7 +314,7 @@ const CASES = [
       },
       {
         title: "Risk Assessment",
-        details: "⏳ Threat forecast pending",
+        details: "Threat forecast pending",
         time: "Pending",
         meta: "Pending logs",
         extra: "Threat levels will refresh once vehicle route vectors are locked.",
@@ -322,7 +322,7 @@ const CASES = [
       },
       {
         title: "Officer Assignment",
-        details: "⏳ Border patrol dispatch pending",
+        details: "Border patrol dispatch pending",
         time: "Pending",
         meta: "Patrol teams briefing",
         extra: "3 patrol interceptors prepared at Raichur bypass awaiting vehicle lock.",
@@ -330,7 +330,7 @@ const CASES = [
       },
       {
         title: "Case Closed / Escalated",
-        details: "⏳ Resolution documentation",
+        details: "Resolution documentation",
         time: "Pending",
         meta: "NDPS logging pending",
         extra: "NDPS seizure logs required to formalize case closure.",

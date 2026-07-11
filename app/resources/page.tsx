@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import {
-  Package, Shield, Users, Monitor, Anchor, Moon,
+  Package, Users, Monitor, Anchor, Moon,
   CheckCircle, Clock, Zap,
   BarChart3, MapPin, Sliders, Target, Activity, TrendingUp,
   Download, Cpu, AlertTriangle, ArrowUpRight,
@@ -36,7 +36,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 const ICON_MAP: Record<string, React.FC<{ size?: number; style?: React.CSSProperties }>> = {
   monitor: Monitor,
-  shield: Shield,
+  shield: Activity,
   anchor: Anchor,
   users: Users,
   moon: Moon,
@@ -235,7 +235,7 @@ export default function ResourcesPage() {
       <div className="grid grid-cols-4 gap-4 mb-8">
         {[
           { label: lang === 'kn' ? t.stat_total_officers : 'Total Police Force', value: totalOfficers.toLocaleString(), sub: lang === 'kn' ? 'ಕರ್ನಾಟಕ' : 'Karnataka', color: '#0F6B5C', icon: Users },
-          { label: lang === 'kn' ? t.dashboard_active_patrol : 'Active Patrol Units', value: totalDeployed.toLocaleString(), sub: lang === 'kn' ? 'ನಿಯೋಜಿಸಲಾಗಿದೆ' : 'Deployed', color: '#10b981', icon: Shield },
+          { label: lang === 'kn' ? t.dashboard_active_patrol : 'Active Patrol Units', value: totalDeployed.toLocaleString(), sub: lang === 'kn' ? 'ನಿಯೋಜಿಸಲಾಗಿದೆ' : 'Deployed', color: '#10b981', icon: Activity },
           { label: lang === 'kn' ? t.crime_cybercrime : 'Cyber Crime Units', value: totalCyber.toLocaleString(), sub: lang === 'kn' ? 'ವಿಶೇಷ ಘಟಕಗಳು' : 'Specialized', color: '#8b5cf6', icon: Monitor },
           { label: lang === 'kn' ? 'ಬಾಕಿ ಇರುವ ಅನುಮೋದನೆಗಳು' : 'Pending Approvals', value: '3', sub: lang === 'kn' ? 'AI ಶಿಫಾರಸುಗಳು' : 'AI Recommendations', color: '#f59e0b', icon: Clock },
         ].map((metric, i) => (
@@ -265,7 +265,7 @@ export default function ResourcesPage() {
 
         <div className="grid grid-cols-2 gap-5">
           {RESOURCE_RECOMMENDATIONS.map((rec) => {
-            const IconComp = ICON_MAP[rec.icon] || Shield;
+            const IconComp = ICON_MAP[rec.icon] || Activity;
             const statusAction = actionStatus[rec.id];
             const priorityColor = PRIORITY_COLORS[rec.priority] || '#64748b';
             return (
@@ -571,7 +571,7 @@ export default function ResourcesPage() {
             <div style={{ marginBottom: 24 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                 <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Shield size={14} style={{ color: '#0F6B5C' }} /> Patrol Units Deployed
+                  <Users size={14} style={{ color: '#0F6B5C' }} /> Patrol Units Deployed
                 </label>
                 <span style={{ fontSize: 15, fontWeight: 700, color: '#0F6B5C', fontFamily: 'JetBrains Mono, monospace' }}>{patrolUnits}</span>
               </div>
@@ -631,7 +631,10 @@ export default function ResourcesPage() {
               className="btn-primary"
               style={{ width: '100%', padding: '12px', fontSize: 14, fontWeight: 700, border: 'none', borderRadius: 10, cursor: 'pointer' }}
             >
-              ⚡ Apply Simulation
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, justifyContent: 'center', width: '100%' }}>
+                <Zap size={14} />
+                Apply Simulation
+              </span>
             </button>
             {simApplied && (
               <div style={{ marginTop: 12, padding: '10px 14px', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 8, fontSize: 13, color: '#34d399', display: 'flex', alignItems: 'center', gap: 8 }}>

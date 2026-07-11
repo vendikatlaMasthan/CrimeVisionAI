@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, Map, Network, Brain, TrendingUp, FileText,
-  Shield, Bell, Clock, BarChart3, MessageSquare,
+  Bell, Clock, BarChart3, MessageSquare,
   AlertTriangle, Package, Eye, User, Users, Search,
   Settings, Database, ScrollText, LogOut
 } from 'lucide-react';
@@ -126,11 +126,11 @@ export default function Sidebar({ user, portalType, isOpen = true }: SidebarProp
         flexShrink: 0,
       }}>
         <div style={{
-          width: 36, height: 36, borderRadius: 10,
-          background: 'rgba(11, 31, 58, 0.06)',
+          width: 34, height: 34,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
+          flexShrink: 0,
         }}>
-          <Shield size={20} style={{ color: 'var(--primary-navy)' }} />
+          <img src="/crimevision_logo.png" alt="CrimeVision AI Logo" style={{ width: '34px', height: '34px', objectFit: 'contain' }} />
         </div>
         <div>
           <div className="logo-wordmark" style={{ fontSize: 15, color: 'var(--primary-navy)', letterSpacing: '-0.01em', lineHeight: 1 }}>

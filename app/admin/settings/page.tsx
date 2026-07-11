@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from 'react';
-import { Settings, Shield, Monitor, Brain, Bell, FileText, Check } from 'lucide-react';
+import { Settings, Lock, Monitor, Brain, Bell, FileText, Check } from 'lucide-react';
 
 export default function PlatformSettingsPage() {
   const [activeCategory, setActiveCategory] = useState<'dashboard' | 'ai' | 'alerts' | 'reports'>('dashboard');
@@ -84,7 +84,7 @@ export default function PlatformSettingsPage() {
           fontSize: 11, fontWeight: 700, color: '#A6192E',
           letterSpacing: '0.04em', textTransform: 'uppercase',
         }}>
-          <Shield size={14} />
+          <Lock size={14} />
           Admin Only
         </div>
       </div>

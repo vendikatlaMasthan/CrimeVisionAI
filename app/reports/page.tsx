@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState, useCallback } from 'react';
-import { FileText, Download, AlertCircle, Shield, Network, Monitor, Target, CheckCircle, Loader } from 'lucide-react';
+import { FileText, Download, AlertCircle, Network, Monitor, Target, CheckCircle, Loader } from 'lucide-react';
 import { useLanguage } from '@/components/LanguageToggle';
 import {
   DISTRICTS, CRIME_CATEGORIES, SUMMARY_METRICS,
@@ -441,7 +441,7 @@ export default function ReportsPage() {
       title: t.report_district_intel,
       titleKn: 'ಜಿಲ್ಲಾ ಗುಪ್ತಚರ ವರದಿ',
       description: 'Complete intelligence analysis for all 31 Karnataka districts including crime counts, risk scores, trend analysis, officer deployment, and top crime categories.',
-      icon: <Shield size={22} className="text-[var(--cyber-cyan)]" />,
+      icon: <Target size={22} className="text-[var(--cyber-cyan)]" />,
       color: 'var(--cyber-cyan)',
       pages: 4,
       category: 'INTELLIGENCE',
@@ -621,8 +621,8 @@ export default function ReportsPage() {
               }}>
                 <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 4 }}>PDF includes:</div>
                 <div style={{ fontSize: 11, color: 'var(--text-dim)', lineHeight: 1.6 }}>
-                  ✓ KSP RESTRICTED header · ✓ Generated timestamp<br />
-                  ✓ Data tables with all 31 districts · ✓ Official footer
+                  KSP RESTRICTED header · Generated timestamp<br />
+                  Data tables with all 31 districts · Official footer
                 </div>
               </div>
 

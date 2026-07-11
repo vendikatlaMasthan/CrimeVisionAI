@@ -5,7 +5,7 @@ import {
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, BarChart, Bar, LineChart, Line, Legend,
 } from 'recharts';
-import { BarChart3, TrendingUp, TrendingDown, Info, Shield, AlertTriangle } from 'lucide-react';
+import { BarChart3, TrendingUp, TrendingDown, Info, AlertTriangle, Award } from 'lucide-react';
 import { SOCIOECONOMIC_DATA, SOCIO_CORRELATIONS } from '@/lib/mockData';
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -280,7 +280,7 @@ export default function SocialRiskPage() {
               detail: 'Districts like Raichur (21.3%), Yadgir (22.1%), and Ballari (19.7%) with very high unemployment show correspondingly extreme crime rates. Every 1% increase in unemployment correlates with a 2.1-point rise in crime rate.',
             },
             {
-              icon: <Shield size={22} color="#10b981" />,
+              icon: <Award size={22} color="#10b981" />,
               title: 'Education as Shield',
               color: '#10b981',
               bg: 'rgba(16,185,129,0.06)',

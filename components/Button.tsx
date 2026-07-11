@@ -22,11 +22,11 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const variantStyles: Record<string, React.CSSProperties> = {
-    primary: { background: '#A6192E', color: '#FFFFFF', border: '1px solid #A6192E' },
-    secondary: { background: '#FFFFFF', color: '#374151', border: '1px solid #D1D5DB' },
-    danger: { background: '#DC2626', color: '#FFFFFF', border: '1px solid #DC2626' },
-    success: { background: '#16A34A', color: '#FFFFFF', border: '1px solid #16A34A' },
-    warning: { background: '#D97706', color: '#FFFFFF', border: '1px solid #D97706' },
+    primary: { background: 'var(--primary-navy)', color: 'var(--neutral-white)', border: '1px solid var(--primary-navy)' },
+    secondary: { background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-default)' },
+    danger: { background: 'var(--alert-red)', color: 'var(--neutral-white)', border: '1px solid var(--alert-red)' },
+    success: { background: 'var(--success-green)', color: 'var(--neutral-white)', border: '1px solid var(--success-green)' },
+    warning: { background: 'var(--warning-amber)', color: 'var(--neutral-white)', border: '1px solid var(--warning-amber)' },
   };
 
   const sizeStyles: Record<string, React.CSSProperties> = {
@@ -40,7 +40,7 @@ export default function Button({
     alignItems: 'center',
     justifyContent: 'center',
     gap: '8px',
-    borderRadius: '8px',
+    borderRadius: '6px',
     fontWeight: 600,
     cursor: disabled || loading ? 'not-allowed' : 'pointer',
     opacity: disabled || loading ? 0.6 : 1,
