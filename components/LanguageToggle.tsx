@@ -137,7 +137,7 @@ export default function LanguageToggle() {
       {/* English label */}
       <span
         style={{
-          fontSize: 11,
+          fontSize: '12px',
           fontWeight: lang === 'en' ? 800 : 500,
           color: lang === 'en' ? '#1E3A5F' : '#64748b',
           letterSpacing: '0.04em',
@@ -148,12 +148,12 @@ export default function LanguageToggle() {
       </span>
 
       {/* Divider */}
-      <span style={{ color: 'rgba(100,116,139,0.5)', fontSize: 10, fontWeight: 300 }}>|</span>
+      <span style={{ color: 'rgba(100,116,139,0.5)', fontSize: '12px', fontWeight: 300 }}>|</span>
 
       {/* Kannada label */}
       <span
         style={{
-          fontSize: 12,
+          fontSize: '12px',
           fontWeight: lang === 'kn' ? 800 : 500,
           color: lang === 'kn' ? '#1E3A5F' : '#64748b',
           transition: 'all 0.2s',

@@ -43,7 +43,7 @@ export default function SimulationBanner() {
           <div style={{ fontSize: '12px', fontWeight: 850, color: '#00D4FF', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
             {lang === 'en' ? 'FORECAST SIMULATION ACTIVE' : 'ಮುನ್ಸೂಚನೆ ಸಿಮ್ಯುಲೇಶನ್ ಸಕ್ರಿಯವಾಗಿದೆ'}
           </div>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
             {lang === 'en' 
               ? 'Tactical predictions calibrated under KSP Intel Directive #KA-2026' 
               : 'ಕೆಎಸ್‌ಪಿ ಇಂಟೆಲ್ ಡೈರೆಕ್ಟಿವ್ #KA-2026 ಅಡಿಯಲ್ಲಿ ಮಾಪನಾಂಕ ನಿರ್ಣಯಿಸಲಾದ ತಾಂತ್ರಿಕ ಮುನ್ಸೂಚನೆಗಳು'}
@@ -51,10 +51,10 @@ export default function SimulationBanner() {
         </div>
       </div>
       <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-        <span className="badge badge-cyan" style={{ fontSize: '9px', fontWeight: 800 }}>
+        <span className="badge badge-cyan" style={{ fontSize: '12px', fontWeight: 800 }}>
           {lang === 'en' ? 'MODEL V3.2' : 'ಮಾದರಿ V3.2'}
         </span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--text-dim)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-dim)' }}>
           <Clock size={12} />
           <span>{lang === 'en' ? 'Update: Real-time' : 'ನವೀಕರಣ: ನೈಜ-ಸಮಯ'}</span>
         </div>

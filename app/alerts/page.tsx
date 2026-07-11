@@ -110,8 +110,8 @@ const CircularProgress = ({ value, label, color }: { value: number, label: strin
         />
       </svg>
       <div>
-        <span style={{ fontSize: '13px', fontWeight: '800', color: '#1A1D23', display: 'block', lineHeight: 1 }}>{value}%</span>
-        <span style={{ fontSize: '9px', color: '#6B7280', display: 'block', marginTop: '1px', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.02em' }}>{label}</span>
+        <span style={{ fontSize: '14px', fontWeight: '800', color: '#1A1D23', display: 'block', lineHeight: 1 }}>{value}%</span>
+        <span style={{ fontSize: '12px', color: '#6B7280', display: 'block', marginTop: '1px', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.02em' }}>{label}</span>
       </div>
     </div>
   );
@@ -132,7 +132,7 @@ const LicensePlateChip = ({ plate }: { plate: string }) => {
         border: '1.5px solid #1A1D23',
         borderRadius: '8px',
         padding: '3px 8px',
-        fontSize: '11px',
+        fontSize: '12px',
         fontWeight: '800',
         fontFamily: 'monospace',
         letterSpacing: '0.08em',
@@ -145,7 +145,7 @@ const LicensePlateChip = ({ plate }: { plate: string }) => {
         style={{
           background: '#002B7F',
           color: '#FFFFFF',
-          fontSize: '7px',
+          fontSize: '12px',
           padding: '1px 3px',
           borderRadius: '4px 0 0 4px',
           marginRight: '6px',
@@ -183,7 +183,7 @@ const sectionLabel = (label: string, IconComponent: React.ComponentType<any>, ac
       >
         <IconComponent size={12} />
       </div>
-      <span style={{ fontSize: '11px', textTransform: 'uppercase', fontVariantCaps: 'all-small-caps', color: '#6B7280', letterSpacing: '0.05em', fontWeight: 700 }}>
+      <span style={{ fontSize: '12px', textTransform: 'uppercase', fontVariantCaps: 'all-small-caps', color: '#6B7280', letterSpacing: '0.05em', fontWeight: 700 }}>
         {label}
       </span>
     </div>
@@ -325,8 +325,8 @@ export default function AlertsPage() {
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
           <div className="status-dot-red" />
-          <span style={{ color: '#ef4444', fontSize: 12, fontWeight: 700, letterSpacing: '0.08em' }}>{t.alerts_live}</span>
-          <span style={{ color: '#64748b', fontSize: 11 }}>{t.alerts_updated} {lastUpdated}</span>
+          <span style={{ color: '#ef4444', fontSize: '12px', fontWeight: 700, letterSpacing: '0.08em' }}>{t.alerts_live}</span>
+          <span style={{ color: '#64748b', fontSize: '12px' }}>{t.alerts_updated} {lastUpdated}</span>
         </div>
       </div>
 
@@ -335,15 +335,20 @@ export default function AlertsPage() {
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{
             flexShrink: 0, background: 'rgba(239,68,68,0.9)', color: '#fff',
-            padding: '4px 12px', fontSize: 11, fontWeight: 800, letterSpacing: '0.1em',
-            marginRight: 12, borderRadius: '0 6px 6px 0',
+            padding: '6px 16px', fontSize: '12px', fontWeight: 800, letterSpacing: '0.1em',
+            marginRight: 24, borderRadius: '4px 6px 6px 4px',
           }}>
             {t.alerts_live_alerts}
           </div>
-          <div style={{ overflow: 'hidden', flex: 1 }}>
+          <div style={{
+            overflow: 'hidden',
+            flex: 1,
+            WebkitMaskImage: 'linear-gradient(to right, transparent, black 20px, black calc(100% - 20px), transparent)',
+            maskImage: 'linear-gradient(to right, transparent, black 20px, black calc(100% - 20px), transparent)',
+          }}>
             <div
               className="ticker-content animate-ticker"
-              style={{ fontSize: 12, color: '#fca5a5', fontWeight: 600, whiteSpace: 'nowrap' }}
+              style={{ fontSize: '12px', color: '#fca5a5', fontWeight: 600, whiteSpace: 'nowrap' }}
             >
               {TICKER_TEXT}
             </div>
@@ -354,28 +359,30 @@ export default function AlertsPage() {
       {/* ALERT STATS ROW */}
       <div className="responsive-grid-4" style={{ marginBottom: 22 }}>
         {[
-          { label: t.stat_critical_alerts, value: criticalCount, color: '#ef4444', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.25)', pulse: true, icon: AlertTriangle },
-          { label: t.stat_high_priority, value: highCount, color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)', pulse: false, icon: AlertCircle },
-          { label: t.stat_under_response, value: underResponse, color: '#0F6B5C', bg: 'rgba(30, 58, 95,0.06)', border: 'rgba(30, 58, 95,0.2)', pulse: false, icon: Activity },
-          { label: t.stat_resolved_today, value: 47, color: '#10b981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.2)', pulse: false, icon: CheckCircle },
+          { label: t.stat_critical_alerts, value: criticalCount, color: '#ef4444', bg: 'rgba(239,68,68,0.04)', border: 'rgba(239,68,68,0.12)', pulse: true, icon: AlertTriangle },
+          { label: t.stat_high_priority, value: highCount, color: '#f59e0b', bg: 'rgba(245,158,11,0.04)', border: 'rgba(245,158,11,0.12)', pulse: false, icon: AlertCircle },
+          { label: t.stat_under_response, value: underResponse, color: '#0F6B5C', bg: 'rgba(30, 58, 95,0.03)', border: 'rgba(30, 58, 95,0.1)', pulse: false, icon: Activity },
+          { label: t.stat_resolved_today, value: 47, color: '#10b981', bg: 'rgba(16,185,129,0.04)', border: 'rgba(16,185,129,0.1)', pulse: false, icon: CheckCircle },
         ].map((s) => {
           const Icon = s.icon;
           return (
             <div key={s.label} className="glass-card" style={{
-              padding: '18px 20px', background: s.bg, border: `1px solid ${s.border}`,
-              display: 'flex', alignItems: 'center', gap: 14,
+              padding: '24px 28px', background: s.bg, border: `1px solid ${s.border}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14,
+              height: '110px', boxSizing: 'border-box',
             }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
+                <span className="metric-label" style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{s.label}</span>
+                <span className="metric-value" style={{ color: s.color, fontSize: '24px', fontWeight: 800, fontFamily: 'monospace', lineHeight: 1 }}>{s.value}</span>
+              </div>
               <div style={{
-                width: 44, height: 44, borderRadius: 10, flexShrink: 0,
-                background: `${s.color}1a`, border: `1px solid ${s.color}40`,
+                width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
+                background: '#FFFFFF', border: `1px solid ${s.border}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
                 ...(s.pulse ? { animation: 'pulse-red 2s ease-in-out infinite' } : {}),
               }}>
                 <Icon size={20} color={s.color} />
-              </div>
-              <div>
-                <div className="metric-value" style={{ color: s.color, fontSize: '1.9rem' }}>{s.value}</div>
-                <div className="metric-label" style={{ fontSize: 11 }}>{s.label}</div>
               </div>
             </div>
           );
@@ -387,7 +394,7 @@ export default function AlertsPage() {
         {/* SEVERITY FILTER */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
           <Filter size={13} color="#64748b" />
-          <span style={{ fontSize: 11, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginRight: 4 }}>
+          <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginRight: 4 }}>
             {t.filter_severity}:
           </span>
           {(['all', 'critical', 'high', 'medium', 'low'] as Severity[]).map((sev) => (
@@ -395,7 +402,7 @@ export default function AlertsPage() {
               key={sev}
               onClick={() => setSelectedSeverity(sev)}
               style={{
-                padding: '5px 14px', borderRadius: 20, fontSize: 11, fontWeight: 700,
+                padding: '5px 14px', borderRadius: 20, fontSize: '12px', fontWeight: 700,
                 cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.06em',
                 border: `1px solid ${selectedSeverity === sev
                   ? sev === 'all' ? 'rgba(30, 58, 95,0.5)' : sev === 'critical' ? 'rgba(239,68,68,0.6)' : sev === 'high' ? 'rgba(245,158,11,0.6)' : sev === 'medium' ? 'rgba(234,179,8,0.5)' : 'rgba(30, 58, 95,0.4)'
@@ -414,7 +421,7 @@ export default function AlertsPage() {
         </div>
         {/* CATEGORY FILTER */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 11, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginRight: 4 }}>
+          <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginRight: 4 }}>
             {t.filter_category}:
           </span>
           {(['all', 'Cybercrime', 'Financial Crime', 'Gang Activity', 'Drug Related', 'Fraud'] as Category[]).map((cat) => (
@@ -422,7 +429,7 @@ export default function AlertsPage() {
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               style={{
-                padding: '5px 12px', borderRadius: 20, fontSize: 11, fontWeight: 600,
+                padding: '5px 12px', borderRadius: 20, fontSize: '12px', fontWeight: 600,
                 cursor: 'pointer', transition: 'all 0.2s',
                 border: `1px solid ${selectedCategory === cat ? 'rgba(30, 58, 95,0.4)' : 'rgba(255,255,255,0.08)'}`,
                 background: selectedCategory === cat ? 'rgba(30, 58, 95,0.1)' : 'rgba(255,255,255,0.03)',
@@ -452,7 +459,7 @@ export default function AlertsPage() {
             {filteredAlerts.length === 0 && (
               <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>
                 <CheckCircle size={32} style={{ margin: '0 auto 12px', opacity: 0.4 }} />
-                <div style={{ fontSize: 14 }}>{t.alerts_no_alerts}</div>
+                <div style={{ fontSize: '14px' }}>{t.alerts_no_alerts}</div>
               </div>
             )}
             {filteredAlerts.map((alert) => {
@@ -485,15 +492,15 @@ export default function AlertsPage() {
                   style={{
                     borderLeftColor: borderColor,
                     background: isCritical ? '#FEF2F2' : '#FFFFFF',
-                    border: `1px solid ${isCritical ? 'rgba(239,68,68,0.3)' : 'rgba(30, 58, 95,0.1)'}`,
+                    border: `1px solid ${isCritical ? 'rgba(239,68,68,0.3)' : 'rgba(30, 58, 95,0.06)'}`,
                     borderLeftWidth: 3,
                     borderLeftStyle: 'solid',
                     borderRadius: '0 12px 12px 0',
-                    padding: '16px 18px',
+                    padding: '20px 22px',
                   }}
                 >
                   {/* TOP ROW */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
                     <span className={SEVERITY_BADGE[severityVal]} style={
                       severityVal === 'medium'
                         ? { background: 'rgba(234,179,8,0.15)', color: '#facc15', border: '1px solid rgba(234,179,8,0.35)' }
@@ -501,85 +508,85 @@ export default function AlertsPage() {
                     }>
                       {severityLabel.toUpperCase()}
                     </span>
-                    <span className={CATEGORY_BADGE[alert.category] || 'badge badge-gray'} style={{ fontSize: 10 }}>
+                    <span className={CATEGORY_BADGE[alert.category] || 'badge badge-gray'} style={{ fontSize: '12px' }}>
                       {getCategoryLabel(alert.category as Category)}
                     </span>
-                    <span style={{ marginLeft: 'auto', fontSize: 11, color: '#64748b', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ marginLeft: 'auto', fontSize: '12px', color: '#64748b', display: 'flex', alignItems: 'center', gap: 4 }}>
                       <Clock size={11} /> {alert.timestamp}
                     </span>
-                    <span style={{ fontSize: 11, color: '#64748b', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ fontSize: '12px', color: '#64748b', display: 'flex', alignItems: 'center', gap: 4 }}>
                       <MapPin size={11} /> {alert.district}
                     </span>
                     {isAcked && (
-                      <span className="badge badge-green" style={{ fontSize: 10 }}>
+                      <span className="badge badge-green" style={{ fontSize: '12px' }}>
                         <CheckCircle size={10} style={{ marginRight: 3 }} /> ACK
                       </span>
                     )}
                     {assignedOfficers[alert.id] && (
-                      <span className="badge badge-cyan" style={{ fontSize: 10 }}>
+                      <span className="badge badge-cyan" style={{ fontSize: '12px' }}>
                         <UserCheck size={10} style={{ marginRight: 3 }} /> {assignedOfficers[alert.id]}
                       </span>
                     )}
                   </div>
 
                   {/* TITLE */}
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1D23', marginBottom: 6, lineHeight: 1.4 }} className="flex justify-between items-center">
+                  <div style={{ fontSize: '16px', fontWeight: 800, color: '#0F172A', marginBottom: 10, lineHeight: 1.4 }} className="flex justify-between items-center">
                     <span>{title}</span>
                     <ArrowUpRight size={14} className="text-slate-400 hover:text-slate-700" />
                   </div>
 
                   {/* DESCRIPTION */}
-                  <p style={{ fontSize: 12, color: '#475569', lineHeight: 1.55, marginBottom: 8 }}>
+                  <p style={{ fontSize: '14px', color: '#475569', lineHeight: 1.55, marginBottom: 12 }}>
                     {description}
                   </p>
 
                   {/* EVIDENCE */}
                   <div style={{
                     display: 'flex', gap: 8, alignItems: 'center',
-                    fontSize: 11, color: '#374151',
+                    fontSize: '12px', color: '#374151',
                     border: '1px solid #E2E8F0',
-                    background: '#F8FAFC', borderRadius: 6, padding: '6px 10px',
-                    marginBottom: 12,
+                    background: '#F8FAFC', borderRadius: 6, padding: '8px 12px',
+                    marginBottom: 16,
                   }}>
                     <Eye size={11} color="#64748b" />
-                    <span style={{ fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: 10 }}>
+                    <span style={{ fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: '12px' }}>
                       {t.evidence_label}
                     </span>
                     <span>{evidence}</span>
                   </div>
 
                   {/* ACTION BUTTONS */}
-                  <div style={{ display: 'flex', gap: 8 }}>
+                  <div style={{ display: 'flex', gap: '10px' }}>
                     <button
                       className="cyber-btn cyber-btn-red"
-                      style={{ fontSize: 11, padding: '7px 14px' }}
+                      style={{ flex: '1 1 0%', fontSize: '12px', padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
                       onClick={(e) => handleDispatch(alert.id, e)}
                       disabled={isDispatched}
                     >
-                      <Send size={11} /> {isDispatched ? (lang === 'kn' ? 'ನಿಯೋಜಿಸಲಾಗಿದೆ' : 'Dispatched') : t.btn_dispatch}
+                      <Send size={11} /> <span>{isDispatched ? (lang === 'kn' ? 'ನಿಯೋಜಿಸಲಾಗಿದೆ' : 'Dispatched') : t.btn_dispatch}</span>
                     </button>
                     <button
                       className="cyber-btn cyber-btn-amber"
-                      style={{ fontSize: 11, padding: '7px 14px' }}
+                      style={{ flex: '1 1 0%', fontSize: '12px', padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
                       onClick={(e) => handleAcknowledge(alert.id, e)}
                       disabled={isAcked}
                     >
-                      <CheckCircle size={11} /> {isAcked ? (lang === 'kn' ? 'ಸ್ವೀಕರಿಸಲಾಗಿದೆ' : 'Acknowledged') : t.btn_acknowledge}
+                      <CheckCircle size={11} /> <span>{isAcked ? (lang === 'kn' ? 'ಸ್ವೀಕರಿಸಲಾಗಿದೆ' : 'Acknowledged') : t.btn_acknowledge}</span>
                     </button>
                     <button
                       className="cyber-btn cyber-btn-purple"
-                      style={{ fontSize: 11, padding: '7px 14px' }}
+                      style={{ flex: '1 1 0%', fontSize: '12px', padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
                       onClick={(e) => handleEscalate(alert.id, e)}
                       disabled={isEscalated}
                     >
-                      <ChevronRight size={11} /> {isEscalated ? (lang === 'kn' ? 'ತೀವ್ರಗೊಳಿಸಲಾಗಿದೆ' : 'Escalated') : t.btn_escalate}
+                      <ChevronRight size={11} /> <span>{isEscalated ? (lang === 'kn' ? 'ತೀವ್ರಗೊಳಿಸಲಾಗಿದೆ' : 'Escalated') : t.btn_escalate}</span>
                     </button>
                     <button
                       className="cyber-btn"
-                      style={{ fontSize: 11, padding: '7px 14px', border: '1px solid #E2E8F0', background: '#F8FAFC', color: '#475569' }}
+                      style={{ flex: '1 1 0%', fontSize: '12px', padding: '8px 12px', border: '1px solid #E2E8F0', background: '#F8FAFC', color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
                       onClick={(e) => handleCloseAlert(alert.id, e)}
                     >
-                      <Trash2 size={11} /> {t.btn_resolve}
+                      <Trash2 size={11} /> <span>{t.btn_resolve}</span>
                     </button>
                   </div>
                 </div>
@@ -589,14 +596,14 @@ export default function AlertsPage() {
         </div>
 
         {/* RIGHT: COMMAND PANEL */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {/* ACTIVE DEPLOYMENTS */}
-          <div className="glass-card" style={{ padding: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+          <div className="glass-card" style={{ padding: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
               <Users size={14} color="#0F6B5C" />
-              <span className="section-title" style={{ fontSize: 13 }}>{t.right_active_deployments}</span>
+              <span className="section-title" style={{ fontSize: '14px' }}>{t.right_active_deployments}</span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {RESPONSE_TEAMS.map((team) => {
                 const teamNameKey = `team_${team.name.replace(/ /g, '_')}` as keyof typeof t;
                 const teamName = t[teamNameKey] || team.name;
@@ -606,25 +613,27 @@ export default function AlertsPage() {
 
                 return (
                   <div key={team.name} style={{
-                    padding: '10px 12px', borderRadius: 8,
+                    padding: '14px 16px', borderRadius: 8,
                     background: '#F8FAFC', border: '1px solid #E2E8F0',
+                    height: '84px', boxSizing: 'border-box',
+                    display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
                   }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: '#1E3A5F' }}>{teamName}</div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                      <div style={{ fontSize: '12px', fontWeight: 700, color: '#1E3A5F' }}>{teamName}</div>
                       <span style={{
-                        fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 12,
+                        fontSize: '12px', fontWeight: 700, padding: '2px 8px', borderRadius: 12,
                         background: `${team.statusColor}20`, color: team.statusColor,
                         border: `1px solid ${team.statusColor}40`,
                       }}>
                         {teamStatus}
                       </span>
                     </div>
-                    <div style={{ fontSize: 11, color: '#64748b', display: 'flex', gap: 10 }}>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                        <MapPin size={10} /> {team.district}
+                    <div style={{ fontSize: '12px', color: '#64748b', display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <MapPin size={11} /> {team.district}
                       </span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                        <Users size={10} /> {team.members} {t.right_officers}
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <Users size={11} /> {team.members} {t.right_officers}
                       </span>
                     </div>
                   </div>
@@ -634,12 +643,12 @@ export default function AlertsPage() {
           </div>
 
           {/* QUICK ACTIONS */}
-          <div className="glass-card" style={{ padding: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+          <div className="glass-card" style={{ padding: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
               <Zap size={14} color="#f59e0b" />
-              <span className="section-title" style={{ fontSize: 13 }}>{t.qa_title}</span>
+              <span className="section-title" style={{ fontSize: '14px' }}>{t.qa_title}</span>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               {QUICK_ACTIONS.map((action) => {
                 const Icon = action.icon;
                 const qaKey = `qa_${action.label.toLowerCase().replace(/ /g, '_')}` as keyof typeof t;
@@ -648,14 +657,15 @@ export default function AlertsPage() {
                   <button
                     key={action.label}
                     style={{
-                      padding: '10px 12px', borderRadius: 8, cursor: 'pointer',
+                      padding: '12px 14px', borderRadius: 8, cursor: 'pointer',
                       background: action.bg, border: `1px solid ${action.border}`,
-                      color: action.color, fontSize: 11, fontWeight: 700,
-                      display: 'flex', alignItems: 'center', gap: 6,
+                      color: action.color, fontSize: '12px', fontWeight: 700,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                      height: '42px', boxSizing: 'border-box',
                       transition: 'all 0.2s ease',
                     }}
                   >
-                    <Icon size={13} /> {qaLabel}
+                    <Icon size={13} /> <span>{qaLabel}</span>
                   </button>
                 );
               })}
@@ -666,7 +676,7 @@ export default function AlertsPage() {
           <div className="glass-card" style={{ padding: 20 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
               <Activity size={14} color="#8b5cf6" />
-              <span className="section-title" style={{ fontSize: 13 }}>{t.alerts_by_category}</span>
+              <span className="section-title" style={{ fontSize: '14px' }}>{t.alerts_by_category}</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {categoryStats.map((cat) => {
@@ -675,8 +685,8 @@ export default function AlertsPage() {
                 return (
                   <div key={cat.name}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                      <span style={{ fontSize: 12, color: '#475569', fontWeight: 600 }}>{getCategoryLabel(cat.name as Category)}</span>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: cat.color }}>{cat.count}</span>
+                      <span style={{ fontSize: '12px', color: '#475569', fontWeight: 600 }}>{getCategoryLabel(cat.name as Category)}</span>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: cat.color }}>{cat.count}</span>
                     </div>
                     <div style={{ height: 5, background: 'rgba(0,0,0,0.05)', borderRadius: 3, overflow: 'hidden' }}>
                       <div style={{
@@ -698,7 +708,7 @@ export default function AlertsPage() {
             borderRadius: 10, background: 'rgba(30, 58, 95,0.04)', border: '1px solid rgba(30, 58, 95,0.1)',
           }}>
             <RefreshCw size={12} color="#0F6B5C" style={{ animation: 'spin-slow 4s linear infinite' }} />
-            <span style={{ fontSize: 12, color: '#475569' }}>
+            <span style={{ fontSize: '12px', color: '#475569' }}>
               {t.live_feed_sync} <span style={{ color: '#0F6B5C', fontWeight: 700 }}>{lastUpdated}</span>
             </span>
           </div>
@@ -744,11 +754,11 @@ export default function AlertsPage() {
               </div>
 
               <div>
-                <h2 style={{ fontSize: '15px', fontWeight: 800, color: '#1A1D23', marginBottom: '6px', lineHeight: 1.3 }}>
+                <h2 style={{ fontSize: '14px', fontWeight: 800, color: '#1A1D23', marginBottom: '6px', lineHeight: 1.3 }}>
                   {t[`alert_${selectedAlert.id}_title` as keyof typeof t] || selectedAlert.title}
                 </h2>
                 <div className="flex items-center gap-2">
-                  <span className={`${SEVERITY_BADGE[getAlertSeverity(selectedAlert.id, selectedAlert.severity)]} inline-block uppercase font-bold`} style={{ borderRadius: '8px', fontSize: '10px', padding: '2px 8px' }}>
+                  <span className={`${SEVERITY_BADGE[getAlertSeverity(selectedAlert.id, selectedAlert.severity)]} inline-block uppercase font-bold`} style={{ borderRadius: '8px', fontSize: '12px', padding: '2px 8px' }}>
                     {(getAlertSeverity(selectedAlert.id, selectedAlert.severity) === 'critical' ? t.badge_critical
                       : getAlertSeverity(selectedAlert.id, selectedAlert.severity) === 'high' ? t.badge_high
                       : getAlertSeverity(selectedAlert.id, selectedAlert.severity) === 'medium' ? t.badge_medium
@@ -768,10 +778,10 @@ export default function AlertsPage() {
               {/* STATUS SUMMARY WITH GAUGE */}
               <div className="grid grid-cols-2 gap-4 pb-4 border-b border-[#E2E8F0] items-center">
                 <div>
-                  <span style={{ fontSize: '11px', textTransform: 'uppercase', fontVariantCaps: 'all-small-caps', color: '#6B7280', letterSpacing: '0.05em', fontWeight: 700, display: 'block', marginBottom: '2px' }}>
+                  <span style={{ fontSize: '12px', textTransform: 'uppercase', fontVariantCaps: 'all-small-caps', color: '#6B7280', letterSpacing: '0.05em', fontWeight: 700, display: 'block', marginBottom: '2px' }}>
                     {t.detail_incident_category}
                   </span>
-                  <span className={`${CATEGORY_BADGE[selectedAlert.category] || 'badge'} inline-block uppercase font-bold`} style={{ borderRadius: '8px', fontSize: '10px', padding: '2px 8px' }}>
+                  <span className={`${CATEGORY_BADGE[selectedAlert.category] || 'badge'} inline-block uppercase font-bold`} style={{ borderRadius: '8px', fontSize: '12px', padding: '2px 8px' }}>
                     {getCategoryLabel(selectedAlert.category as Category)}
                   </span>
                 </div>
@@ -791,7 +801,7 @@ export default function AlertsPage() {
               {/* DETAILS DESCRIPTION & PLATE */}
               <div className="pb-4 border-b border-[#E2E8F0]">
                 {sectionLabel(t.detail_alert_description, AlertCircle, "#1E3A5F")}
-                <p className="text-[#1A1D23] leading-relaxed" style={{ fontSize: '13px' }}>
+                <p className="text-[#1A1D23] leading-relaxed" style={{ fontSize: '14px' }}>
                   {t[`alert_${selectedAlert.id}_desc` as keyof typeof t] || selectedAlert.description}
                 </p>
                 {(() => {
@@ -824,7 +834,7 @@ export default function AlertsPage() {
                         height: '42px'
                       }}
                     >
-                      <span className="font-bold text-[#1A1D23]" style={{ fontSize: '13px' }}>{name}</span>
+                      <span className="font-bold text-[#1A1D23]" style={{ fontSize: '14px' }}>{name}</span>
                       <Link 
                         href={`/search?query=${name}`}
                         onClick={() => setSelectedAlertId(null)}
@@ -854,7 +864,7 @@ export default function AlertsPage() {
                         }}
                       >
                         <div>
-                          <span className="font-mono font-bold text-[#1A1D23]" style={{ fontSize: '13px' }}>{fir.firNumber}</span>
+                          <span className="font-mono font-bold text-[#1A1D23]" style={{ fontSize: '14px' }}>{fir.firNumber}</span>
                           <span className="text-[10px] text-slate-500 block" style={{ marginTop: '1px' }}>
                             {getCategoryLabel(fir.crimeCategory as Category)}
                           </span>
@@ -888,7 +898,7 @@ export default function AlertsPage() {
                       border: '1px solid #D1D5DB',
                       borderRadius: '8px',
                       color: '#1A1D23',
-                      fontSize: '13px',
+                      fontSize: '14px',
                       fontWeight: 'bold',
                       padding: '8px 12px',
                       fontFamily: 'inherit',
@@ -916,7 +926,7 @@ export default function AlertsPage() {
                       <CheckCircle size={10} color="#fff" />
                     </span>
                     <div>
-                      <span className="font-bold text-[#1A1D23]" style={{ fontSize: '13px' }}>{t.detail_step_triggered_title}</span>
+                      <span className="font-bold text-[#1A1D23]" style={{ fontSize: '14px' }}>{t.detail_step_triggered_title}</span>
                       <p className="text-[11px] text-slate-500">{t.detail_step_triggered_desc}</p>
                     </div>
                   </div>
@@ -938,7 +948,7 @@ export default function AlertsPage() {
                       </span>
                     )}
                     <div className={acknowledged.has(selectedAlert.id) ? '' : 'font-medium'}>
-                      <span className="font-bold text-[#1A1D23]" style={{ fontSize: '13px' }}>{t.detail_step_acknowledge_title}</span>
+                      <span className="font-bold text-[#1A1D23]" style={{ fontSize: '14px' }}>{t.detail_step_acknowledge_title}</span>
                       <p className="text-[11px] text-slate-500">
                         {acknowledged.has(selectedAlert.id) ? t.detail_step_acknowledge_acked : t.detail_step_acknowledge_pending}
                       </p>
@@ -966,7 +976,7 @@ export default function AlertsPage() {
                       />
                     )}
                     <div className={dispatched.has(selectedAlert.id) ? '' : 'opacity-60'}>
-                      <span className="font-bold text-[#1A1D23]" style={{ fontSize: '13px' }}>{t.detail_step_dispatched_title}</span>
+                      <span className="font-bold text-[#1A1D23]" style={{ fontSize: '14px' }}>{t.detail_step_dispatched_title}</span>
                       <p className="text-[11px] text-slate-500">
                         {dispatched.has(selectedAlert.id) ? t.detail_step_dispatched_done : t.detail_step_dispatched_pending}
                       </p>

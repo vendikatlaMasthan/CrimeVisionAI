@@ -137,9 +137,9 @@ function FIRCard({ fir, onClick, isSelected }: { fir: FIRRecord; onClick: () => 
       style={cardStyle}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, alignItems: 'center' }}>
-        <span style={{ fontSize: 12, fontFamily: 'monospace', fontWeight: 700, color: 'var(--color-navy)' }}>{fir.firNumber}</span>
+        <span style={{ fontSize: '12px', fontFamily: 'monospace', fontWeight: 700, color: 'var(--color-navy)' }}>{fir.firNumber}</span>
         <span style={{
-          fontSize: 9,
+          fontSize: '12px',
           fontWeight: 800,
           padding: '4px 10px',
           borderRadius: '9999px',
@@ -155,11 +155,11 @@ function FIRCard({ fir, onClick, isSelected }: { fir: FIRRecord; onClick: () => 
           {fir.priority}
         </span>
       </div>
-      <div style={{ fontSize: 13, fontWeight: 700, color: '#1F2937', marginBottom: 8 }}>{fir.crimeType}</div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#475569', alignItems: 'center' }}>
+      <div style={{ fontSize: '14px', fontWeight: 700, color: '#1F2937', marginBottom: 8 }}>{fir.crimeType}</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#475569', alignItems: 'center' }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={11} className="text-gray-400" />{fir.district}</span>
         <span style={{
-          fontSize: 9,
+          fontSize: '12px',
           fontWeight: 800,
           padding: '4px 10px',
           borderRadius: '9999px',
@@ -314,15 +314,15 @@ function FIRDetailPanel({ fir }: { fir: FIRRecord }) {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
           <div>
-            <div style={{ fontSize: 11, color: '#475569', marginBottom: 4 }}>FIR NUMBER</div>
-            <div style={{ fontSize: 22, fontFamily: 'monospace', fontWeight: 900, color: '#0F6B5C' }}>{fir.firNumber}</div>
+            <div style={{ fontSize: '12px', color: '#475569', marginBottom: 4 }}>FIR NUMBER</div>
+            <div style={{ fontSize: '20px', fontFamily: 'monospace', fontWeight: 900, color: '#0F6B5C' }}>{fir.firNumber}</div>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
-            <div style={{ padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 800,
+            <div style={{ padding: '4px 12px', borderRadius: 6, fontSize: '12px', fontWeight: 800,
               background: pc.bg, color: pc.text, border: `1px solid ${pc.border}`, textTransform: 'uppercase' }}>
               {fir.priority}
             </div>
-            <div style={{ padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+            <div style={{ padding: '4px 12px', borderRadius: 6, fontSize: '12px', fontWeight: 700,
               background: '#FFFFFF', color: statusColors[fir.status] ?? '#475569',
               border: '1px solid #E5E7EB' }}>
               {fir.status}
@@ -330,8 +330,8 @@ function FIRDetailPanel({ fir }: { fir: FIRRecord }) {
           </div>
         </div>
 
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#1F2937', marginBottom: 8 }}>{fir.crimeType}</div>
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 12, color: '#475569' }}>
+        <div style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', marginBottom: 8 }}>{fir.crimeType}</div>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: '12px', color: '#475569' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={12} />{fir.district}</span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} />{fir.date}</span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><User size={12} />{fir.assignedOfficer}</span>
@@ -350,8 +350,8 @@ function FIRDetailPanel({ fir }: { fir: FIRRecord }) {
             padding: 12, borderRadius: 10, background: '#FFFFFF',
             border: '1px solid #E5E7EB',
           }}>
-            <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>{item.label}</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: item.color }}>{item.value}</div>
+            <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>{item.label}</div>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: item.color }}>{item.value}</div>
           </div>
         ))}
       </div>
@@ -364,7 +364,7 @@ function FIRDetailPanel({ fir }: { fir: FIRRecord }) {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
             <User size={14} color="#ef4444" />
-            <span style={{ fontSize: 11, fontWeight: 800, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <span style={{ fontSize: '12px', fontWeight: 800, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Linked Suspect
             </span>
           </div>
@@ -378,8 +378,8 @@ function FIRDetailPanel({ fir }: { fir: FIRRecord }) {
               { k: 'Status', v: suspect.status },
             ].map(({ k, v }) => (
               <div key={k}>
-                <div style={{ fontSize: 9, color: '#475569', marginBottom: 2 }}>{k}</div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: k === 'Status' ? (statusColors[v] ?? '#475569') : '#1F2937' }}>{v}</div>
+                <div style={{ fontSize: '12px', color: '#475569', marginBottom: 2 }}>{k}</div>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: k === 'Status' ? (statusColors[v] ?? '#475569') : '#1F2937' }}>{v}</div>
               </div>
             ))}
           </div>
@@ -388,10 +388,10 @@ function FIRDetailPanel({ fir }: { fir: FIRRecord }) {
 
       {/* Evidence Panel */}
       <div style={{ padding: 16, borderRadius: 12, background: '#F9FAFB', border: '1px solid #E5E7EB' }}>
-        <div style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ fontSize: '12px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
           <Eye size={11} /> Forensics &amp; Evidence Log
         </div>
-        <div style={{ fontSize: 13, color: '#0F6B5C', fontWeight: 600, background: '#FFFFFF', padding: '10px 12px', borderRadius: 8, border: '1px solid #E5E7EB' }}>
+        <div style={{ fontSize: '14px', color: '#0F6B5C', fontWeight: 600, background: '#FFFFFF', padding: '10px 12px', borderRadius: 8, border: '1px solid #E5E7EB' }}>
           {fir.id === '1' ? 'CCTV footage of transaction counters, IP Log from routing node' :
            fir.id === '2' ? '8.2kg methamphetamine seized in vehicle trunk, suspect phone SIM trace' :
            fir.id === '3' ? 'Truck vehicle registry logs, river sand deposits geolocation trace' :
@@ -402,10 +402,10 @@ function FIRDetailPanel({ fir }: { fir: FIRRecord }) {
 
       {/* Description */}
       <div style={{ padding: 16, borderRadius: 12, background: '#F9FAFB', border: '1px solid #E5E7EB' }}>
-        <div style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ fontSize: '12px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
           <Activity size={11} /> Case Description
         </div>
-        <p style={{ fontSize: 13, color: '#1F2937', lineHeight: 1.7, margin: 0 }}>{fir.description}</p>
+        <p style={{ fontSize: '14px', color: '#1F2937', lineHeight: 1.7, margin: 0 }}>{fir.description}</p>
       </div>
 
       {/* AI Case Summary */}
@@ -413,7 +413,7 @@ function FIRDetailPanel({ fir }: { fir: FIRRecord }) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: aiSummary ? 12 : 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <Brain size={14} color="#7C3AED" />
-            <span style={{ fontSize: 11, fontWeight: 800, color: '#7C3AED', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <span style={{ fontSize: '12px', fontWeight: 800, color: '#7C3AED', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               AI Case Summary
             </span>
           </div>
@@ -422,7 +422,7 @@ function FIRDetailPanel({ fir }: { fir: FIRRecord }) {
               <button onClick={() => { navigator.clipboard.writeText(aiSummary); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
                 style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 6,
                   border: '1px solid #D1D5DB', background: '#FFFFFF', color: copied ? '#2E8B57' : '#475569',
-                  fontSize: 11, cursor: 'pointer', fontFamily: 'inherit' }}>
+                  fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit' }}>
                 {copied ? <Check size={10} /> : <Copy size={10} />}
                 {copied ? 'Copied' : 'Copy'}
               </button>
@@ -434,7 +434,7 @@ function FIRDetailPanel({ fir }: { fir: FIRRecord }) {
                 display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 8,
                 background: isGenerating ? 'transparent' : '#7C3AED',
                 border: '1px solid #7C3AED', color: isGenerating ? '#64748b' : '#FFFFFF',
-                fontSize: 11, fontWeight: 700, cursor: isGenerating ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+                fontSize: '12px', fontWeight: 700, cursor: isGenerating ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
               }}
             >
               {isGenerating ? <><Loader size={12} style={{ animation: 'spin 0.8s linear infinite' }} /> Analyzing...</> : <><Zap size={12} /> Generate AI Summary</>}
@@ -443,13 +443,13 @@ function FIRDetailPanel({ fir }: { fir: FIRRecord }) {
         </div>
 
         {aiSummary && (
-          <div style={{ fontSize: 12, color: '#1F2937', lineHeight: 1.75, whiteSpace: 'pre-wrap', marginTop: 10 }}>
+          <div style={{ fontSize: '12px', color: '#1F2937', lineHeight: 1.75, whiteSpace: 'pre-wrap', marginTop: 10 }}>
             {aiSummary}
           </div>
         )}
 
         {!aiSummary && !isGenerating && (
-          <div style={{ fontSize: 12, color: '#475569', marginTop: 8 }}>
+          <div style={{ fontSize: '12px', color: '#475569', marginTop: 8 }}>
             Click "Generate AI Summary" to get an instant intelligence assessment powered by AI.
           </div>
         )}
@@ -464,7 +464,7 @@ function FIRDetailPanel({ fir }: { fir: FIRRecord }) {
             flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             padding: '10px', borderRadius: 10, border: '1px solid #1E3A5F',
             background: '#1E3A5F', color: '#FFFFFF',
-            fontSize: 12, fontWeight: 700, cursor: isDownloading ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+            fontSize: '12px', fontWeight: 700, cursor: isDownloading ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
           }}
         >
           {isDownloading ? <><Loader size={14} style={{ animation: 'spin 0.8s linear infinite' }} /> Generating PDF...</> : <><Download size={14} /> Download FIR PDF</>}
@@ -557,10 +557,10 @@ function FIRPageContent() {
 
           {/* Priority filter */}
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 11, color: '#475569', alignSelf: 'center', fontWeight: 700, textTransform: 'uppercase', marginRight: 4 }}>Priority:</span>
+            <span style={{ fontSize: '12px', color: '#475569', alignSelf: 'center', fontWeight: 700, textTransform: 'uppercase', marginRight: 4 }}>Priority:</span>
             {['All', 'Critical', 'High', 'Medium', 'Low'].map(p => (
               <button key={p} onClick={() => setFilterPriority(p)}
-                style={{ padding: '6px 14px', borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                style={{ padding: '6px 14px', borderRadius: 8, fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                   border: `1px solid ${filterPriority === p ? '#0F6B5C' : '#E5E7EB'}`,
                   background: filterPriority === p ? 'rgba(15, 107, 92, 0.08)' : '#FFFFFF',
                   color: filterPriority === p ? '#0F6B5C' : '#475569', transition: 'all 0.15s' }}>
@@ -571,10 +571,10 @@ function FIRPageContent() {
 
           {/* Status filter */}
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginLeft: 'auto' }}>
-            <span style={{ fontSize: 11, color: '#475569', alignSelf: 'center', fontWeight: 700, textTransform: 'uppercase', marginRight: 4 }}>Status:</span>
+            <span style={{ fontSize: '12px', color: '#475569', alignSelf: 'center', fontWeight: 700, textTransform: 'uppercase', marginRight: 4 }}>Status:</span>
             {['All', 'Under Investigation', 'Arrested', 'Closed'].map(s => (
               <button key={s} onClick={() => setFilterStatus(s)}
-                style={{ padding: '6px 14px', borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                style={{ padding: '6px 14px', borderRadius: 8, fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                   border: `1px solid ${filterStatus === s ? '#0F6B5C' : '#E5E7EB'}`,
                   background: filterStatus === s ? 'rgba(15, 107, 92, 0.08)' : '#FFFFFF',
                   color: filterStatus === s ? '#0F6B5C' : '#475569', transition: 'all 0.15s' }}>
@@ -595,7 +595,7 @@ function FIRPageContent() {
       {filteredFIRs.length === 0 && (
         <div style={{ textAlign: 'center', padding: 60, borderRadius: 14, background: '#FFFFFF', border: '1px dashed #D1D5DB' }}>
           <FileText size={44} color="#6B7280" style={{ margin: '0 auto 12px' }} />
-          <p style={{ color: '#475569', fontSize: 14 }}>No FIR registry records match your search criteria.</p>
+          <p style={{ color: '#475569', fontSize: '14px' }}>No FIR registry records match your search criteria.</p>
         </div>
       )}
 
@@ -618,7 +618,7 @@ function FIRPageContent() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, borderBottom: '1px solid #E5E7EB', paddingBottom: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ width: 3, height: 16, background: '#1E3A5F', borderRadius: 1.5 }} />
-                <span style={{ fontSize: 13, fontWeight: 900, color: '#1F2937', letterSpacing: '0.05em' }}>CASE INTELLIGENCE FILE</span>
+                <span style={{ fontSize: '14px', fontWeight: 900, color: '#1F2937', letterSpacing: '0.05em' }}>CASE INTELLIGENCE FILE</span>
               </div>
               <button onClick={() => setSelectedFIR(null)}
                 style={{ background: '#F3F4F6', border: 'none', color: '#475569', cursor: 'pointer', padding: 6, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -642,7 +642,7 @@ function FIRPageContent() {
 
 export default function FIRPage() {
   return (
-    <Suspense fallback={<div style={{ padding: 24, color: '#64748b', fontSize: 14 }}>Loading FIR data...</div>}>
+    <Suspense fallback={<div style={{ padding: 24, color: '#64748b', fontSize: '14px' }}>Loading FIR data...</div>}>
       <FIRPageContent />
     </Suspense>
   );

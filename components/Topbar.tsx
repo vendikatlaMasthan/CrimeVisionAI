@@ -481,10 +481,10 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
               <img src={`${basePath}/crimevision_logo.png`} alt="CrimeVision AI Logo" style={{ width: '34px', height: '34px', objectFit: 'contain' }} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', lineHeight: '1.2' }}>
-              <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--primary-navy)', whiteSpace: 'nowrap' }}>
+              <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--primary-navy)', whiteSpace: 'nowrap' }}>
                 CrimeVision AI
               </span>
-              <span style={{ fontSize: '9px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>
                 AI Intelligence Platform
               </span>
             </div>
@@ -524,8 +524,8 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
           borderRadius: '12px',
           border: '1px solid #D1D5DB',
           background: '#FFFFFF',
-          paddingLeft: '16px',
-          paddingRight: '16px',
+          paddingLeft: '20px',
+          paddingRight: '20px',
           boxSizing: 'border-box',
           flexShrink: 1,
           transition: 'all 200ms ease',
@@ -536,7 +536,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
             alignItems: 'center',
             justifyContent: 'center',
             width: '24px',
-            marginRight: '12px',
+            marginRight: '16px',
             flexShrink: 0,
           }}>
             <Search size={20} strokeWidth={1.75} className="text-slate-400" />
@@ -561,8 +561,8 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
               background: 'transparent',
               padding: 0,
               margin: 0,
-              fontSize: '16px',
-              lineHeight: '1',
+              fontSize: '14px',
+              lineHeight: '1.2',
               color: '#374151',
               minWidth: 0,
               display: 'flex',
@@ -574,9 +574,9 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
           <div className="right-widgets-container" style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
+            gap: '16px',
             flexShrink: 0,
-            marginLeft: '12px',
+            marginLeft: '16px',
           }}>
             {/* Clear button if text exists */}
             {searchQuery && (
@@ -624,8 +624,8 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                 title={isVoiceActive ? "Listening... Click to stop" : "Voice Search (EN/KN)"}
                 className="mic-button-responsive"
                 style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '36px',
+                  height: '36px',
                   borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',
@@ -776,7 +776,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                   {/* NLP result hint */}
                   {nlpResult && (
                     <div style={{ marginBottom: 12, padding: '10px 12px', background: 'rgba(30,58,95,0.06)', borderRadius: 8, border: '1px solid rgba(30,58,95,0.12)' }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--primary-navy)', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--primary-navy)', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
                         <Brain size={12} /> {nlpResult.message}
                       </div>
                       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
@@ -785,7 +785,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                             key={i}
                             type="button"
                             onMouseDown={() => { router.push(l.url); setShowDropdown(false); setSearchQuery(''); }}
-                            style={{ fontSize: 11, fontWeight: 600, color: 'var(--primary-navy)', background: 'rgba(30,58,95,0.08)', border: '1px solid rgba(30,58,95,0.18)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+                            style={{ fontSize: '12px', fontWeight: 600, color: 'var(--primary-navy)', background: 'rgba(30,58,95,0.08)', border: '1px solid rgba(30,58,95,0.18)', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
                           >
                             {l.label} <ArrowRight size={10} />
                           </button>
@@ -798,8 +798,8 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                   {allResults.length === 0 ? (
                     <div style={{ padding: '28px 0', textAlign: 'center' }}>
                       <Search size={24} style={{ color: '#CBD5E1', margin: '0 auto 10px' }} />
-                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 4 }}>No matches found for &ldquo;{searchQuery}&rdquo;</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Try searching by FIR number, district, suspect name, or crime type</div>
+                      <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 4 }}>No matches found for &ldquo;{searchQuery}&rdquo;</div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Try searching by FIR number, district, suspect name, or crime type</div>
                     </div>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -807,7 +807,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                       {/* FIR Results */}
                       {matchedFIRs.length > 0 && (
                         <>
-                          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '4px 8px 2px', marginTop: 2 }}>
+                          <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '4px 8px 2px', marginTop: 2 }}>
                             <FileText size={10} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />FIR Records
                           </div>
                           {matchedFIRs.map((f, i) => {
@@ -830,12 +830,12 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                                   <FileText size={13} style={{ color: 'var(--primary-navy)' }} />
                                 </div>
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'monospace' }}>{f.firNumber}</div>
-                                  <div style={{ fontSize: 11, color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                  <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'monospace' }}>{f.firNumber}</div>
+                                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                     {f.crimeType} · {f.district} · {f.assignedOfficer}
                                   </div>
                                 </div>
-                                <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: f.priority === 'Critical' ? 'rgba(239,68,68,0.1)' : f.priority === 'High' ? 'rgba(245,158,11,0.1)' : 'rgba(100,116,139,0.08)', color: f.priority === 'Critical' ? '#ef4444' : f.priority === 'High' ? '#f59e0b' : '#64748b', flexShrink: 0 }}>
+                                <span style={{ fontSize: '12px', fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: f.priority === 'Critical' ? 'rgba(239,68,68,0.1)' : f.priority === 'High' ? 'rgba(245,158,11,0.1)' : 'rgba(100,116,139,0.08)', color: f.priority === 'Critical' ? '#ef4444' : f.priority === 'High' ? '#f59e0b' : '#64748b', flexShrink: 0 }}>
                                   {f.priority}
                                 </span>
                               </button>
@@ -847,7 +847,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                       {/* Suspect Results */}
                       {matchedSuspects.length > 0 && (
                         <>
-                          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '8px 8px 2px', marginTop: 2 }}>
+                          <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '8px 8px 2px', marginTop: 2 }}>
                             <User size={10} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />Suspects
                           </div>
                           {matchedSuspects.map((s, i) => {
@@ -870,10 +870,10 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                                   <User size={13} style={{ color: '#ef4444' }} />
                                 </div>
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>{s.name}</div>
-                                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{s.crimeType} · {s.district} · {s.status}</div>
+                                  <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>{s.name}</div>
+                                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{s.crimeType} · {s.district} · {s.status}</div>
                                 </div>
-                                <span style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', flexShrink: 0 }}>{s.riskScore}%</span>
+                                <span style={{ fontSize: '12px', fontWeight: 700, color: '#ef4444', flexShrink: 0 }}>{s.riskScore}%</span>
                               </button>
                             );
                           })}
@@ -883,7 +883,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                       {/* District Results */}
                       {matchedDistricts.length > 0 && (
                         <>
-                          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '8px 8px 2px', marginTop: 2 }}>
+                          <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '8px 8px 2px', marginTop: 2 }}>
                             <MapPin size={10} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />Districts
                           </div>
                           {matchedDistricts.map((d, i) => {
@@ -906,10 +906,10 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                                   <MapPin size={13} style={{ color: 'var(--primary-navy)' }} />
                                 </div>
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>{d.name}</div>
-                                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{d.crimeCount.toLocaleString()} crimes · Risk {d.riskScore}/100</div>
+                                  <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>{d.name}</div>
+                                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{d.crimeCount.toLocaleString()} crimes · Risk {d.riskScore}/100</div>
                                 </div>
-                                <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: d.riskScore > 80 ? 'rgba(239,68,68,0.1)' : d.riskScore > 60 ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.1)', color: d.riskScore > 80 ? '#ef4444' : d.riskScore > 60 ? '#f59e0b' : '#10b981', flexShrink: 0 }}>
+                                <span style={{ fontSize: '12px', fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: d.riskScore > 80 ? 'rgba(239,68,68,0.1)' : d.riskScore > 60 ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.1)', color: d.riskScore > 80 ? '#ef4444' : d.riskScore > 60 ? '#f59e0b' : '#10b981', flexShrink: 0 }}>
                                   {d.code}
                                 </span>
                               </button>
@@ -921,7 +921,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                       {/* Crime Category Results */}
                       {matchedCategories.length > 0 && (
                         <>
-                          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '8px 8px 2px', marginTop: 2 }}>
+                          <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '8px 8px 2px', marginTop: 2 }}>
                             <AlertTriangle size={10} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />Crime Categories
                           </div>
                           {matchedCategories.map((c, i) => {
@@ -944,10 +944,10 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                                   <Activity size={13} style={{ color: c.color }} />
                                 </div>
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>{c.name}</div>
-                                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{c.count.toLocaleString()} reported · {c.percentage}% of total</div>
+                                  <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>{c.name}</div>
+                                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{c.count.toLocaleString()} reported · {c.percentage}% of total</div>
                                 </div>
-                                <span style={{ fontSize: 11, color: c.trend.startsWith('+') ? '#ef4444' : '#10b981', fontWeight: 700, flexShrink: 0 }}>{c.trend}</span>
+                                <span style={{ fontSize: '12px', color: c.trend.startsWith('+') ? '#ef4444' : '#10b981', fontWeight: 700, flexShrink: 0 }}>{c.trend}</span>
                               </button>
                             );
                           })}
@@ -957,7 +957,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                       {/* Alert Results */}
                       {matchedAlerts.length > 0 && (
                         <>
-                          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '8px 8px 2px', marginTop: 2 }}>
+                          <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '8px 8px 2px', marginTop: 2 }}>
                             <ShieldAlert size={10} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />Live Alerts
                           </div>
                           {matchedAlerts.map((a, i) => {
@@ -980,8 +980,8 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                                   <ShieldAlert size={13} style={{ color: '#ef4444' }} />
                                 </div>
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{a.title}</div>
-                                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{a.district} · {a.category}</div>
+                                  <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{a.title}</div>
+                                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{a.district} · {a.category}</div>
                                 </div>
                                 <CornerDownLeft size={11} style={{ color: 'var(--text-dim)', flexShrink: 0 }} />
                               </button>
@@ -992,13 +992,13 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
 
                       {/* Footer hint */}
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8, paddingTop: 8, borderTop: '1px solid var(--border-default)' }}>
-                        <span style={{ fontSize: 10, color: 'var(--text-dim)' }}>
+                        <span style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
                           {allResults.length} result{allResults.length !== 1 ? 's' : ''} · ↑↓ navigate · Enter to open · Esc to close
                         </span>
                         <button
                           type="button"
                           onMouseDown={() => { router.push(`/search?query=${encodeURIComponent(searchQuery)}`); setShowDropdown(false); setSearchQuery(''); }}
-                          style={{ fontSize: 11, fontWeight: 600, color: 'var(--primary-navy)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+                          style={{ fontSize: '12px', fontWeight: 600, color: 'var(--primary-navy)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
                         >
                           View all results <ArrowRight size={11} />
                         </button>
@@ -1020,28 +1020,28 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
           style={{
             width: '40px',
             height: '40px',
-            borderRadius: '12px',
+            borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
             border: 'none',
-            background: isPresentationMode ? 'var(--accent-cyan-dim)' : 'transparent',
-            color: isPresentationMode ? 'var(--accent-cyan)' : 'var(--text-muted)',
+            background: isPresentationMode ? 'rgba(30,58,95,0.08)' : 'transparent',
+            color: isPresentationMode ? 'var(--primary-navy)' : '#64748B',
             transition: 'all 200ms ease',
           }}
           onMouseEnter={e => {
             e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.background = isPresentationMode ? 'var(--accent-cyan-dim)' : 'transparent';
+            e.currentTarget.style.background = isPresentationMode ? 'rgba(30,58,95,0.08)' : 'transparent';
           }}
         >
           <Monitor size={20} strokeWidth={1.75} />
         </button>
 
         {/* Right Section: Date, Live Time, Restricted Badge, Language Toggle, Bell Notifications & Profile */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginLeft: 'auto', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginLeft: 'auto', flexShrink: 0 }}>
 
           {/* Live Date + Time */}
           <div
@@ -1050,14 +1050,14 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'flex-end',
-              gap: '1px',
+              gap: '2px',
               flexShrink: 0,
             }}
           >
             <span style={{ fontSize: '12px', fontWeight: 700, color: '#111827', letterSpacing: '0.01em', lineHeight: 1.2, fontVariantNumeric: 'tabular-nums' }}>
               {liveTime || '--:--:-- --'}
             </span>
-            <span style={{ fontSize: '10px', fontWeight: 500, color: '#6B7280', whiteSpace: 'nowrap', lineHeight: 1.2 }}>
+            <span style={{ fontSize: '12px', fontWeight: 500, color: '#6B7280', whiteSpace: 'nowrap', lineHeight: 1.2 }}>
               {new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
             </span>
           </div>
@@ -1072,11 +1072,11 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
-              border: '1px solid #E5E7EB',
-              borderRadius: '16px',
-              padding: '2px 4px',
+              border: '1px solid #E2E8F0',
+              borderRadius: '20px',
+              padding: '3px 4px',
               height: '40px',
-              background: '#FFFFFF',
+              background: '#F8FAFC',
               boxSizing: 'border-box'
             }}
           >
@@ -1085,13 +1085,13 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
               className="pill-label"
               style={{
                 background: lang === 'en' ? 'var(--primary-navy)' : 'transparent',
-                color: lang === 'en' ? '#FFFFFF' : '#475569',
+                color: lang === 'en' ? '#FFFFFF' : '#64748B',
                 border: 'none',
-                borderRadius: '999px',
+                borderRadius: '16px',
                 fontSize: '12px',
-                fontWeight: 600,
+                fontWeight: 700,
                 letterSpacing: '0.02em',
-                width: '56px',
+                width: '64px',
                 height: '32px',
                 cursor: 'pointer',
                 display: 'flex',
@@ -1107,11 +1107,11 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
               className="pill-label"
               style={{
                 background: lang === 'kn' ? 'var(--primary-navy)' : 'transparent',
-                color: lang === 'kn' ? '#FFFFFF' : '#475569',
+                color: lang === 'kn' ? '#FFFFFF' : '#64748B',
                 border: 'none',
-                borderRadius: '999px',
+                borderRadius: '16px',
                 fontSize: '12px',
-                fontWeight: 600,
+                fontWeight: 700,
                 letterSpacing: '0.02em',
                 width: '64px',
                 height: '32px',
@@ -1132,15 +1132,15 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
               onClick={() => setIsAlertOpen(true)}
               className="notification-button"
               style={{
-                width: '48px',
-                height: '48px',
+                width: '40px',
+                height: '40px',
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 border: 'none',
                 background: 'transparent',
-                color: 'var(--text-muted)',
+                color: '#64748B',
                 cursor: 'pointer',
                 position: 'relative',
                 transition: 'all 200ms ease',
@@ -1159,12 +1159,12 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                     position: 'absolute',
                     top: '2px',
                     right: '2px',
-                    minWidth: '18px',
-                    height: '18px',
+                    minWidth: '16px',
+                    height: '16px',
                     borderRadius: '50%',
                     background: '#DC2626',
                     color: 'white',
-                    fontSize: '10px',
+                    fontSize: '12px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',

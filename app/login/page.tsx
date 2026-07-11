@@ -288,7 +288,7 @@ export default function LoginPage() {
               &ldquo;Protecting Karnataka through Intelligence and Technology&rdquo;
             </span>
             <div className="quote-divider" style={{ background: 'rgba(243, 198, 95, 0.3)', width: '40px', height: '1px', margin: '8px 0' }} />
-            <span className="quote-tagline" style={{ color: '#FFFFFF', fontWeight: 600, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <span className="quote-tagline" style={{ color: '#FFFFFF', fontWeight: 600, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Data Driven &bull; AI Powered &bull; Safer Karnataka
             </span>
           </div>
@@ -314,8 +314,8 @@ export default function LoginPage() {
               <img src={`${basePath}/crimevision_logo.png`} alt="CrimeVision AI Logo" style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
             </div>
             <div style={{ textAlign: 'left' }}>
-              <h2 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--brand-crimson)', margin: 0 }}>CRIMEVISION AI</h2>
-              <p style={{ fontSize: '9px', fontWeight: 600, color: 'var(--text-muted)', margin: 0 }}>KARNATAKA STATE POLICE</p>
+              <h2 style={{ fontSize: '14px', fontWeight: 800, color: 'var(--brand-crimson)', margin: 0 }}>CRIMEVISION AI</h2>
+              <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', margin: 0 }}>KARNATAKA STATE POLICE</p>
             </div>
           </div>
 

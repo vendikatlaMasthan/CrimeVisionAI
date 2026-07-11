@@ -153,7 +153,7 @@ function ConfidenceMeter({ value, color }: { value: number; color: string }) {
           transition: 'width 0.8s ease',
         }} />
       </div>
-      <span style={{ color, fontWeight: 700, fontSize: 12, minWidth: 38 }}>{value}%</span>
+      <span style={{ color, fontWeight: 700, fontSize: '12px', minWidth: 38 }}>{value}%</span>
     </div>
   );
 }
@@ -184,19 +184,19 @@ function SuspectCard({ profile, selected, onClick }: {
             width: 36, height: 36, borderRadius: '50%',
             background: getAvatarBg(profile.riskLevel),
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 800, fontSize: 13, color: '#fff',
+            fontWeight: 800, fontSize: '14px', color: '#fff',
             flexShrink: 0,
           }}>{getInitials(profile.name)}</div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 13, color: '#f1f5f9' }}>{profile.name}</div>
-            <div style={{ fontSize: 11, color: '#64748b' }}>{profile.district} · Age {profile.age}</div>
+            <div style={{ fontWeight: 700, fontSize: '14px', color: '#f1f5f9' }}>{profile.name}</div>
+            <div style={{ fontSize: '12px', color: '#64748b' }}>{profile.district} · Age {profile.age}</div>
           </div>
         </div>
-        <span className={riskBadgeClass(profile.riskLevel)} style={{ fontSize: 10 }}>{profile.riskLevel}</span>
+        <span className={riskBadgeClass(profile.riskLevel)} style={{ fontSize: '12px' }}>{profile.riskLevel}</span>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-        <span className={statusBadgeClass(profile.status)} style={{ fontSize: 10 }}>{profile.status}</span>
-        <span style={{ color: '#64748b', fontSize: 11 }}>Score: <span style={{ color, fontWeight: 700 }}>{profile.profileScore}</span></span>
+        <span className={statusBadgeClass(profile.status)} style={{ fontSize: '12px' }}>{profile.status}</span>
+        <span style={{ color: '#64748b', fontSize: '12px' }}>Score: <span style={{ color, fontWeight: 700 }}>{profile.profileScore}</span></span>
       </div>
       <div style={{ height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
         <div style={{
@@ -248,25 +248,25 @@ function ReasoningStepCard({ step, isLast }: { step: ReasoningStep; isLast: bool
             background: 'rgba(30, 58, 95,0.15)',
             border: '1px solid rgba(30, 58, 95,0.3)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 10, fontWeight: 800, color: '#0F6B5C',
+            fontSize: '12px', fontWeight: 800, color: '#0F6B5C',
           }}>{step.num}</div>
         </div>
 
         {/* Content */}
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-            <div style={{ fontWeight: 800, fontSize: 12, color: step.iconColor, letterSpacing: '0.1em' }}>
+            <div style={{ fontWeight: 800, fontSize: '12px', color: step.iconColor, letterSpacing: '0.1em' }}>
               {step.title}
             </div>
             <span style={{
               background: `${step.iconColor}22`,
               border: `1px solid ${step.iconColor}55`,
               color: step.iconColor,
-              fontSize: 10, fontWeight: 700,
+              fontSize: '12px', fontWeight: 700,
               padding: '2px 8px', borderRadius: 4,
             }}>CONF. {step.confidence}%</span>
           </div>
-          <p style={{ fontSize: 13, color: '#cbd5e1', lineHeight: 1.6, marginBottom: 10, margin: '0 0 10px 0' }}>
+          <p style={{ fontSize: '14px', color: '#cbd5e1', lineHeight: 1.6, marginBottom: 10, margin: '0 0 10px 0' }}>
             {step.evidence}
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -276,7 +276,7 @@ function ReasoningStepCard({ step, isLast }: { step: ReasoningStep; isLast: bool
               <Eye size={12} color="#f59e0b" />
             )}
             <span style={{
-              fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
+              fontSize: '12px', fontWeight: 700, letterSpacing: '0.08em',
               color: step.label === 'VERIFIED' ? '#10b981' : '#f59e0b',
             }}>{step.label}</span>
             <div style={{ flex: 1 }}>
@@ -320,15 +320,15 @@ function EmptyState() {
       }}>
         <Brain size={36} color="#0F6B5C" />
       </div>
-      <h2 style={{ color: '#f1f5f9', fontWeight: 800, fontSize: 18, marginBottom: 8, textAlign: 'center' }}>
+      <h2 style={{ color: '#f1f5f9', fontWeight: 800, fontSize: '18px', marginBottom: 8, textAlign: 'center' }}>
         Select a Suspect to Run AI Detective Analysis
       </h2>
-      <p style={{ color: '#64748b', fontSize: 13, textAlign: 'center', maxWidth: 340, marginBottom: 32 }}>
+      <p style={{ color: '#64748b', fontSize: '14px', textAlign: 'center', maxWidth: 340, marginBottom: 32 }}>
         The AI Detective Engine will generate a full reasoning chain, connection analysis, evidence dossier, and verdict for the selected subject.
       </p>
 
       <div style={{ width: '100%', maxWidth: 480 }}>
-        <div style={{ fontSize: 11, color: '#0F6B5C', fontWeight: 700, letterSpacing: '0.1em', marginBottom: 12 }}>
+        <div style={{ fontSize: '12px', color: '#0F6B5C', fontWeight: 700, letterSpacing: '0.1em', marginBottom: 12 }}>
           SAMPLE ANALYSIS PREVIEWS
         </div>
         {ghosts.map((g, i) => (
@@ -339,12 +339,12 @@ function EmptyState() {
             opacity: 0.5 + (i * 0.1),
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-              <div style={{ fontWeight: 700, fontSize: 13, color: '#94a3b8' }}>{g.name}</div>
-              <span className={riskBadgeClass(g.risk)} style={{ fontSize: 10 }}>{g.risk}</span>
+              <div style={{ fontWeight: 700, fontSize: '14px', color: '#94a3b8' }}>{g.name}</div>
+              <span className={riskBadgeClass(g.risk)} style={{ fontSize: '12px' }}>{g.risk}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 11, color: '#475569' }}>{g.district}</span>
-              <span style={{ fontSize: 11, color: '#475569' }}>Score: {g.score}</span>
+              <span style={{ fontSize: '12px', color: '#475569' }}>{g.district}</span>
+              <span style={{ fontSize: '12px', color: '#475569' }}>Score: {g.score}</span>
             </div>
             <div style={{ height: 2, background: 'rgba(255,255,255,0.04)', borderRadius: 1, marginTop: 8, overflow: 'hidden' }}>
               <div style={{ width: `${g.score}%`, height: '100%', background: 'rgba(255,255,255,0.12)' }} />
@@ -415,7 +415,7 @@ export default function DetectivePage() {
             <Brain size={26} color="#0F6B5C" />
           </div>
           <div>
-            <h1 className="page-title" style={{ fontSize: 26, marginBottom: 2 }}>
+            <h1 className="page-title" style={{ fontSize: '24px', marginBottom: 2 }}>
               AI DETECTIVE ENGINE
             </h1>
             <p className="page-subtitle" style={{ marginBottom: 0 }}>
@@ -437,7 +437,7 @@ export default function DetectivePage() {
               background: `${s.color}18`,
               border: `1px solid ${s.color}44`,
               borderRadius: 6, padding: '5px 12px',
-              fontSize: 11, fontWeight: 700, color: s.color,
+              fontSize: '12px', fontWeight: 700, color: s.color,
               letterSpacing: '0.06em',
             }}>
               {s.icon} {s.label}
@@ -469,14 +469,14 @@ export default function DetectivePage() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <Users size={16} color="#0F6B5C" />
-                  <span style={{ fontWeight: 800, fontSize: 13, color: '#0F6B5C', letterSpacing: '0.08em' }}>
+                  <span style={{ fontWeight: 800, fontSize: '14px', color: '#0F6B5C', letterSpacing: '0.08em' }}>
                     SUSPECT REGISTRY
                   </span>
                 </div>
                 <span style={{
                   background: 'rgba(30, 58, 95,0.15)',
                   border: '1px solid rgba(30, 58, 95,0.3)',
-                  color: '#0F6B5C', fontSize: 11, fontWeight: 700,
+                  color: '#0F6B5C', fontSize: '12px', fontWeight: 700,
                   padding: '2px 8px', borderRadius: 4,
                 }}>{filteredProfiles.length} SUBJECTS</span>
               </div>
@@ -491,7 +491,7 @@ export default function DetectivePage() {
                     width: '100%', background: 'rgba(255,255,255,0.05)',
                     border: '1px solid rgba(255,255,255,0.1)',
                     borderRadius: 8, padding: '8px 12px',
-                    color: '#f1f5f9', fontSize: 13, outline: 'none',
+                    color: '#f1f5f9', fontSize: '14px', outline: 'none',
                     boxSizing: 'border-box',
                   }}
                 />
@@ -501,7 +501,7 @@ export default function DetectivePage() {
             {/* Suspect list */}
             <div style={{ padding: 12, maxHeight: 'calc(100vh - 260px)', overflowY: 'auto' }}>
               {filteredProfiles.length === 0 ? (
-                <div style={{ textAlign: 'center', color: '#475569', padding: 32, fontSize: 13 }}>
+                <div style={{ textAlign: 'center', color: '#475569', padding: 32, fontSize: '14px' }}>
                   No suspects match your search.
                 </div>
               ) : (
@@ -543,7 +543,7 @@ export default function DetectivePage() {
                       width: 72, height: 72, borderRadius: '50%',
                       background: getAvatarBg(selected.riskLevel),
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontWeight: 900, fontSize: 24, color: '#fff',
+                      fontWeight: 900, fontSize: '24px', color: '#fff',
                       boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                       border: `3px solid ${verdictColor}`,
                     }}>{getInitials(selected.name)}</div>
@@ -553,39 +553,39 @@ export default function DetectivePage() {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6, flexWrap: 'wrap', gap: 8 }}>
                       <div>
-                        <h2 style={{ color: '#f1f5f9', fontWeight: 900, fontSize: 22, margin: 0, letterSpacing: '0.02em' }}>
+                        <h2 style={{ color: '#f1f5f9', fontWeight: 900, fontSize: '20px', margin: 0, letterSpacing: '0.02em' }}>
                           {selected.name}
                         </h2>
-                        <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>ID: {selected.id.toUpperCase()}</div>
+                        <div style={{ fontSize: '12px', color: '#64748b', marginTop: 2 }}>ID: {selected.id.toUpperCase()}</div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <div style={{ color: verdictColor, fontSize: 42, fontWeight: 900, lineHeight: 1, textShadow: `0 0 20px ${verdictColor}` }}>
+                        <div style={{ color: verdictColor, fontSize: '30px', fontWeight: 900, lineHeight: 1, textShadow: `0 0 20px ${verdictColor}` }}>
                           {selected.profileScore}
                         </div>
-                        <div style={{ fontSize: 11, color: '#64748b', fontWeight: 600 }}>PROFILE SCORE</div>
+                        <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>PROFILE SCORE</div>
                       </div>
                     </div>
 
                     {/* Tags row */}
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#94a3b8' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '12px', color: '#94a3b8' }}>
                         <Clock size={12} color="#64748b" /> Age {selected.age}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#94a3b8' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '12px', color: '#94a3b8' }}>
                         <Users size={12} color="#64748b" /> {selected.gender}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#94a3b8' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '12px', color: '#94a3b8' }}>
                         <MapPin size={12} color="#64748b" /> {selected.district}
                       </div>
-                      <span className={statusBadgeClass(selected.status)} style={{ fontSize: 11 }}>{selected.status}</span>
-                      <span className={riskBadgeClass(selected.riskLevel)} style={{ fontSize: 11 }}>{selected.riskLevel} RISK</span>
+                      <span className={statusBadgeClass(selected.status)} style={{ fontSize: '12px' }}>{selected.status}</span>
+                      <span className={riskBadgeClass(selected.riskLevel)} style={{ fontSize: '12px' }}>{selected.riskLevel} RISK</span>
                     </div>
 
                     {/* Threat bar */}
                     <div style={{ marginBottom: 10 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                        <span style={{ fontSize: 11, color: '#64748b', fontWeight: 600, letterSpacing: '0.06em' }}>THREAT ASSESSMENT</span>
-                        <span style={{ fontSize: 11, color: verdictColor, fontWeight: 700 }}>{selected.profileScore}/100</span>
+                        <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600, letterSpacing: '0.06em' }}>THREAT ASSESSMENT</span>
+                        <span style={{ fontSize: '12px', color: verdictColor, fontWeight: 700 }}>{selected.profileScore}/100</span>
                       </div>
                       <div style={{ height: 8, background: 'rgba(255,255,255,0.06)', borderRadius: 4, overflow: 'hidden' }}>
                         <div style={{
@@ -606,9 +606,9 @@ export default function DetectivePage() {
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
                         <Brain size={13} color={verdictColor} />
-                        <span style={{ fontSize: 11, fontWeight: 700, color: verdictColor, letterSpacing: '0.08em' }}>AI ASSESSMENT</span>
+                        <span style={{ fontSize: '12px', fontWeight: 700, color: verdictColor, letterSpacing: '0.08em' }}>AI ASSESSMENT</span>
                       </div>
-                      <p style={{ fontSize: 13, color: '#cbd5e1', margin: 0, lineHeight: 1.6 }}>
+                      <p style={{ fontSize: '14px', color: '#cbd5e1', margin: 0, lineHeight: 1.6 }}>
                         {generateAIAssessment(selected)}
                       </p>
                     </div>
@@ -627,10 +627,10 @@ export default function DetectivePage() {
                     { label: 'EVIDENCE PIECES', value: getEvidenceCount(selected), color: '#0F6B5C' },
                   ].map((stat, i) => (
                     <div key={i} style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: 26, fontWeight: 900, color: stat.color, textShadow: `0 0 12px ${stat.color}` }}>
+                      <div style={{ fontSize: '24px', fontWeight: 900, color: stat.color, textShadow: `0 0 12px ${stat.color}` }}>
                         {stat.value}
                       </div>
-                      <div style={{ fontSize: 10, color: '#64748b', fontWeight: 600, letterSpacing: '0.06em' }}>{stat.label}</div>
+                      <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600, letterSpacing: '0.06em' }}>{stat.label}</div>
                     </div>
                   ))}
                 </div>
@@ -649,16 +649,16 @@ export default function DetectivePage() {
                       <Network size={16} color="#0F6B5C" />
                     </div>
                     <div>
-                      <div style={{ fontWeight: 800, fontSize: 15, color: '#f1f5f9' }}>
+                      <div style={{ fontWeight: 800, fontSize: '14px', color: '#f1f5f9' }}>
                         Connection Reasoning Chain — AI Evidence Analysis
                       </div>
-                      <div style={{ fontSize: 12, color: '#64748b' }}>
+                      <div style={{ fontSize: '12px', color: '#64748b' }}>
                         How this suspect is linked to criminal networks
                       </div>
                     </div>
                     <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
                       <Crosshair size={13} color="#0F6B5C" />
-                      <span style={{ fontSize: 12, color: '#0F6B5C', fontWeight: 700 }}>
+                      <span style={{ fontSize: '12px', color: '#0F6B5C', fontWeight: 700 }}>
                         {reasoningSteps.length} STEPS
                       </span>
                     </div>
@@ -698,7 +698,7 @@ export default function DetectivePage() {
                 }}>
                   <Brain size={18} color="#0F6B5C" />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 12, color: '#0F6B5C', fontWeight: 700, marginBottom: 2 }}>
+                    <div style={{ fontSize: '12px', color: '#0F6B5C', fontWeight: 700, marginBottom: 2 }}>
                       OVERALL AI CONFIDENCE
                     </div>
                     <ConfidenceMeter
@@ -706,7 +706,7 @@ export default function DetectivePage() {
                       color="#0F6B5C"
                     />
                   </div>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: '#0F6B5C', textShadow: '0 0 12px #0F6B5C' }}>
+                  <div style={{ fontSize: '20px', fontWeight: 900, color: '#0F6B5C', textShadow: '0 0 12px #0F6B5C' }}>
                     {Math.round(reasoningSteps.reduce((a, s) => a + s.confidence, 0) / reasoningSteps.length)}%
                   </div>
                 </div>
@@ -725,14 +725,14 @@ export default function DetectivePage() {
                       <FileText size={16} color="#ef4444" />
                     </div>
                     <div>
-                      <div style={{ fontWeight: 800, fontSize: 15, color: '#f1f5f9' }}>Linked Case Files</div>
-                      <div style={{ fontSize: 12, color: '#64748b' }}>FIR records connected to this subject</div>
+                      <div style={{ fontWeight: 800, fontSize: '14px', color: '#f1f5f9' }}>Linked Case Files</div>
+                      <div style={{ fontSize: '12px', color: '#64748b' }}>FIR records connected to this subject</div>
                     </div>
                   </div>
                   <span style={{
                     background: 'rgba(239,68,68,0.15)',
                     border: '1px solid rgba(239,68,68,0.3)',
-                    color: '#ef4444', fontSize: 11, fontWeight: 700,
+                    color: '#ef4444', fontSize: '12px', fontWeight: 700,
                     padding: '3px 10px', borderRadius: 5,
                   }}>{linkedFIRs.length} CASES FOUND</span>
                 </div>
@@ -745,7 +745,7 @@ export default function DetectivePage() {
                     borderRadius: 10,
                   }}>
                     <FileText size={24} color="#334155" style={{ marginBottom: 8 }} />
-                    <div style={{ color: '#475569', fontSize: 13 }}>No directly linked FIRs found. Check associate network.</div>
+                    <div style={{ color: '#475569', fontSize: '14px' }}>No directly linked FIRs found. Check associate network.</div>
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -768,16 +768,16 @@ export default function DetectivePage() {
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                            <span style={{ fontWeight: 700, fontSize: 13, color: '#f1f5f9' }}>{fir.firNumber}</span>
-                            <span className={firStatusBadgeClass(fir.investigationStatus)} style={{ fontSize: 10 }}>
+                            <span style={{ fontWeight: 700, fontSize: '14px', color: '#f1f5f9' }}>{fir.firNumber}</span>
+                            <span className={firStatusBadgeClass(fir.investigationStatus)} style={{ fontSize: '12px' }}>
                               {fir.investigationStatus.toUpperCase()}
                             </span>
                           </div>
                           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                            <span style={{ fontSize: 11, color: '#64748b' }}>{fir.date}</span>
-                            <span style={{ fontSize: 11, color: '#64748b' }}>{fir.crimeCategory}</span>
-                            <span style={{ fontSize: 11, color: '#64748b' }}>{fir.district}</span>
-                            <span style={{ fontSize: 11, color: '#64748b' }}>Evidence: {fir.evidenceCount} items</span>
+                            <span style={{ fontSize: '12px', color: '#64748b' }}>{fir.date}</span>
+                            <span style={{ fontSize: '12px', color: '#64748b' }}>{fir.crimeCategory}</span>
+                            <span style={{ fontSize: '12px', color: '#64748b' }}>{fir.district}</span>
+                            <span style={{ fontSize: '12px', color: '#64748b' }}>Evidence: {fir.evidenceCount} items</span>
                           </div>
                         </div>
                         <a
@@ -786,7 +786,7 @@ export default function DetectivePage() {
                             display: 'flex', alignItems: 'center', gap: 5,
                             background: 'rgba(30, 58, 95,0.1)',
                             border: '1px solid rgba(30, 58, 95,0.3)',
-                            color: '#0F6B5C', fontSize: 11, fontWeight: 700,
+                            color: '#0F6B5C', fontSize: '12px', fontWeight: 700,
                             padding: '6px 12px', borderRadius: 6,
                             textDecoration: 'none', whiteSpace: 'nowrap',
                             flexShrink: 0,
@@ -829,12 +829,12 @@ export default function DetectivePage() {
                   }}>
                     <Star size={18} color={verdictColor} />
                   </div>
-                  <div style={{ fontWeight: 900, fontSize: 16, color: '#f1f5f9', letterSpacing: '0.06em' }}>
+                  <div style={{ fontWeight: 900, fontSize: '16px', color: '#f1f5f9', letterSpacing: '0.06em' }}>
                     AI DETECTIVE VERDICT
                   </div>
                   <div style={{ marginLeft: 'auto' }}>
                     <span style={{
-                      fontSize: 11, background: `${verdictColor}22`,
+                      fontSize: '12px', background: `${verdictColor}22`,
                       border: `1px solid ${verdictColor}55`,
                       color: verdictColor, padding: '3px 10px', borderRadius: 5, fontWeight: 700,
                     }}>CLASSIFIED LEVEL 4</span>
@@ -850,13 +850,13 @@ export default function DetectivePage() {
                   borderRadius: 12,
                 }}>
                   <div style={{
-                    fontSize: 36, fontWeight: 900, color: verdictColor,
+                    fontSize: '30px', fontWeight: 900, color: verdictColor,
                     textShadow: `0 0 30px ${verdictColor}`,
                     letterSpacing: '0.05em', marginBottom: 4,
                   }}>
                     {verdictLabel}
                   </div>
-                  <div style={{ fontSize: 13, color: '#64748b' }}>
+                  <div style={{ fontSize: '14px', color: '#64748b' }}>
                     AI-generated verdict based on multi-factor analysis of {reasoningSteps.length} evidence streams
                   </div>
                 </div>
@@ -897,10 +897,10 @@ export default function DetectivePage() {
                         flexShrink: 0, marginTop: 1,
                       }}>{c.icon}</div>
                       <div>
-                        <div style={{ fontSize: 11, color: c.color, fontWeight: 700, letterSpacing: '0.06em', marginBottom: 3 }}>
+                        <div style={{ fontSize: '12px', color: c.color, fontWeight: 700, letterSpacing: '0.06em', marginBottom: 3 }}>
                           {c.label.toUpperCase()}
                         </div>
-                        <div style={{ fontSize: 13, color: '#cbd5e1', lineHeight: 1.5 }}>{c.value}</div>
+                        <div style={{ fontSize: '14px', color: '#cbd5e1', lineHeight: 1.5 }}>{c.value}</div>
                       </div>
                       <ArrowRight size={14} color={c.color} style={{ marginLeft: 'auto', flexShrink: 0, marginTop: 6, opacity: 0.6 }} />
                     </div>
@@ -915,7 +915,7 @@ export default function DetectivePage() {
                   borderRadius: 8, padding: '10px 14px',
                 }}>
                   <MapPin size={13} color="#64748b" />
-                  <span style={{ fontSize: 12, color: '#94a3b8' }}>{selected.recentActivity}</span>
+                  <span style={{ fontSize: '12px', color: '#94a3b8' }}>{selected.recentActivity}</span>
                 </div>
 
                 {/* Action buttons */}
@@ -953,7 +953,7 @@ export default function DetectivePage() {
                     display: 'flex', alignItems: 'center', gap: 8,
                   }}>
                     <CheckCircle size={14} color="#10b981" />
-                    <span style={{ fontSize: 12, color: '#10b981', fontWeight: 600 }}>
+                    <span style={{ fontSize: '12px', color: '#10b981', fontWeight: 600 }}>
                       Full intelligence report for {selected.name} generated and queued for classified distribution. Report ID: KSPAI-{selected.id.toUpperCase()}-{Date.now().toString().slice(-6)}
                     </span>
                   </div>
@@ -967,7 +967,7 @@ export default function DetectivePage() {
                     display: 'flex', alignItems: 'center', gap: 8,
                   }}>
                     <AlertTriangle size={14} color="#ef4444" />
-                    <span style={{ fontSize: 12, color: '#ef4444', fontWeight: 600 }}>
+                    <span style={{ fontSize: '12px', color: '#ef4444', fontWeight: 600 }}>
                       {selected.name} flagged for priority investigation. ACP Chandrashekar and SIT team notified. Priority tracker ID: PRI-{selected.profileScore}-{selected.id.slice(-4).toUpperCase()}
                     </span>
                   </div>

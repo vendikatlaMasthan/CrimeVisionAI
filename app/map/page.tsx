@@ -270,7 +270,7 @@ class MapErrorBoundary extends React.Component<{ children: React.ReactNode }, { 
           width: '100%'
         }}>
           <AlertTriangle size={36} color="#ef4444" style={{ margin: '0 auto 12px' }} />
-          <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#ef4444', marginBottom: '8px' }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 800, color: '#ef4444', marginBottom: '8px' }}>
             Map Visualizer Engine Failed
           </h3>
           <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
@@ -400,7 +400,7 @@ export default function HeatmapPage() {
           gap: '8px', 
           background: '#FFFFFF',
           border: '1px solid #E5E7EB',
-          fontSize: '13px',
+          fontSize: '14px',
           fontWeight: 600,
         }}
       >
@@ -456,7 +456,7 @@ export default function HeatmapPage() {
         {/* Time of Day Heatmap Selector */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Clock size={14} className="text-slate-500" />
-          <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Time of Day:</span>
+          <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Time of Day:</span>
           <div className="flex gap-1.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
             {(['morning', 'afternoon', 'night'] as const).map(time => (
               <button
@@ -481,7 +481,7 @@ export default function HeatmapPage() {
         {/* Socio-Economic Overlay Toggles */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Info size={14} className="text-slate-500" />
-          <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Social Overlay:</span>
+          <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Social Overlay:</span>
           <div className="flex gap-1.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
             {[
               { id: 'none', label: 'None' },
@@ -515,7 +515,7 @@ export default function HeatmapPage() {
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            fontSize: '11px',
+            fontSize: '12px',
             fontWeight: 800,
             background: 'rgba(15,107,92,0.08)',
             border: '1px solid rgba(15,107,92,0.2)',
@@ -538,7 +538,7 @@ export default function HeatmapPage() {
           
           {/* Statewide Stats Strip (Top Left Floating) */}
           <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 10, background: '#FFFFFF', border: '1px solid var(--cyber-border)', borderRadius: '12px', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '180px' }}>
-            <span style={{ fontSize: '9px', fontWeight: 900, color: 'var(--text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Statewide Overview</span>
+            <span style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Statewide Overview</span>
             <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Total Crimes: <strong style={{ color: 'var(--cyber-cyan)' }}>82,089</strong></div>
             <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>High Risk Districts: <strong style={{ color: '#ef4444' }}>7</strong></div>
             <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Active Alerts: <strong style={{ color: '#f59e0b' }}>34</strong></div>
@@ -945,23 +945,23 @@ export default function HeatmapPage() {
                   border: `1.5px solid ${hDist.color}`
                 }}
               >
-                <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '13px' }}>
+                <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '14px' }}>
                   {hoveredDistrict.toUpperCase()} DISTRICT
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>
                   Threat Score: <strong style={{ color: hDist.color }}>{hDist.score}/100 ({hDist.level})</strong>
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+                <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
                   Active Cases: <strong>{hDist.crimes.toLocaleString()}</strong>
                 </div>
                 {/* Social Overlay stats */}
                 {socialOverlay === 'density' && (
-                  <div style={{ fontSize: '11px', color: '#7C3AED', marginTop: '4px', fontWeight: 600 }}>
+                  <div style={{ fontSize: '12px', color: '#7C3AED', marginTop: '4px', fontWeight: 600 }}>
                     Pop. Density: <strong>{sDist.density}/km²</strong>
                   </div>
                 )}
                 {socialOverlay === 'unemployment' && (
-                  <div style={{ fontSize: '11px', color: '#f97316', marginTop: '4px', fontWeight: 600 }}>
+                  <div style={{ fontSize: '12px', color: '#f97316', marginTop: '4px', fontWeight: 600 }}>
                     Unemployment: <strong>{sDist.unemployment}%</strong>
                   </div>
                 )}
@@ -987,9 +987,9 @@ export default function HeatmapPage() {
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
             }}
           >
-            <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>CRIME DENSITY SCALE</span>
+            <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>CRIME DENSITY SCALE</span>
             <div style={{ height: '8px', borderRadius: '4px', background: 'linear-gradient(to right, var(--color-green), var(--color-gold), var(--color-red))' }} />
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', fontWeight: 700, color: 'var(--text-muted)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)' }}>
               <span>Low</span>
               <span>Medium</span>
               <span>High</span>
@@ -1032,38 +1032,38 @@ export default function HeatmapPage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '20px' }}>
                 <div style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '10px' }}>
-                  <div style={{ fontSize: '9px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>Officers on Beat</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>Officers on Beat</div>
                   <div style={{ fontSize: '18px', fontWeight: 800, color: '#2563EB', marginTop: '2px' }}>12 Active</div>
                 </div>
                 <div style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '10px' }}>
-                  <div style={{ fontSize: '9px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>Clearance MTD</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>Clearance MTD</div>
                   <div style={{ fontSize: '18px', fontWeight: 800, color: '#16A34A', marginTop: '2px' }}>87.5%</div>
                 </div>
               </div>
 
               {/* Active Patrol Teams */}
               <div style={{ marginBottom: '20px' }}>
-                <div style={{ fontSize: '10px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
                   Active Beat Patrols
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12px' }}>
                   <div style={{ border: '1px solid #E5E7EB', borderRadius: '12px', padding: '10px', background: '#F9FAFB' }}>
                     <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Patrol Team Alpha</div>
-                    <div style={{ color: 'var(--text-muted)', fontSize: '11px', marginTop: '2px' }}>Sector 3 Sand Quarries · Active Route NH-50</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '12px', marginTop: '2px' }}>Sector 3 Sand Quarries · Active Route NH-50</div>
                   </div>
                   <div style={{ border: '1px solid #E5E7EB', borderRadius: '12px', padding: '10px', background: '#F9FAFB' }}>
                     <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Patrol Team Beta</div>
-                    <div style={{ color: 'var(--text-muted)', fontSize: '11px', marginTop: '2px' }}>Town Checkpost 4 · Border Route</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '12px', marginTop: '2px' }}>Town Checkpost 4 · Border Route</div>
                   </div>
                 </div>
               </div>
 
               {/* Localized AI Recommendations */}
               <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '10px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
                   LOCAL STATION DIRECTIVE
                 </div>
-                <p style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><AlertTriangle size={11} /> <strong>Patrol Priority:</strong></span> Increase presence at Sector 3 docks during 10 PM - 2 AM. AI model detects a 45% spike risk of unauthorized extractions.
                 </p>
               </div>
@@ -1100,7 +1100,7 @@ export default function HeatmapPage() {
                   <span 
                     className="badge" 
                     style={{ 
-                      fontSize: '9px', 
+                      fontSize: '12px', 
                       marginTop: '4px',
                       background: activeDistrict.level === 'CRITICAL' ? 'rgba(239, 68, 68, 0.12)' : 'rgba(245, 158, 11, 0.12)',
                       color: activeDistrict.level === 'CRITICAL' ? '#ef4444' : '#fbbf24',
@@ -1120,7 +1120,7 @@ export default function HeatmapPage() {
 
               {/* Threat dial */}
               <div style={{ marginBottom: '18px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>
                   <span>{lang === 'kn' ? 'ಲೆಕ್ಕಾಚಾರದ ಬೆದರಿಕೆ ಸೂಚ್ಯಂಕ:' : 'Calculated Threat Index:'}</span>
                   <span style={{ fontWeight: 800, color: activeDistrict.color }}>{activeDistrict.score}/100</span>
                 </div>
@@ -1138,7 +1138,7 @@ export default function HeatmapPage() {
                   { label: lang === 'kn' ? t.stat_total_officers : 'Officers Deployed', val: activeDistrict.officers }
                 ].map((stat, idx) => (
                   <div key={idx} style={{ background: 'rgba(0,0,0,0.05)', border: '1px solid var(--cyber-border)', borderRadius: '8px', padding: '10px' }}>
-                     <div style={{ fontSize: '10px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>{stat.label}</div>
+                     <div style={{ fontSize: '12px', color: 'var(--text-dim)', textTransform: 'uppercase' }}>{stat.label}</div>
                      <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'JetBrains Mono, monospace', marginTop: '2px' }}>
                        <CountUp end={stat.val} />
                      </div>
@@ -1154,7 +1154,7 @@ export default function HeatmapPage() {
                   borderRadius: '12px',
                   padding: '10px 14px',
                   marginBottom: '16px',
-                  fontSize: '11px',
+                  fontSize: '12px',
                   lineHeight: '1.5',
                   color: '#b45309',
                   fontWeight: 700
@@ -1165,11 +1165,11 @@ export default function HeatmapPage() {
 
               {/* Police Station List/Table */}
               <div style={{ marginBottom: '20px', borderTop: '1px solid #E5E7EB', paddingTop: '16px' }}>
-                <div style={{ fontSize: '11px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
                   Police Stations in {selectedDistrict}
                 </div>
                 <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', textAlign: 'left' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', textAlign: 'left' }}>
                     <thead>
                       <tr style={{ borderBottom: '1px solid #E2E8F0', color: 'var(--text-dim)' }}>
                         <th style={{ padding: '6px 4px', fontWeight: 800 }}>Station Name</th>
@@ -1209,18 +1209,18 @@ export default function HeatmapPage() {
               {/* Socio-Economic Factors Overlay analysis */}
               {selectedDistrict && SOCIO_ECONOMIC_DATA[selectedDistrict] && (
                 <div style={{ marginBottom: '20px', borderTop: '1px solid #E5E7EB', paddingTop: '16px' }}>
-                  <div style={{ fontSize: '11px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
                     Socio-Economic Overlay
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '12px' }}>
                     <div style={{ background: '#F9FAFB', padding: '8px 10px', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
-                      <span style={{ fontSize: '9px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>Unemployment</span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>Unemployment</span>
                       <div style={{ fontSize: '14px', fontWeight: 800, color: '#f97316', marginTop: '2px' }}>
                         {SOCIO_ECONOMIC_DATA[selectedDistrict].unemployment}%
                       </div>
                     </div>
                     <div style={{ background: '#F9FAFB', padding: '8px 10px', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
-                      <span style={{ fontSize: '9px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>Pop. Density</span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>Pop. Density</span>
                       <div style={{ fontSize: '14px', fontWeight: 800, color: '#7C3AED', marginTop: '2px' }}>
                         {SOCIO_ECONOMIC_DATA[selectedDistrict].density}/km²
                       </div>
@@ -1231,7 +1231,7 @@ export default function HeatmapPage() {
 
               {/* Breakdown Bars */}
               <div style={{ marginBottom: '20px' }}>
-                <div style={{ fontSize: '11px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
                   {lang === 'kn' ? 'ಮುಖ್ಯ ಅಪರಾಧ ವಿಭಾಗಗಳು' : 'TOP CRIME CATEGORIES'}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -1247,7 +1247,7 @@ export default function HeatmapPage() {
 
                     return (
                       <div key={idx}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '3px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '3px' }}>
                           <span>{t[key as keyof TranslationSet] || item.label}</span>
                           <span style={{ fontWeight: 700 }}>{item.pct}%</span>
                         </div>
@@ -1262,7 +1262,7 @@ export default function HeatmapPage() {
 
               {/* Recommendations directives checklist list */}
               <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '11px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
                   {lang === 'kn' ? 'AI ಶಿಫಾರಸುಗಳು' : 'AI RECOMMENDATIONS'}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)' }}>
@@ -1290,7 +1290,7 @@ export default function HeatmapPage() {
                 <button
                   onClick={() => setViewLevel('district')}
                   className="cyber-btn cyber-btn-cyan animate-pulse"
-                  style={{ width: '100%', justifyContent: 'center', borderRadius: '16px', fontSize: '13px', padding: '10px', fontWeight: 700, marginTop: '12px', background: '#2563EB', color: '#FFFFFF', border: 'none', cursor: 'pointer' }}
+                  style={{ width: '100%', justifyContent: 'center', borderRadius: '16px', fontSize: '14px', padding: '10px', fontWeight: 700, marginTop: '12px', background: '#2563EB', color: '#FFFFFF', border: 'none', cursor: 'pointer' }}
                 >
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                     <Search size={13} />
@@ -1318,7 +1318,7 @@ export default function HeatmapPage() {
             </div>
           </aside>
         ) : (
-          <aside className="glass-card flex items-center justify-center text-center p-6" style={{ height: '620px', color: 'var(--text-dim)', fontSize: '13px' }}>
+          <aside className="glass-card flex items-center justify-center text-center p-6" style={{ height: '620px', color: 'var(--text-dim)', fontSize: '14px' }}>
             <div>
               <Map size={36} style={{ margin: '0 auto 12px', color: 'var(--cyber-cyan)' }} />
               {lang === 'kn' ? 'ಸ್ಥಳೀಯ ಬೆದರಿಕೆ ಗುಪ್ತಚರ ಲಾಗ್‌ಗಳನ್ನು ಪ್ರದರ್ಶಿಸಲು ನಕ್ಷೆಯಲ್ಲಿ ಜಿಲ್ಲೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ.' : 'Select a district on the map to display localized threat intelligence logs.'}

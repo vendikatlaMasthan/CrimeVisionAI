@@ -31,7 +31,7 @@ export default function Button({
 
   const sizeStyles: Record<string, React.CSSProperties> = {
     sm: { padding: '6px 12px', fontSize: '12px' },
-    md: { padding: '10px 20px', fontSize: '13px' },
+    md: { padding: '10px 20px', fontSize: '14px' },
     lg: { padding: '12px 24px', fontSize: '14px' },
   };
 

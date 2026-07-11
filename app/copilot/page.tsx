@@ -215,7 +215,7 @@ export default function InvestigationCopilotPage() {
           <div>
             <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               INVESTIGATION COPILOT
-              <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.14em', background: 'rgba(15,107,92,0.1)', color: '#0F6B5C', border: '1px solid rgba(15,107,92,0.25)', borderRadius: 4, padding: '2px 8px' }}>AI</span>
+              <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '0.14em', background: 'rgba(15,107,92,0.1)', color: '#0F6B5C', border: '1px solid rgba(15,107,92,0.25)', borderRadius: 4, padding: '2px 8px' }}>AI</span>
             </h1>
             <p className="page-subtitle">AI investigation leads, chat workspace and operational recommendations — no external API required</p>
           </div>
@@ -223,16 +223,16 @@ export default function InvestigationCopilotPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 20, padding: '5px 12px' }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10b981', animation: 'pulse-green 1.5s ease-in-out infinite' }} />
-            <span style={{ fontSize: 11, fontWeight: 800, color: '#10b981', letterSpacing: '0.08em' }}>COPILOT ACTIVE</span>
+            <span style={{ fontSize: '12px', fontWeight: 800, color: '#10b981', letterSpacing: '0.08em' }}>COPILOT ACTIVE</span>
           </div>
-          <div style={{ background: 'rgba(15,107,92,0.08)', border: '1px solid rgba(15,107,92,0.2)', borderRadius: 20, padding: '5px 12px', fontSize: 11, fontWeight: 700, color: '#0F6B5C' }}>LOCAL AI ENGINE</div>
+          <div style={{ background: 'rgba(15,107,92,0.08)', border: '1px solid rgba(15,107,92,0.2)', borderRadius: 20, padding: '5px 12px', fontSize: '12px', fontWeight: 700, color: '#0F6B5C' }}>LOCAL AI ENGINE</div>
           {selectedFir && (
-            <button onClick={handleExport} style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 20, padding: '5px 14px', fontSize: 11, fontWeight: 700, color: '#f59e0b', cursor: 'pointer' }}>
+            <button onClick={handleExport} style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 20, padding: '5px 14px', fontSize: '12px', fontWeight: 700, color: '#f59e0b', cursor: 'pointer' }}>
               <Download size={12} /> Export Dossier
             </button>
           )}
           {selectedFir && (
-            <button onClick={handleSyncCommand} style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.25)', borderRadius: 20, padding: '5px 14px', fontSize: 11, fontWeight: 700, color: '#8b5cf6', cursor: 'pointer' }}>
+            <button onClick={handleSyncCommand} style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.25)', borderRadius: 20, padding: '5px 14px', fontSize: '12px', fontWeight: 700, color: '#8b5cf6', cursor: 'pointer' }}>
               <Share2 size={12} /> Sync Command Desk
             </button>
           )}
@@ -246,12 +246,12 @@ export default function InvestigationCopilotPage() {
         <div className="glass-card" style={{ padding: 18, minHeight: '80vh' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
             <FileText size={14} color="#0F6B5C" />
-            <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Load Case Dossier</span>
-            <span className="badge badge-cyan" style={{ marginLeft: 'auto', fontSize: 10 }}>{filteredFIRs.length} cases</span>
+            <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Load Case Dossier</span>
+            <span className="badge badge-cyan" style={{ marginLeft: 'auto', fontSize: '12px' }}>{filteredFIRs.length} cases</span>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 14 }}>
             {STATUS_FILTERS.map(f => (
-              <button key={f.value} onClick={() => setStatusFilter(f.value)} style={{ padding: '4px 10px', borderRadius: 14, fontSize: 10, fontWeight: 700, cursor: 'pointer', textTransform: 'uppercase', border: `1px solid ${statusFilter === f.value ? 'rgba(15,107,92,0.4)' : 'var(--border-default)'}`, background: statusFilter === f.value ? 'rgba(15,107,92,0.08)' : 'var(--neutral-light)', color: statusFilter === f.value ? '#0F6B5C' : 'var(--text-muted)', transition: 'all 0.2s' }}>
+              <button key={f.value} onClick={() => setStatusFilter(f.value)} style={{ padding: '4px 10px', borderRadius: 14, fontSize: '12px', fontWeight: 700, cursor: 'pointer', textTransform: 'uppercase', border: `1px solid ${statusFilter === f.value ? 'rgba(15,107,92,0.4)' : 'var(--border-default)'}`, background: statusFilter === f.value ? 'rgba(15,107,92,0.08)' : 'var(--neutral-light)', color: statusFilter === f.value ? '#0F6B5C' : 'var(--text-muted)', transition: 'all 0.2s' }}>
                 {f.label}
               </button>
             ))}
@@ -262,16 +262,16 @@ export default function InvestigationCopilotPage() {
               return (
                 <div key={fir.id} onClick={() => handleSelectFir(fir)} style={{ padding: '12px 14px', borderRadius: 10, cursor: 'pointer', border: `1px solid ${isSelected ? 'rgba(15,107,92,0.4)' : 'var(--border-default)'}`, background: isSelected ? 'rgba(15,107,92,0.05)' : 'var(--bg-card)', boxShadow: isSelected ? '0 0 10px rgba(15,107,92,0.08)' : 'none', transition: 'all 0.18s', position: 'relative' }}>
                   {fir.riskScore > 60 && <div style={{ position: 'absolute', top: 10, right: 10, width: 7, height: 7, borderRadius: '50%', background: fir.riskScore > 80 ? '#ef4444' : '#f59e0b', animation: fir.riskScore > 80 ? 'pulse-red 1.5s infinite' : 'none' }} />}
-                  <div style={{ fontFamily: 'monospace', fontSize: 11, fontWeight: 800, color: '#0F6B5C', marginBottom: 4 }}>{fir.firNumber}</div>
-                  <div style={{ marginBottom: 6 }}><span className="badge badge-gray" style={{ fontSize: 9 }}>{fir.crimeCategory}</span></div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{fir.suspectDetails.name}</div>
-                  <div style={{ display: 'flex', gap: 10, fontSize: 10, color: 'var(--text-muted)', marginBottom: 7 }}>
+                  <div style={{ fontFamily: 'monospace', fontSize: '12px', fontWeight: 800, color: '#0F6B5C', marginBottom: 4 }}>{fir.firNumber}</div>
+                  <div style={{ marginBottom: 6 }}><span className="badge badge-gray" style={{ fontSize: '12px' }}>{fir.crimeCategory}</span></div>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{fir.suspectDetails.name}</div>
+                  <div style={{ display: 'flex', gap: 10, fontSize: '12px', color: 'var(--text-muted)', marginBottom: 7 }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}><MapPin size={9} /> {fir.district}</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}><Clock size={9} /> {fir.date}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span className={STATUS_BADGE[fir.investigationStatus]} style={{ fontSize: 9 }}>{fir.investigationStatus}</span>
-                    <span style={{ fontSize: 10, fontWeight: 800, fontFamily: 'monospace', color: fir.riskScore > 80 ? '#ef4444' : fir.riskScore > 60 ? '#f59e0b' : '#64748b' }}>Risk {fir.riskScore}</span>
+                    <span className={STATUS_BADGE[fir.investigationStatus]} style={{ fontSize: '12px' }}>{fir.investigationStatus}</span>
+                    <span style={{ fontSize: '12px', fontWeight: 800, fontFamily: 'monospace', color: fir.riskScore > 80 ? '#ef4444' : fir.riskScore > 60 ? '#f59e0b' : '#64748b' }}>Risk {fir.riskScore}</span>
                   </div>
                 </div>
               );
@@ -289,37 +289,37 @@ export default function InvestigationCopilotPage() {
                 <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'conic-gradient(rgba(15,107,92,0.15) 0deg, transparent 60deg, transparent 360deg)', animation: 'spin 3s linear infinite' }} />
                 <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Crosshair size={32} color="#0F6B5C" /></div>
               </div>
-              <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 10 }}>Select a case to activate Investigation Copilot</h3>
-              <p style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 340, lineHeight: 1.6 }}>Choose any FIR from the panel. The AI copilot generates investigation leads and opens a chat workspace — no external API required.</p>
+              <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 10 }}>Select a case to activate Investigation Copilot</h3>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', maxWidth: 340, lineHeight: 1.6 }}>Choose any FIR from the panel. The AI copilot generates investigation leads and opens a chat workspace — no external API required.</p>
               <div style={{ marginTop: 24, display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(15,107,92,0.06)', border: '1px solid rgba(15,107,92,0.15)', borderRadius: 10, padding: '10px 20px' }}>
                 <Brain size={14} color="#0F6B5C" />
-                <span style={{ fontSize: 12, color: '#0F6B5C', fontWeight: 600 }}>{FIR_RECORDS.length} case files indexed • Local AI engine ready</span>
+                <span style={{ fontSize: '12px', color: '#0F6B5C', fontWeight: 600 }}>{FIR_RECORDS.length} case files indexed • Local AI engine ready</span>
               </div>
             </div>
           ) : (
             <>
               {/* CASE BRIEF */}
               <div className="glass-card" style={{ padding: '10px 18px', marginBottom: 12, background: 'rgba(15,107,92,0.03)', border: '1px solid rgba(15,107,92,0.15)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', fontSize: 11 }}>
-                  <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#0F6B5C', fontSize: 12 }}>{selectedFir.firNumber}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', fontSize: '12px' }}>
+                  <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#0F6B5C', fontSize: '12px' }}>{selectedFir.firNumber}</span>
                   <span style={{ color: 'var(--text-muted)' }}>|</span>
                   <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{selectedFir.crimeCategory}</span>
                   <span style={{ color: 'var(--text-muted)' }}>|</span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: 3, color: 'var(--text-secondary)' }}><MapPin size={10} /> {selectedFir.district}</span>
                   <span style={{ color: 'var(--text-muted)' }}>|</span>
                   <span style={{ color: 'var(--text-secondary)' }}>{selectedFir.assignedOfficer}</span>
-                  <span style={{ marginLeft: 'auto' }}><span className={STATUS_BADGE[selectedFir.investigationStatus]} style={{ fontSize: 10 }}>{selectedFir.investigationStatus}</span></span>
+                  <span style={{ marginLeft: 'auto' }}><span className={STATUS_BADGE[selectedFir.investigationStatus]} style={{ fontSize: '12px' }}>{selectedFir.investigationStatus}</span></span>
                 </div>
               </div>
 
               {/* TABS */}
               <div style={{ display: 'flex', marginBottom: 12, borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-default)' }}>
                 {([{ id: 'leads', label: 'Investigation Leads', Icon: Target }, { id: 'chat', label: 'AI Chat Workspace', Icon: MessageSquare }] as { id: TabMode; label: string; Icon: React.ElementType }[]).map(tab => (
-                  <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '10px 16px', border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 700, background: activeTab === tab.id ? 'rgba(15,107,92,0.08)' : 'var(--bg-card)', color: activeTab === tab.id ? '#0F6B5C' : 'var(--text-muted)', borderBottom: activeTab === tab.id ? '2px solid #0F6B5C' : '2px solid transparent', transition: 'all 0.2s' }}>
+                  <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '10px 16px', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 700, background: activeTab === tab.id ? 'rgba(15,107,92,0.08)' : 'var(--bg-card)', color: activeTab === tab.id ? '#0F6B5C' : 'var(--text-muted)', borderBottom: activeTab === tab.id ? '2px solid #0F6B5C' : '2px solid transparent', transition: 'all 0.2s' }}>
                     <tab.Icon size={14} />
                     {tab.label}
                     {tab.id === 'chat' && messages.length > 1 && (
-                      <span style={{ fontSize: 9, fontWeight: 800, background: '#0F6B5C', color: '#fff', borderRadius: 10, padding: '1px 6px' }}>{messages.length - 1}</span>
+                      <span style={{ fontSize: '12px', fontWeight: 800, background: '#0F6B5C', color: '#fff', borderRadius: 10, padding: '1px 6px' }}>{messages.length - 1}</span>
                     )}
                   </button>
                 ))}
@@ -332,11 +332,11 @@ export default function InvestigationCopilotPage() {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <Target size={15} color="#0F6B5C" />
-                        <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>TOP INVESTIGATION LEADS</span>
-                        <span style={{ fontSize: 9, fontWeight: 800, background: 'rgba(15,107,92,0.08)', color: '#0F6B5C', border: '1px solid rgba(15,107,92,0.2)', borderRadius: 4, padding: '1px 6px' }}>AI GENERATED</span>
+                        <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>TOP INVESTIGATION LEADS</span>
+                        <span style={{ fontSize: '12px', fontWeight: 800, background: 'rgba(15,107,92,0.08)', color: '#0F6B5C', border: '1px solid rgba(15,107,92,0.2)', borderRadius: 4, padding: '1px 6px' }}>AI GENERATED</span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: completedCount === leads.length ? 'rgba(16,185,129,0.08)' : 'var(--neutral-light)', border: `1px solid ${completedCount === leads.length ? 'rgba(16,185,129,0.2)' : 'var(--border-default)'}`, borderRadius: 8, padding: '5px 12px' }}>
-                        <span style={{ fontSize: 11, fontWeight: 800, color: completedCount === leads.length ? '#10b981' : 'var(--text-secondary)' }}>{completedCount}/{leads.length} Completed</span>
+                        <span style={{ fontSize: '12px', fontWeight: 800, color: completedCount === leads.length ? '#10b981' : 'var(--text-secondary)' }}>{completedCount}/{leads.length} Completed</span>
                         {completedCount === leads.length && <Check size={12} color="#10b981" />}
                       </div>
                     </div>
@@ -358,15 +358,15 @@ export default function InvestigationCopilotPage() {
                               </div>
                               <div style={{ flex: 1, minWidth: 0 }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 6, flexWrap: 'wrap' }}>
-                                  <span className={PRIORITY_BADGE[lead.priority]} style={{ fontSize: 9 }}>{lead.priority}</span>
-                                  <span style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, fontFamily: 'monospace' }}>#{lead.id}</span>
-                                  <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{lead.category}</span>
-                                  <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4, background: 'var(--neutral-light)', border: '1px solid var(--border-default)', borderRadius: 5, padding: '2px 7px', fontSize: 10, color: 'var(--text-muted)', fontWeight: 600 }}>
+                                  <span className={PRIORITY_BADGE[lead.priority]} style={{ fontSize: '12px' }}>{lead.priority}</span>
+                                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 700, fontFamily: 'monospace' }}>#{lead.id}</span>
+                                  <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{lead.category}</span>
+                                  <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4, background: 'var(--neutral-light)', border: '1px solid var(--border-default)', borderRadius: 5, padding: '2px 7px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>
                                     <Clock size={10} /> {lead.timeEstimate}
                                   </div>
                                 </div>
-                                <div style={{ fontSize: 13, fontWeight: 700, color: isChecked ? 'var(--text-muted)' : 'var(--text-primary)', marginBottom: 5, lineHeight: 1.4, textDecoration: isChecked ? 'line-through' : 'none' }}>{lead.action}</div>
-                                <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.55 }}>{lead.details}</div>
+                                <div style={{ fontSize: '14px', fontWeight: 700, color: isChecked ? 'var(--text-muted)' : 'var(--text-primary)', marginBottom: 5, lineHeight: 1.4, textDecoration: isChecked ? 'line-through' : 'none' }}>{lead.action}</div>
+                                <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{lead.details}</div>
                               </div>
                             </div>
                           </div>
@@ -377,12 +377,12 @@ export default function InvestigationCopilotPage() {
                   <div className="glass-card" style={{ padding: 20 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
                       <Zap size={14} color="#f59e0b" />
-                      <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>RECOMMENDED NEXT ACTIONS</span>
+                      <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>RECOMMENDED NEXT ACTIONS</span>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-                      <Link href="/reports" style={{ textDecoration: 'none' }}><button className="cyber-btn cyber-btn-cyan" style={{ width: '100%', justifyContent: 'center', padding: '13px 16px', fontSize: 12, flexDirection: 'column', gap: 6, height: 'auto' }}><FileText size={18} /><span>Generate Full</span><span>Report</span></button></Link>
-                      <Link href="/network" style={{ textDecoration: 'none' }}><button style={{ width: '100%', padding: '13px 16px', borderRadius: 10, cursor: 'pointer', background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.25)', color: '#7c3aed', fontSize: 12, fontWeight: 700, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6 }}><Users size={18} /><span>Criminal</span><span>Network</span></button></Link>
-                      <Link href="/detective" style={{ textDecoration: 'none' }}><button style={{ width: '100%', padding: '13px 16px', borderRadius: 10, cursor: 'pointer', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', color: '#dc2626', fontSize: 12, fontWeight: 700, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6 }}><Brain size={18} /><span>AI Detective</span><span>Analysis</span></button></Link>
+                      <Link href="/reports" style={{ textDecoration: 'none' }}><button className="cyber-btn cyber-btn-cyan" style={{ width: '100%', justifyContent: 'center', padding: '13px 16px', fontSize: '12px', flexDirection: 'column', gap: 6, height: 'auto' }}><FileText size={18} /><span>Generate Full</span><span>Report</span></button></Link>
+                      <Link href="/network" style={{ textDecoration: 'none' }}><button style={{ width: '100%', padding: '13px 16px', borderRadius: 10, cursor: 'pointer', background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.25)', color: '#7c3aed', fontSize: '12px', fontWeight: 700, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6 }}><Users size={18} /><span>Criminal</span><span>Network</span></button></Link>
+                      <Link href="/detective" style={{ textDecoration: 'none' }}><button style={{ width: '100%', padding: '13px 16px', borderRadius: 10, cursor: 'pointer', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', color: '#dc2626', fontSize: '12px', fontWeight: 700, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6 }}><Brain size={18} /><span>AI Detective</span><span>Analysis</span></button></Link>
                     </div>
                   </div>
                 </>
@@ -394,8 +394,8 @@ export default function InvestigationCopilotPage() {
                   {/* Chat header */}
                   <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-default)', display: 'flex', alignItems: 'center', gap: 10 }}>
                     <Brain size={15} color="#0F6B5C" />
-                    <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.06em' }}>AI INVESTIGATIVE CHAT</span>
-                    <span style={{ marginLeft: 'auto', fontSize: 10, fontWeight: 700, color: '#10b981', display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.06em' }}>AI INVESTIGATIVE CHAT</span>
+                    <span style={{ marginLeft: 'auto', fontSize: '12px', fontWeight: 700, color: '#10b981', display: 'flex', alignItems: 'center', gap: 5 }}>
                       <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981', display: 'inline-block', animation: 'pulse-green 1.5s infinite' }} />
                       LOCAL ENGINE — No API Key Needed
                     </span>
@@ -404,7 +404,7 @@ export default function InvestigationCopilotPage() {
                   {/* Suggested Prompts */}
                   <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--border-default)', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     {SUGGESTED_PROMPTS.map(p => (
-                      <button key={p.label} onClick={() => { setActiveTab('chat'); sendMessage(p.query); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 20, cursor: 'pointer', background: p.bg, border: `1px solid ${p.border}`, fontSize: 11, fontWeight: 700, color: p.color, transition: 'opacity 0.15s', whiteSpace: 'nowrap' }} onMouseEnter={e => { e.currentTarget.style.opacity = '0.75'; }} onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}>
+                      <button key={p.label} onClick={() => { setActiveTab('chat'); sendMessage(p.query); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 20, cursor: 'pointer', background: p.bg, border: `1px solid ${p.border}`, fontSize: '12px', fontWeight: 700, color: p.color, transition: 'opacity 0.15s', whiteSpace: 'nowrap' }} onMouseEnter={e => { e.currentTarget.style.opacity = '0.75'; }} onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}>
                         <p.Icon size={11} /> {p.label}
                       </button>
                     ))}
@@ -425,7 +425,7 @@ export default function InvestigationCopilotPage() {
                               )}
                             </div>
                           </div>
-                          <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4, textAlign: msg.role === 'user' ? 'right' : 'left', padding: '0 4px' }}>
+                          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: 4, textAlign: msg.role === 'user' ? 'right' : 'left', padding: '0 4px' }}>
                             {msg.role === 'system' ? 'SYSTEM' : msg.role === 'user' ? 'YOU' : 'COPILOT AI'} • {msg.timestamp}
                           </div>
                         </div>
@@ -446,7 +446,7 @@ export default function InvestigationCopilotPage() {
 
                   {/* Input */}
                   <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border-default)', display: 'flex', gap: 10, alignItems: 'center', background: 'var(--neutral-light)' }}>
-                    <input ref={inputRef} type="text" value={inputText} onChange={e => setInputText(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(inputText); } }} placeholder={`Ask about ${selectedFir.suspectDetails.name} or case ${selectedFir.firNumber}...`} style={{ flex: 1, padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--border-default)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: 13, fontFamily: 'Inter, sans-serif', outline: 'none' }} onFocus={e => { e.target.style.borderColor = '#0F6B5C'; e.target.style.boxShadow = '0 0 0 2px rgba(15,107,92,0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-default)'; e.target.style.boxShadow = 'none'; }} />
+                    <input ref={inputRef} type="text" value={inputText} onChange={e => setInputText(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(inputText); } }} placeholder={`Ask about ${selectedFir.suspectDetails.name} or case ${selectedFir.firNumber}...`} style={{ flex: 1, padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--border-default)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '14px', fontFamily: 'Inter, sans-serif', outline: 'none' }} onFocus={e => { e.target.style.borderColor = '#0F6B5C'; e.target.style.boxShadow = '0 0 0 2px rgba(15,107,92,0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-default)'; e.target.style.boxShadow = 'none'; }} />
                     <button onClick={() => sendMessage(inputText)} disabled={!inputText.trim() || isTyping} style={{ width: 42, height: 42, borderRadius: 10, border: 'none', background: inputText.trim() && !isTyping ? '#0F6B5C' : 'var(--border-default)', color: inputText.trim() && !isTyping ? '#fff' : 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: inputText.trim() && !isTyping ? 'pointer' : 'not-allowed', transition: 'all 0.2s', flexShrink: 0 }}>
                       <Send size={17} />
                     </button>
@@ -462,26 +462,26 @@ export default function InvestigationCopilotPage() {
           {!selectedFir ? (
             <div className="glass-card" style={{ padding: 32, textAlign: 'center', minHeight: 220, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
               <Brain size={32} color="var(--text-muted)" style={{ marginBottom: 12 }} />
-              <p style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 600 }}>Case intelligence will appear here after selection</p>
+              <p style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600 }}>Case intelligence will appear here after selection</p>
             </div>
           ) : (
             <>
               <div className="glass-card" style={{ padding: 18, border: '1px solid rgba(239,68,68,0.1)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 14, borderBottom: '1px solid var(--border-default)', paddingBottom: 10 }}>
                   <AlertTriangle size={13} color="#ef4444" />
-                  <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Accused Profile</span>
+                  <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Accused Profile</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
                   <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Users size={16} color="#ef4444" /></div>
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)' }}>{suspect?.name}</div>
-                    <span className={getRiskBadge(suspect?.riskLevel ?? 'Low')} style={{ fontSize: 9, marginTop: 2 }}>{suspect?.riskLevel?.toUpperCase()} RISK</span>
+                    <div style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>{suspect?.name}</div>
+                    <span className={getRiskBadge(suspect?.riskLevel ?? 'Low')} style={{ fontSize: '12px', marginTop: 2 }}>{suspect?.riskLevel?.toUpperCase()} RISK</span>
                   </div>
                 </div>
                 <div style={{ marginBottom: 14 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-                    <span style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Risk Score</span>
-                    <span style={{ fontFamily: 'monospace', fontSize: 13, fontWeight: 800, color: (suspect?.profileScore ?? 0) > 80 ? '#ef4444' : '#f59e0b' }}>{suspect?.profileScore}/100</span>
+                    <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Risk Score</span>
+                    <span style={{ fontFamily: 'monospace', fontSize: '14px', fontWeight: 800, color: (suspect?.profileScore ?? 0) > 80 ? '#ef4444' : '#f59e0b' }}>{suspect?.profileScore}/100</span>
                   </div>
                   <div style={{ height: 8, background: 'var(--neutral-light)', borderRadius: 6, overflow: 'hidden', border: '1px solid var(--border-default)' }}>
                     <div style={{ height: '100%', borderRadius: 6, width: `${suspect?.profileScore ?? 0}%`, background: (suspect?.profileScore ?? 0) > 80 ? 'linear-gradient(90deg,#b91c1c,#ef4444)' : 'linear-gradient(90deg,#b45309,#f59e0b)', transition: 'width 1s ease' }} />
@@ -490,8 +490,8 @@ export default function InvestigationCopilotPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                   {[{ label: 'Arrests', value: suspect?.arrestCount ?? 0, color: '#ef4444' }, { label: 'Associates', value: suspect?.knownAssociates?.length ?? 0, color: '#f59e0b' }, { label: 'Vehicles', value: suspect?.vehiclesUsed?.length ?? 0, color: '#8b5cf6' }, { label: 'Mobiles', value: suspect?.mobileNumbers?.length ?? 0, color: '#0F6B5C' }].map(f => (
                     <div key={f.label} style={{ background: 'var(--neutral-light)', border: '1px solid var(--border-default)', borderRadius: 8, padding: '8px 10px', textAlign: 'center' }}>
-                      <div style={{ fontSize: 18, fontWeight: 900, color: f.color, fontFamily: 'monospace' }}>{f.value}</div>
-                      <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 600 }}>{f.label}</div>
+                      <div style={{ fontSize: '18px', fontWeight: 900, color: f.color, fontFamily: 'monospace' }}>{f.value}</div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>{f.label}</div>
                     </div>
                   ))}
                 </div>
@@ -500,12 +500,12 @@ export default function InvestigationCopilotPage() {
               <div className="glass-card" style={{ padding: 18 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 12, borderBottom: '1px solid var(--border-default)', paddingBottom: 10 }}>
                   <CheckSquare size={13} color="#10b981" />
-                  <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Evidence Secured</span>
+                  <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Evidence Secured</span>
                 </div>
                 <div style={{ marginBottom: 12 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-                    <span style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 600 }}>{selectedFir.evidenceCount} / 10 exhibits</span>
-                    <span style={{ fontSize: 10, fontWeight: 800, color: '#10b981' }}>{Math.round((selectedFir.evidenceCount / 10) * 100)}%</span>
+                    <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>{selectedFir.evidenceCount} / 10 exhibits</span>
+                    <span style={{ fontSize: '12px', fontWeight: 800, color: '#10b981' }}>{Math.round((selectedFir.evidenceCount / 10) * 100)}%</span>
                   </div>
                   <div style={{ height: 6, background: 'var(--neutral-light)', borderRadius: 4, overflow: 'hidden', border: '1px solid var(--border-default)' }}>
                     <div style={{ height: '100%', borderRadius: 4, width: `${(selectedFir.evidenceCount / 10) * 100}%`, background: 'linear-gradient(90deg,#059669,#10b981)', transition: 'width 1s ease' }} />
@@ -514,8 +514,8 @@ export default function InvestigationCopilotPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 5, maxHeight: 130, overflowY: 'auto' }}>
                   {Array.from({ length: selectedFir.evidenceCount }).map((_, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--neutral-light)', border: '1px solid var(--border-default)', borderRadius: 6, padding: '5px 9px' }}>
-                      <span style={{ fontFamily: 'monospace', fontSize: 10, color: 'var(--text-secondary)', fontWeight: 700 }}>EXHIBIT-KSP-{String(i + 1).padStart(2, '0')}</span>
-                      <span style={{ fontSize: 9, color: '#10b981', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 3 }}><Check size={9} /> Secured</span>
+                      <span style={{ fontFamily: 'monospace', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 700 }}>EXHIBIT-KSP-{String(i + 1).padStart(2, '0')}</span>
+                      <span style={{ fontSize: '12px', color: '#10b981', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 3 }}><Check size={9} /> Secured</span>
                     </div>
                   ))}
                 </div>
@@ -524,14 +524,14 @@ export default function InvestigationCopilotPage() {
               <div className="glass-card" style={{ padding: 18 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 14, borderBottom: '1px solid var(--border-default)', paddingBottom: 10 }}>
                   <BarChart2 size={13} color="#8b5cf6" />
-                  <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>AI Risk Analysis</span>
-                  <span style={{ marginLeft: 'auto', fontSize: 9, fontWeight: 700, background: 'rgba(139,92,246,0.08)', color: '#8b5cf6', border: '1px solid rgba(139,92,246,0.2)', borderRadius: 4, padding: '1px 6px' }}>COMPUTED</span>
+                  <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>AI Risk Analysis</span>
+                  <span style={{ marginLeft: 'auto', fontSize: '12px', fontWeight: 700, background: 'rgba(139,92,246,0.08)', color: '#8b5cf6', border: '1px solid rgba(139,92,246,0.2)', borderRadius: 4, padding: '1px 6px' }}>COMPUTED</span>
                 </div>
                 {[{ label: 'Recidivism Risk', score: Math.round(recidivismRisk), color: recidivismRisk > 70 ? '#ef4444' : recidivismRisk > 45 ? '#f59e0b' : '#10b981', note: `${suspect?.arrestCount} prior arrests` }, { label: 'Flight Risk', score: flightRisk, color: flightRisk > 70 ? '#ef4444' : flightRisk > 45 ? '#f59e0b' : '#10b981', note: `${suspect?.riskLevel} profile` }, { label: 'Network Danger', score: Math.round(networkDanger), color: networkDanger > 60 ? '#ef4444' : networkDanger > 35 ? '#f59e0b' : '#10b981', note: `${suspect?.knownAssociates?.length} associates` }].map(factor => (
                   <div key={factor.label} style={{ marginBottom: 12 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 5 }}>
-                      <div><span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)' }}>{factor.label}</span><span style={{ fontSize: 9, color: 'var(--text-muted)', display: 'block', marginTop: 1 }}>{factor.note}</span></div>
-                      <span style={{ fontFamily: 'monospace', fontSize: 13, fontWeight: 900, color: factor.color }}>{factor.score}</span>
+                      <div><span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>{factor.label}</span><span style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginTop: 1 }}>{factor.note}</span></div>
+                      <span style={{ fontFamily: 'monospace', fontSize: '14px', fontWeight: 900, color: factor.color }}>{factor.score}</span>
                     </div>
                     <div style={{ height: 6, background: 'var(--neutral-light)', borderRadius: 4, overflow: 'hidden', border: '1px solid var(--border-default)' }}>
                       <div style={{ height: '100%', borderRadius: 4, width: `${factor.score}%`, background: `linear-gradient(90deg,${factor.color}60,${factor.color})`, transition: 'width 1s ease' }} />
@@ -543,23 +543,23 @@ export default function InvestigationCopilotPage() {
               <div className="glass-card" style={{ padding: 18 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 14, borderBottom: '1px solid var(--border-default)', paddingBottom: 10 }}>
                   <Clock size={13} color="#f59e0b" />
-                  <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Investigation Timeline</span>
+                  <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Investigation Timeline</span>
                 </div>
                 <div style={{ position: 'relative', paddingLeft: 20, borderLeft: '2px solid var(--border-default)', marginLeft: 6 }}>
                   {selectedFir.timeline.slice(-3).map((step, i) => (
                     <div key={i} style={{ marginBottom: 14, position: 'relative' }}>
                       <div style={{ position: 'absolute', left: -27, top: 2, width: 12, height: 12, borderRadius: '50%', background: i === selectedFir.timeline.slice(-3).length - 1 ? '#f59e0b' : '#10b981', border: '2px solid var(--bg-card)', boxShadow: i === selectedFir.timeline.slice(-3).length - 1 ? '0 0 5px rgba(245,158,11,0.4)' : 'none' }} />
-                      <div style={{ fontSize: 9, fontFamily: 'monospace', color: 'var(--text-muted)', marginBottom: 2 }}>{step.timestamp}</div>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <div style={{ fontSize: '12px', fontFamily: 'monospace', color: 'var(--text-muted)', marginBottom: 2 }}>{step.timestamp}</div>
+                      <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 5 }}>
                         {step.status}
-                        {i === selectedFir.timeline.slice(-3).length - 1 && <span style={{ fontSize: 8, fontWeight: 800, background: 'rgba(245,158,11,0.08)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 3, padding: '0 5px' }}>LATEST</span>}
+                        {i === selectedFir.timeline.slice(-3).length - 1 && <span style={{ fontSize: '12px', fontWeight: 800, background: 'rgba(245,158,11,0.08)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 3, padding: '0 5px' }}>LATEST</span>}
                       </div>
-                      <div style={{ fontSize: 10, color: 'var(--text-secondary)', lineHeight: 1.4 }}>{step.notes}</div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{step.notes}</div>
                     </div>
                   ))}
                 </div>
                 <Link href={`/fir?id=${selectedFir.id}`} style={{ textDecoration: 'none' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, marginTop: 6, padding: '7px 0', borderRadius: 7, border: '1px solid var(--border-default)', background: 'var(--neutral-light)', cursor: 'pointer', fontSize: 11, fontWeight: 700, color: '#0F6B5C' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, marginTop: 6, padding: '7px 0', borderRadius: 7, border: '1px solid var(--border-default)', background: 'var(--neutral-light)', cursor: 'pointer', fontSize: '12px', fontWeight: 700, color: '#0F6B5C' }}>
                     <FileText size={11} /> View Full FIR <ArrowRight size={11} />
                   </div>
                 </Link>

@@ -417,7 +417,7 @@ export default function TimelinePage() {
             onClick={handleExportPDF}
             disabled={isExporting}
             className="cyber-btn cyber-btn-cyan"
-            style={{ padding: '8px 16px', borderRadius: '8px', fontSize: '13px', textTransform: 'none', fontWeight: 600 }}
+            style={{ padding: '8px 16px', borderRadius: '8px', fontSize: '14px', textTransform: 'none', fontWeight: 600 }}
           >
             <FileText size={14} />
             {isExporting ? 'Exporting...' : 'Export PDF'}
@@ -440,7 +440,7 @@ export default function TimelinePage() {
             background: 'var(--cyber-surface)',
           }}
         >
-          <div style={{ fontSize: '10px', fontWeight: 900, color: 'var(--text-dim)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '16px', borderBottom: '1px solid var(--cyber-border)', paddingBottom: '8px' }}>
+          <div style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-dim)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '16px', borderBottom: '1px solid var(--cyber-border)', paddingBottom: '8px' }}>
             {lang === 'en' ? 'ACTIVE CASES' : 'ಸಕ್ರಿಯ ಪ್ರಕರಣಗಳು'}
           </div>
 
@@ -480,11 +480,11 @@ export default function TimelinePage() {
                     {c.title}
                   </div>
                   
-                  <div style={{ fontSize: '10px', color: 'var(--text-dim)', marginTop: '2px', paddingLeft: '16px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-dim)', marginTop: '2px', paddingLeft: '16px' }}>
                     {c.category} · {c.district}
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)', marginTop: '8px', paddingLeft: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px', paddingLeft: '16px' }}>
                     <span>Progress:</span>
                     <span style={{ fontWeight: 800, color: isSelected ? 'var(--cyber-cyan)' : 'var(--text-primary)' }}>{c.progress}%</span>
                   </div>
@@ -518,7 +518,7 @@ export default function TimelinePage() {
                   style={{
                     padding: '5px 12px',
                     borderRadius: '20px',
-                    fontSize: '11px',
+                    fontSize: '12px',
                     fontWeight: 700,
                     cursor: 'pointer',
                     background: filter === btn.id ? 'var(--cyber-cyan)' : 'rgba(30, 58, 95, 0.05)',
@@ -558,7 +558,7 @@ export default function TimelinePage() {
             />
 
             {filteredEvents.length === 0 ? (
-              <div style={{ color: 'var(--text-muted)', fontSize: '13px', fontStyle: 'italic', padding: '10px 0' }}>
+              <div style={{ color: 'var(--text-muted)', fontSize: '14px', fontStyle: 'italic', padding: '10px 0' }}>
                 No events matched the selected filter.
               </div>
             ) : (
@@ -601,13 +601,13 @@ export default function TimelinePage() {
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px', marginBottom: '8px' }}>
                         <div>
-                          <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--cyber-cyan)', fontFamily: 'JetBrains Mono, monospace' }}>
+                          <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--cyber-cyan)', fontFamily: 'JetBrains Mono, monospace' }}>
                             {ev.time}
                           </span>
-                          <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', margin: '2px 0 0 0' }}>
+                          <h3 style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', margin: '2px 0 0 0' }}>
                             {ev.title}
                           </h3>
-                          <div style={{ fontSize: '11px', color: 'var(--text-dim)', marginTop: '2px' }}>
+                          <div style={{ fontSize: '12px', color: 'var(--text-dim)', marginTop: '2px' }}>
                             {ev.subtitle}
                           </div>
                         </div>
@@ -616,7 +616,7 @@ export default function TimelinePage() {
                           <span 
                             className="badge"
                             style={{
-                              fontSize: '8px',
+                              fontSize: '12px',
                               padding: '2px 8px',
                               background: ev.type === 'fir' ? 'rgba(30, 58, 95, 0.1)' : ev.type === 'ai' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
                               color: ev.type === 'fir' ? 'var(--cyber-cyan)' : ev.type === 'ai' ? '#ef4444' : '#10b981',
@@ -632,7 +632,7 @@ export default function TimelinePage() {
                         </div>
                       </div>
 
-                      <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                      <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
                         {ev.desc}
                       </p>
 

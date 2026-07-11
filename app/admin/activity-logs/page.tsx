@@ -60,7 +60,7 @@ export default function ActivityLogsPage() {
     <div className="page-content" style={{ background: '#F5F7FA', padding: '24px 32px' }}>
       
       {/* Breadcrumb */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, fontSize: 12, color: '#475569' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, fontSize: '12px', color: '#475569' }}>
         <span>Home</span>
         <span>/</span>
         <span>Administration</span>
@@ -79,10 +79,10 @@ export default function ActivityLogsPage() {
             <ScrollText size={22} style={{ color: '#A6192E' }} />
           </div>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1F2937', margin: 0 }}>
+            <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#1F2937', margin: 0 }}>
               KSP System Activity Logs
             </h1>
-            <p style={{ fontSize: 13, color: '#475569', margin: 0 }}>
+            <p style={{ fontSize: '14px', color: '#475569', margin: 0 }}>
               Immutable audit logs tracking officer queries, logins, edits, and system alerts.
             </p>
           </div>
@@ -94,7 +94,7 @@ export default function ActivityLogsPage() {
             style={{
               display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px',
               background: '#FFFFFF', color: '#1E3A5F', border: '1px solid #1E3A5F', borderRadius: 8,
-              fontSize: 13, fontWeight: 600, cursor: 'pointer'
+              fontSize: '14px', fontWeight: 600, cursor: 'pointer'
             }}
           >
             <Download size={14} /> Export CSV
@@ -104,7 +104,7 @@ export default function ActivityLogsPage() {
             style={{
               display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px',
               background: '#FEF2F2', color: '#991B1B', border: '1px solid #FCA5A5', borderRadius: 8,
-              fontSize: 13, fontWeight: 600, cursor: 'pointer'
+              fontSize: '14px', fontWeight: 600, cursor: 'pointer'
             }}
           >
             <Trash size={14} /> Clear Log
@@ -127,19 +127,19 @@ export default function ActivityLogsPage() {
             placeholder="Search logs..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #D1D5DB', fontSize: 13 }}
+            style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #D1D5DB', fontSize: '14px' }}
           />
         </div>
 
         {/* Category Filter */}
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 11, color: '#475569', alignSelf: 'center', fontWeight: 700, textTransform: 'uppercase' }}>Category:</span>
+          <span style={{ fontSize: '12px', color: '#475569', alignSelf: 'center', fontWeight: 700, textTransform: 'uppercase' }}>Category:</span>
           {['All', 'Navigation', 'Report', 'Case Update', 'User Management', 'Evidence'].map(c => (
             <button
               key={c}
               onClick={() => setFilterCategory(c)}
               style={{
-                padding: '6px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                padding: '6px 12px', borderRadius: 6, fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                 border: `1px solid ${filterCategory === c ? '#0F6B5C' : '#E5E7EB'}`,
                 background: filterCategory === c ? 'rgba(15, 107, 92, 0.08)' : '#FFFFFF',
                 color: filterCategory === c ? '#0F6B5C' : '#475569', transition: 'all 0.15s'
@@ -152,13 +152,13 @@ export default function ActivityLogsPage() {
 
         {/* Level Filter */}
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginLeft: 'auto' }}>
-          <span style={{ fontSize: 11, color: '#475569', alignSelf: 'center', fontWeight: 700, textTransform: 'uppercase' }}>Severity:</span>
+          <span style={{ fontSize: '12px', color: '#475569', alignSelf: 'center', fontWeight: 700, textTransform: 'uppercase' }}>Severity:</span>
           {['All', 'info', 'warning', 'critical'].map(l => (
             <button
               key={l}
               onClick={() => setFilterLevel(l)}
               style={{
-                padding: '6px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                padding: '6px 12px', borderRadius: 6, fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                 border: `1px solid ${filterLevel === l ? '#0F6B5C' : '#E5E7EB'}`,
                 background: filterLevel === l ? 'rgba(15, 107, 92, 0.08)' : '#FFFFFF',
                 color: filterLevel === l ? '#0F6B5C' : '#475569', transition: 'all 0.15s'
@@ -186,13 +186,13 @@ export default function ActivityLogsPage() {
           <tbody>
             {filteredLogs.map((log, index) => (
               <tr key={index}>
-                <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{log.time}</td>
-                <td style={{ fontFamily: 'monospace', fontSize: 12, color: '#6B7280' }}>{log.ip}</td>
+                <td style={{ fontFamily: 'monospace', fontSize: '12px' }}>{log.time}</td>
+                <td style={{ fontFamily: 'monospace', fontSize: '12px', color: '#6B7280' }}>{log.ip}</td>
                 <td style={{ fontWeight: 600 }}>{log.user}</td>
                 <td>{log.category}</td>
                 <td>
                   <span style={{
-                    fontSize: 10, padding: '3px 8px', borderRadius: 4, fontWeight: 800, textTransform: 'uppercase',
+                    fontSize: '12px', padding: '3px 8px', borderRadius: 4, fontWeight: 800, textTransform: 'uppercase',
                     background: log.level === 'critical' ? '#FEE2E2' : log.level === 'warning' ? '#FEF3C7' : '#E0F2FE',
                     color: log.level === 'critical' ? '#991B1B' : log.level === 'warning' ? '#92400E' : '#1976D2',
                     border: `1px solid ${log.level === 'critical' ? '#FCA5A5' : log.level === 'warning' ? '#FDE68A' : '#BAE6FD'}`

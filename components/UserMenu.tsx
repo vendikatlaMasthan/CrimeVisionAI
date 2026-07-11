@@ -96,7 +96,7 @@ export default function UserMenu({ user }: UserMenuProps) {
           <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>
             {user?.name ?? 'KSP Officer'}
           </span>
-          <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 500 }}>
+          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>
             {user?.designation ?? 'Inspector'} · {user?.district ?? 'Bengaluru'}
           </span>
         </div>
@@ -113,189 +113,209 @@ export default function UserMenu({ user }: UserMenuProps) {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'rgba(0, 0, 0, 0.4)',
+            background: 'rgba(0, 0, 0, 0.25)',
             zIndex: 45,
           }}
         />
       )}
 
       {/* Dropdown Menu */}
-      {isOpen && (
+      <div
+        ref={menuRef}
+        className="absolute rounded-xl shadow-lg z-50 profile-dropdown"
+        style={{
+          position: 'absolute',
+          top: 'calc(100% + 6px)',
+          right: '0px',
+          left: 'auto',
+          minWidth: '260px',
+          maxWidth: '320px',
+          width: '280px',
+          background: '#FFFFFF',
+          border: '1px solid #E2E8F0',
+          boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+          transformOrigin: 'top right',
+          transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+          opacity: isOpen ? 1 : 0,
+          transform: isOpen ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-4px)',
+          pointerEvents: isOpen ? 'auto' : 'none',
+          zIndex: 50,
+        }}
+      >
+        {/* Arrow Pointer */}
         <div
-          ref={menuRef}
-          className="absolute rounded-xl shadow-lg z-50 profile-dropdown"
           style={{
             position: 'absolute',
-            top: 'calc(100% + 8px)',
-            right: '0px',
-            left: 'auto',
-            minWidth: '260px',
-            maxWidth: '320px',
-            width: '280px',
+            top: '-6px',
+            right: '24px',
+            width: '12px',
+            height: '12px',
             background: '#FFFFFF',
-            border: '1px solid #E5E7EB',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+            borderLeft: '1px solid #E2E8F0',
+            borderTop: '1px solid #E2E8F0',
+            transform: 'rotate(45deg)',
+            zIndex: 51,
           }}
-        >
-          {/* 1. Identity Header */}
-          <div style={{ padding: '16px 40px 16px 16px', display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
-            {/* Circular avatar placeholder */}
-            <div
-              style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                background: 'rgba(11, 31, 58, 0.05)',
-                border: '1px solid #E2E8F0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              <User size={20} style={{ color: '#0B1F3A' }} />
-            </div>
-            {/* Officer info */}
-            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
-              <span style={{ fontSize: '15px', fontWeight: 700, color: '#0B1F3A', whiteSpace: 'normal', overflowWrap: 'break-word' }}>
-                {user?.name ?? 'KSP Officer'}
-              </span>
-              <span style={{ fontSize: '13px', color: '#64748B', whiteSpace: 'normal', overflowWrap: 'break-word' }}>
-                {user?.designation ?? 'Inspector'}
-              </span>
-            </div>
-            {/* Role Badge */}
-            <span
-              style={{
-                fontSize: '10px',
-                fontWeight: 800,
-                color: '#0B1F3A',
-                background: 'rgba(11, 31, 58, 0.08)',
-                padding: '2px 8px',
-                borderRadius: '12px',
-                textTransform: 'uppercase',
-                flexShrink: 0,
-              }}
-            >
-              {badge.text}
+        />
+
+        {/* 1. Identity Header */}
+        <div style={{ padding: '20px 16px', display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
+          {/* Circular avatar placeholder */}
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              background: 'rgba(11, 31, 58, 0.05)',
+              border: '1px solid #E2E8F0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <User size={20} style={{ color: '#0B1F3A' }} />
+          </div>
+          {/* Officer info */}
+          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
+            <span style={{ fontSize: '14px', fontWeight: 700, color: '#0B1F3A', whiteSpace: 'normal', overflowWrap: 'break-word' }}>
+              {user?.name ?? 'KSP Officer'}
             </span>
-            {/* Close Button */}
-            <button
-              onClick={() => setIsOpen(false)}
-              style={{
-                position: 'absolute',
-                top: '12px',
-                right: '12px',
-                background: 'transparent',
-                border: 'none',
-                color: '#64748B',
-                cursor: 'pointer',
-                padding: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: '50%',
-                transition: 'background 150ms ease',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.background = '#F1F5F9'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-              title="Close Menu"
-            >
-              <X size={16} />
-            </button>
+            <span style={{ fontSize: '14px', color: '#64748B', whiteSpace: 'normal', overflowWrap: 'break-word' }}>
+              {user?.designation ?? 'Inspector'}
+            </span>
           </div>
+          {/* Role Badge */}
+          <span
+            style={{
+              fontSize: '12px',
+              fontWeight: 800,
+              color: '#0B1F3A',
+              background: 'rgba(11, 31, 58, 0.08)',
+              padding: '2px 8px',
+              borderRadius: '12px',
+              textTransform: 'uppercase',
+              flexShrink: 0,
+            }}
+          >
+            {badge.text}
+          </span>
+          {/* Close Button */}
+          <button
+            onClick={() => setIsOpen(false)}
+            style={{
+              position: 'absolute',
+              top: '12px',
+              right: '12px',
+              background: 'transparent',
+              border: 'none',
+              color: '#64748B',
+              cursor: 'pointer',
+              padding: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '50%',
+              transition: 'background 150ms ease',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#F1F5F9'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+            title="Close Menu"
+          >
+            <X size={16} />
+          </button>
+        </div>
 
-          {/* Divider */}
-          <div style={{ height: '1px', background: '#E2E8F0' }} />
+        {/* Divider */}
+        <div style={{ height: '1px', background: '#F1F5F9' }} />
 
-          {/* 3. Meta Info Block */}
-          <div className="profile-dropdown-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <div className="field-row" style={{ display: 'flex', flexDirection: 'column', padding: '12px 16px 6px', gap: '2px' }}>
-              <div className="field-label" style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.04em', color: '#9CA3AF', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
-                Badge ID
-              </div>
-              <div className="field-value" style={{ fontSize: '14px', fontWeight: 600, color: '#111827', whiteSpace: 'normal', overflowWrap: 'break-word' }}>
-                {user?.badgeNumber ?? 'KSP-94827'}
-              </div>
+        {/* 3. Meta Info Block */}
+        <div className="profile-dropdown-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '16px 16px' }}>
+          <div className="field-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '2px' }}>
+            <div className="field-label" style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.04em', color: '#9CA3AF', textTransform: 'uppercase' }}>
+              Badge ID
             </div>
-            <div className="field-row" style={{ display: 'flex', flexDirection: 'column', padding: '6px 16px 12px', gap: '2px' }}>
-              <div className="field-label" style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.04em', color: '#9CA3AF', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
-                Command
-              </div>
-              <div className="field-value" style={{ fontSize: '14px', fontWeight: 600, color: '#111827', whiteSpace: 'normal', overflowWrap: 'break-word' }}>
-                Karnataka Police HQ
-              </div>
+            <div className="field-value" style={{ fontSize: '14px', fontWeight: 600, color: '#1E3A5F' }}>
+              {user?.badgeNumber ?? 'KSP-94827'}
             </div>
           </div>
-
-          {/* Divider */}
-          <div style={{ height: '1px', background: '#E2E8F0' }} />
-
-          {/* 5. Action List */}
-          <div style={{ padding: '4px 0' }}>
-            {/* Profile */}
-            <button
-              onClick={() => {
-                setIsOpen(false);
-                router.push('/settings#profile');
-              }}
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '12px 16px',
-                fontSize: '14px',
-                color: '#0B1F3A',
-                border: 'none',
-                background: 'transparent',
-                cursor: 'pointer',
-                textAlign: 'left',
-                transition: 'background 150ms ease',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.background = '#F1F5F9'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-            >
-              <User size={16} style={{ color: '#64748B' }} />
-              <span>Profile</span>
-            </button>
-
-            {/* Language Selection Row as an interactive control */}
-            <button
-              onClick={() => {
-                setLang(lang === 'en' ? 'kn' : 'en');
-              }}
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '12px 16px',
-                fontSize: '14px',
-                color: '#0B1F3A',
-                border: 'none',
-                background: 'transparent',
-                cursor: 'pointer',
-                textAlign: 'left',
-                transition: 'background 150ms ease',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.background = '#F1F5F9'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
-                <Globe size={16} style={{ color: '#64748B' }} />
-                <span>Language</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ fontSize: '13px', color: '#64748B', fontWeight: 600 }}>
-                  {lang === 'en' ? 'English' : 'ಕನ್ನಡ'}
-                </span>
-                <ChevronDown size={14} style={{ color: '#64748B', transform: 'rotate(-90deg)' }} />
-              </div>
-            </button>
+          <div className="field-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '2px' }}>
+            <div className="field-label" style={{ fontSize: '12px', fontWeight: 600, letterSpacing: '0.04em', color: '#9CA3AF', textTransform: 'uppercase' }}>
+              Command
+            </div>
+            <div className="field-value" style={{ fontSize: '14px', fontWeight: 600, color: '#1E3A5F' }}>
+              Karnataka Police HQ
+            </div>
           </div>
         </div>
-      )}
+
+        {/* Divider */}
+        <div style={{ height: '1px', background: '#F1F5F9' }} />
+
+        {/* 5. Action List */}
+        <div style={{ padding: '8px 0' }}>
+          {/* Profile */}
+          <button
+            onClick={() => {
+              setIsOpen(false);
+              router.push('/settings#profile');
+            }}
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '12px 16px',
+              fontSize: '14px',
+              color: '#0B1F3A',
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'background 150ms ease',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#F1F5F9'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+          >
+            <User size={16} style={{ color: '#64748B' }} />
+            <span>Profile</span>
+          </button>
+
+          {/* Language Selection Row as an interactive control */}
+          <button
+            onClick={() => {
+              setLang(lang === 'en' ? 'kn' : 'en');
+            }}
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '12px 16px',
+              fontSize: '14px',
+              color: '#0B1F3A',
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'background 150ms ease',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#F1F5F9'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+              <Globe size={16} style={{ color: '#64748B' }} />
+              <span>Language</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span style={{ fontSize: '14px', color: '#64748B', fontWeight: 600 }}>
+                {lang === 'en' ? 'English' : 'ಕನ್ನಡ'}
+              </span>
+              <ChevronDown size={14} style={{ color: '#64748B', transform: 'rotate(-90deg)' }} />
+            </div>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

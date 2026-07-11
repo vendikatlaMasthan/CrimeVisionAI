@@ -175,7 +175,7 @@ export default function OfficerManagementPage() {
     padding: '10px 12px',
     borderRadius: 8,
     border: `1px solid ${hasError ? '#DC2626' : '#D1D5DB'}`,
-    fontSize: 13,
+    fontSize: '14px',
     outline: 'none',
     boxSizing: 'border-box',
     background: hasError ? '#FFF5F5' : '#FFFFFF',
@@ -183,7 +183,7 @@ export default function OfficerManagementPage() {
   });
 
   const errMsg: React.CSSProperties = {
-    fontSize: 11, color: '#DC2626', marginTop: 4,
+    fontSize: '12px', color: '#DC2626', marginTop: 4,
     display: 'flex', alignItems: 'center', gap: 4,
   };
 
@@ -191,7 +191,7 @@ export default function OfficerManagementPage() {
     <div className="page-content" style={{ background: '#F5F7FA', padding: '24px 32px' }}>
 
       {/* Breadcrumb */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, fontSize: 12, color: '#475569' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, fontSize: '12px', color: '#475569' }}>
         <span>Home</span><span>/</span><span>Administration</span><span>/</span>
         <span style={{ color: '#1F2937', fontWeight: 600 }}>Officer Management</span>
       </div>
@@ -203,14 +203,14 @@ export default function OfficerManagementPage() {
             <Users size={22} style={{ color: '#A6192E' }} />
           </div>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1F2937', margin: 0 }}>Officer Account Management</h1>
-            <p style={{ fontSize: 13, color: '#475569', margin: 0 }}>Deploy, configure, and audit Karnataka State Police officer credential access.</p>
+            <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#1F2937', margin: 0 }}>Officer Account Management</h1>
+            <p style={{ fontSize: '14px', color: '#475569', margin: 0 }}>Deploy, configure, and audit Karnataka State Police officer credential access.</p>
           </div>
         </div>
         <button
           type="button"
           onClick={() => setShowAddModal(true)}
-          style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1E3A5F', color: '#FFFFFF', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#1E3A5F', color: '#FFFFFF', border: 'none', borderRadius: 8, fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
         >
           <Plus size={16} /> Add Officer Account
         </button>
@@ -225,7 +225,7 @@ export default function OfficerManagementPage() {
             placeholder="Search officers by name, badge ID, station..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #D1D5DB', fontSize: 13, outline: 'none' }}
+            style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #D1D5DB', fontSize: '14px', outline: 'none' }}
           />
         </div>
       </div>
@@ -248,13 +248,13 @@ export default function OfficerManagementPage() {
                 <td>{officer.rank}</td>
                 <td>
                   <div>{officer.policeStation}</div>
-                  <div style={{ fontSize: 11, color: '#6B7280' }}>{officer.district}</div>
+                  <div style={{ fontSize: '12px', color: '#6B7280' }}>{officer.district}</div>
                 </td>
-                <td style={{ fontSize: 13 }}>{officer.email}</td>
+                <td style={{ fontSize: '14px' }}>{officer.email}</td>
                 <td>
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px',
-                    borderRadius: 20, fontSize: 11, fontWeight: 700,
+                    borderRadius: 20, fontSize: '12px', fontWeight: 700,
                     background: officer.status === 'Active' ? '#D1FAE5' : '#F3F4F6',
                     color: officer.status === 'Active' ? '#065F46' : '#374151',
                     border: `1px solid ${officer.status === 'Active' ? '#A7F3D0' : '#E5E7EB'}`,
@@ -292,8 +292,8 @@ export default function OfficerManagementPage() {
         onClose={() => { setShowAddModal(false); setFormErrors({}); }}
         title={
           <div>
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: '#1F2937', margin: '0 0 3px' }}>Add New KSP Officer Account</h2>
-            <p style={{ fontSize: 12, color: '#6B7280', margin: 0, fontWeight: 'normal' }}>All fields are required. Credentials will be generated automatically.</p>
+            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1F2937', margin: '0 0 3px' }}>Add New KSP Officer Account</h2>
+            <p style={{ fontSize: '12px', color: '#6B7280', margin: 0, fontWeight: 'normal' }}>All fields are required. Credentials will be generated automatically.</p>
           </div>
         }
         size="md"
@@ -301,7 +301,7 @@ export default function OfficerManagementPage() {
         {/* noValidate suppresses browser native popups — all validation handled in JS */}
         <form onSubmit={handleAddOfficer} noValidate style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 5 }}>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: 5 }}>
               Officer Full Name <span style={{ color: '#DC2626' }}>*</span>
             </label>
             <input
@@ -316,13 +316,13 @@ export default function OfficerManagementPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 5 }}>Rank</label>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: 5 }}>Rank</label>
               <select value={newRank} onChange={(e) => setNewRank(e.target.value)} style={inputBase()}>
                 {['Inspector', 'Sub-Inspector', 'Constable'].map((r) => <option key={r} value={r}>{r}</option>)}
               </select>
             </div>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 5 }}>District</label>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: 5 }}>District</label>
               <select value={newDistrict} onChange={(e) => setNewDistrict(e.target.value)} style={inputBase()}>
                 {DISTRICTS.map((d) => <option key={d.name} value={d.name}>{d.name}</option>)}
               </select>
@@ -330,7 +330,7 @@ export default function OfficerManagementPage() {
           </div>
 
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 5 }}>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: 5 }}>
               Police Station Assignment <span style={{ color: '#DC2626' }}>*</span>
             </label>
             <input
@@ -344,7 +344,7 @@ export default function OfficerManagementPage() {
           </div>
 
           <div>
-            <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 5 }}>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: 5 }}>
               Official Email <span style={{ color: '#DC2626' }}>*</span>
             </label>
             <input
@@ -356,15 +356,15 @@ export default function OfficerManagementPage() {
             />
             {formErrors.email
               ? <div style={errMsg}><AlertTriangle size={11} /> {formErrors.email}</div>
-              : <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4 }}>Must be an official @ksp.gov.in address</div>
+              : <div style={{ fontSize: '12px', color: '#9CA3AF', marginTop: 4 }}>Must be an official @ksp.gov.in address</div>
             }
           </div>
 
           <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 6, borderTop: '1px solid #E5E7EB', paddingTop: 16 }}>
-            <button type="button" onClick={() => { setShowAddModal(false); setFormErrors({}); }} style={{ padding: '10px 18px', background: '#F3F4F6', border: '1px solid #E5E7EB', borderRadius: 8, fontSize: 13, cursor: 'pointer', color: '#374151' }}>
+            <button type="button" onClick={() => { setShowAddModal(false); setFormErrors({}); }} style={{ padding: '10px 18px', background: '#F3F4F6', border: '1px solid #E5E7EB', borderRadius: 8, fontSize: '14px', cursor: 'pointer', color: '#374151' }}>
               Cancel
             </button>
-            <button type="submit" style={{ padding: '10px 22px', background: '#1E3A5F', color: '#FFFFFF', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7 }}>
+            <button type="submit" style={{ padding: '10px 22px', background: '#1E3A5F', color: '#FFFFFF', border: 'none', borderRadius: 8, fontSize: '14px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7 }}>
               <Key size={14} /> Generate Credentials
             </button>
           </div>
@@ -382,15 +382,15 @@ export default function OfficerManagementPage() {
                 <CheckCircle2 size={20} style={{ color: '#059669' }} />
               </div>
               <div>
-                <h2 style={{ fontSize: 15, fontWeight: 700, color: '#1F2937', margin: '0 0 2px' }}>Account Created Successfully</h2>
-                <p style={{ fontSize: 12, color: '#6B7280', margin: 0, fontWeight: 'normal' }}>{generatedCredentials.officerName} · {generatedCredentials.badgeId}</p>
+                <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#1F2937', margin: '0 0 2px' }}>Account Created Successfully</h2>
+                <p style={{ fontSize: '12px', color: '#6B7280', margin: 0, fontWeight: 'normal' }}>{generatedCredentials.officerName} · {generatedCredentials.badgeId}</p>
               </div>
             </div>
           ) : null
         }
         size="md"
         footer={
-          <button type="button" onClick={() => { setGeneratedCredentials(null); setCopiedField(null); }} style={{ width: '100%', padding: '11px', background: '#1E3A5F', color: '#FFFFFF', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+          <button type="button" onClick={() => { setGeneratedCredentials(null); setCopiedField(null); }} style={{ width: '100%', padding: '11px', background: '#1E3A5F', color: '#FFFFFF', border: 'none', borderRadius: 8, fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
             Close &amp; Secure Credentials
           </button>
         }
@@ -398,15 +398,15 @@ export default function OfficerManagementPage() {
         {generatedCredentials && (
           <div>
             <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: 16, marginBottom: 16 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
+              <div style={{ fontSize: '12px', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
                 System-Generated Credentials
               </div>
 
               {/* Badge ID row */}
               <div style={{ marginBottom: 10 }}>
-                <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 3 }}>Badge ID</div>
+                <div style={{ fontSize: '12px', color: '#9CA3AF', marginBottom: 3 }}>Badge ID</div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 7, padding: '8px 12px' }}>
-                  <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#1E3A5F', fontSize: 15 }}>{generatedCredentials.badgeId}</span>
+                  <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#1E3A5F', fontSize: '14px' }}>{generatedCredentials.badgeId}</span>
                   <button type="button" onClick={() => copyToClipboard(generatedCredentials.badgeId, 'badgeId')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: copiedField === 'badgeId' ? '#059669' : '#9CA3AF', padding: 2 }}>
                     {copiedField === 'badgeId' ? <CheckCircle2 size={14} /> : <Copy size={14} />}
                   </button>
@@ -415,9 +415,9 @@ export default function OfficerManagementPage() {
 
               {/* Username row */}
               <div style={{ marginBottom: 10 }}>
-                <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 3 }}>System Username</div>
+                <div style={{ fontSize: '12px', color: '#9CA3AF', marginBottom: 3 }}>System Username</div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 7, padding: '8px 12px' }}>
-                  <span style={{ fontFamily: 'monospace', fontWeight: 600, color: '#374151', fontSize: 14 }}>{generatedCredentials.username}@ksp.gov.in</span>
+                  <span style={{ fontFamily: 'monospace', fontWeight: 600, color: '#374151', fontSize: '14px' }}>{generatedCredentials.username}@ksp.gov.in</span>
                   <button type="button" onClick={() => copyToClipboard(`${generatedCredentials.username}@ksp.gov.in`, 'username')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: copiedField === 'username' ? '#059669' : '#9CA3AF', padding: 2 }}>
                     {copiedField === 'username' ? <CheckCircle2 size={14} /> : <Copy size={14} />}
                   </button>
@@ -426,11 +426,11 @@ export default function OfficerManagementPage() {
 
               {/* Temp password row */}
               <div>
-                <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 3 }}>
+                <div style={{ fontSize: '12px', color: '#9CA3AF', marginBottom: 3 }}>
                   Temporary Password <span style={{ color: '#DC2626' }}>— expires in 24h</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#FFFFFF', border: '1px solid #FCA5A5', borderRadius: 7, padding: '8px 12px' }}>
-                  <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#DC2626', fontSize: 15, letterSpacing: '0.04em' }}>{generatedCredentials.tempPassword}</span>
+                  <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#DC2626', fontSize: '14px', letterSpacing: '0.04em' }}>{generatedCredentials.tempPassword}</span>
                   <button type="button" onClick={() => copyToClipboard(generatedCredentials.tempPassword, 'password')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: copiedField === 'password' ? '#059669' : '#9CA3AF', padding: 2 }}>
                     {copiedField === 'password' ? <CheckCircle2 size={14} /> : <Copy size={14} />}
                   </button>
@@ -438,7 +438,7 @@ export default function OfficerManagementPage() {
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'start', gap: 8, padding: '10px 12px', background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 8, fontSize: 12, color: '#92400E' }}>
+            <div style={{ display: 'flex', alignItems: 'start', gap: 8, padding: '10px 12px', background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 8, fontSize: '12px', color: '#92400E' }}>
               <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
               <span>Share these credentials securely. The officer must change their password on first login. This dialog cannot be reopened.</span>
             </div>
@@ -458,17 +458,17 @@ export default function OfficerManagementPage() {
         }
         size="sm"
         footer={
-          <button type="button" onClick={() => setShowPasswordResetModal(null)} style={{ width: '100%', padding: '10px', background: '#1E3A5F', color: '#FFFFFF', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+          <button type="button" onClick={() => setShowPasswordResetModal(null)} style={{ width: '100%', padding: '10px', background: '#1E3A5F', color: '#FFFFFF', border: 'none', borderRadius: 8, fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
             Close &amp; Copy Credentials
           </button>
         }
       >
         {showPasswordResetModal && (
           <div style={{ textAlign: 'center' }}>
-            <p style={{ fontSize: 13, color: '#475569', marginBottom: 18, marginTop: 0 }}>
+            <p style={{ fontSize: '14px', color: '#475569', marginBottom: 18, marginTop: 0 }}>
               Credential access has been refreshed for <strong>{showPasswordResetModal.name}</strong> ({showPasswordResetModal.badgeId}).
             </p>
-            <div style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 8, padding: 12, fontFamily: 'monospace', fontSize: 15, fontWeight: 700, color: '#1E3A5F', letterSpacing: '0.05em' }}>
+            <div style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 8, padding: 12, fontFamily: 'monospace', fontSize: '14px', fontWeight: 700, color: '#1E3A5F', letterSpacing: '0.05em' }}>
               {generatedPassword}
             </div>
           </div>

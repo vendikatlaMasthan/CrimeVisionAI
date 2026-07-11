@@ -30,7 +30,7 @@ const CustomTooltip = ({ active, payload }: any) => {
     return (
       <div style={{
         background: '#FFFFFF', border: '1px solid rgba(30, 58, 95,0.22)',
-        borderRadius: 8, padding: '10px 14px', fontSize: 13, color: 'var(--text-primary)'
+        borderRadius: 8, padding: '10px 14px', fontSize: '14px', color: 'var(--text-primary)'
       }}>
         <div style={{ color: '#0F6B5C', fontWeight: 700, marginBottom: 4 }}>{payload[0].payload.name}</div>
         <div style={{ color: 'var(--text-secondary)' }}>Crimes: <strong style={{ color: 'var(--text-primary)' }}>{payload[0].value.toLocaleString()}</strong></div>
@@ -77,18 +77,18 @@ export default function CommissionerPage() {
             <span style={{
               background: 'rgba(239,68,68,0.12)', color: '#ef4444',
               border: '1px solid rgba(239,68,68,0.4)', borderRadius: 6,
-              padding: '4px 10px', fontSize: 10, fontWeight: 800, letterSpacing: '0.08em'
+              padding: '4px 10px', fontSize: '12px', fontWeight: 800, letterSpacing: '0.08em'
             }}>CONFIDENTIAL</span>
             <span style={{
               background: 'rgba(30, 58, 95,0.1)', color: '#0F6B5C',
               border: '1px solid rgba(30, 58, 95,0.3)', borderRadius: 6,
-              padding: '4px 10px', fontSize: 10, fontWeight: 800, letterSpacing: '0.08em'
+              padding: '4px 10px', fontSize: '12px', fontWeight: 800, letterSpacing: '0.08em'
             }}>DGP COMMAND CENTER</span>
           </div>
           <h1 className="page-title" style={{ fontSize: '20px', fontWeight: 900, letterSpacing: '0.03em', margin: 0 }}>
             STATE COMMAND CENTER VIEW
           </h1>
-          <p className="page-subtitle" style={{ margin: '2px 0 0', fontSize: 12 }}>
+          <p className="page-subtitle" style={{ margin: '2px 0 0', fontSize: '12px' }}>
             Karnataka State Police — Director General of Police Briefing Interface
           </p>
         </div>
@@ -97,7 +97,7 @@ export default function CommissionerPage() {
           <button
             onClick={handlePrint}
             className="cyber-btn cyber-btn-cyan"
-            style={{ padding: '8px 16px', fontSize: 12 }}
+            style={{ padding: '8px 16px', fontSize: '12px' }}
             disabled={printing}
           >
             {printing ? <RefreshCw size={14} style={{ animation: 'spin-slow 1.8s linear infinite' }} /> : <Printer size={14} />}
@@ -106,7 +106,7 @@ export default function CommissionerPage() {
           <button
             onClick={handlePrint}
             className="cyber-btn cyber-btn-amber"
-            style={{ padding: '8px 16px', fontSize: 12 }}
+            style={{ padding: '8px 16px', fontSize: '12px' }}
           >
             <FileDown size={14} />
             <span>EXPORT SUMMARY</span>
@@ -146,9 +146,9 @@ export default function CommissionerPage() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
               <ShieldAlert size={14} color="#ef4444" />
-              <span style={{ fontSize: 11, fontWeight: 900, color: '#ef4444', letterSpacing: '0.05em' }}>INTELLIGENCE ALERT STATUS</span>
+              <span style={{ fontSize: '12px', fontWeight: 900, color: '#ef4444', letterSpacing: '0.05em' }}>INTELLIGENCE ALERT STATUS</span>
             </div>
-            <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
               State Threat Matrix index calculated at <strong>CRITICAL (84%)</strong>. High activity anomalies registered across 5 major districts.
               Tactical reinforcements active.
             </p>
@@ -159,10 +159,10 @@ export default function CommissionerPage() {
         <div className="glass-card" style={{ padding: 20 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
             <AlertTriangle size={14} color="#f59e0b" />
-            <span style={{ fontSize: 11, fontWeight: 800, color: '#f59e0b', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            <span style={{ fontSize: '12px', fontWeight: 800, color: '#f59e0b', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Resource Shortage Alerts
             </span>
-            <span className="badge badge-amber" style={{ marginLeft: 'auto', fontSize: 9 }}>5 DISTRICTS BELOW LIMIT</span>
+            <span className="badge badge-amber" style={{ marginLeft: 'auto', fontSize: '12px' }}>5 DISTRICTS BELOW LIMIT</span>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
@@ -175,11 +175,11 @@ export default function CommissionerPage() {
             ].map(s => (
               <div key={s.district} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 10px', background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 8 }}>
                 <div>
-                  <div style={{ fontSize: 12, fontWeight: 'bold', color: 'var(--text-primary)' }}>{s.district}</div>
-                  <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>Short: <span style={{ color: s.color, fontWeight: 'bold' }}>{s.shortage}</span></div>
+                  <div style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-primary)' }}>{s.district}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Short: <span style={{ color: s.color, fontWeight: 'bold' }}>{s.shortage}</span></div>
                 </div>
                 <div style={{ textAlign: 'right', alignSelf: 'center' }}>
-                  <span style={{ fontSize: 10, fontWeight: 'bold', color: s.color }}>{s.score}% Adequacy</span>
+                  <span style={{ fontSize: '12px', fontWeight: 'bold', color: s.color }}>{s.score}% Adequacy</span>
                 </div>
               </div>
             ))}
@@ -205,16 +205,16 @@ export default function CommissionerPage() {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{m.label}</span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{m.label}</span>
               <m.icon size={16} color={m.color === 'var(--primary-navy)' ? 'var(--primary-navy)' : m.color} />
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
               <div style={{ fontSize: '24px', fontWeight: 900, color: m.color === 'var(--primary-navy)' ? 'var(--primary-navy)' : m.color, fontFamily: 'monospace' }}>{m.value}</div>
               {m.badge && (
-                <span className="badge badge-green" style={{ fontSize: 9 }}>{m.badge}</span>
+                <span className="badge badge-green" style={{ fontSize: '12px' }}>{m.badge}</span>
               )}
             </div>
-            <div style={{ fontSize: 11, color: 'var(--text-faint)', marginTop: 4 }}>{m.sub}</div>
+            <div style={{ fontSize: '12px', color: 'var(--text-faint)', marginTop: 4 }}>{m.sub}</div>
           </div>
         ))}
       </div>
@@ -260,7 +260,7 @@ export default function CommissionerPage() {
                     <td>{d.active.toLocaleString()}</td>
                     <td>{d.clearance}%</td>
                     <td>{d.officers.toLocaleString()}</td>
-                    <td style={{ color: statusColor, fontWeight: 'bold', fontSize: 11 }}>{statusLabel} ({d.adequacy}%)</td>
+                    <td style={{ color: statusColor, fontWeight: 'bold', fontSize: '12px' }}>{statusLabel} ({d.adequacy}%)</td>
                   </tr>
                 );
               })}
@@ -281,8 +281,8 @@ export default function CommissionerPage() {
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={chartData} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
-              <XAxis type="number" tick={{ fill: '#64748B', fontSize: 11 }} />
-              <YAxis dataKey="name" type="category" tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontWeight: 600 }} />
+              <XAxis type="number" tick={{ fill: '#64748B', fontSize: '12px' }} />
+              <YAxis dataKey="name" type="category" tick={{ fill: 'var(--text-secondary)', fontSize: '12px', fontWeight: 600 }} />
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="crimes" name="Crimes YTD" radius={[0, 4, 4, 0]}>
                 {chartData.map((entry, index) => (
@@ -315,16 +315,16 @@ export default function CommissionerPage() {
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-primary)' }}>{t.type}</div>
-                    <span className={isCrit ? 'badge badge-red' : 'badge badge-amber'} style={{ fontSize: 9 }}>
+                    <div style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-primary)' }}>{t.type}</div>
+                    <span className={isCrit ? 'badge badge-red' : 'badge badge-amber'} style={{ fontSize: '12px' }}>
                       {t.severity.toUpperCase()}
                     </span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, color: 'var(--text-secondary)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '12px', color: 'var(--text-secondary)' }}>
                     <MapPin size={9} color="var(--text-muted)" />
                     <span>Districts: <strong>{t.districts}</strong></span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: 'var(--text-muted)', marginTop: 4 }}>
                     <span>Status: <strong style={{ color: isCrit ? '#ef4444' : '#f59e0b' }}>{t.status}</strong></span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                       <Clock size={10} /> Active {t.since}
@@ -365,26 +365,26 @@ export default function CommissionerPage() {
                     width: 30, height: 30, borderRadius: '50%',
                     background: 'rgba(139, 30, 30, 0.08)', border: '1px solid rgba(139, 30, 30, 0.2)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 11, fontWeight: 900, color: 'var(--primary-navy)'
+                    fontSize: '12px', fontWeight: 900, color: 'var(--primary-navy)'
                   }}>
                     {rec.priority}
                   </div>
-                  <span className={rec.urgency === '48 Hours' ? 'badge badge-red' : rec.urgency === 'This Week' ? 'badge badge-amber' : 'badge badge-cyan'} style={{ fontSize: 9 }}>
+                  <span className={rec.urgency === '48 Hours' ? 'badge badge-red' : rec.urgency === 'This Week' ? 'badge badge-amber' : 'badge badge-cyan'} style={{ fontSize: '12px' }}>
                     {rec.urgency}
                   </span>
                 </div>
 
-                <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 6, lineHeight: 1.4 }}>
+                <div style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 6, lineHeight: 1.4 }}>
                   {rec.action}
                 </div>
                 
-                <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 14, flex: 1 }}>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 14, flex: 1 }}>
                   {rec.rationale}
                 </p>
 
                 <div style={{ display: 'flex', gap: 8, borderTop: '1px solid #E5E7EB', paddingTop: 10 }}>
                   {isApproved ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#10b981', fontSize: 11, fontWeight: 700, margin: '6px auto 0' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#10b981', fontSize: '12px', fontWeight: 700, margin: '6px auto 0' }}>
                       <CheckCircle size={13} /> APPROVED &amp; DISPATCHED
                     </div>
                   ) : (
@@ -392,13 +392,13 @@ export default function CommissionerPage() {
                       <button
                         onClick={() => handleApprove(rec.id)}
                         className="cyber-btn cyber-btn-green"
-                        style={{ flex: 1, fontSize: 11, padding: '7px 10px', justifyContent: 'center' }}
+                        style={{ flex: 1, fontSize: '12px', padding: '7px 10px', justifyContent: 'center' }}
                       >
                         <Zap size={11} /> APPROVE DIRECTIVE
                       </button>
                       <button
                         className="cyber-btn"
-                        style={{ flex: 1, fontSize: 11, padding: '7px 10px', justifyContent: 'center', background: '#FFFFFF', color: 'var(--text-muted)', border: '1px solid var(--border-default)' }}
+                        style={{ flex: 1, fontSize: '12px', padding: '7px 10px', justifyContent: 'center', background: '#FFFFFF', color: 'var(--text-muted)', border: '1px solid var(--border-default)' }}
                       >
                         REVIEW INTEL
                       </button>
@@ -428,14 +428,14 @@ export default function CommissionerPage() {
               background: '#F9FAFB', border: '1px solid #E5E7EB',
               padding: '10px 14px', borderRadius: 10, textAlign: 'center'
             }}>
-              <div style={{ fontSize: 18, fontWeight: 900, color: item.color }}>{item.value}</div>
-              <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4, fontWeight: 600, textTransform: 'uppercase' }}>{item.label}</div>
+              <div style={{ fontSize: '18px', fontWeight: 900, color: item.color }}>{item.value}</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: 4, fontWeight: 600, textTransform: 'uppercase' }}>{item.label}</div>
             </div>
           ))}
         </div>
         <div style={{
           background: 'rgba(139, 30, 30, 0.04)', border: '1px solid rgba(139, 30, 30, 0.15)',
-          borderRadius: 8, padding: '12px 16px', fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6
+          borderRadius: 8, padding: '12px 16px', fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6
         }}>
           <strong>Executive Security Summary:</strong> Response time indices indicate that redeploying 1,200 personnel from the low-activity southern corridor to northern districts (Raichur, Kalaburagi) will yield a <strong>23% increase in state-wide crime resolution efficiency</strong>. SIT Teams have successfully disrupted 3 nodes of the Ballari gang ring in the last 48 hours.
         </div>
@@ -458,14 +458,14 @@ export default function CommissionerPage() {
             <div key={idx} style={{
               background: '#F9FAFB', border: '1px solid #E5E7EB',
               padding: '12px 16px', borderRadius: 8, textAlign: 'center',
-              fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)'
+              fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)'
             }}>
               {item}
             </div>
           ))}
         </div>
         <div style={{
-          textAlign: 'center', fontSize: 11, color: 'var(--text-dim)', fontStyle: 'italic',
+          textAlign: 'center', fontSize: '12px', color: 'var(--text-dim)', fontStyle: 'italic',
           borderTop: '1px dashed var(--cyber-border)', paddingTop: 12
         }}>
           Pending Government API Authorization

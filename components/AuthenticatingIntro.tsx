@@ -70,13 +70,13 @@ export default function AuthenticatingIntro({ onComplete }: { onComplete: () => 
 
       {/* Title */}
       <div style={{
-        fontSize: 20, fontWeight: 800, color: '#1F2937',
+        fontSize: '20px', fontWeight: 800, color: '#1F2937',
         letterSpacing: '0.06em', marginBottom: 4,
       }}>
         CRIMEVISION AI
       </div>
       <div style={{
-        fontSize: 12, fontWeight: 500, color: '#6B7280',
+        fontSize: '12px', fontWeight: 500, color: '#6B7280',
         letterSpacing: '0.04em', marginBottom: 32,
       }}>
         Karnataka State Police — Intelligence Platform
@@ -99,7 +99,7 @@ export default function AuthenticatingIntro({ onComplete }: { onComplete: () => 
 
         {/* Step Text */}
         <div style={{
-          fontSize: 12, color: '#6B7280', textAlign: 'center',
+          fontSize: '12px', color: '#6B7280', textAlign: 'center',
           fontWeight: 500, minHeight: 20,
         }}>
           {LOADING_STEPS[stepIdx]}
@@ -112,7 +112,7 @@ export default function AuthenticatingIntro({ onComplete }: { onComplete: () => 
         style={{
           marginTop: 32,
           background: 'none', border: 'none',
-          color: '#9CA3AF', fontSize: 12, cursor: 'pointer',
+          color: '#9CA3AF', fontSize: '12px', cursor: 'pointer',
           fontFamily: 'inherit', fontWeight: 500,
         }}
       >

@@ -52,16 +52,16 @@ function SidebarItem({ href, icon: Icon, label, badge }: SidebarItemProps) {
         textDecoration: 'none',
         borderRadius: isActive ? '0 10px 10px 0' : '0',
         borderLeft: isActive ? '3px solid var(--primary-navy)' : '3px solid transparent',
-        background: isActive ? 'rgba(11, 31, 58, 0.05)' : 'transparent',
+        background: isActive ? 'rgba(11, 31, 58, 0.08)' : 'transparent',
         color: isActive ? 'var(--primary-navy)' : '#475569',
         userSelect: 'none',
-        transition: 'all 150ms ease',
+        transition: 'all 200ms ease-in-out',
         marginRight: isActive ? '8px' : '0',
       }}
       onMouseEnter={e => {
         if (!isActive) {
-          e.currentTarget.style.background = '#F5F6F8';
-          e.currentTarget.style.color = '#1F2937';
+          e.currentTarget.style.background = '#F1F5F9';
+          e.currentTarget.style.color = '#0F172A';
         }
       }}
       onMouseLeave={e => {
@@ -72,13 +72,13 @@ function SidebarItem({ href, icon: Icon, label, badge }: SidebarItemProps) {
       }}
     >
       <Icon size={20} style={{ flexShrink: 0, color: isActive ? 'var(--primary-navy)' : '#94A3B8', strokeWidth: 1.8 }} />
-      <span style={{ flex: 1, fontSize: '13.5px', fontWeight: isActive ? 600 : 500, letterSpacing: '0.01em' }}>{label}</span>
+      <span style={{ flex: 1, fontSize: '14px', fontWeight: isActive ? 600 : 500, letterSpacing: '0.01em' }}>{label}</span>
       {badge && (
         <span style={{
           minWidth: '20px', height: '20px', borderRadius: '10px',
           background: 'var(--alert-red)', color: '#FFFFFF',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '10px', fontWeight: 700, padding: '0 6px', flexShrink: 0,
+          fontSize: '12px', fontWeight: 700, padding: '0 6px', flexShrink: 0,
         }}>
           {badge}
         </span>
@@ -89,9 +89,9 @@ function SidebarItem({ href, icon: Icon, label, badge }: SidebarItemProps) {
 
 function SectionLabel({ label }: { label: string }) {
   return (
-    <div style={{ padding: '0 20px', marginBottom: '8px', marginTop: '4px' }}>
+    <div style={{ padding: '0 20px', marginBottom: '10px', marginTop: '12px' }}>
       <div style={{
-        fontSize: '10px', textTransform: 'uppercase', fontWeight: 700,
+        fontSize: '12px', textTransform: 'uppercase', fontWeight: 700,
         color: '#94A3B8', letterSpacing: '0.1em',
       }}>
         {label}
@@ -140,10 +140,10 @@ export default function Sidebar({ user, portalType, isOpen = true }: SidebarProp
           <img src={`${basePath}/crimevision_logo.png`} alt="CrimeVision AI Logo" style={{ width: '34px', height: '34px', objectFit: 'contain' }} />
         </div>
         <div>
-          <div className="logo-wordmark" style={{ fontSize: 15, color: 'var(--primary-navy)', letterSpacing: '-0.01em', lineHeight: 1 }}>
+          <div className="logo-wordmark" style={{ fontSize: '14px', color: 'var(--primary-navy)', letterSpacing: '-0.01em', lineHeight: 1 }}>
             CrimeVision AI
           </div>
-          <div style={{ fontSize: 9, fontWeight: 600, color: '#94A3B8', letterSpacing: '0.06em', marginTop: 4, textTransform: 'uppercase' }}>
+          <div style={{ fontSize: '12px', fontWeight: 600, color: '#94A3B8', letterSpacing: '0.06em', marginTop: 4, textTransform: 'uppercase' }}>
             {portalType === 'admin' ? 'Admin Portal' : 'Officer Portal'}
           </div>
         </div>
@@ -153,19 +153,19 @@ export default function Sidebar({ user, portalType, isOpen = true }: SidebarProp
       <nav style={{ flex: 1, overflowY: 'auto', paddingTop: 12, paddingBottom: 12 }}>
 
         {/* ── Home ──────────────────────────────────────────────── */}
-        <div style={{ marginBottom: 4 }}>
+        <div style={{ marginBottom: 8 }}>
           <SidebarItem href="/" icon={LayoutDashboard} label={lang === 'en' ? 'Dashboard' : 'ಮುಖಪುಟ'} />
         </div>
 
         {/* State Overview (Admin only) */}
         {portalType === 'admin' && (
-          <div style={{ marginBottom: 4 }}>
+          <div style={{ marginBottom: 8 }}>
             <SidebarItem href="/commissioner" icon={Eye} label={lang === 'en' ? 'State Overview' : 'ರಾಜ್ಯ ಅವಲೋಕನ'} />
           </div>
         )}
 
         {/* ── Investigation ──────────────────────────────────────── */}
-        <div style={{ marginTop: 20 }}>
+        <div style={{ marginTop: 28 }}>
           <SectionLabel label={lang === 'en' ? 'INVESTIGATION' : 'ತನಿಖೆ'} />
           <div>
             <SidebarItem href="/fir" icon={Search} label={lang === 'en' ? 'Cases / FIR Search' : 'ಪ್ರಕರಣಗಳು'} />
@@ -176,7 +176,7 @@ export default function Sidebar({ user, portalType, isOpen = true }: SidebarProp
         </div>
 
         {/* ── Crime Analysis ─────────────────────────────────────── */}
-        <div style={{ marginTop: 20 }}>
+        <div style={{ marginTop: 28 }}>
           <SectionLabel label={lang === 'en' ? 'CRIME ANALYSIS' : 'ಅಪರಾಧ ವಿಶ್ಲೇಷಣೆ'} />
           <div>
             <SidebarItem href="/genome" icon={Brain} label={lang === 'en' ? 'Crime Insights' : 'ಅಪರಾಧ ಒಳನೋಟಗಳು'} />
@@ -187,7 +187,7 @@ export default function Sidebar({ user, portalType, isOpen = true }: SidebarProp
         </div>
 
         {/* ── Alerts ─────────────────────────────────────────────── */}
-        <div style={{ marginTop: 20 }}>
+        <div style={{ marginTop: 28 }}>
           <SectionLabel label={lang === 'en' ? 'ALERTS' : 'ಎಚ್ಚರಿಕೆಗಳು'} />
           <div>
             <SidebarItem href="/alerts" icon={Bell} label={lang === 'en' ? 'Live Alerts' : 'ನೇರ ಎಚ್ಚರಿಕೆಗಳು'} badge={unreadAlertsCount > 0 ? String(unreadAlertsCount) : null} />
@@ -196,7 +196,7 @@ export default function Sidebar({ user, portalType, isOpen = true }: SidebarProp
         </div>
 
         {/* ── Operations ────────────────────────────────────────── */}
-        <div style={{ marginTop: 20 }}>
+        <div style={{ marginTop: 28 }}>
           <SectionLabel label={lang === 'en' ? 'OPERATIONS' : 'ಕಾರ್ಯಾಚರಣೆ'} />
           <div>
             <SidebarItem href="/resources" icon={Package} label={lang === 'en' ? 'Officer Deployment' : 'ಸಂಪನ್ಮೂಲ ನಿಯೋಜನೆ'} />
@@ -207,7 +207,7 @@ export default function Sidebar({ user, portalType, isOpen = true }: SidebarProp
 
         {/* ── Administration (Admin only) ───────────────────────── */}
         {portalType === 'admin' && (
-          <div style={{ marginTop: 20 }}>
+          <div style={{ marginTop: 28 }}>
             <SectionLabel label={lang === 'en' ? 'ADMINISTRATION' : 'ಆಡಳಿತ'} />
             <div>
               <SidebarItem href="/admin/officers" icon={Users} label={lang === 'en' ? 'Officer Management' : 'ಅಧಿಕಾರಿ ನಿರ್ವಹಣೆ'} />
@@ -288,10 +288,10 @@ export default function Sidebar({ user, portalType, isOpen = true }: SidebarProp
             <User size={16} style={{ color: 'var(--primary-navy)' }} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 12, fontWeight: 600, color: '#1F2937', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ fontSize: '12px', fontWeight: 600, color: '#1F2937', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {user?.name ?? 'KSP Officer'}
             </div>
-            <div style={{ fontSize: 10, color: '#6B7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ fontSize: '12px', color: '#6B7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {user?.designation ?? 'Karnataka Police'}
             </div>
           </div>

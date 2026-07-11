@@ -521,10 +521,10 @@ export default function ReportsPage() {
             <FileText size={22} className="text-[var(--cyber-cyan)]" />
           </div>
           <div>
-            <h1 style={{ fontSize: 20, fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
+            <h1 style={{ fontSize: '20px', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
               {t.page_reports}
             </h1>
-            <p style={{ fontSize: 12, color: 'var(--text-dim)', margin: '2px 0 0' }}>
+            <p style={{ fontSize: '12px', color: 'var(--text-dim)', margin: '2px 0 0' }}>
               {t.sub_reports}
             </p>
           </div>
@@ -540,7 +540,7 @@ export default function ReportsPage() {
             background: generatingAll ? 'rgba(30, 58, 95,0.05)' : 'linear-gradient(135deg, rgba(30, 58, 95,0.15), rgba(139,92,246,0.15))',
             border: '1px solid rgba(30, 58, 95,0.35)', borderRadius: 10,
             color: generatingAll ? '#64748b' : '#0F6B5C',
-            fontSize: 13, fontWeight: 800, cursor: generatingAll ? 'not-allowed' : 'pointer',
+            fontSize: '14px', fontWeight: 800, cursor: generatingAll ? 'not-allowed' : 'pointer',
             fontFamily: 'inherit', letterSpacing: '0.04em', transition: 'all 0.2s',
           }}
         >
@@ -563,8 +563,8 @@ export default function ReportsPage() {
           <div key={s.label} className="glass-card" style={{
             padding: '14px 18px', textAlign: 'center',
           }}>
-            <div style={{ fontSize: 22, fontWeight: 900, color: s.color }}>{s.value}</div>
-            <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 3, fontWeight: 600 }}>{s.label}</div>
+            <div style={{ fontSize: '20px', fontWeight: 900, color: s.color }}>{s.value}</div>
+            <div style={{ fontSize: '12px', color: 'var(--text-dim)', marginTop: 3, fontWeight: 600 }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -595,22 +595,22 @@ export default function ReportsPage() {
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{
-                    fontSize: 9, fontWeight: 800, padding: '3px 8px', borderRadius: 6,
+                    fontSize: '12px', fontWeight: 800, padding: '3px 8px', borderRadius: 6,
                     background: 'rgba(30, 58, 95, 0.05)',
                     color: card.color, border: '1px solid var(--cyber-border)',
                     letterSpacing: '0.1em',
                   }}>
                     {card.category}
                   </div>
-                  <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>{card.pages} pages</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: 4 }}>{card.pages} pages</div>
                 </div>
               </div>
 
               {/* Title */}
-              <h3 style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 4px', lineHeight: 1.3 }}>
+              <h3 style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 4px', lineHeight: 1.3 }}>
                 {lang === 'kn' ? card.titleKn : card.title}
               </h3>
-              <p style={{ fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.6, margin: '0 0 20px' }}>
+              <p style={{ fontSize: '12px', color: 'var(--text-dim)', lineHeight: 1.6, margin: '0 0 20px' }}>
                 {card.description}
               </p>
 
@@ -619,8 +619,8 @@ export default function ReportsPage() {
                 padding: '10px 14px', borderRadius: 8, marginBottom: 16,
                 background: 'var(--cyber-bg)', border: '1px solid var(--cyber-border)',
               }}>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 4 }}>PDF includes:</div>
-                <div style={{ fontSize: 11, color: 'var(--text-dim)', lineHeight: 1.6 }}>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: 4 }}>PDF includes:</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-dim)', lineHeight: 1.6 }}>
                   KSP RESTRICTED header · Generated timestamp<br />
                   Data tables with all 31 districts · Official footer
                 </div>
@@ -641,7 +641,7 @@ export default function ReportsPage() {
                   border: `1px solid ${isDone ? 'rgba(16,185,129,0.3)' : 'var(--cyber-border)'}`,
                   borderRadius: 10, fontFamily: 'inherit',
                   color: isDone ? '#10b981' : isGen ? '#64748b' : card.color,
-                  fontSize: 12, fontWeight: 800, cursor: isGen || generatingAll ? 'not-allowed' : 'pointer',
+                  fontSize: '12px', fontWeight: 800, cursor: isGen || generatingAll ? 'not-allowed' : 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   transition: 'all 0.2s', letterSpacing: '0.04em',
                 }}
@@ -679,7 +679,7 @@ export default function ReportsPage() {
         display: 'flex', alignItems: 'flex-start', gap: 10,
       }}>
         <AlertCircle size={15} className="text-[var(--cyber-cyan)]" style={{ flexShrink: 0, marginTop: 2 }} />
-        <div style={{ fontSize: 12, color: 'var(--text-dim)', lineHeight: 1.6 }}>
+        <div style={{ fontSize: '12px', color: 'var(--text-dim)', lineHeight: 1.6 }}>
           <strong style={{ color: 'var(--text-muted)' }}>PDF Generation Note:</strong>{' '}
           Reports are generated client-side using jsPDF loaded from CDN. An internet connection is required for the first download.
           All data comes from the KSP crime intelligence database (82,089 records). Reports are marked{' '}

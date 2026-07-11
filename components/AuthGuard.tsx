@@ -145,7 +145,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
             borderTopColor: '#A6192E',
             animation: 'spin 0.8s linear infinite',
           }} />
-          <span style={{ fontSize: 12, color: '#6B7280', letterSpacing: '0.1em', fontWeight: 600 }}>
+          <span style={{ fontSize: '12px', color: '#6B7280', letterSpacing: '0.1em', fontWeight: 600 }}>
             LOADING CRIMEVISION AI...
           </span>
         </div>
@@ -173,8 +173,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         }}>
           <Lock size={24} color="#ef4444" />
         </div>
-        <div style={{ fontSize: 18, fontWeight: 700, color: '#1F2937' }}>Access Denied</div>
-        <div style={{ fontSize: 13, color: '#475569', textAlign: 'center', maxWidth: 320 }}>
+        <div style={{ fontSize: '18px', fontWeight: 700, color: '#1F2937' }}>Access Denied</div>
+        <div style={{ fontSize: '14px', color: '#475569', textAlign: 'center', maxWidth: 320 }}>
           You do not have permission to access this page. Redirecting to your dashboard...
         </div>
         <div style={{ marginTop: 8, width: 200, height: 4, background: '#E5E7EB', borderRadius: 2, overflow: 'hidden' }}>

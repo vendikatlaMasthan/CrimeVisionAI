@@ -118,7 +118,7 @@ export default function AuditTrail() {
             position: 'absolute', top: -4, right: -4,
             width: 18, height: 18, borderRadius: '50%',
             background: '#ef4444', color: '#fff',
-            fontSize: 9, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '12px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>{Math.min(99, trail.length)}</span>
         )}
       </button>
@@ -150,14 +150,14 @@ export default function AuditTrail() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <ClipboardList size={18} style={{ color: '#1E3A5F' }} />
             <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Session Audit Trail</div>
-              <div style={{ fontSize: 10, color: 'var(--text-dim)', fontFamily: 'JetBrains Mono, monospace' }}>{sessionId}</div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>Session Audit Trail</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-dim)', fontFamily: 'JetBrains Mono, monospace' }}>{sessionId}</div>
             </div>
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <button
               onClick={clearTrail}
-              style={{ fontSize: 11, color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
+              style={{ fontSize: '12px', color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}
             >Clear</button>
             <button
               onClick={() => setOpen(false)}
@@ -171,16 +171,16 @@ export default function AuditTrail() {
         {/* Stats */}
         <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--cyber-border)', display: 'flex', gap: 20 }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 18, fontWeight: 700, color: '#1E3A5F', fontFamily: 'Inter' }}>{trail.length}</div>
-            <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>Page Views</div>
+            <div style={{ fontSize: '18px', fontWeight: 700, color: '#1E3A5F', fontFamily: 'Inter' }}>{trail.length}</div>
+            <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Page Views</div>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 18, fontWeight: 700, color: '#8b5cf6', fontFamily: 'Inter' }}>{new Set(trail.map(t => t.path)).size}</div>
-            <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>Unique Pages</div>
+            <div style={{ fontSize: '18px', fontWeight: 700, color: '#8b5cf6', fontFamily: 'Inter' }}>{new Set(trail.map(t => t.path)).size}</div>
+            <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Unique Pages</div>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 18, fontWeight: 700, color: '#10b981', fontFamily: 'Inter' }}>{trail[0]?.timestamp ?? '—'}</div>
-            <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>Last Action</div>
+            <div style={{ fontSize: '18px', fontWeight: 700, color: '#10b981', fontFamily: 'Inter' }}>{trail[0]?.timestamp ?? '—'}</div>
+            <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>Last Action</div>
           </div>
         </div>
 
@@ -190,13 +190,13 @@ export default function AuditTrail() {
           borderBottom: '1px solid var(--cyber-border)', display: 'flex', alignItems: 'center', gap: 8,
         }}>
           <Lock size={12} style={{ color: '#10b981' }} />
-          <span style={{ fontSize: 11, color: '#10b981' }}>Audit log encrypted · GDPR compliant · Session-scoped</span>
+          <span style={{ fontSize: '12px', color: '#10b981' }}>Audit log encrypted · GDPR compliant · Session-scoped</span>
         </div>
 
         {/* Trail List */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
           {trail.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-dim)', fontSize: 13 }}>
+            <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-dim)', fontSize: '14px' }}>
               No navigation recorded yet
             </div>
           ) : (
@@ -213,13 +213,13 @@ export default function AuditTrail() {
                 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{
-                    fontSize: 13, fontWeight: idx === 0 ? 700 : 500,
+                    fontSize: '14px', fontWeight: idx === 0 ? 700 : 500,
                     color: idx === 0 ? 'var(--text-primary)' : 'var(--text-secondary)',
                     whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                   }}>{entry.page}</div>
-                  <div style={{ fontSize: 10, color: 'var(--text-dim)', fontFamily: 'Inter', marginTop: 2 }}>{entry.path}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-dim)', fontFamily: 'Inter', marginTop: 2 }}>{entry.path}</div>
                 </div>
-                <div style={{ flexShrink: 0, fontSize: 10, color: 'var(--text-dim)', fontFamily: 'Inter' }}>
+                <div style={{ flexShrink: 0, fontSize: '12px', color: 'var(--text-dim)', fontFamily: 'Inter' }}>
                   <Clock size={9} style={{ verticalAlign: 'middle', marginRight: 3 }} />
                   {entry.timestamp}
                 </div>
@@ -233,7 +233,7 @@ export default function AuditTrail() {
           <button
             onClick={handleExport}
             style={{
-              width: '100%', padding: '9px', fontSize: 13, fontWeight: 600,
+              width: '100%', padding: '9px', fontSize: '14px', fontWeight: 600,
               background: 'rgba(30,58,95,0.06)', color: '#1E3A5F',
               border: '1px solid rgba(30,58,95,0.15)', borderRadius: 8, cursor: 'pointer',
             }}

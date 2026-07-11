@@ -22,7 +22,7 @@ function InvestigatorRedirectContent() {
           borderTopColor: '#1E3A5F',
           animation: 'spin 0.8s linear infinite',
         }} />
-        <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.05em' }}>
+        <span style={{ fontSize: '14px', fontWeight: 600, letterSpacing: '0.05em' }}>
           Redirecting to AI Investigator...
         </span>
       </div>

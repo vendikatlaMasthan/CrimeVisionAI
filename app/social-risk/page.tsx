@@ -14,7 +14,7 @@ const CustomTooltip = ({ active, payload }: any) => {
     return (
       <div style={{
         background: '#FFFFFF', border: '1px solid rgba(30, 58, 95,0.25)',
-        borderRadius: 8, padding: '10px 14px', fontSize: 13, color: 'var(--text-primary)',
+        borderRadius: 8, padding: '10px 14px', fontSize: '14px', color: 'var(--text-primary)',
       }}>
         <div style={{ fontWeight: 700, color: 'var(--primary-navy)', marginBottom: 4 }}>{d?.district}</div>
         {payload.map((p: any) => (
@@ -77,10 +77,10 @@ export default function SocialRiskPage() {
       }}>
         <Info size={20} color="var(--primary-navy)" style={{ marginTop: 2, flexShrink: 0 }} />
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--primary-navy)', marginBottom: 4 }}>
+          <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--primary-navy)', marginBottom: 4 }}>
             HACKATHON PROBLEM STATEMENT ALIGNMENT
           </div>
-          <div style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+          <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
             This analysis directly addresses the hackathon problem statement — identifying the <strong style={{ color: 'var(--text-primary)' }}>socio-economic root causes of crime in Karnataka</strong> to enable targeted preventive policing.
             By correlating unemployment, education, urbanization, and migration data with district crime rates, we enable <strong style={{ color: 'var(--text-primary)' }}>evidence-based resource allocation</strong> and early intervention strategies.
           </div>
@@ -102,13 +102,13 @@ export default function SocialRiskPage() {
             return (
               <div key={cor.factor} className="glass-card" style={{ padding: 20 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{cor.factor}</span>
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>{cor.factor}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     {isPositive
                       ? <TrendingUp size={14} color="var(--brand-crimson)" />
                       : <TrendingDown size={14} color="var(--brand-forest)" />}
                     <span style={{
-                      fontSize: 12, fontWeight: 800,
+                      fontSize: '12px', fontWeight: 800,
                       color: isPositive ? 'var(--brand-crimson)' : 'var(--brand-forest)'
                     }}>
                       {isPositive ? '+' : '-'}{absVal.toFixed(2)}
@@ -116,11 +116,11 @@ export default function SocialRiskPage() {
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
-                  <span className={`badge ${isPositive ? 'badge-red' : 'badge-green'}`} style={{ fontSize: '10px', fontWeight: 800 }}>
+                  <span className={`badge ${isPositive ? 'badge-red' : 'badge-green'}`} style={{ fontSize: '12px', fontWeight: 800 }}>
                     {strengthLabel} {isPositive ? '↑ CRIME RISK' : '↓ CRIME RISK'}
                   </span>
                 </div>
-                <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{cor.interpretation}</p>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{cor.interpretation}</p>
               </div>
             );
           })}
@@ -141,7 +141,7 @@ export default function SocialRiskPage() {
             { x: 'populationDensity', xLabel: 'Population Density (per km²)', y: 'crimeRate', yLabel: 'Crime Rate', title: 'Population Density vs Crime Rate' },
           ].map(chart => (
             <div key={chart.title} className="glass-card" style={{ padding: 20 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 14 }}>{chart.title}</div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 14 }}>{chart.title}</div>
               <ResponsiveContainer width="100%" height={280}>
                 <ScatterChart margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
@@ -149,15 +149,15 @@ export default function SocialRiskPage() {
                     type="number"
                     dataKey={chart.x}
                     name={chart.xLabel}
-                    tick={{ fill: 'var(--text-muted)', fontSize: 10 }}
-                    label={{ value: chart.xLabel, position: 'insideBottom', offset: -10, fill: 'var(--text-muted)', fontSize: 10 }}
+                    tick={{ fill: 'var(--text-muted)', fontSize: '12px' }}
+                    label={{ value: chart.xLabel, position: 'insideBottom', offset: -10, fill: 'var(--text-muted)', fontSize: '12px' }}
                   />
                   <YAxis
                     type="number"
                     dataKey={chart.y}
                     name={chart.yLabel}
-                    tick={{ fill: 'var(--text-muted)', fontSize: 10 }}
-                    label={{ value: chart.yLabel, angle: -90, position: 'insideLeft', fill: 'var(--text-muted)', fontSize: 10 }}
+                    tick={{ fill: 'var(--text-muted)', fontSize: '12px' }}
+                    label={{ value: chart.yLabel, angle: -90, position: 'insideLeft', fill: 'var(--text-muted)', fontSize: '12px' }}
                   />
                   <Tooltip content={<CustomTooltip />} />
                   <Scatter
@@ -179,7 +179,7 @@ export default function SocialRiskPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
           <div style={{ width: 3, height: 22, background: 'var(--primary-navy)', borderRadius: 2 }} />
           <h2 className="section-title">Districts Correlation Dataset</h2>
-          <span style={{ fontSize: 12, color: 'var(--text-muted)', marginLeft: 'auto' }}>Click columns to sort</span>
+          <span style={{ fontSize: '12px', color: 'var(--text-muted)', marginLeft: 'auto' }}>Click columns to sort</span>
         </div>
         <div style={{ overflowX: 'auto' }}>
           <table className="cyber-table" style={{ minWidth: 900 }}>
@@ -314,13 +314,13 @@ export default function SocialRiskPage() {
                 }}>
                   {finding.icon}
                 </div>
-                <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>{finding.title}</h3>
+                <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>{finding.title}</h3>
               </div>
-              <div style={{ fontSize: 24, fontWeight: 900, color: finding.color, marginBottom: 4 }}>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: finding.color, marginBottom: 4 }}>
                 {finding.stat}
               </div>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 12 }}>{finding.statLabel}</div>
-              <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{finding.detail}</p>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: 12 }}>{finding.statLabel}</div>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{finding.detail}</p>
             </div>
           ))}
         </div>

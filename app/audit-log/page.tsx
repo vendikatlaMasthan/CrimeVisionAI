@@ -123,7 +123,7 @@ export default function AuditLogPage() {
 
       {/* Audit log table container */}
       <div className="glass-card" style={{ background: 'var(--bg-card)', borderRadius: '12px', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
           <thead>
             <tr style={{ background: 'rgba(11, 31, 58, 0.02)', borderBottom: '1px solid var(--border-default)', color: 'var(--text-primary)' }}>
               <th style={{ padding: '16px 20px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Log Hash</th>

@@ -380,7 +380,7 @@ export default function CriminalNetworkPage() {
           }}
         >
           <div>
-            <div style={{ fontSize: '10px', fontWeight: 900, color: 'var(--text-dim)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '16px', borderBottom: '1px solid var(--cyber-border)', paddingBottom: '8px' }}>
+            <div style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-dim)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '16px', borderBottom: '1px solid var(--cyber-border)', paddingBottom: '8px' }}>
               {lang === 'en' ? 'NETWORK CONTROLS' : 'ನೆಟ್‌ವರ್ಕ್ ಫಿಲ್ಟರ್‌ಗಳು'}
             </div>
 
@@ -388,7 +388,7 @@ export default function CriminalNetworkPage() {
               
               {/* Search Suspect */}
               <div>
-                <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '5px', textTransform: 'uppercase' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '5px', textTransform: 'uppercase' }}>
                   Search Suspect
                 </label>
                 <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
@@ -403,7 +403,7 @@ export default function CriminalNetworkPage() {
                       border: '1px solid var(--cyber-border)',
                       borderRadius: '6px',
                       padding: '8px 12px',
-                      fontSize: '13px',
+                      fontSize: '14px',
                       color: 'var(--text-primary)',
                       outline: 'none',
                     }}
@@ -413,7 +413,7 @@ export default function CriminalNetworkPage() {
 
               {/* Crime Category */}
               <div>
-                <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '5px', textTransform: 'uppercase' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '5px', textTransform: 'uppercase' }}>
                   Crime Category
                 </label>
                 <select
@@ -438,7 +438,7 @@ export default function CriminalNetworkPage() {
 
               {/* District */}
               <div>
-                <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '5px', textTransform: 'uppercase' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '5px', textTransform: 'uppercase' }}>
                   District
                 </label>
                 <select
@@ -463,7 +463,7 @@ export default function CriminalNetworkPage() {
 
               {/* Threat Level */}
               <div>
-                <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '5px', textTransform: 'uppercase' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '5px', textTransform: 'uppercase' }}>
                   Threat Level
                 </label>
                 <select
@@ -488,7 +488,7 @@ export default function CriminalNetworkPage() {
 
               {/* Active Toggle */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '6px' }}>
-                <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Active Network Only</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Active Network Only</span>
                 <input
                   type="checkbox"
                   checked={statusActiveOnly}
@@ -502,10 +502,10 @@ export default function CriminalNetworkPage() {
 
           {/* Network Stats at bottom of sidebar */}
           <div style={{ borderTop: '1px dashed var(--cyber-border)', paddingTop: '16px' }}>
-            <span style={{ fontSize: '10px', fontWeight: 900, color: 'var(--text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            <span style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               NETWORK METRICS
             </span>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '11px', color: 'var(--text-secondary)', marginTop: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '12px', color: 'var(--text-secondary)', marginTop: '8px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span>Total Suspects:</span> <strong style={{ color: 'var(--text-primary)' }}>{filteredNodes.length}</strong>
               </div>
@@ -524,24 +524,24 @@ export default function CriminalNetworkPage() {
           
           {/* Edge Color Legend Top-Left */}
           <div style={{ position: 'absolute', top: '15px', left: '15px', zIndex: 10, background: '#FFFFFF', border: '1px solid var(--cyber-border)', borderRadius: '8px', padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <span style={{ fontSize: '9px', fontWeight: 950, color: 'var(--text-dim)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Relationship Map</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: 'var(--color-navy)' }}>
+            <span style={{ fontSize: '12px', fontWeight: 950, color: 'var(--text-dim)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Relationship Map</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--color-navy)' }}>
               <div style={{ width: '12px', height: '3px', background: 'var(--color-navy)' }} /> CO-ACCUSED
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: 'var(--color-orange)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--color-orange)' }}>
               <div style={{ width: '12px', height: '3.5px', borderBottom: '2.5px dashed var(--color-orange)' }} /> FAMILY
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: 'var(--color-green)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--color-green)' }}>
               <div style={{ width: '12px', height: '1.5px', background: 'var(--color-green)' }} /> ASSOCIATE
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: 'var(--color-red)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--color-red)' }}>
               <div style={{ width: '12px', height: '1.5px', background: 'var(--color-red)' }} /> SAME MO
             </div>
           </div>
 
           {/* Relationship Filter Chips Row */}
           <div style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 10, display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <span style={{ fontSize: '10px', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase' }}>Relationship Filter:</span>
+            <span style={{ fontSize: '12px', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase' }}>Relationship Filter:</span>
             {[
               { type: 'Co-Accused', color: 'var(--color-navy)' },
               { type: 'Family', color: 'var(--color-orange)' },
@@ -601,14 +601,14 @@ export default function CriminalNetworkPage() {
             <button
               onClick={handleZoomReset}
               className="cyber-btn"
-              style={{ padding: '6px 10px', borderRadius: '6px', background: '#FFFFFF', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)', fontSize: '10px', fontWeight: 800 }}
+              style={{ padding: '6px 10px', borderRadius: '6px', background: '#FFFFFF', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)', fontSize: '12px', fontWeight: 800 }}
             >
               ⟳ Reset
             </button>
             <button
               onClick={handleScreenshot}
               className="cyber-btn cyber-btn-cyan"
-              style={{ padding: '6px 10px', borderRadius: '6px', fontSize: '10px', fontWeight: 800 }}
+              style={{ padding: '6px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 800 }}
             >
               <Camera size={12} /> Snapshot
             </button>
@@ -634,7 +634,7 @@ export default function CriminalNetworkPage() {
                   <h2 style={{ fontSize: '16px', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
                     {activeNode.name.toUpperCase()}
                   </h2>
-                  <div style={{ fontSize: '11px', color: 'var(--cyber-cyan)', fontWeight: 700, marginTop: '2px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--cyber-cyan)', fontWeight: 700, marginTop: '2px' }}>
                     {activeNode.rank.toUpperCase()} · {activeNode.category}
                   </div>
                 </div>
@@ -649,7 +649,7 @@ export default function CriminalNetworkPage() {
 
               {/* Threat Score slider */}
               <div style={{ marginBottom: '18px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '3px' }}>
                   <span>Threat Index Rating:</span>
                   <span style={{ fontWeight: 800, color: '#ef4444' }}>{activeNode.threatScore}/100</span>
                 </div>
@@ -680,30 +680,30 @@ export default function CriminalNetworkPage() {
 
               {/* AI Confidence match details */}
               <div style={{ background: 'rgba(30, 58, 95, 0.02)', border: '1px solid rgba(30, 58, 95, 0.15)', borderRadius: '8px', padding: '12px', marginBottom: '16px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: 'var(--cyber-cyan)', fontWeight: 800, marginBottom: '6px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: 'var(--cyber-cyan)', fontWeight: 800, marginBottom: '6px' }}>
                   <span>AI CONFIDENCE MATCH:</span>
                   <span>{activeNode.aiMatch}%</span>
                 </div>
-                <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
                   {activeNode.aiReason}
                 </p>
               </div>
 
               {/* Connections relationships lists */}
               <div style={{ marginBottom: '18px' }}>
-                <div style={{ fontSize: '11px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '6px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '6px' }}>
                   DIRECT CONNECTIONS
                 </div>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   {getConnections(activeNode.id).map((conn, idx) => (
-                    <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--cyber-border)', padding: '5px 8px', borderRadius: '4px' }}>
+                    <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--cyber-border)', padding: '5px 8px', borderRadius: '4px' }}>
                       <span style={{ color: 'var(--text-dim)' }}>{conn.type}</span>
                       <strong style={{ color: 'var(--text-primary)' }}>{conn.name}</strong>
                     </div>
                   ))}
                   {getConnections(activeNode.id).length === 0 && (
-                    <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontStyle: 'italic' }}>No connections logged in sub-graph.</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-dim)', fontStyle: 'italic' }}>No connections logged in sub-graph.</div>
                   )}
                 </div>
               </div>
@@ -711,7 +711,7 @@ export default function CriminalNetworkPage() {
               {/* Modus Operandi (MO) Summary Section */}
               {activeNode.mo && (
                 <div style={{ marginBottom: '18px', borderTop: '1px solid #E5E7EB', paddingTop: '14px' }}>
-                  <div style={{ fontSize: '11px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '6px' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '6px' }}>
                     MODUS OPERANDI (MO)
                   </div>
                   <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-primary)', lineHeight: 1.5, fontStyle: 'italic' }}>
@@ -723,7 +723,7 @@ export default function CriminalNetworkPage() {
               {/* Incident Timeline Section */}
               {activeNode.timeline && activeNode.timeline.length > 0 && (
                 <div style={{ marginBottom: '18px', borderTop: '1px solid #E5E7EB', paddingTop: '14px' }}>
-                  <div style={{ fontSize: '11px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
                     INCIDENT TIMELINE
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderLeft: '1.5px solid var(--border-default)', paddingLeft: '12px', marginLeft: '6px' }}>
@@ -739,8 +739,8 @@ export default function CriminalNetworkPage() {
                           background: 'var(--color-navy)',
                           border: '1.5px solid #FFFFFF',
                         }} />
-                        <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--color-navy)' }}>{event.year}</div>
-                        <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>{event.event}</div>
+                        <div style={{ fontSize: '12px', fontWeight: 800, color: 'var(--color-navy)' }}>{event.year}</div>
+                        <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>{event.event}</div>
                       </div>
                     ))}
                   </div>
@@ -762,7 +762,7 @@ export default function CriminalNetworkPage() {
                 <button
                   onClick={() => alert(`Opening comprehensive Intelligence Dossier for ${activeNode.name}`)}
                   className="cyber-btn"
-                  style={{ width: '100%', justifyContent: 'center', fontSize: '11px', fontWeight: 800, borderRadius: '6px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)', textTransform: 'none' }}
+                  style={{ width: '100%', justifyContent: 'center', fontSize: '12px', fontWeight: 800, borderRadius: '6px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)', textTransform: 'none' }}
                 >
                   View Full Profile
                 </button>
@@ -770,14 +770,14 @@ export default function CriminalNetworkPage() {
                   <button
                     onClick={() => alert(`${activeNode.name} flagged as Priority Target.`)}
                     className="cyber-btn cyber-btn-red"
-                    style={{ flex: 1, justifyContent: 'center', fontSize: '11px', fontWeight: 800, borderRadius: '6px', textTransform: 'none' }}
+                    style={{ flex: 1, justifyContent: 'center', fontSize: '12px', fontWeight: 800, borderRadius: '6px', textTransform: 'none' }}
                   >
                     Flag Priority
                   </button>
                   <button
                     onClick={() => alert(`Exported Node Dossier for ${activeNode.name} as text.`)}
                     className="cyber-btn cyber-btn-cyan"
-                    style={{ flex: 1, justifyContent: 'center', fontSize: '11px', fontWeight: 800, borderRadius: '6px', textTransform: 'none' }}
+                    style={{ flex: 1, justifyContent: 'center', fontSize: '12px', fontWeight: 800, borderRadius: '6px', textTransform: 'none' }}
                   >
                     Export Intel
                   </button>

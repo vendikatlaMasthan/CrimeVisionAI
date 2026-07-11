@@ -41,7 +41,7 @@ export default function AIRecommendationCard({ action, rationale, urgency, prior
           <Sparkles size={16} className="animate-pulse" />
         </div>
         <div>
-          <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--cyber-cyan)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--cyber-cyan)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             {lang === 'en' ? 'AI TACTICAL DIRECTIVE' : 'AI ತಾಂತ್ರಿಕ ನಿರ್ದೇಶನ'}
           </span>
         </div>
@@ -59,7 +59,7 @@ export default function AIRecommendationCard({ action, rationale, urgency, prior
         <span 
           className="badge" 
           style={{ 
-            fontSize: '9px', 
+            fontSize: '12px', 
             padding: '2px 8px', 
             background: urgency.toLowerCase() === 'critical' ? 'rgba(239, 68, 68, 0.12)' : 'rgba(245, 158, 11, 0.12)',
             color: urgency.toLowerCase() === 'critical' ? '#ef4444' : '#fbbf24',
@@ -71,7 +71,7 @@ export default function AIRecommendationCard({ action, rationale, urgency, prior
         <span 
           className="badge" 
           style={{ 
-            fontSize: '9px', 
+            fontSize: '12px', 
             padding: '2px 8px',
             background: 'rgba(255, 255, 255, 0.04)',
             color: 'var(--text-muted)',

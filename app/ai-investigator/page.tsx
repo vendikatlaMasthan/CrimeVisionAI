@@ -935,16 +935,16 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
               />
             </svg>
             <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: 16, fontWeight: 900, color: '#1E3A5F' }}>{cCase.riskScore}</span>
-              <span style={{ fontSize: 8, color: '#6B7280', textTransform: 'uppercase', fontWeight: 700 }}>Risk</span>
+              <span style={{ fontSize: '16px', fontWeight: 900, color: '#1E3A5F' }}>{cCase.riskScore}</span>
+              <span style={{ fontSize: '12px', color: '#6B7280', textTransform: 'uppercase', fontWeight: 700 }}>Risk</span>
             </div>
           </div>
 
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 13, fontWeight: 800, color: '#1E3A5F', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '14px', fontWeight: 800, color: '#1E3A5F', textTransform: 'uppercase' }}>
               Threat Matrix Level: <span style={{ color: cCase.riskScore > 75 ? '#dc2626' : '#f59e0b' }}>{cCase.escapeRisk}</span>
             </div>
-            <p style={{ fontSize: 11, color: '#475569', margin: '4px 0 0 0', lineHeight: 1.3 }}>
+            <p style={{ fontSize: '12px', color: '#475569', margin: '4px 0 0 0', lineHeight: 1.3 }}>
               Synthesized threat profile based on communication graphs, location proximity logs, and repeat patterns.
             </p>
           </div>
@@ -954,7 +954,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
           {Object.entries(cCase.riskBreakdown).map(([key, val]) => {
             const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
             return (
-              <div key={key} style={{ fontSize: 11 }}>
+              <div key={key} style={{ fontSize: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: '#475569', marginBottom: 2 }}>
                   <span>{formattedKey}</span>
                   <span style={{ fontWeight: 700 }}>{val}%</span>
@@ -1031,7 +1031,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                     x={x} y={isPrimary ? '25%' : '90%'} 
                     textAnchor="middle" 
                     fill="#1E3A5F"
-                    style={{ fontSize: 11, fontWeight: 800 }}
+                    style={{ fontSize: '12px', fontWeight: 800 }}
                   >
                     {node.label}
                   </text>
@@ -1039,7 +1039,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                     x={x} y={isPrimary ? '30%' : '95%'} 
                     textAnchor="middle" 
                     fill="#6B7280"
-                    style={{ fontSize: 9, fontWeight: 700 }}
+                    style={{ fontSize: '12px', fontWeight: 700 }}
                   >
                     {node.role.toUpperCase()}
                   </text>
@@ -1053,10 +1053,10 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
         {selectedNode && (
           <div style={{ position: 'absolute', bottom: 12, left: 12, right: 12, background: '#FFFFFF', border: '1px solid #1E3A5F', borderRadius: 8, padding: 12, zIndex: 10, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E2E8F0', paddingBottom: 6, marginBottom: 8 }}>
-              <span style={{ fontSize: 13, fontWeight: 900, color: '#1E3A5F' }}>Target Dossier: {selectedNode.label}</span>
+              <span style={{ fontSize: '14px', fontWeight: 900, color: '#1E3A5F' }}>Target Dossier: {selectedNode.label}</span>
               <button onClick={() => setSelectedNode(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280' }}><X size={14} /></button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: 11 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '12px' }}>
               <div><span style={{ color: '#6B7280' }}>Criminal History:</span> <strong style={{ color: '#1F2937' }}>{selectedNode.details.history}</strong></div>
               <div><span style={{ color: '#6B7280' }}>Connected FIRs:</span> <strong style={{ color: '#1F2937' }}>{selectedNode.details.firs}</strong></div>
               <div><span style={{ color: '#6B7280' }}>Registered Assets:</span> <strong style={{ color: '#1F2937' }}>{selectedNode.details.assets}</strong></div>
@@ -1095,7 +1095,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
               return (
                 <g key={pt.id}>
                   <circle cx={`${pt.coords[0]}%`} cy={`${pt.coords[1]}%`} r="6" fill={isScene ? '#DC2626' : '#00D4FF'} />
-                  <text x={`${pt.coords[0]}%`} y={`${pt.coords[1]}%`} dy="-10" textAnchor="middle" fill="#94A3B8" style={{ fontSize: 9, fontWeight: 700 }}>
+                  <text x={`${pt.coords[0]}%`} y={`${pt.coords[1]}%`} dy="-10" textAnchor="middle" fill="#94A3B8" style={{ fontSize: '12px', fontWeight: 700 }}>
                     {pt.label}
                   </text>
                 </g>
@@ -1112,7 +1112,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
           </svg>
 
           {/* Interactive target radar indicator top-left */}
-          <div style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(0, 212, 255, 0.4)', borderRadius: 4, padding: '4px 8px', fontSize: 10, color: '#00D4FF', fontFamily: 'monospace' }}>
+          <div style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(0, 212, 255, 0.4)', borderRadius: 4, padding: '4px 8px', fontSize: '12px', color: '#00D4FF', fontFamily: 'monospace' }}>
             TARGET GPS TRACKER ACTIVE
           </div>
         </div>
@@ -1121,7 +1121,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <button 
             onClick={() => setIsMapPlaying(prev => !prev)}
-            style={{ padding: '6px 12px', background: '#D4A017', color: '#1A1620', border: 'none', borderRadius: 4, fontWeight: 800, fontSize: 11, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+            style={{ padding: '6px 12px', background: '#D4A017', color: '#1A1620', border: 'none', borderRadius: 4, fontWeight: 800, fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
           >
             {isMapPlaying ? <Pause size={12} /> : <Play size={12} />}
             {isMapPlaying ? 'Pause' : 'Replay Route'}
@@ -1137,7 +1137,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
             style={{ flex: 1, accentColor: '#D4A017', cursor: 'pointer' }}
           />
 
-          <span style={{ fontSize: 11, color: '#6B7280', fontFamily: 'monospace' }}>
+          <span style={{ fontSize: '12px', color: '#6B7280', fontFamily: 'monospace' }}>
             Waypoint {mapPlaybackIndex + 1}/{cCase.route.length}
           </span>
         </div>
@@ -1162,7 +1162,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
               key={filter}
               onClick={() => setTimelineFilter(filter)}
               style={{
-                fontSize: 10, padding: '3px 8px', borderRadius: 12, cursor: 'pointer',
+                fontSize: '12px', padding: '3px 8px', borderRadius: 12, cursor: 'pointer',
                 background: timelineFilter === filter ? '#1E3A5F' : '#F1F5F9',
                 color: timelineFilter === filter ? '#FFFFFF' : '#475569',
                 border: 'none', textTransform: 'uppercase', fontWeight: 800
@@ -1184,9 +1184,9 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                   background: item.type === 'vehicle' ? '#7C3AED' : item.type === 'call' ? '#2563EB' : item.type === 'money' ? '#059669' : '#DC2626'
                 }} />
                 <div>
-                  <span style={{ fontSize: 10, color: '#6B7280', fontFamily: 'monospace' }}>{item.time}</span>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: '#1E3A5F' }}>{item.event}</div>
-                  <p style={{ fontSize: 11, color: '#475569', margin: '2px 0 0 0', lineHeight: 1.3 }}>{item.desc}</p>
+                  <span style={{ fontSize: '12px', color: '#6B7280', fontFamily: 'monospace' }}>{item.time}</span>
+                  <div style={{ fontSize: '12px', fontWeight: 800, color: '#1E3A5F' }}>{item.event}</div>
+                  <p style={{ fontSize: '12px', color: '#475569', margin: '2px 0 0 0', lineHeight: 1.3 }}>{item.desc}</p>
                 </div>
               </div>
             );
@@ -1201,26 +1201,26 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
     return (
       <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 16, marginTop: 10 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 6, marginBottom: 12 }}>
-          <span style={{ fontSize: 12, fontWeight: 900, color: '#1E3A5F', textTransform: 'uppercase' }}> Immediate Actions List</span>
-          <span style={{ fontSize: 10, fontWeight: 700, color: '#DC2626' }}>Escape Risk: {cCase.escapeRisk.toUpperCase()}</span>
+          <span style={{ fontSize: '12px', fontWeight: 900, color: '#1E3A5F', textTransform: 'uppercase' }}> Immediate Actions List</span>
+          <span style={{ fontSize: '12px', fontWeight: 700, color: '#DC2626' }}>Escape Risk: {cCase.escapeRisk.toUpperCase()}</span>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {cCase.operationalSteps.map((step, idx) => (
-            <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, borderBottom: '1px solid #F1F5F9', paddingBottom: 6 }}>
+            <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', borderBottom: '1px solid #F1F5F9', paddingBottom: 6 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <input type="checkbox" defaultChecked={step.status === 'Active' || step.status === 'In Progress'} style={{ accentColor: '#1E3A5F' }} />
                 <span style={{ fontWeight: 800, color: '#1F2937' }}>{step.action}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span style={{
-                  fontSize: 9, padding: '2px 6px', borderRadius: 4, fontWeight: 900,
+                  fontSize: '12px', padding: '2px 6px', borderRadius: 4, fontWeight: 900,
                   background: step.priority === 'Immediate' ? '#FEE2E2' : step.priority === 'High' ? '#FEF3C7' : '#F1F5F9',
                   color: step.priority === 'Immediate' ? '#991B1B' : step.priority === 'High' ? '#92400E' : '#475569'
                 }}>
                   {step.priority}
                 </span>
-                <span style={{ fontSize: 10, color: '#6B7280' }}>{step.status}</span>
+                <span style={{ fontSize: '12px', color: '#6B7280' }}>{step.status}</span>
               </div>
             </div>
           ))}
@@ -1243,8 +1243,8 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
             }
           `}</style>
           <RefreshCw size={36} className="spinner-eval" style={{ color: '#1E3A5F', marginBottom: 16 }} />
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1F2937', margin: 0 }}>Evaluating Case Context</h2>
-          <p style={{ fontSize: 13, color: '#6B7280', marginTop: 4, maxWidth: 300, textAlign: 'center' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>Evaluating Case Context</h2>
+          <p style={{ fontSize: '14px', color: '#6B7280', marginTop: 4, maxWidth: 300, textAlign: 'center' }}>
             Querying intelligence database and processing evidence summaries for FIR docket...
           </p>
         </div>
@@ -1255,8 +1255,8 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
       return (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 12, padding: 24 }}>
           <AlertTriangle size={48} style={{ color: '#DC2626', marginBottom: 16 }} />
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#DC2626', margin: 0 }}>Evaluation Failed</h2>
-          <p style={{ fontSize: 13, color: '#475569', marginTop: 8, maxWidth: 400, textAlign: 'center', lineHeight: 1.4 }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#DC2626', margin: 0 }}>Evaluation Failed</h2>
+          <p style={{ fontSize: '14px', color: '#475569', marginTop: 8, maxWidth: 400, textAlign: 'center', lineHeight: 1.4 }}>
             {evaluationError}
           </p>
           <button
@@ -1276,8 +1276,8 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
       return (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 12, padding: 24, textAlign: 'center' }}>
           <Brain size={48} style={{ color: '#9CA3AF', marginBottom: 12 }} />
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1F2937', margin: 0 }}>No Case Loaded</h2>
-          <p style={{ fontSize: 13, color: '#6B7280', marginTop: 4, maxWidth: 300 }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>No Case Loaded</h2>
+          <p style={{ fontSize: '14px', color: '#6B7280', marginTop: 4, maxWidth: 300 }}>
             Use the Left Panel Case Loader to trigger analytical evaluation of an official police docket.
           </p>
         </div>
@@ -1301,7 +1301,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 800,
+                  display: 'flex', alignItems: 'center', gap: 6, fontSize: '12px', fontWeight: 800,
                   padding: '12px 16px', cursor: 'pointer', border: 'none', background: 'none',
                   borderBottom: isActive ? '3px solid #1E3A5F' : '3px solid transparent',
                   color: isActive ? '#1E3A5F' : '#475569', transition: 'all 0.15s ease'
@@ -1329,7 +1329,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                         color: isUser ? '#FFFFFF' : '#1F2937',
                         border: isUser ? 'none' : '1px solid #E2E8F0',
                         borderRadius: isUser ? '12px 12px 2px 12px' : '12px 12px 12px 2px',
-                        padding: '10px 14px', fontSize: 13, lineHeight: 1.5,
+                        padding: '10px 14px', fontSize: '14px', lineHeight: 1.5,
                         whiteSpace: 'pre-line'
                       }}>
                         {msg.content}
@@ -1341,7 +1341,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                         {!isUser && msg.widgetType === 'timeline' && renderTimelineWidget(currentCase)}
                         {!isUser && msg.widgetType === 'actions' && renderOperationalWidget(currentCase)}
                       </div>
-                      <span style={{ fontSize: 9, color: '#6B7280', alignSelf: isUser ? 'flex-end' : 'flex-start', fontFamily: 'monospace' }}>
+                      <span style={{ fontSize: '12px', color: '#6B7280', alignSelf: isUser ? 'flex-end' : 'flex-start', fontFamily: 'monospace' }}>
                         {msg.timestamp}
                       </span>
                     </div>
@@ -1354,7 +1354,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                       color: '#475569',
                       border: '1px solid #E2E8F0',
                       borderRadius: '12px 12px 12px 2px',
-                      padding: '10px 14px', fontSize: 13, lineHeight: 1.5,
+                      padding: '10px 14px', fontSize: '14px', lineHeight: 1.5,
                       display: 'flex', alignItems: 'center', gap: 8
                     }}>
                       <style>{`
@@ -1371,7 +1371,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                         }
                       `}</style>
                       <div className="spinner-mini" />
-                      <span style={{ fontSize: 12, fontStyle: 'italic' }}>AI is compiling intelligence...</span>
+                      <span style={{ fontSize: '12px', fontStyle: 'italic' }}>AI is compiling intelligence...</span>
                     </div>
                   </div>
                 )}
@@ -1392,7 +1392,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                       key={prompt}
                       onClick={() => handleSendQuery(prompt)}
                       style={{
-                        fontSize: 10, padding: '3px 8px', background: '#FFFFFF',
+                        fontSize: '12px', padding: '3px 8px', background: '#FFFFFF',
                         border: '1px solid #D1D5DB', borderRadius: 12, color: '#475569', cursor: 'pointer'
                       }}
                     >
@@ -1412,7 +1412,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                       onKeyDown={e => { if (e.key === 'Enter') handleSendQuery(inputVal); }}
                       style={{
                         width: '100%', background: '#FFFFFF', border: '1px solid #D1D5DB', borderRadius: 20,
-                        padding: '8px 38px 8px 14px', fontSize: 13, color: '#1F2937', outline: 'none'
+                        padding: '8px 38px 8px 14px', fontSize: '14px', color: '#1F2937', outline: 'none'
                       }}
                     />
                     <button
@@ -1424,7 +1424,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                   </div>
                   <button
                     onClick={() => handleSendQuery(inputVal)}
-                    style={{ padding: '8px 16px', background: '#1E3A5F', color: '#FFFFFF', border: 'none', borderRadius: 20, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}
+                    style={{ padding: '8px 16px', background: '#1E3A5F', color: '#FFFFFF', border: 'none', borderRadius: 20, fontSize: '12px', fontWeight: 800, cursor: 'pointer' }}
                   >
                     Send
                   </button>
@@ -1436,8 +1436,8 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
           {activeTab === 'graph' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E2E8F0', paddingBottom: 6, marginBottom: 12 }}>
-                <h3 style={{ fontSize: 14, fontWeight: 800, color: '#1E3A5F', margin: 0 }}>Interactive Relationship Matrix</h3>
-                <span style={{ fontSize: 11, color: '#6B7280' }}>Click nodes to view full dossiers</span>
+                <h3 style={{ fontSize: '14px', fontWeight: 800, color: '#1E3A5F', margin: 0 }}>Interactive Relationship Matrix</h3>
+                <span style={{ fontSize: '12px', color: '#6B7280' }}>Click nodes to view full dossiers</span>
               </div>
               {renderNetworkGraphWidget(currentCase)}
             </div>
@@ -1446,8 +1446,8 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
           {activeTab === 'map' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E2E8F0', paddingBottom: 6, marginBottom: 12 }}>
-                <h3 style={{ fontSize: 14, fontWeight: 800, color: '#1E3A5F', margin: 0 }}>Tactical Route Playback</h3>
-                <span style={{ fontSize: 11, color: '#6B7280' }}>GPS Coordinates logged under tower registry</span>
+                <h3 style={{ fontSize: '14px', fontWeight: 800, color: '#1E3A5F', margin: 0 }}>Tactical Route Playback</h3>
+                <span style={{ fontSize: '12px', color: '#6B7280' }}>GPS Coordinates logged under tower registry</span>
               </div>
               {renderMapWidget(currentCase)}
             </div>
@@ -1456,18 +1456,18 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
           {activeTab === 'timeline' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E2E8F0', paddingBottom: 6, marginBottom: 12 }}>
-                <h3 style={{ fontSize: 14, fontWeight: 800, color: '#1E3A5F', margin: 0 }}>Reconstructed Case Chronology</h3>
-                <span style={{ fontSize: 11, color: '#6B7280' }}>Logged triggers & handoffs</span>
+                <h3 style={{ fontSize: '14px', fontWeight: 800, color: '#1E3A5F', margin: 0 }}>Reconstructed Case Chronology</h3>
+                <span style={{ fontSize: '12px', color: '#6B7280' }}>Logged triggers & handoffs</span>
               </div>
               {renderTimelineWidget(currentCase)}
             </div>
           )}
 
           {activeTab === 'report' && (
-            <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 20, fontFamily: 'monospace', fontSize: 12, color: '#1F2937' }}>
+            <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 20, fontFamily: 'monospace', fontSize: '12px', color: '#1F2937' }}>
               <div style={{ textAlign: 'center', borderBottom: '3px double #1E3A5F', paddingBottom: 10, marginBottom: 16 }}>
-                <h2 style={{ margin: 0, color: '#1E3A5F', fontSize: 16, fontWeight: 900 }}>RESTRICTED — OFFICIAL INTEL DOSSIER</h2>
-                <span style={{ fontSize: 10, color: '#6B7280' }}>KARNATAKA STATE POLICE COMMAND CENTRE</span>
+                <h2 style={{ margin: 0, color: '#1E3A5F', fontSize: '16px', fontWeight: 900 }}>RESTRICTED — OFFICIAL INTEL DOSSIER</h2>
+                <span style={{ fontSize: '12px', color: '#6B7280' }}>KARNATAKA STATE POLICE COMMAND CENTRE</span>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
@@ -1507,8 +1507,8 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 24, borderTop: '1px solid #E2E8F0', paddingTop: 14 }}>
-                <button onClick={() => window.print()} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', background: '#F1F5F9', border: '1px solid #D1D5DB', borderRadius: 4, cursor: 'pointer', fontSize: 11, fontWeight: 700 }}><Printer size={12} /> Print Dossier</button>
-                <button onClick={handleExportPDF} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', background: '#1E3A5F', color: '#FFFFFF', border: 'none', borderRadius: 4, cursor: 'pointer', fontSize: 11, fontWeight: 700 }}><Download size={12} /> Download PDF</button>
+                <button onClick={() => window.print()} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', background: '#F1F5F9', border: '1px solid #D1D5DB', borderRadius: 4, cursor: 'pointer', fontSize: '12px', fontWeight: 700 }}><Printer size={12} /> Print Dossier</button>
+                <button onClick={handleExportPDF} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', background: '#1E3A5F', color: '#FFFFFF', border: 'none', borderRadius: 4, cursor: 'pointer', fontSize: '12px', fontWeight: 700 }}><Download size={12} /> Download PDF</button>
               </div>
             </div>
           )}
@@ -1525,7 +1525,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
       <SimulationBanner />
 
       {/* Breadcrumb */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, fontSize: 12, color: '#475569' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, fontSize: '12px', color: '#475569' }}>
         <span>Home</span>
         <span>/</span>
         <span>Investigation</span>
@@ -1544,10 +1544,10 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
             <Brain size={22} style={{ color: '#1E3A5F' }} />
           </div>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1F2937', margin: 0 }}>
+            <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#1F2937', margin: 0 }}>
               AI Investigation Copilot Workspace
             </h1>
-            <p style={{ fontSize: 13, color: '#475569', margin: 0 }}>
+            <p style={{ fontSize: '14px', color: '#475569', margin: 0 }}>
               Real-time intelligence engine integrating relationship matrices, geofencing, and risk threat indexes.
             </p>
           </div>
@@ -1572,7 +1572,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
             gap: 16
           }}
         >
-          <div style={{ fontSize: '10px', fontWeight: 900, color: '#475569', letterSpacing: '0.12em', textTransform: 'uppercase', borderBottom: '1px solid #E5E7EB', paddingBottom: '8px' }}>
+          <div style={{ fontSize: '12px', fontWeight: 900, color: '#475569', letterSpacing: '0.12em', textTransform: 'uppercase', borderBottom: '1px solid #E5E7EB', paddingBottom: '8px' }}>
             {lang === 'en' ? 'LOAD CASE DOSSIER' : 'ಪ್ರಕರಣದ ಸಂದರ್ಭ ಲೋಡ್ ಮಾಡಿ'}
           </div>
 
@@ -1594,9 +1594,9 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                     transition: 'all 0.15s'
                   }}
                 >
-                  <div style={{ fontWeight: 800, color: '#1E3A5F', fontSize: 12 }}>{item.firNumber}</div>
-                  <div style={{ fontSize: 11, color: '#475569', marginTop: 2 }}>Target: {item.suspectName}</div>
-                  <div style={{ fontSize: 10, color: '#6B7280', marginTop: 2 }}>{item.category} · {item.district}</div>
+                  <div style={{ fontWeight: 800, color: '#1E3A5F', fontSize: '12px' }}>{item.firNumber}</div>
+                  <div style={{ fontSize: '12px', color: '#475569', marginTop: 2 }}>Target: {item.suspectName}</div>
+                  <div style={{ fontSize: '12px', color: '#6B7280', marginTop: 2 }}>{item.category} · {item.district}</div>
                 </div>
               );
             })}
@@ -1604,7 +1604,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', borderTop: '1px dashed #E2E8F0', paddingTop: 14 }}>
             <div>
-              <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: '#475569', marginBottom: '5px', textTransform: 'uppercase' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '5px', textTransform: 'uppercase' }}>
                 FIR Number
               </label>
               <input
@@ -1618,7 +1618,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: '#475569', marginBottom: '5px', textTransform: 'uppercase' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '5px', textTransform: 'uppercase' }}>
                 Suspect Target
               </label>
               <input
@@ -1632,7 +1632,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: '#475569', marginBottom: '5px', textTransform: 'uppercase' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '5px', textTransform: 'uppercase' }}>
                 District Division
               </label>
               <select
@@ -1650,7 +1650,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
               onClick={() => triggerLoadAndAnalyze()}
               style={{
                 width: '100%', padding: '8px 12px', background: '#1E3A5F', color: '#FFFFFF',
-                border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 800, cursor: 'pointer',
+                border: 'none', borderRadius: '6px', fontSize: '12px', fontWeight: 800, cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6
               }}
             >
@@ -1678,29 +1678,29 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
           }}
         >
           <div>
-            <div style={{ fontSize: '10px', fontWeight: 900, color: '#475569', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '16px', borderBottom: '1px solid #E5E7EB', paddingBottom: '8px' }}>
+            <div style={{ fontSize: '12px', fontWeight: 900, color: '#475569', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '16px', borderBottom: '1px solid #E5E7EB', paddingBottom: '8px' }}>
               THREAT MATRIX & SUMMARY
             </div>
 
             {currentCase ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 14, fontSize: 12, color: '#475569' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14, fontSize: '12px', color: '#475569' }}>
                 <div>
                   <span style={{ color: '#6B7280' }}>Docket Reference:</span>
-                  <div style={{ fontWeight: 800, color: '#1E3A5F', fontSize: 13, fontFamily: 'monospace', marginTop: 2 }}>
+                  <div style={{ fontWeight: 800, color: '#1E3A5F', fontSize: '14px', fontFamily: 'monospace', marginTop: 2 }}>
                     {currentCase.firNumber}
                   </div>
                 </div>
 
                 <div>
                   <span style={{ color: '#6B7280' }}>Investigative Status:</span>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: '#DC2626', fontWeight: 800, background: '#FEE2E2', padding: '2px 8px', borderRadius: 4, fontSize: 9, marginTop: 2 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: '#DC2626', fontWeight: 800, background: '#FEE2E2', padding: '2px 8px', borderRadius: 4, fontSize: '12px', marginTop: 2 }}>
                     ● ACTIVE
                   </span>
                 </div>
 
                 <div>
                   <span style={{ color: '#6B7280' }}>Target:</span>
-                  <div style={{ color: '#1F2937', fontWeight: 800, fontSize: 13, marginTop: 1 }}>{currentCase.suspectName}</div>
+                  <div style={{ color: '#1F2937', fontWeight: 800, fontSize: '14px', marginTop: 1 }}>{currentCase.suspectName}</div>
                 </div>
 
                 {/* Risk matrix meter */}
@@ -1727,7 +1727,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
 
                 <div>
                   <span style={{ color: '#6B7280' }}>Evidence Summary:</span>
-                  <div style={{ fontSize: 11, color: '#1F2937', marginTop: 2, lineHeight: 1.3 }}>
+                  <div style={{ fontSize: '12px', color: '#1F2937', marginTop: 2, lineHeight: 1.3 }}>
                     • {currentCase.evidenceSummary.length} verified records.<br />
                     • {currentCase.suspectNetwork.nodes.length} network actors mapped.
                   </div>
@@ -1739,7 +1739,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                 </div>
               </div>
             ) : (
-              <div style={{ fontSize: 12, color: '#9CA3AF', fontStyle: 'italic' }}>
+              <div style={{ fontSize: '12px', color: '#9CA3AF', fontStyle: 'italic' }}>
                 No active docket intelligence loaded.
               </div>
             )}
@@ -1752,7 +1752,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                 onClick={handleExportPDF}
                 disabled={isExporting}
                 style={{
-                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700, borderRadius: '6px',
+                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, borderRadius: '6px',
                   background: '#FFFFFF', border: '1px solid #D1D5DB', color: '#1E3A5F', padding: '6px 10px', gap: '6px', cursor: 'pointer'
                 }}
               >
@@ -1761,7 +1761,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
               <button
                 onClick={() => alert(`Operational brief exported to dispatch unit.`)}
                 style={{
-                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700, borderRadius: '6px',
+                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, borderRadius: '6px',
                   background: '#FFFFFF', border: '1px solid #D1D5DB', color: '#1F2937', padding: '6px 10px', gap: '6px', cursor: 'pointer'
                 }}
               >
@@ -1770,7 +1770,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
               <button
                 onClick={() => alert(`Escalated case file to Special Intelligence Cell.`)}
                 style={{
-                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700, borderRadius: '6px',
+                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, borderRadius: '6px',
                   background: '#FEE2E2', border: '1px solid #FCA5A5', color: '#991B1B', padding: '6px 10px', gap: '6px', cursor: 'pointer'
                 }}
               >
@@ -1787,7 +1787,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
 
 export default function AIInvestigatorPage() {
   return (
-    <Suspense fallback={<div style={{ padding: 24, color: '#64748b', fontSize: 14 }}>Loading AI Investigator...</div>}>
+    <Suspense fallback={<div style={{ padding: 24, color: '#64748b', fontSize: '14px' }}>Loading AI Investigator...</div>}>
       <AIInvestigatorPageContent />
     </Suspense>
   );

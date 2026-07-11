@@ -18,11 +18,11 @@
    ───────────────────────────────────────────── */
 :root {
   --text-scale: 1.0; /* Controlled by GovHeader A−/A+ buttons. Range: 0.7–1.4 */
-  --font-base: calc(14.5px * var(--text-scale, 1.0));
-  --font-card-title: calc(17px * var(--text-scale, 1.0));
-  --font-section-title: calc(22px * var(--text-scale, 1.0));
-  --font-page-title: calc(32px * var(--text-scale, 1.0));
-  --font-label: calc(12.5px * var(--text-scale, 1.0));
+  --font-base: calc(14px * var(--text-scale, 1.0));
+  --font-card-title: calc(16px * var(--text-scale, 1.0));
+  --font-section-title: calc(20px * var(--text-scale, 1.0));
+  --font-page-title: calc(30px * var(--text-scale, 1.0));
+  --font-label: calc(14px * var(--text-scale, 1.0));
   /* Karnataka State branding theme colors mapped to standardized tokens */
   --primary-navy:     var(--color-navy);      /* Standardized Navy */
   --brand-crimson:    var(--color-navy);
@@ -119,31 +119,31 @@
 /* Semantic heading classes */
 h1, .page-title, .text-page-title {
   font: var(--text-page-title) !important;
-  font-size: calc(36px * var(--text-scale, 1.0)) !important;
+  font-size: calc(30px * var(--text-scale, 1.0)) !important;
   font-family: 'Inter', sans-serif !important;
 }
 
 h2, .section-title, .text-section-heading {
   font: var(--text-section-heading) !important;
-  font-size: calc(22px * var(--text-scale, 1.0)) !important;
+  font-size: calc(20px * var(--text-scale, 1.0)) !important;
   font-family: 'Inter', sans-serif !important;
 }
 
 h3, .card-title, .text-card-heading {
   font: var(--text-card-heading) !important;
-  font-size: calc(17px * var(--text-scale, 1.0)) !important;
+  font-size: calc(16px * var(--text-scale, 1.0)) !important;
   font-family: 'Inter', sans-serif !important;
 }
 
 body, p, .text-body {
   font: var(--text-body) !important;
-  font-size: calc(14.5px * var(--text-scale, 1.0)) !important;
+  font-size: calc(14px * var(--text-scale, 1.0)) !important;
   font-family: 'Inter', sans-serif !important;
 }
 
 .caption, .text-caption {
   font: var(--text-caption) !important;
-  font-size: calc(12.5px * var(--text-scale, 1.0)) !important;
+  font-size: calc(12px * var(--text-scale, 1.0)) !important;
   color: var(--color-caption) !important;
   font-family: 'Inter', sans-serif !important;
 }
@@ -553,7 +553,7 @@ html, body {
 .animate-slideInLeft   { animation: slideInLeft 0.4s ease-out forwards; }
 .animate-float         { animation: float 3s ease-in-out infinite; }
 .animate-spin-slow     { animation: spin-slow 8s linear infinite; }
-.animate-ticker        { animation: ticker-scroll 30s linear infinite; }
+.animate-ticker        { animation: ticker-scroll 50s linear infinite; }
 .animate-alert-flash   { animation: alert-flash 2s ease-in-out infinite; }
 
 /* ─────────────────────────────────────────────

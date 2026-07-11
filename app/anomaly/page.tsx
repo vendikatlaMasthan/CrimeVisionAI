@@ -36,7 +36,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return (
       <div style={{
         background: '#FFFFFF', border: '1px solid rgba(239,68,68,0.35)',
-        borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#f1f5f9'
+        borderRadius: 8, padding: '10px 14px', fontSize: '14px', color: '#f1f5f9'
       }}>
         <div style={{ fontWeight: 700, color: '#f1f5f9', marginBottom: 4 }}>Time: {label}</div>
         {payload.map((p: any) => (
@@ -89,10 +89,10 @@ export default function AnomalyPage() {
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <span className="badge badge-red animate-pulse" style={{ padding: '6px 14px', fontSize: 11, fontWeight: 800 }}>
+          <span className="badge badge-red animate-pulse" style={{ padding: '6px 14px', fontSize: '12px', fontWeight: 800 }}>
             ANOMALY ALERT ACTIVE
           </span>
-          <span style={{ fontSize: 12, color: '#94a3b8' }}>State Threat Level: <strong style={{ color: '#ef4444' }}>ELEVATED</strong></span>
+          <span style={{ fontSize: '12px', color: '#94a3b8' }}>State Threat Level: <strong style={{ color: '#ef4444' }}>ELEVATED</strong></span>
         </div>
       </div>
 
@@ -131,11 +131,11 @@ export default function AnomalyPage() {
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-            <XAxis dataKey="time" tick={{ fill: '#94a3b8', fontSize: 11 }} />
-            <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
+            <XAxis dataKey="time" tick={{ fill: '#94a3b8', fontSize: '12px' }} />
+            <YAxis tick={{ fill: '#94a3b8', fontSize: '12px' }} />
             <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ color: '#94a3b8', fontSize: 12 }} />
-            <ReferenceLine x="14:00" stroke="#ef4444" strokeWidth={2} strokeDasharray="4 4" label={{ value: 'ANOMALY DETECTED', fill: '#ef4444', fontSize: 10, fontWeight: 700 }} />
+            <Legend wrapperStyle={{ color: '#94a3b8', fontSize: '12px' }} />
+            <ReferenceLine x="14:00" stroke="#ef4444" strokeWidth={2} strokeDasharray="4 4" label={{ value: 'ANOMALY DETECTED', fill: '#ef4444', fontSize: '12px', fontWeight: 700 }} />
             <Line type="monotone" dataKey="baseline" name="Expected Baseline" stroke="#94a3b8" strokeDasharray="5 5" dot={false} strokeWidth={1.5} />
             <Area type="monotone" dataKey="actual" name="Actual Crime Volume" stroke="#ef4444" fill="url(#actualGrad)" strokeWidth={2.5} activeDot={{ r: 6 }} />
           </AreaChart>
@@ -166,7 +166,7 @@ export default function AnomalyPage() {
               >
                 {/* Header */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
-                  <span className="badge badge-gray" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10 }}>
+                  <span className="badge badge-gray" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px' }}>
                     {anom.id}
                   </span>
                   <span className={SEVERITY_BADGES[anom.severity]} style={
@@ -179,20 +179,20 @@ export default function AnomalyPage() {
                   <span className={STATUS_BADGES[anom.status] || 'badge'}>
                     {anom.status}
                   </span>
-                  <span style={{ marginLeft: 'auto', fontSize: 11, color: '#64748b', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span style={{ marginLeft: 'auto', fontSize: '12px', color: '#64748b', display: 'flex', alignItems: 'center', gap: 4 }}>
                     <Clock size={11} /> {anom.timestamp}
                   </span>
-                  <span style={{ fontSize: 11, color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span style={{ fontSize: '12px', color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: 4 }}>
                     <MapPin size={11} color="#64748b" /> {anom.district}
                   </span>
                 </div>
 
                 {/* Body */}
-                <div style={{ fontSize: 15, fontWeight: 800, color: '#f1f5f9', marginBottom: 6 }}>
+                <div style={{ fontSize: '14px', fontWeight: 800, color: '#f1f5f9', marginBottom: 6 }}>
                   {anom.crimeType} — {anom.type}
                 </div>
                 
-                <p style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.55, marginBottom: 12 }}>
+                <p style={{ fontSize: '12px', color: '#94a3b8', lineHeight: 1.55, marginBottom: 12 }}>
                   {anom.description}
                 </p>
 
@@ -203,16 +203,16 @@ export default function AnomalyPage() {
                   padding: '10px 14px', borderRadius: 8, marginBottom: 12
                 }}>
                   <div>
-                    <div style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Baseline</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#94a3b8', marginTop: 1 }}>{anom.baseline}</div>
+                    <div style={{ fontSize: '12px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Baseline</div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#94a3b8', marginTop: 1 }}>{anom.baseline}</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Detected</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#f1f5f9', marginTop: 1 }}>{anom.actual}</div>
+                    <div style={{ fontSize: '12px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Detected</div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#f1f5f9', marginTop: 1 }}>{anom.actual}</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Deviation</div>
-                    <div style={{ fontSize: 14, fontWeight: 900, color: cardBorder, marginTop: 1 }}>
+                    <div style={{ fontSize: '12px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Deviation</div>
+                    <div style={{ fontSize: '14px', fontWeight: 900, color: cardBorder, marginTop: 1 }}>
                       +{anom.spikePercent}%
                     </div>
                   </div>
@@ -220,12 +220,12 @@ export default function AnomalyPage() {
 
                 {/* Indicators */}
                 <div style={{ marginBottom: 16 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
                     Trigger Indicators
                   </div>
                   <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                     {anom.indicators.map((ind, i) => (
-                      <span key={i} className="badge badge-gray" style={{ fontSize: 10, background: 'rgba(255,255,255,0.05)', color: '#cbd5e1' }}>
+                      <span key={i} className="badge badge-gray" style={{ fontSize: '12px', background: 'rgba(255,255,255,0.05)', color: '#cbd5e1' }}>
                         • {ind}
                       </span>
                     ))}
@@ -236,7 +236,7 @@ export default function AnomalyPage() {
                 <div style={{ display: 'flex', gap: 8, borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 12 }}>
                   <button
                     className="cyber-btn cyber-btn-cyan"
-                    style={{ fontSize: 11, padding: '6px 12px' }}
+                    style={{ fontSize: '12px', padding: '6px 12px' }}
                     onClick={() => handleAction(anom.id, 'Under Investigation')}
                     disabled={anom.status === 'Under Investigation' || isDismissed}
                   >
@@ -244,7 +244,7 @@ export default function AnomalyPage() {
                   </button>
                   <button
                     className="cyber-btn cyber-btn-red"
-                    style={{ fontSize: 11, padding: '6px 12px' }}
+                    style={{ fontSize: '12px', padding: '6px 12px' }}
                     onClick={() => handleAction(anom.id, 'Confirmed')}
                     disabled={anom.status === 'Confirmed' || isDismissed}
                   >
@@ -253,7 +253,7 @@ export default function AnomalyPage() {
                   <button
                     className="cyber-btn"
                     style={{
-                      fontSize: 11, padding: '6px 12px',
+                      fontSize: '12px', padding: '6px 12px',
                       background: isDismissed ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.03)',
                       color: isDismissed ? '#10b981' : '#64748b',
                       border: `1px solid ${isDismissed ? 'rgba(16,185,129,0.25)' : 'rgba(255,255,255,0.08)'}`

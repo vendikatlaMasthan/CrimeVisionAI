@@ -90,7 +90,7 @@ export default function DatabaseManagementPage() {
     <div className="page-content" style={{ background: '#F5F7FA', padding: '24px 32px' }}>
       
       {/* Breadcrumb */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, fontSize: 12, color: '#475569' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, fontSize: '12px', color: '#475569' }}>
         <span>Home</span>
         <span>/</span>
         <span>Administration</span>
@@ -109,10 +109,10 @@ export default function DatabaseManagementPage() {
             <Database size={22} style={{ color: '#A6192E' }} />
           </div>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1F2937', margin: 0 }}>
+            <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#1F2937', margin: 0 }}>
               Database &amp; Records Management
             </h1>
-            <p style={{ fontSize: 13, color: '#475569', margin: 0 }}>
+            <p style={{ fontSize: '14px', color: '#475569', margin: 0 }}>
               Query, back up, and import state police digital records.
             </p>
           </div>
@@ -125,7 +125,7 @@ export default function DatabaseManagementPage() {
             style={{
               display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px',
               background: '#FFFFFF', color: '#1E3A5F', border: '1px solid #1E3A5F', borderRadius: 8,
-              fontSize: 13, fontWeight: 600, cursor: 'pointer'
+              fontSize: '14px', fontWeight: 600, cursor: 'pointer'
             }}
           >
             {isBackingUp ? <RefreshCw size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Database size={14} />}
@@ -137,7 +137,7 @@ export default function DatabaseManagementPage() {
             style={{
               display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px',
               background: '#FFFFFF', color: '#1E3A5F', border: '1px solid #1E3A5F', borderRadius: 8,
-              fontSize: 13, fontWeight: 600, cursor: 'pointer'
+              fontSize: '14px', fontWeight: 600, cursor: 'pointer'
             }}
           >
             {isRestoring ? <RefreshCw size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <RefreshCw size={14} />}
@@ -166,8 +166,8 @@ export default function DatabaseManagementPage() {
                 <db.icon size={18} style={{ color: db.color }} />
               </div>
               <div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: '#1F2937' }}>{db.label}</div>
-                <div style={{ fontSize: 11, color: '#475569' }}>{db.count}</div>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: '#1F2937' }}>{db.label}</div>
+                <div style={{ fontSize: '12px', color: '#475569' }}>{db.count}</div>
               </div>
             </div>
           </div>
@@ -194,11 +194,11 @@ export default function DatabaseManagementPage() {
                   padding: '14px 20px', border: 'none', background: 'transparent',
                   borderBottom: activeTab === tab.id ? '2px solid #1E3A5F' : '2px solid transparent',
                   color: activeTab === tab.id ? '#1E3A5F' : '#475569',
-                  fontSize: 13, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8
+                  fontSize: '14px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8
                 }}
               >
                 {tab.label}
-                <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 10, background: '#E5E7EB', color: '#475569' }}>
+                <span style={{ fontSize: '12px', padding: '2px 6px', borderRadius: 10, background: '#E5E7EB', color: '#475569' }}>
                   {tab.count}
                 </span>
               </button>
@@ -214,7 +214,7 @@ export default function DatabaseManagementPage() {
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder={`Search records in active registry...`}
-                style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #D1D5DB', fontSize: 13 }}
+                style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #D1D5DB', fontSize: '14px' }}
               />
             </div>
           </div>
@@ -261,7 +261,7 @@ export default function DatabaseManagementPage() {
                   <tr key={s.id}>
                     <td>
                       <div style={{ fontWeight: 600, color: '#1F2937' }}>{s.name}</div>
-                      <div style={{ fontSize: 11, color: '#6B7280' }}>Alias: "{s.alias}"</div>
+                      <div style={{ fontSize: '12px', color: '#6B7280' }}>Alias: "{s.alias}"</div>
                     </td>
                     <td>{s.district}</td>
                     <td>{s.crimeType}</td>
@@ -294,7 +294,7 @@ export default function DatabaseManagementPage() {
                     <td>{e.custodian}</td>
                     <td>{e.location}</td>
                     <td>
-                      <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 4, background: '#D1FAE5', color: '#065F46', border: '1px solid #A7F3D0' }}>
+                      <span style={{ fontSize: '12px', padding: '2px 8px', borderRadius: 4, background: '#D1FAE5', color: '#065F46', border: '1px solid #A7F3D0' }}>
                         {e.status}
                       </span>
                     </td>
@@ -310,21 +310,21 @@ export default function DatabaseManagementPage() {
           <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#F0FDF4', border: '1px solid #DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
             <Upload size={20} color="#059669" />
           </div>
-          <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1F2937', marginBottom: 4 }}>Import Datasets</h3>
-          <p style={{ fontSize: 11, color: '#475569', marginBottom: 16 }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1F2937', marginBottom: 4 }}>Import Datasets</h3>
+          <p style={{ fontSize: '12px', color: '#475569', marginBottom: 16 }}>
             Upload CSV/Excel file to sync local crime records.
           </p>
 
           <label style={{
             display: 'block', padding: '10px 14px', background: '#F9FAFB', border: '1px dashed #D1D5DB', borderRadius: 8,
-            cursor: 'pointer', fontSize: 12, color: '#1E3A5F', fontWeight: 600
+            cursor: 'pointer', fontSize: '12px', color: '#1E3A5F', fontWeight: 600
           }}>
             {uploadingFile ? 'Uploading dataset...' : 'Choose File to Import'}
             <input type="file" onChange={handleFileUpload} accept=".csv,.xlsx" style={{ display: 'none' }} />
           </label>
 
           {uploadedRecords !== null && (
-            <div style={{ marginTop: 14, padding: 10, background: '#D1FAE5', border: '1px solid #A7F3D0', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#065F46' }}>
+            <div style={{ marginTop: 14, padding: 10, background: '#D1FAE5', border: '1px solid #A7F3D0', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 6, fontSize: '12px', color: '#065F46' }}>
               <Check size={14} />
               Import complete: {uploadedRecords} records merged.
             </div>

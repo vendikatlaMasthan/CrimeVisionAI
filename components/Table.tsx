@@ -27,7 +27,7 @@ export default function Table<T>({
 }: TableProps<T>) {
   return (
     <div style={{ width: '100%', overflowX: 'auto', borderRadius: '8px', border: '1px solid var(--border-default)' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', background: 'var(--bg-card)', fontSize: '13.5px' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', background: 'var(--bg-card)', fontSize: '14px' }}>
         <thead>
           <tr style={{ background: 'var(--neutral-light)', borderBottom: '1px solid var(--border-default)' }}>
             {columns.map((col, idx) => (
@@ -36,7 +36,7 @@ export default function Table<T>({
                 style={{
                   padding: '12px 16px',
                   fontWeight: 700,
-                  fontSize: '11px',
+                  fontSize: '12px',
                   textTransform: 'uppercase',
                   letterSpacing: '0.08em',
                   color: 'var(--text-primary)',

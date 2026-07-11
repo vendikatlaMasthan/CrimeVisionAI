@@ -601,7 +601,7 @@ export default function GenomePage() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <Fingerprint size={18} style={{ color: 'var(--primary-navy)' }} />
-                    <span className="font-bold text-sm text-[var(--text-primary)]" style={{ fontSize: '15px' }}>
+                    <span className="font-bold text-sm text-[var(--text-primary)]" style={{ fontSize: '14px' }}>
                       CASE DETAILS — {selectedFIR.firNumber}
                     </span>
                   </div>
@@ -635,7 +635,7 @@ export default function GenomePage() {
                     alignItems: 'center',
                     gap: '8px',
                     padding: '8px 16px',
-                    fontSize: '13px',
+                    fontSize: '14px',
                     fontWeight: activeTab === 'matches' ? 800 : 500,
                     color: activeTab === 'matches' ? 'var(--primary-navy)' : '#94A3B8',
                     borderBottom: activeTab === 'matches' ? '3px solid var(--primary-navy)' : '3px solid transparent',
@@ -650,7 +650,7 @@ export default function GenomePage() {
                   <span>Pattern Matches & Anomalies</span>
                   <span 
                     style={{ 
-                      fontSize: '10px', 
+                      fontSize: '12px', 
                       padding: '2px 6px', 
                       borderRadius: '10px', 
                       background: '#E2E8F0', 
@@ -667,7 +667,7 @@ export default function GenomePage() {
                     alignItems: 'center',
                     gap: '8px',
                     padding: '8px 16px',
-                    fontSize: '13px',
+                    fontSize: '14px',
                     fontWeight: activeTab === 'clusters' ? 800 : 500,
                     color: activeTab === 'clusters' ? 'var(--primary-navy)' : '#94A3B8',
                     borderBottom: activeTab === 'clusters' ? '3px solid var(--primary-navy)' : '3px solid transparent',
@@ -682,7 +682,7 @@ export default function GenomePage() {
                   <span>Forensic Link & Clusters</span>
                   <span 
                     style={{ 
-                      fontSize: '10px', 
+                      fontSize: '12px', 
                       padding: '2px 6px', 
                       borderRadius: '10px', 
                       background: '#E2E8F0', 
@@ -734,10 +734,10 @@ export default function GenomePage() {
                           >
                             <AlertTriangle size={20} style={{ color: alertColor }} />
                             <div>
-                              <div style={{ fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', color: alertColor }}>
+                              <div style={{ fontSize: '12px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', color: alertColor }}>
                                 {isAnomaly ? 'ANOMALOUS PATTERN DETECTED' : 'TYPICAL PATTERN VERIFIED'} — RISK: {riskLevel}
                               </div>
-                              <div style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 600, marginTop: '2px' }}>
+                              <div style={{ fontSize: '14px', color: 'var(--text-primary)', fontWeight: 600, marginTop: '2px' }}>
                                 {isAnomaly 
                                   ? `Case shows an atypical modus operandi with an average DNA profile deviation of ${averageDeviation}%.`
                                   : `Case pattern is consistent with standard historical baselines.`}
@@ -768,7 +768,7 @@ export default function GenomePage() {
                           
                           return (
                             <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                              <span style={{ fontSize: '11px', fontWeight: 800, color: barColor }}>{vector.val}%</span>
+                              <span style={{ fontSize: '12px', fontWeight: 800, color: barColor }}>{vector.val}%</span>
                               <div style={{ width: '28px', height: '100px', background: 'rgba(0,0,0,0.05)', borderRadius: '4px', overflow: 'hidden', position: 'relative' }}>
                                 <div 
                                   style={{ 
@@ -784,9 +784,9 @@ export default function GenomePage() {
                                 />
                               </div>
                               <div style={{ textAlign: 'center', marginTop: '4px' }}>
-                                <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-primary)' }}>{vector.label}: {vector.code}</div>
+                                <div style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-primary)' }}>{vector.label}: {vector.code}</div>
                                 <div 
-                                  style={{ fontSize: '10px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '80px' }} 
+                                  style={{ fontSize: '12px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '80px' }} 
                                   title={vector.sub}
                                 >
                                   {vector.sub}

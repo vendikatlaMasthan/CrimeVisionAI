@@ -125,7 +125,7 @@ export default function InsightsPage() {
           <Brain size={22} style={{ color: '#0F6B5C' }} />
           AI INTELLIGENCE INSIGHTS
         </h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 6 }}>
+        <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: 6 }}>
           Explainable AI — Pattern Analysis with Evidence, Confidence Metrics and Transparent Scoring Methodology
         </p>
       </div>
@@ -138,9 +138,9 @@ export default function InsightsPage() {
             const c = INSIGHT_COLORS[colorKey] || INSIGHT_COLORS.cyan;
             return (
               <div key={idx} className="glass-card" style={{ padding: 18, border: `1px solid ${c.border}`, background: c.bg }}>
-                <div style={{ fontSize: 26, fontWeight: 800, color: c.color, fontFamily: 'JetBrains Mono, monospace', marginBottom: 4 }}>{insight.value}</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{insight.title}</div>
-                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{insight.description}</div>
+                <div style={{ fontSize: '24px', fontWeight: 800, color: c.color, fontFamily: 'JetBrains Mono, monospace', marginBottom: 4 }}>{insight.value}</div>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{insight.title}</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{insight.description}</div>
               </div>
             );
           })}
@@ -156,13 +156,13 @@ export default function InsightsPage() {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                 <Calculator size={18} style={{ color: '#0F6B5C' }} />
-                <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>AI EXPLAINABILITY PANEL</h2>
+                <h2 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>AI EXPLAINABILITY PANEL</h2>
               </div>
-              <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0 }}>Transparent weighted scoring — see exactly HOW the risk score is computed</p>
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>Transparent weighted scoring — see exactly HOW the risk score is computed</p>
             </div>
             <button
               onClick={() => setShowMethodology(!showMethodology)}
-              style={{ fontSize: 12, color: '#0F6B5C', background: 'rgba(30, 58, 95,0.08)', border: '1px solid rgba(30, 58, 95,0.25)', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
+              style={{ fontSize: '12px', color: '#0F6B5C', background: 'rgba(30, 58, 95,0.08)', border: '1px solid rgba(30, 58, 95,0.25)', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
             >
               <Info size={13} /> Methodology
             </button>
@@ -170,14 +170,14 @@ export default function InsightsPage() {
 
           {/* District selector */}
           <div style={{ marginBottom: 20 }}>
-            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 6, fontWeight: 600 }}>SELECT DISTRICT TO ANALYZE:</label>
+            <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: 6, fontWeight: 600 }}>SELECT DISTRICT TO ANALYZE:</label>
             <select
               value={xaiDistrict.id}
               onChange={e => {
                 const found = KARNATAKA_DISTRICTS.find(d => d.id === parseInt(e.target.value));
                 if (found) setXaiDistrict(found);
               }}
-              style={{ background: 'var(--cyber-surface)', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)', borderRadius: 8, padding: '8px 12px', fontSize: 13, width: '100%', cursor: 'pointer' }}
+              style={{ background: 'var(--cyber-surface)', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)', borderRadius: 8, padding: '8px 12px', fontSize: '14px', width: '100%', cursor: 'pointer' }}
             >
               {KARNATAKA_DISTRICTS.map(d => (
                 <option key={d.id} value={d.id}>{d.name}</option>
@@ -194,15 +194,15 @@ export default function InsightsPage() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 6px',
               }}>
                 <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'var(--cyber-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontSize: 18, fontWeight: 800, color: xaiResult.total > 70 ? '#ef4444' : xaiResult.total > 50 ? '#f59e0b' : '#10b981', fontFamily: 'JetBrains Mono' }}>{xaiResult.total}</span>
+                  <span style={{ fontSize: '18px', fontWeight: 800, color: xaiResult.total > 70 ? '#ef4444' : xaiResult.total > 50 ? '#f59e0b' : '#10b981', fontFamily: 'JetBrains Mono' }}>{xaiResult.total}</span>
                 </div>
               </div>
-              <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>RISK SCORE</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>RISK SCORE</div>
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{xaiDistrict.name}</div>
+              <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{xaiDistrict.name}</div>
               <span className={`badge badge-${xaiDistrict.riskLevel === 'critical' ? 'red' : xaiDistrict.riskLevel === 'low' ? 'green' : 'amber'}`}>{xaiDistrict.riskLevel.toUpperCase()} RISK</span>
-              <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '8px 0 0', lineHeight: 1.4 }}>
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '8px 0 0', lineHeight: 1.4 }}>
                 Computed from {RISK_WEIGHTS.length} weighted factors using statistical scoring model.
               </p>
             </div>
@@ -210,43 +210,43 @@ export default function InsightsPage() {
 
           {/* Weighted Factor Breakdown */}
           <div style={{ marginBottom: 16 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>Factor Breakdown</div>
+            <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>Factor Breakdown</div>
             {xaiResult.breakdown.map((b, i) => (
               <div key={i} style={{ marginBottom: 12 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, alignItems: 'baseline' }}>
-                  <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 500 }}>{b.factor}</span>
+                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>{b.factor}</span>
                   <div style={{ display: 'flex', gap: 12 }}>
-                    <span style={{ fontSize: 11, color: 'var(--text-dim)', fontFamily: 'JetBrains Mono, monospace' }}>raw: {b.rawScore}/100</span>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: '#0F6B5C', fontFamily: 'JetBrains Mono, monospace' }}>x{b.weight} = {b.weightedScore}</span>
+                    <span style={{ fontSize: '12px', color: 'var(--text-dim)', fontFamily: 'JetBrains Mono, monospace' }}>raw: {b.rawScore}/100</span>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#0F6B5C', fontFamily: 'JetBrains Mono, monospace' }}>x{b.weight} = {b.weightedScore}</span>
                   </div>
                 </div>
                 <div style={{ height: 6, borderRadius: 4, background: 'var(--cyber-surface)', overflow: 'hidden' }}>
                   <div style={{ height: '100%', width: `${b.rawScore}%`, background: 'linear-gradient(90deg, #0F6B5C, #8b5cf6)', borderRadius: 4, transition: 'width 0.6s ease' }} />
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 3 }}>{RISK_WEIGHTS[i].description}</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-dim)', marginTop: 3 }}>{RISK_WEIGHTS[i].description}</div>
               </div>
             ))}
           </div>
 
           {/* Total */}
           <div style={{ borderTop: '1px solid var(--cyber-border)', paddingTop: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>Composite Risk Score:</span>
-            <span style={{ fontSize: 24, fontWeight: 800, color: xaiResult.total > 70 ? '#ef4444' : xaiResult.total > 50 ? '#f59e0b' : '#10b981', fontFamily: 'JetBrains Mono, monospace' }}>{xaiResult.total} / 100</span>
+            <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)' }}>Composite Risk Score:</span>
+            <span style={{ fontSize: '24px', fontWeight: 800, color: xaiResult.total > 70 ? '#ef4444' : xaiResult.total > 50 ? '#f59e0b' : '#10b981', fontFamily: 'JetBrains Mono, monospace' }}>{xaiResult.total} / 100</span>
           </div>
 
           {/* Methodology Modal */}
           {showMethodology && (
             <div style={{ marginTop: 16, padding: 16, background: 'rgba(148,163,184,0.06)', border: '1px solid var(--cyber-border)', borderRadius: 10 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#0F6B5C', marginBottom: 10 }}>Scoring Methodology</div>
-              <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 8px' }}>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#0F6B5C', marginBottom: 10 }}>Scoring Methodology</div>
+              <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 8px' }}>
                 The risk score is computed using a <strong>weighted multi-factor linear model</strong> — no black box.
               </p>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#94a3b8', background: 'var(--cyber-surface)', padding: '10px 14px', borderRadius: 8, lineHeight: 1.7 }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: '#94a3b8', background: 'var(--cyber-surface)', padding: '10px 14px', borderRadius: 8, lineHeight: 1.7 }}>
                 RiskScore = Sum(rawScore_i x weight_i)<br />
                 rawScore_i = normalize(metric_i, max_i) x 100<br />
                 Weights: CR=0.30, YoY=0.25, ACR=0.20, Cyber=0.15, OC=0.10
               </div>
-              <p style={{ fontSize: 11, color: 'var(--text-dim)', margin: '8px 0 0' }}>
+              <p style={{ fontSize: '12px', color: 'var(--text-dim)', margin: '8px 0 0' }}>
                 All thresholds calibrated against Karnataka State Police historical baselines (2018-2024).
               </p>
             </div>
@@ -255,26 +255,26 @@ export default function InsightsPage() {
 
         {/* Radar Chart */}
         <div className="glass-card" style={{ padding: 20 }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
             <Layers size={16} style={{ color: '#8b5cf6' }} /> Threat Vector Analysis
           </div>
           <ResponsiveContainer width="100%" height={260}>
             <RadarChart data={radarData}>
               <PolarGrid stroke="rgba(148,163,184,0.15)" />
-              <PolarAngleAxis dataKey="dimension" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} />
-              <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: 'var(--text-dim)', fontSize: 9 }} />
+              <PolarAngleAxis dataKey="dimension" tick={{ fill: 'var(--text-muted)', fontSize: '12px' }} />
+              <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: 'var(--text-dim)', fontSize: '12px' }} />
               <Radar name="Threat Score" dataKey="score" stroke="#0F6B5C" fill="#0F6B5C" fillOpacity={0.2} strokeWidth={2} />
             </RadarChart>
           </ResponsiveContainer>
           <div style={{ marginTop: 12 }}>
             {radarData.map(r => (
               <div key={r.dimension} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, alignItems: 'center' }}>
-                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{r.dimension}</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{r.dimension}</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <div style={{ width: 60, height: 4, borderRadius: 2, background: 'var(--cyber-surface)', overflow: 'hidden' }}>
                     <div style={{ width: `${r.score}%`, height: '100%', background: r.score > 75 ? '#ef4444' : r.score > 55 ? '#f59e0b' : '#10b981', borderRadius: 2 }} />
                   </div>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'JetBrains Mono, monospace', minWidth: 26 }}>{r.score}</span>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'JetBrains Mono, monospace', minWidth: 26 }}>{r.score}</span>
                 </div>
               </div>
             ))}
@@ -285,7 +285,7 @@ export default function InsightsPage() {
       {/* Explainable AI Alerts */}
       {AI_ALERTS && (
         <div style={{ marginBottom: 28 }}>
-          <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>Explainable AI Alerts</h2>
+          <h2 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>Explainable AI Alerts</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {(AI_ALERTS as AlertType[]).map((alert) => {
               const color = SEVERITY_COLORS[alert.severity] || '#64748b';
@@ -299,35 +299,35 @@ export default function InsightsPage() {
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                       <span className={SEVERITY_BADGE[alert.severity] || 'badge'}>{alert.severity?.toUpperCase()}</span>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{alert.title}</span>
+                      <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>{alert.title}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <span style={{ fontSize: 12, color: '#10b981', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{alert.confidence}% confidence</span>
-                      <span style={{ fontSize: 11, color: 'var(--text-dim)' }}>{alert.timestamp}</span>
+                      <span style={{ fontSize: '12px', color: '#10b981', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{alert.confidence}% confidence</span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-dim)' }}>{alert.timestamp}</span>
                       {isExpanded ? <ChevronUp size={16} style={{ color: 'var(--text-muted)' }} /> : <ChevronDown size={16} style={{ color: 'var(--text-muted)' }} />}
                     </div>
                   </div>
 
                   {isExpanded && (
                     <div style={{ padding: '0 20px 20px', borderTop: '1px solid var(--cyber-border)' }}>
-                      <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, margin: '14px 0' }}>{alert.description}</p>
+                      <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '14px 0' }}>{alert.description}</p>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
                         {alert.why && (
                           <div style={{ background: 'var(--cyber-surface)', borderRadius: 8, padding: 12, border: '1px solid var(--cyber-border)' }}>
-                            <div style={{ fontSize: 11, fontWeight: 700, color: '#f59e0b', marginBottom: 6 }}>WHY THIS ALERT?</div>
-                            <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{alert.why}</p>
+                            <div style={{ fontSize: '12px', fontWeight: 700, color: '#f59e0b', marginBottom: 6 }}>WHY THIS ALERT?</div>
+                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{alert.why}</p>
                           </div>
                         )}
                         {alert.evidence && (
                           <div style={{ background: 'var(--cyber-surface)', borderRadius: 8, padding: 12, border: '1px solid var(--cyber-border)' }}>
-                            <div style={{ fontSize: 11, fontWeight: 700, color: '#0F6B5C', marginBottom: 6 }}>EVIDENCE BASE</div>
-                            <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{alert.evidence}</p>
+                            <div style={{ fontSize: '12px', fontWeight: 700, color: '#0F6B5C', marginBottom: 6 }}>EVIDENCE BASE</div>
+                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{alert.evidence}</p>
                           </div>
                         )}
                       </div>
                       {alert.affectedDistricts && (
                         <div style={{ marginBottom: 12 }}>
-                          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>AFFECTED DISTRICTS:</div>
+                          <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>AFFECTED DISTRICTS:</div>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                             {alert.affectedDistricts.map((d: string) => (
                               <span key={d} className="badge">{d}</span>
@@ -338,8 +338,8 @@ export default function InsightsPage() {
                       {/* Confidence Bar */}
                       <div style={{ marginBottom: 12 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                          <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)' }}>CONFIDENCE SCORE</span>
-                          <span style={{ fontSize: 11, fontWeight: 700, color: '#10b981', fontFamily: 'JetBrains Mono' }}>{alert.confidence}%</span>
+                          <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)' }}>CONFIDENCE SCORE</span>
+                          <span style={{ fontSize: '12px', fontWeight: 700, color: '#10b981', fontFamily: 'JetBrains Mono' }}>{alert.confidence}%</span>
                         </div>
                         <div style={{ height: 8, borderRadius: 4, background: 'var(--cyber-surface)', overflow: 'hidden' }}>
                           <div style={{ height: '100%', width: `${alert.confidence}%`, background: 'linear-gradient(90deg, #10b981, #0F6B5C)', borderRadius: 4, transition: 'width 0.5s ease' }} />
@@ -347,14 +347,14 @@ export default function InsightsPage() {
                       </div>
                       {alert.recommendation && (
                         <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 8, padding: 12 }}>
-                          <div style={{ fontSize: 11, fontWeight: 700, color: '#10b981', marginBottom: 4 }}>RECOMMENDED ACTION</div>
-                          <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0 }}>{alert.recommendation}</p>
+                          <div style={{ fontSize: '12px', fontWeight: 700, color: '#10b981', marginBottom: 4 }}>RECOMMENDED ACTION</div>
+                          <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>{alert.recommendation}</p>
                         </div>
                       )}
                       {alert.tags && (
                         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 12 }}>
                           {alert.tags.map((tag: string) => (
-                            <span key={tag} style={{ fontSize: 10, color: 'var(--text-dim)', background: 'var(--cyber-surface)', border: '1px solid var(--cyber-border)', borderRadius: 12, padding: '2px 8px' }}>#{tag}</span>
+                            <span key={tag} style={{ fontSize: '12px', color: 'var(--text-dim)', background: 'var(--cyber-surface)', border: '1px solid var(--cyber-border)', borderRadius: 12, padding: '2px 8px' }}>#{tag}</span>
                           ))}
                         </div>
                       )}
@@ -369,14 +369,14 @@ export default function InsightsPage() {
 
       {/* Pattern Matrix */}
       <div>
-        <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>Intelligence Pattern Matrix</h2>
+        <h2 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>Intelligence Pattern Matrix</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14 }}>
           {patternCards.map((p, idx) => (
             <div key={idx} className="glass-card" style={{ padding: 20, borderLeft: `3px solid ${p.color}` }}>
               <p.icon size={20} style={{ color: p.color, marginBottom: 10 }} />
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{p.title}</div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: p.color, fontFamily: 'JetBrains Mono, monospace', marginBottom: 8 }}>{p.value}</div>
-              <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>{p.desc}</p>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{p.title}</div>
+              <div style={{ fontSize: '18px', fontWeight: 800, color: p.color, fontFamily: 'JetBrains Mono, monospace', marginBottom: 8 }}>{p.value}</div>
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>{p.desc}</p>
             </div>
           ))}
         </div>

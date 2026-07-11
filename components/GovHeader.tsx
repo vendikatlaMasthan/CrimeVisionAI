@@ -168,7 +168,6 @@ export default function GovHeader() {
       height: '72px',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'space-between',
       padding: '0 24px',
       position: 'fixed',
       top: 0,
@@ -178,106 +177,100 @@ export default function GovHeader() {
       boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
     }}>
       
-      {/* Left: Chief Minister Office */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-        flex: '0 0 auto',
-      }}>
+      {/* Column 1: Chief Minister Office (Left aligned) */}
+      <div style={{ flex: '1 1 0%', display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
         <div style={{
-          width: 44,
-          height: 44,
-          borderRadius: '50%',
-          background: '#F3F4F6',
-          border: '1px solid #D1D5DB',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
+          gap: 12,
         }}>
-          <User size={22} style={{ color: '#4B5563' }} />
-        </div>
-        <div>
           <div style={{
-            fontSize: 12,
-            fontWeight: 700,
-            color: 'var(--text-primary)',
-            lineHeight: 1.2,
-            textTransform: 'uppercase',
-            letterSpacing: '0.02em',
+            width: 44,
+            height: 44,
+            borderRadius: '50%',
+            background: '#F3F4F6',
+            border: '1px solid #D1D5DB',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
           }}>
-            Chief Minister Office
+            <User size={22} style={{ color: '#4B5563' }} />
           </div>
-          <div style={{
-            fontSize: 10,
-            color: 'var(--text-muted)',
-            fontWeight: 500,
-            lineHeight: 1.3,
-          }}>
-            Government of Karnataka
+          <div>
+            <div style={{
+              fontSize: '12px',
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+              lineHeight: 1.2,
+              textTransform: 'uppercase',
+              letterSpacing: '0.02em',
+            }}>
+              Chief Minister Office
+            </div>
+            <div style={{
+              fontSize: '12px',
+              color: 'var(--text-muted)',
+              fontWeight: 500,
+              lineHeight: 1.3,
+            }}>
+              Government of Karnataka
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Center: Karnataka State Police Logo */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 14,
-        position: 'absolute',
-        left: '50%',
-        transform: 'translateX(-50%)',
-      }}>
+      {/* Column 2: Karnataka State Police Logo (Center aligned) */}
+      <div style={{ flex: '1 1 0%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{
-          width: 48,
-          height: 48,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
+          gap: 14,
         }}>
-          <SafeEmblem width={48} height={48} />
-        </div>
-        <div style={{ textAlign: 'left' }}>
-          <div className="logo-wordmark" style={{
-            fontSize: 18,
-            fontWeight: 800,
-            color: 'var(--text-primary)',
-            lineHeight: 1.1,
-            letterSpacing: '0.01em',
-          }}>
-            Karnataka State Police
-          </div>
           <div style={{
-            fontSize: 10,
-            color: 'var(--text-muted)',
-            fontWeight: 500,
-            letterSpacing: '0.02em',
+            width: 48,
+            height: 48,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
           }}>
-            Government of Karnataka
+            <SafeEmblem width={48} height={48} />
+          </div>
+          <div style={{ textAlign: 'left' }}>
+            <div className="logo-wordmark" style={{
+              fontSize: '18px',
+              fontWeight: 800,
+              color: 'var(--text-primary)',
+              lineHeight: 1.1,
+              letterSpacing: '0.01em',
+            }}>
+              Karnataka State Police
+            </div>
+            <div style={{
+              fontSize: '12px',
+              color: 'var(--text-muted)',
+              fontWeight: 500,
+              letterSpacing: '0.02em',
+            }}>
+              Government of Karnataka
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Right: Home Minister Office */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 16,
-        flex: '0 0 auto',
-      }}>
+      {/* Column 3: Home Minister Office & Text Scale (Right aligned) */}
+      <div style={{ flex: '1 1 0%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 16 }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
           gap: 8,
           borderRight: '1px solid #E5E7EB',
           paddingRight: 16,
-          marginRight: 4,
           height: '32px',
         }}>
           <span style={{
-            fontSize: '10px',
+            fontSize: '12px',
             fontWeight: 800,
             color: 'var(--text-muted)',
             letterSpacing: '0.06em',
@@ -298,7 +291,7 @@ export default function GovHeader() {
               border: '1px solid #D1D5DB',
               background: '#FFFFFF',
               color: '#374151',
-              fontSize: '10px',
+              fontSize: '12px',
               fontWeight: 800,
               cursor: scale === 70 ? 'not-allowed' : 'pointer',
               display: 'flex',
@@ -335,7 +328,7 @@ export default function GovHeader() {
               border: '1px solid #D1D5DB',
               background: '#FFFFFF',
               color: '#374151',
-              fontSize: '10px',
+              fontSize: '12px',
               fontWeight: 800,
               cursor: scale === 140 ? 'not-allowed' : 'pointer',
               display: 'flex',
@@ -363,7 +356,6 @@ export default function GovHeader() {
           </button>
         </div>
 
-
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -371,7 +363,7 @@ export default function GovHeader() {
         }}>
           <div style={{ textAlign: 'right' }}>
             <div style={{
-              fontSize: 12,
+              fontSize: '12px',
               fontWeight: 700,
               color: 'var(--text-primary)',
               lineHeight: 1.2,
@@ -381,7 +373,7 @@ export default function GovHeader() {
               Home Minister Office
             </div>
             <div style={{
-              fontSize: 10,
+              fontSize: '12px',
               color: 'var(--text-muted)',
               fontWeight: 500,
               lineHeight: 1.3,

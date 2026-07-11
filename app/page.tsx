@@ -40,7 +40,7 @@ function CustomTooltip({ active, payload, label }: any) {
       color: '#1F2937',
       boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
     }}>
-      <div style={{ color: '#1E3A5F', fontWeight: 700, marginBottom: 4, fontSize: '10px', letterSpacing: '0.08em' }}>{label}</div>
+      <div style={{ color: '#1E3A5F', fontWeight: 700, marginBottom: 4, fontSize: '12px', letterSpacing: '0.08em' }}>{label}</div>
       {payload.map((p: any, i: number) => (
         <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
           <span style={{ color: '#475569' }}>{p.name}</span>
@@ -230,29 +230,29 @@ export default function DashboardPage() {
           <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(245, 158, 11, 0.04)', border: '1.5px solid rgba(245, 158, 11, 0.15)', display: 'flex', gap: '12px', minHeight: '100px' }}>
             <ShieldAlert size={20} color="#b45309" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#b45309', marginBottom: '4px' }}>Increase patrol in Kalaburagi, 10 PM – 2 AM</div>
-              <p style={{ fontSize: '11px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected Narcotics hotspot trend (+34% vs. 90-day average).</p>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#b45309', marginBottom: '4px' }}>Increase patrol in Kalaburagi, 10 PM – 2 AM</div>
+              <p style={{ fontSize: '12px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected Narcotics hotspot trend (+34% vs. 90-day average).</p>
             </div>
           </div>
           <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(245, 158, 11, 0.04)', border: '1.5px solid rgba(245, 158, 11, 0.15)', display: 'flex', gap: '12px', minHeight: '100px' }}>
             <Activity size={20} color="#b45309" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#b45309', marginBottom: '4px' }}>Audit payment gateways in Bengaluru Urban</div>
-              <p style={{ fontSize: '11px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected Cybercrime/OTP Phishing spike (+243% vs. 90-day average).</p>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#b45309', marginBottom: '4px' }}>Audit payment gateways in Bengaluru Urban</div>
+              <p style={{ fontSize: '12px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected Cybercrime/OTP Phishing spike (+243% vs. 90-day average).</p>
             </div>
           </div>
           <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(220, 38, 38, 0.04)', border: '1.5px solid rgba(220, 38, 38, 0.15)', display: 'flex', gap: '12px', minHeight: '100px' }}>
             <Lock size={20} color="#b91c1c" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#b91c1c', marginBottom: '4px' }}>Reinforce checkposts in Ballari town perimeter</div>
-              <p style={{ fontSize: '11px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected Organized Crime spike (+500% vs. 90-day average).</p>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#b91c1c', marginBottom: '4px' }}>Reinforce checkposts in Ballari town perimeter</div>
+              <p style={{ fontSize: '12px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected Organized Crime spike (+500% vs. 90-day average).</p>
             </div>
           </div>
           <div style={{ padding: '16px', borderRadius: '12px', background: 'rgba(245, 158, 11, 0.04)', border: '1.5px solid rgba(245, 158, 11, 0.15)', display: 'flex', gap: '12px', minHeight: '100px' }}>
             <Car size={20} color="#b45309" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#b45309', marginBottom: '4px' }}>Deploy auto-theft decoy units in Mysuru</div>
-              <p style={{ fontSize: '11px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected relay-attack vehicle theft surge near college zones.</p>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#b45309', marginBottom: '4px' }}>Deploy auto-theft decoy units in Mysuru</div>
+              <p style={{ fontSize: '12px', color: '#475569', margin: 0, lineHeight: 1.4 }}>Based on a detected relay-attack vehicle theft surge near college zones.</p>
             </div>
           </div>
         </div>
@@ -266,7 +266,7 @@ export default function DashboardPage() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>{t.dashboard_trend_analysis || 'Crime Trend Analysis'}</h2>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>LAST 18 MONTHS</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>LAST 18 MONTHS</span>
             </div>
             <ResponsiveContainer width="100%" height={230}>
               <AreaChart data={translatedMonthlyTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -277,8 +277,8 @@ export default function DashboardPage() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
-                <XAxis dataKey="month" tick={{ fill: '#475569', fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: '#475569', fontSize: 10 }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="month" tick={{ fill: '#475569', fontSize: '12px' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: '#475569', fontSize: '12px' }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
                 <Area type="monotone" dataKey="crimes" name={t.stat_total_crimes || 'Total Crimes'} stroke="#1E3A5F" strokeWidth={2} fill="url(#dashboardTrend)" />
               </AreaChart>
@@ -296,7 +296,7 @@ export default function DashboardPage() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>{t.dashboard_category_share || 'Crime Category Share'}</h2>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>DISTRIBUTION</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>DISTRIBUTION</span>
             </div>
             
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 160 }}>
@@ -322,7 +322,7 @@ export default function DashboardPage() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 12, maxHeight: 90, overflowY: 'auto' }}>
               {translatedCrimeCategories.map((cat, index) => (
-                <div key={cat.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 11 }}>
+                <div key={cat.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     <span style={{ width: 8, height: 8, borderRadius: '50%', background: COLORS[index % COLORS.length] }} />
                     <span style={{ color: '#1F2937', fontWeight: 600 }}>{cat.name}</span>
@@ -344,7 +344,7 @@ export default function DashboardPage() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>{t.dashboard_recent_registry || 'Recent FIR Registry'}</h2>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>{t.dashboard_ksp_filings || 'KSP FILINGS'}</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>{t.dashboard_ksp_filings || 'KSP FILINGS'}</span>
             </div>
             
             <div style={{ marginTop: '16px' }}>
@@ -380,16 +380,16 @@ export default function DashboardPage() {
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{
-                      fontSize: '9px', fontWeight: 700, padding: '2px 8px', borderRadius: '20px',
+                      fontSize: '12px', fontWeight: 700, padding: '2px 8px', borderRadius: '20px',
                       background: '#FFFFFF', color: alertSeverityColor(alert.severity),
                       border: `1px solid ${alertSeverityColor(alert.severity)}30`, textTransform: 'uppercase'
                     }}>
                       {getAlertSeverityText(alert.severity, t)}
                     </span>
-                    <span style={{ fontSize: '10px', color: '#475569' }}>{alert.timestamp} · {alert.affectedDistricts?.[0] || ''}</span>
+                    <span style={{ fontSize: '12px', color: '#475569' }}>{alert.timestamp} · {alert.affectedDistricts?.[0] || ''}</span>
                   </div>
-                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#1F2937' }}>{alert.title}</div>
-                  <div style={{ fontSize: '11px', color: '#475569', lineHeight: 1.4, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#1F2937' }}>{alert.title}</div>
+                  <div style={{ fontSize: '12px', color: '#475569', lineHeight: 1.4, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
                     {alert.description}
                   </div>
                 </div>
@@ -414,22 +414,22 @@ export default function DashboardPage() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>{t.dashboard_threat_index || 'High-Risk Districts'}</h2>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>ANALYTICS</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>ANALYTICS</span>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {highRiskDistricts.map((d, index) => (
                 <div key={d.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 8 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: '#1E3A5F' }}>#{index + 1}</span>
+                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#1E3A5F' }}>#{index + 1}</span>
                     <div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: '#1F2937' }}>{d.name}</div>
-                      <div style={{ fontSize: 10, color: '#475569' }}>Top: {d.topCrimeType}</div>
+                      <div style={{ fontSize: '12px', fontWeight: 700, color: '#1F2937' }}>{d.name}</div>
+                      <div style={{ fontSize: '12px', color: '#475569' }}>Top: {d.topCrimeType}</div>
                     </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <span style={{ fontSize: 14, fontWeight: 800, color: d.riskScore > 80 ? '#ef4444' : '#f59e0b' }}>{d.riskScore}</span>
-                    <div style={{ fontSize: 8, color: '#6B7280', textTransform: 'uppercase' }}>Risk index</div>
+                    <span style={{ fontSize: '14px', fontWeight: 800, color: d.riskScore > 80 ? '#ef4444' : '#f59e0b' }}>{d.riskScore}</span>
+                    <div style={{ fontSize: '12px', color: '#6B7280', textTransform: 'uppercase' }}>Risk index</div>
                   </div>
                 </div>
               ))}
@@ -447,7 +447,7 @@ export default function DashboardPage() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', margin: 0 }}>{t.dashboard_ai_recommendations || 'AI Recommendations'}</h2>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>COGNITIVE</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '1px' }}>COGNITIVE</span>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 180, overflowY: 'auto' }}>
@@ -455,10 +455,10 @@ export default function DashboardPage() {
                 <div key={i} style={{ padding: 10, borderRadius: 8, background: '#F5F3FF', border: '1px solid #DDD6FE' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
                     <Brain size={12} color="#7C3AED" />
-                    <span style={{ fontSize: 9, fontWeight: 800, color: '#7C3AED', textTransform: 'uppercase' }}>PRIORITY {rec.priority}</span>
+                    <span style={{ fontSize: '12px', fontWeight: 800, color: '#7C3AED', textTransform: 'uppercase' }}>PRIORITY {rec.priority}</span>
                   </div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#1F2937', lineHeight: 1.3 }}>{rec.action}</div>
-                  <div style={{ fontSize: 10, color: '#475569', marginTop: 2 }}>{rec.rationale} · <span style={{ fontWeight: 600 }}>{rec.urgency}</span></div>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#1F2937', lineHeight: 1.3 }}>{rec.action}</div>
+                  <div style={{ fontSize: '12px', color: '#475569', marginTop: 2 }}>{rec.rationale} · <span style={{ fontWeight: 600 }}>{rec.urgency}</span></div>
                 </div>
               ))}
             </div>
@@ -492,7 +492,7 @@ export default function DashboardPage() {
                     <Search size={14} color="#1E3A5F" />
                   </div>
                   <div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#1F2937' }}>{t.nav_case_search || 'Cases / FIR Search'}</div>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: '#1F2937' }}>{t.nav_case_search || 'Cases / FIR Search'}</div>
                   </div>
                 </div>
               </Link>
@@ -510,7 +510,7 @@ export default function DashboardPage() {
                     <Cpu size={14} color="#2E8B57" />
                   </div>
                   <div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#1F2937' }}>{t.nav_ai_investigator || 'AI Investigator Engine'}</div>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: '#1F2937' }}>{t.nav_ai_investigator || 'AI Investigator Engine'}</div>
                   </div>
                 </div>
               </Link>
@@ -528,7 +528,7 @@ export default function DashboardPage() {
                     <Sliders size={14} color="#D97706" />
                   </div>
                   <div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#1F2937' }}>{t.nav_resource_allocation || 'Officer Deployment'}</div>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: '#1F2937' }}>{t.nav_resource_allocation || 'Officer Deployment'}</div>
                   </div>
                 </div>
               </Link>

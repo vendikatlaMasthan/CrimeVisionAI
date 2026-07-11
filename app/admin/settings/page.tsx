@@ -49,7 +49,7 @@ export default function PlatformSettingsPage() {
     <div className="page-content" style={{ background: '#F5F7FA', padding: '24px 32px' }}>
 
       {/* Breadcrumb */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, fontSize: 12, color: '#475569' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, fontSize: '12px', color: '#475569' }}>
         <span>Home</span>
         <span>/</span>
         <span>Administration</span>
@@ -68,10 +68,10 @@ export default function PlatformSettingsPage() {
             <Settings size={22} style={{ color: '#A6192E' }} />
           </div>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1F2937', margin: 0 }}>
+            <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#1F2937', margin: 0 }}>
               Platform &amp; System Configuration
             </h1>
-            <p style={{ fontSize: 13, color: '#475569', margin: 0 }}>
+            <p style={{ fontSize: '14px', color: '#475569', margin: 0 }}>
               Configure dashboard defaults, AI inference tuning parameters, and notification policies.
             </p>
           </div>
@@ -81,7 +81,7 @@ export default function PlatformSettingsPage() {
           padding: '6px 14px', borderRadius: 8,
           background: 'rgba(166, 25, 46, 0.08)',
           border: '1px solid rgba(166, 25, 46, 0.15)',
-          fontSize: 11, fontWeight: 700, color: '#A6192E',
+          fontSize: '12px', fontWeight: 700, color: '#A6192E',
           letterSpacing: '0.04em', textTransform: 'uppercase',
         }}>
           <Lock size={14} />
@@ -108,7 +108,7 @@ export default function PlatformSettingsPage() {
                 background: activeCategory === cat.id ? '#FFFFFF' : 'transparent',
                 border: activeCategory === cat.id ? '1px solid #E5E7EB' : '1px solid transparent',
                 borderRadius: 8, color: activeCategory === cat.id ? '#1E3A5F' : '#475569',
-                fontSize: 13, fontWeight: 700, cursor: 'pointer', textAlign: 'left',
+                fontSize: '14px', fontWeight: 700, cursor: 'pointer', textAlign: 'left',
                 boxShadow: activeCategory === cat.id ? '0 1px 3px rgba(0,0,0,0.05)' : 'none'
               }}
             >
@@ -124,14 +124,14 @@ export default function PlatformSettingsPage() {
             
             {activeCategory === 'dashboard' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1F2937', marginBottom: 4, borderBottom: '1px solid #E5E7EB', paddingBottom: 8 }}>Dashboard Preferences</h3>
+                <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', marginBottom: 4, borderBottom: '1px solid #E5E7EB', paddingBottom: 8 }}>Dashboard Preferences</h3>
                 
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>Default District Focus</label>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>Default District Focus</label>
                   <select 
                     value={defaultDistrict}
                     onChange={e => setDefaultDistrict(e.target.value)}
-                    style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #D1D5DB', fontSize: 13, background: '#FFFFFF' }}
+                    style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #D1D5DB', fontSize: '14px', background: '#FFFFFF' }}
                   >
                     {['Bengaluru Urban', 'Kalaburagi', 'Raichur', 'Ballari', 'Belagavi'].map(d => (
                       <option key={d} value={d}>{d}</option>
@@ -140,11 +140,11 @@ export default function PlatformSettingsPage() {
                 </div>
 
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>Auto Refresh Interval</label>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>Auto Refresh Interval</label>
                   <select 
                     value={refreshRate} 
                     onChange={e => setRefreshRate(e.target.value)}
-                    style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #D1D5DB', fontSize: 13, background: '#FFFFFF' }}
+                    style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #D1D5DB', fontSize: '14px', background: '#FFFFFF' }}
                   >
                     <option value="15s">15 Seconds</option>
                     <option value="30s">30 Seconds</option>
@@ -155,8 +155,8 @@ export default function PlatformSettingsPage() {
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0' }}>
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: '#1F2937' }}>Show Simulation Banner</div>
-                    <div style={{ fontSize: 11, color: '#6B7280' }}>Display warning that dataset contains mock records.</div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#1F2937' }}>Show Simulation Banner</div>
+                    <div style={{ fontSize: '12px', color: '#6B7280' }}>Display warning that dataset contains mock records.</div>
                   </div>
                   <input 
                     type="checkbox" 
@@ -170,14 +170,14 @@ export default function PlatformSettingsPage() {
 
             {activeCategory === 'ai' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1F2937', marginBottom: 4, borderBottom: '1px solid #E5E7EB', paddingBottom: 8 }}>AI Configuration tuning</h3>
+                <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', marginBottom: 4, borderBottom: '1px solid #E5E7EB', paddingBottom: 8 }}>AI Configuration tuning</h3>
                 
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>Active Large Language Model</label>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>Active Large Language Model</label>
                   <select 
                     value={aiModel} 
                     onChange={e => setAiModel(e.target.value)}
-                    style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #D1D5DB', fontSize: 13, background: '#FFFFFF' }}
+                    style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #D1D5DB', fontSize: '14px', background: '#FFFFFF' }}
                   >
                     <option value="gemini-2.0-flash">Gemini 2.0 Flash (Recommended)</option>
                     <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
@@ -187,8 +187,8 @@ export default function PlatformSettingsPage() {
 
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: '#475569' }}>Temperature (Inference Creativity)</label>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: '#1E3A5F' }}>{temperature}</span>
+                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>Temperature (Inference Creativity)</label>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#1E3A5F' }}>{temperature}</span>
                   </div>
                   <input 
                     type="range" 
@@ -203,8 +203,8 @@ export default function PlatformSettingsPage() {
 
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: '#475569' }}>Target Prediction Confidence Threshold</label>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: '#1E3A5F' }}>{confidenceThreshold}%</span>
+                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>Target Prediction Confidence Threshold</label>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#1E3A5F' }}>{confidenceThreshold}%</span>
                   </div>
                   <input 
                     type="range" 
@@ -218,12 +218,12 @@ export default function PlatformSettingsPage() {
                 </div>
 
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>Intelligence System Prompt Guidelines</label>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>Intelligence System Prompt Guidelines</label>
                   <textarea 
                     rows={3}
                     value={sysPrompt}
                     onChange={e => setSysPrompt(e.target.value)}
-                    style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #D1D5DB', fontSize: 13, fontFamily: 'inherit' }}
+                    style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #D1D5DB', fontSize: '14px', fontFamily: 'inherit' }}
                   />
                 </div>
               </div>
@@ -231,12 +231,12 @@ export default function PlatformSettingsPage() {
 
             {activeCategory === 'alerts' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1F2937', marginBottom: 4, borderBottom: '1px solid #E5E7EB', paddingBottom: 8 }}>Alert Management</h3>
+                <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', marginBottom: 4, borderBottom: '1px solid #E5E7EB', paddingBottom: 8 }}>Alert Management</h3>
                 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0' }}>
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: '#1F2937' }}>Email Alerts for Critical Anomalies</div>
-                    <div style={{ fontSize: 11, color: '#6B7280' }}>Send instant briefing to SPs on statistical spikes.</div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#1F2937' }}>Email Alerts for Critical Anomalies</div>
+                    <div style={{ fontSize: '12px', color: '#6B7280' }}>Send instant briefing to SPs on statistical spikes.</div>
                   </div>
                   <input 
                     type="checkbox" 
@@ -248,8 +248,8 @@ export default function PlatformSettingsPage() {
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0' }}>
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: '#1F2937' }}>Escalate via SMS Dispatch</div>
-                    <div style={{ fontSize: 11, color: '#6B7280' }}>Send SMS coordinates to patrolling officers.</div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#1F2937' }}>Escalate via SMS Dispatch</div>
+                    <div style={{ fontSize: '12px', color: '#6B7280' }}>Send SMS coordinates to patrolling officers.</div>
                   </div>
                   <input 
                     type="checkbox" 
@@ -260,12 +260,12 @@ export default function PlatformSettingsPage() {
                 </div>
 
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>Proximity Alert Radius (km)</label>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>Proximity Alert Radius (km)</label>
                   <input 
                     type="number" 
                     value={alertRadius} 
                     onChange={e => setAlertRadius(parseInt(e.target.value))}
-                    style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #D1D5DB', fontSize: 13 }}
+                    style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #D1D5DB', fontSize: '14px' }}
                   />
                 </div>
               </div>
@@ -273,12 +273,12 @@ export default function PlatformSettingsPage() {
 
             {activeCategory === 'reports' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1F2937', marginBottom: 4, borderBottom: '1px solid #E5E7EB', paddingBottom: 8 }}>Report Settings</h3>
+                <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1F2937', marginBottom: 4, borderBottom: '1px solid #E5E7EB', paddingBottom: 8 }}>Report Settings</h3>
                 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0' }}>
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: '#1F2937' }}>Display KSP Logo Emblem in Headers</div>
-                    <div style={{ fontSize: 11, color: '#6B7280' }}>Attach KSP insignia to PDF exports.</div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#1F2937' }}>Display KSP Logo Emblem in Headers</div>
+                    <div style={{ fontSize: '12px', color: '#6B7280' }}>Attach KSP insignia to PDF exports.</div>
                   </div>
                   <input 
                     type="checkbox" 
@@ -289,21 +289,21 @@ export default function PlatformSettingsPage() {
                 </div>
 
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>Digital Signature Header</label>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>Digital Signature Header</label>
                   <input 
                     type="text" 
                     value={signatureText} 
                     onChange={e => setSignatureText(e.target.value)}
-                    style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #D1D5DB', fontSize: 13 }}
+                    style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #D1D5DB', fontSize: '14px' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>Standard Classification Label</label>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#475569', display: 'block', marginBottom: 6 }}>Standard Classification Label</label>
                   <select 
                     value={reportFormat} 
                     onChange={e => setReportFormat(e.target.value)}
-                    style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #D1D5DB', fontSize: 13, background: '#FFFFFF' }}
+                    style={{ width: '100%', padding: 10, borderRadius: 8, border: '1px solid #D1D5DB', fontSize: '14px', background: '#FFFFFF' }}
                   >
                     <option value="government-restricted">RESTRICTED — FOR OFFICIAL USE ONLY</option>
                     <option value="confidential">CONFIDENTIAL — KSP INTEL SECURE</option>
@@ -316,7 +316,7 @@ export default function PlatformSettingsPage() {
             {/* Bottom Actions */}
             <div style={{ display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'flex-end', marginTop: 24, borderTop: '1px solid #E5E7EB', paddingTop: 16 }}>
               {saveSuccess && (
-                <span style={{ fontSize: 12, color: '#065F46', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 600 }}>
+                <span style={{ fontSize: '12px', color: '#065F46', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 600 }}>
                   <Check size={14} /> Settings Saved Successfully
                 </span>
               )}
@@ -325,7 +325,7 @@ export default function PlatformSettingsPage() {
                 disabled={isSaving}
                 style={{
                   padding: '10px 24px', background: '#1E3A5F', color: '#FFFFFF', border: 'none',
-                  borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: isSaving ? 'not-allowed' : 'pointer'
+                  borderRadius: 8, fontSize: '14px', fontWeight: 600, cursor: isSaving ? 'not-allowed' : 'pointer'
                 }}
               >
                 {isSaving ? 'Saving Configurations...' : 'Save Configuration'}

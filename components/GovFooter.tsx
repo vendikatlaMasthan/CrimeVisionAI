@@ -31,13 +31,13 @@ export default function GovFooter() {
             <div style={{ fontSize: '12px', fontWeight: 700, color: '#1B263B' }}>
               Karnataka State Police Intelligence Unit
             </div>
-            <div style={{ fontSize: '11px', color: '#6B7280' }}>
+            <div style={{ fontSize: '12px', color: '#6B7280' }}>
               Government of Karnataka
             </div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '11px', color: '#6B7280', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px', color: '#6B7280', flexWrap: 'wrap' }}>
           <span>Chief Minister Office</span>
           <span>•</span>
           <span>Home Minister Office</span>
@@ -57,7 +57,7 @@ export default function GovFooter() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          fontSize: '11px',
+          fontSize: '12px',
           color: '#94A3B8',
           flexWrap: 'wrap',
           gap: '8px',

@@ -509,7 +509,7 @@ export default function InvestigationWorkflowPage() {
             onClick={handleExportPDF}
             disabled={isExporting}
             className="cyber-btn cyber-btn-cyan"
-            style={{ padding: '8px 16px', borderRadius: '8px', fontSize: '13px', textTransform: 'none', fontWeight: 600 }}
+            style={{ padding: '8px 16px', borderRadius: '8px', fontSize: '14px', textTransform: 'none', fontWeight: 600 }}
           >
             <FileText size={14} />
             {isExporting ? 'Exporting...' : 'Export PDF'}
@@ -518,7 +518,7 @@ export default function InvestigationWorkflowPage() {
             onClick={() => alert('Case share link copied to clipboard!')}
             className="cyber-btn"
             style={{ 
-              padding: '8px 16px', borderRadius: '8px', fontSize: '13px', textTransform: 'none', fontWeight: 600,
+              padding: '8px 16px', borderRadius: '8px', fontSize: '14px', textTransform: 'none', fontWeight: 600,
               background: 'rgba(255,255,255,0.03)', border: '1px solid var(--cyber-border)', color: 'var(--text-primary)'
             }}
           >
@@ -528,7 +528,7 @@ export default function InvestigationWorkflowPage() {
           <button
             onClick={() => alert('Case escalated to State CID Alpha Cell!')}
             className="cyber-btn cyber-btn-red"
-            style={{ padding: '8px 16px', borderRadius: '8px', fontSize: '13px', textTransform: 'none', fontWeight: 600 }}
+            style={{ padding: '8px 16px', borderRadius: '8px', fontSize: '14px', textTransform: 'none', fontWeight: 600 }}
           >
             <AlertOctagon size={14} />
             Escalate Case
@@ -551,7 +551,7 @@ export default function InvestigationWorkflowPage() {
             background: 'var(--cyber-surface)',
           }}
         >
-          <div style={{ fontSize: '10px', fontWeight: 900, color: 'var(--text-dim)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '16px', borderBottom: '1px solid var(--cyber-border)', paddingBottom: '8px' }}>
+          <div style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-dim)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '16px', borderBottom: '1px solid var(--cyber-border)', paddingBottom: '8px' }}>
             {lang === 'en' ? 'ACTIVE CASES' : 'ಸಕ್ರಿಯ ಪ್ರಕರಣಗಳು'}
           </div>
 
@@ -592,12 +592,12 @@ export default function InvestigationWorkflowPage() {
                     {c.title}
                   </div>
                   
-                  <div style={{ fontSize: '10px', color: 'var(--text-dim)', marginTop: '2px', paddingLeft: '16px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-dim)', marginTop: '2px', paddingLeft: '16px' }}>
                     {c.category} · {c.district}
                   </div>
 
                   {/* Progress Info */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)', marginTop: '8px', paddingLeft: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px', paddingLeft: '16px' }}>
                     <span>Progress:</span>
                     <span style={{ fontWeight: 800, color: isSelected ? 'var(--cyber-cyan)' : 'var(--text-primary)' }}>{c.progress}%</span>
                   </div>
@@ -617,7 +617,7 @@ export default function InvestigationWorkflowPage() {
           <div className="glass-card" style={{ padding: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
               <div>
-                <span className="badge badge-cyan" style={{ fontSize: '9px', marginBottom: '8px' }}>
+                <span className="badge badge-cyan" style={{ fontSize: '12px', marginBottom: '8px' }}>
                   {selectedCase.category.toUpperCase()}
                 </span>
                 <h2 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
@@ -629,10 +629,10 @@ export default function InvestigationWorkflowPage() {
               </div>
               
               <div style={{ textAlign: 'right', minWidth: '150px' }}>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>
                   Investigation Progress
                 </div>
-                <div style={{ fontSize: '28px', fontWeight: 900, color: 'var(--cyber-cyan)', fontFamily: 'Space Grotesk, sans-serif', marginTop: '2px' }}>
+                <div style={{ fontSize: '24px', fontWeight: 900, color: 'var(--cyber-cyan)', fontFamily: 'Space Grotesk, sans-serif', marginTop: '2px' }}>
                   <CountUp end={selectedCase.progress} suffix="%" />
                 </div>
                 <div style={{ height: '5px', background: 'rgba(255,255,255,0.06)', borderRadius: '2.5px', overflow: 'hidden', marginTop: '6px' }}>
@@ -694,7 +694,7 @@ export default function InvestigationWorkflowPage() {
                         ) : isActive ? (
                           <Play size={10} className="fill-current text-[var(--cyber-cyan)] animate-pulse" />
                         ) : (
-                          <span style={{ fontSize: '11px', fontWeight: 800 }}>{idx + 1}</span>
+                          <span style={{ fontSize: '12px', fontWeight: 800 }}>{idx + 1}</span>
                         )}
                       </div>
 
@@ -714,7 +714,7 @@ export default function InvestigationWorkflowPage() {
                           {isActive && (
                             <span
                               style={{
-                                fontSize: '8px',
+                                fontSize: '12px',
                                 fontWeight: 900,
                                 background: 'rgba(30, 58, 95, 0.12)',
                                 color: 'var(--cyber-cyan)',
@@ -735,7 +735,7 @@ export default function InvestigationWorkflowPage() {
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', fontSize: '11px', color: 'var(--text-dim)' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', fontSize: '12px', color: 'var(--text-dim)' }}>
                         <span style={{ fontWeight: 600 }}>{step.time}</span>
                         <span>{step.meta}</span>
                       </div>
@@ -754,7 +754,7 @@ export default function InvestigationWorkflowPage() {
                         marginTop: '16px',
                         paddingTop: '16px',
                         borderTop: '1px dashed var(--cyber-border)',
-                        fontSize: '13px',
+                        fontSize: '14px',
                         color: 'var(--text-secondary)',
                         lineHeight: 1.6,
                       }}
