@@ -133,7 +133,7 @@ function PredictionsPageContent() {
 
   /**
    * Generate prediction — LOCAL engine is always the guaranteed fallback.
-   * External AI (Gemini/Claude) is attempted first ONLY if a key is configured;
+   * External AI (Gemini) is attempted first ONLY if a key is configured;
    * on any failure it falls back to the local engine silently.
    * Page is NEVER blank — local result is always shown.
    */
