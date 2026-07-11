@@ -14,6 +14,7 @@ import { useSearchParams } from 'next/navigation';
 import CountUp from '@/components/CountUp';
 import SimulationBanner from '@/components/SimulationBanner';
 import { DISTRICTS } from '@/lib/crimeData';
+import { generateText } from '@/lib/aiService';
 
 // ── TYPES & SCHEMAS ──────────────────────────────────────────────────────────
 interface SuspectNode {
@@ -327,17 +328,128 @@ const CASES_DATABASE: Record<string, CaseData> = {
   }
 };
 
-const REASONING_PIPELINE = [
-  { text: "Reading FIR...", icon: <Brain size={14} /> },
-  { text: "Loading Case Files...", icon: <FileText size={14} /> },
-  { text: "Scanning Evidence...", icon: <Search size={14} /> },
-  { text: "Cross-checking Phone Records...", icon: <Phone size={14} /> },
-  { text: "Analyzing Financial Transactions...", icon: <Landmark size={14} /> },
-  { text: "Matching GPS Locations...", icon: <MapPin size={14} /> },
-  { text: "Building Criminal Network...", icon: <GitMerge size={14} /> },
-  { text: "Evaluating Risk...", icon: <Lock size={14} /> },
-  { text: "Generating Investigation Report...", icon: <FileText size={14} /> }
-];
+// ── HELPER FOR DYNAMIC CASE CREATION (Offline/Rule-based/API fallback) ────────
+function generateDynamicCase(
+  fNum: string,
+  sName: string,
+  dist: string,
+  cat: string
+): CaseData {
+  const riskScore = Math.min(99, Math.max(30, (fNum.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % 35) + 60));
+  const confidence = Math.min(95, Math.max(50, 75 + (sName.length % 15)));
+
+  const nodes: SuspectNode[] = [
+    {
+      id: "primary",
+      label: sName || "Unknown Suspect",
+      role: "Primary Suspect",
+      type: "suspect",
+      details: {
+        history: `Suspected coordinator of illegal ${cat.toLowerCase()} activities in the ${dist} division. Mapped in multiple regional logs.`,
+        firs: `${fNum}, FIR/2025/MYS/82`,
+        assets: "₹24L tracked deposits, 2 regional vehicles",
+        vehicles: "KA-01-M-9912 (SUV), KA-01-H-4321",
+        associates: "Venkat R., Ramesh Patil"
+      }
+    },
+    {
+      id: "associate1",
+      label: "Venkat R.",
+      role: "Logistics Link",
+      type: "associate",
+      details: {
+        history: "Prior citations for commercial transport violations and regional leasing fraud.",
+        firs: "FIR/2024/KLB/12",
+        assets: "Contract lease agreements, ₹12L bank records",
+        vehicles: "KA-01-T-8877 (Truck)",
+        associates: sName
+      }
+    },
+    {
+      id: "associate2",
+      label: "Ramesh Patil",
+      role: "Financial Handler",
+      type: "broker",
+      details: {
+        history: "Financial broker flagged for routing unusual transaction volumes.",
+        firs: "None",
+        assets: "Local firm assets, ₹45L bank accounts",
+        vehicles: "KA-01-A-4433 (Sedan)",
+        associates: sName
+      }
+    }
+  ];
+
+  const edges: SuspectEdge[] = [
+    { from: "primary", to: "associate1", rel: "Logistics Link", freq: "Daily", conf: "92%", lastContact: "Today 08:30 AM" },
+    { from: "primary", to: "associate2", rel: "Money Trail", freq: "Weekly", conf: "88%", lastContact: "2 days ago" }
+  ];
+
+  const mapPoints: MapPoint[] = [
+    { id: "scene", type: "crime_scene", label: "Incident Hotspot", coords: [48, 42], desc: `Site of reported ${cat.toLowerCase()} extraction/fraud.` },
+    { id: "residence", type: "residence", label: "Suspect Primary Address", coords: [30, 68], desc: `Registered residential address of ${sName}.` },
+    { id: "tower", type: "tower", label: "Mobile Tower 9", coords: [52, 46], desc: `Tower routing connection logs for suspect's device.` },
+    { id: "bank", type: "bank", label: "State Bank Center", coords: [38, 55], desc: `Location of suspicious transactional routing.` },
+    { id: "police", type: "police", label: `${dist} HQ`, coords: [22, 25], desc: "Investigating command center." }
+  ];
+
+  const route: Array<[number, number]> = [[30, 68], [38, 55], [48, 42], [52, 46], [22, 25]];
+
+  const timeline: TimelineItem[] = [
+    { time: "09:00 AM", event: "Incident Logged", type: "witness", desc: `First responder report registered for ${cat.toLowerCase()} in ${dist}.` },
+    { time: "10:15 AM", event: "Cellular Handoff Detected", type: "call", desc: `Accused's device connects to regional Tower 9.` },
+    { time: "11:45 AM", event: "Bank Audit Match", type: "money", desc: `Suspicious transfer of ₹3.8L flags beneficiary account.` },
+    { time: "02:30 PM", event: "Highway Intercept", type: "vehicle", desc: `LPR camera records suspect transport vehicle exiting checkpoint.` }
+  ];
+
+  const operationalSteps: OperationalStep[] = [
+    { action: `Freeze ${sName}'s bank accounts`, priority: "Immediate", status: "Pending", icon: "Lock" },
+    { action: `Obtain search warrant for ${dist} premises`, priority: "High", status: "Approved", icon: "Search" },
+    { action: `Question logistics associate Venkat R.`, priority: "Medium", status: "Scheduled", icon: "User" }
+  ];
+
+  const report = {
+    executiveSummary: `This restricted dossier records findings regarding the coordination of illegal ${cat.toLowerCase()} activities in the ${dist} division, with primary focus on suspect ${sName}. Case logs and tower attachments indicate active syndicate links.`,
+    caseOverview: `Following citizen complaints and divisional reporting, the cyber/tactical divisions initiated geofencing audits and financial ledger tracking for docket ${fNum}.`,
+    findings: `Evidentiary trails confirm matching mobile attachments near the incident coordinates at the estimated timeline, combined with suspicious transfers routing through flagged broker shell entities.`,
+    legalSections: `Violation of Karnataka Police Regulations, IPC Section 379/420, and associated regional acts governing ${cat.toLowerCase()}.`,
+    pendingTasks: `Acquire official bank transaction reports, question named logistics contacts, and retrieve local traffic camera DVR recordings.`,
+    officerNotes: `Target exhibits moderate-to-high threat potential. Suggest immediate border alert triggers and bank freezes before asset reallocation occurs.`
+  };
+
+  return {
+    firNumber: fNum,
+    suspectName: sName,
+    district: dist,
+    category: cat,
+    date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+    severity: riskScore,
+    officer: "PI Ravi Kumar",
+    confidence,
+    missingEvidence: ["DNA / forensics analysis pending", "Linked CCTV hard disk decrypting"],
+    evidenceSummary: [
+      `Cellular tower ping records place suspect's device within incident zone.`,
+      `Financial ledgers track correlation of capital movements matching load times.`,
+      `Witness testimony states suspect's vehicle was observed near scene.`
+    ],
+    suspectNetwork: { nodes, edges },
+    mapPoints,
+    route,
+    timeline,
+    riskScore,
+    riskBreakdown: {
+      evidenceStrength: Math.round(riskScore * 0.9),
+      networkInfluence: Math.round(riskScore * 0.8),
+      criminalHistory: Math.round(riskScore * 0.75),
+      financialSuspicion: Math.round(riskScore * 0.7),
+      locationMatch: Math.round(riskScore * 0.95),
+      repeatOffense: Math.round(riskScore * 0.6)
+    },
+    operationalSteps,
+    escapeRisk: riskScore > 80 ? "High" : riskScore > 50 ? "Medium" : "Low",
+    report
+  };
+}
 
 // ── COMPONENT ROOT CONTENT ───────────────────────────────────────────────────
 function AIInvestigatorPageContent() {
@@ -373,9 +485,10 @@ function AIInvestigatorPageContent() {
   const [inputVal, setInputVal] = useState("");
   const [isVoiceActive, setIsVoiceActive] = useState(false);
 
-  // Thinking pipeline states
-  const [isThinking, setIsThinking] = useState(false);
-  const [thinkingIndex, setThinkingIndex] = useState(0);
+  // Loading and Error states
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [evaluationError, setEvaluationError] = useState<string | null>(null);
+  const [isChatTyping, setIsChatTyping] = useState(false);
 
   // Export states
   const [isExporting, setIsExporting] = useState(false);
@@ -383,65 +496,140 @@ function AIInvestigatorPageContent() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   // ── TRIGGER PIPELINE LOAD & ANALYZE ─────────────────────────────────────────
-  const triggerLoadAndAnalyze = useCallback((targetFir?: string) => {
+  const triggerLoadAndAnalyze = useCallback(async (targetFir?: string) => {
     const fNum = targetFir || firNumber;
-    setIsThinking(true);
-    setThinkingIndex(0);
+    
+    // Determine the parameters to use
+    let sName = suspectName;
+    let dist = selectedDistrict;
+    let cat = selectedCategory;
+
+    const matchedBase = CASES_DATABASE[fNum];
+    if (matchedBase) {
+      if (targetFir) {
+        sName = matchedBase.suspectName;
+        dist = matchedBase.district;
+        cat = matchedBase.category;
+        
+        setFirNumber(fNum);
+        setSuspectName(sName);
+        setSelectedDistrict(dist);
+        setSelectedCategory(cat);
+      }
+    }
+
+    setIsEvaluating(true);
+    setEvaluationError(null);
     setCurrentCase(null);
     setSelectedNode(null);
     setMapPlaybackIndex(0);
     setIsMapPlaying(false);
-
-    // Initial messages clear
     setMessages([]);
 
-    // Clear interval if any
     if (mapIntervalRef.current) {
       clearInterval(mapIntervalRef.current);
     }
-  }, [firNumber]);
 
-  // Handle Reasoning Pipeline ticks
-  useEffect(() => {
-    if (!isThinking) return;
-
-    if (thinkingIndex < REASONING_PIPELINE.length) {
-      const timer = setTimeout(() => {
-        setThinkingIndex(prev => prev + 1);
-      }, 350);
-      return () => clearTimeout(timer);
-    } else {
-      // Completed thinking
-      setIsThinking(false);
-      const targetCase = CASES_DATABASE[firNumber];
-      if (targetCase) {
-        setCurrentCase(targetCase);
-        // Load correct inputs
-        setSuspectName(targetCase.suspectName);
-        setSelectedDistrict(targetCase.district);
-        setSelectedCategory(targetCase.category);
-
-        // Add welcome system report
-        const welcomeMsg: Message = {
-          id: `sys-welcome-${Date.now()}`,
-          role: 'assistant',
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          caseRef: firNumber,
-          content: `AI investigative workspace initialized for docket **FIR #${targetCase.firNumber}**. Threat matrix generated, suspect graph verified, and tactical maps calibrated. Ask me anything about suspects, routes, transactions, or operational recommendation items.`
+    try {
+      // Build base case data
+      let baseCaseData: CaseData;
+      if (matchedBase) {
+        baseCaseData = {
+          ...matchedBase,
+          suspectName: sName,
+          district: dist,
+          category: cat,
+          riskBreakdown: {
+            ...matchedBase.riskBreakdown
+          }
         };
-        setMessages([welcomeMsg]);
       } else {
-        // Unknown case fallback
-        const emptyMsg: Message = {
-          id: `sys-empty-${Date.now()}`,
-          role: 'assistant',
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          content: `No intelligence reports found for docket **${firNumber}**. This information is not available in the current investigation.`
-        };
-        setMessages([emptyMsg]);
+        baseCaseData = generateDynamicCase(fNum, sName, dist, cat);
       }
+
+      // Perform a real backend call to /api/investigate (via generateText)
+      // to generate a custom executive summary / findings for this case!
+      const prompt = `Perform an official intelligence evaluation for Karnataka Police. 
+FIR Number: ${fNum}
+Suspect Target: ${sName}
+District Division: ${dist}
+Category: ${cat}
+
+Please generate the restricted police intelligence report in JSON format:
+{
+  "executiveSummary": "A concise summary of the case and threat level.",
+  "caseOverview": "Details of the incident, complaints, and investigations.",
+  "findings": "Evidentiary correlation, tower locations, bank transfers, and vehicle checkpoints.",
+  "legalSections": "Applicable IPC/BNS/MMRD/IT Act sections.",
+  "pendingTasks": "Immediate next investigative tasks.",
+  "officerNotes": "Operational warnings and flight risk advice."
+}`;
+
+      // Enforce a minimum delay for the spinner so it feels natural but fast (e.g. 800ms)
+      const minDelay = new Promise(resolve => setTimeout(resolve, 800));
+      
+      let aiReportText = '';
+      try {
+        aiReportText = await generateText({
+          systemPrompt: "You are the CrimeVision AI Intelligence platform for Karnataka State Police. Analyze the provided case details and generate a realistic, professional, restricted police intelligence report. You must respond ONLY with a raw JSON object containing keys: executiveSummary, caseOverview, findings, legalSections, pendingTasks, officerNotes.",
+          messages: [{ role: 'user', content: prompt }]
+        });
+      } catch (e) {
+        console.warn("API request failed, falling back to local JS generation.", e);
+      }
+
+      await minDelay;
+
+      // Try to parse the AI report text
+      if (aiReportText) {
+        try {
+          let cleanJson = aiReportText.trim();
+          if (cleanJson.startsWith('```')) {
+            cleanJson = cleanJson.replace(/^```json\s*/, '').replace(/```$/, '').trim();
+          }
+          const parsed = JSON.parse(cleanJson);
+          if (parsed.executiveSummary || parsed.caseOverview) {
+            baseCaseData.report = {
+              executiveSummary: parsed.executiveSummary || baseCaseData.report.executiveSummary,
+              caseOverview: parsed.caseOverview || baseCaseData.report.caseOverview,
+              findings: parsed.findings || baseCaseData.report.findings,
+              legalSections: parsed.legalSections || baseCaseData.report.legalSections,
+              pendingTasks: parsed.pendingTasks || baseCaseData.report.pendingTasks,
+              officerNotes: parsed.officerNotes || baseCaseData.report.officerNotes,
+            };
+            
+            if (parsed.findings) {
+              baseCaseData.evidenceSummary = [
+                parsed.findings,
+                ...baseCaseData.evidenceSummary.slice(1)
+              ];
+            }
+          }
+        } catch (jsonErr) {
+          console.warn("Failed to parse AI JSON response. Using text directly as executive summary.", jsonErr);
+          baseCaseData.report.executiveSummary = aiReportText;
+        }
+      }
+
+      setCurrentCase(baseCaseData);
+
+      // Add welcome system report
+      const welcomeMsg: Message = {
+        id: `sys-welcome-${Date.now()}`,
+        role: 'assistant',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        caseRef: fNum,
+        content: `AI investigative workspace initialized for docket **FIR #${baseCaseData.firNumber}**. Threat matrix generated, suspect graph verified, and tactical maps calibrated. Ask me anything about suspects, routes, transactions, or operational recommendation items.`
+      };
+      setMessages([welcomeMsg]);
+
+    } catch (err: any) {
+      console.error("Evaluation error:", err);
+      setEvaluationError(err.message || "An unexpected error occurred during case context evaluation.");
+    } finally {
+      setIsEvaluating(false);
     }
-  }, [isThinking, thinkingIndex, firNumber]);
+  }, [firNumber, suspectName, selectedDistrict, selectedCategory]);
 
   // Run on mount or searchParams
   useEffect(() => {
@@ -455,8 +643,8 @@ function AIInvestigatorPageContent() {
       triggerLoadAndAnalyze();
       setTimeout(() => {
         handleSendQuery(qParam);
-      }, 3500); // Wait for reasoning pipeline
-    } else if (!qParam && !currentCase && !isThinking) {
+      }, 1200); // Wait for async evaluation
+    } else if (!qParam && !currentCase && !isEvaluating) {
       // Load first case on mount
       triggerLoadAndAnalyze("FIR/2026/BLR/101");
     }
@@ -471,7 +659,7 @@ function AIInvestigatorPageContent() {
         behavior: 'smooth'
       });
     }
-  }, [messages, isThinking]);
+  }, [messages, isChatTyping]);
 
   // Load Recent Case
   const handleLoadRecent = (fir: string) => {
@@ -503,7 +691,7 @@ function AIInvestigatorPageContent() {
   }, [isMapPlaying, currentCase]);
 
   // ── HANDLE CONVERSATIONAL QUERIES ──────────────────────────────────────────
-  const handleSendQuery = (text: string) => {
+  const handleSendQuery = async (text: string) => {
     const query = text.trim();
     if (!query) return;
 
@@ -517,61 +705,94 @@ function AIInvestigatorPageContent() {
 
     setMessages(prev => [...prev, userMsg]);
     setInputVal("");
+    setIsChatTyping(true);
 
-    // Simulate thinking pipeline in chat
-    setIsThinking(true);
-    setThinkingIndex(0);
-
-    setTimeout(() => {
-      const responseTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const lower = query.toLowerCase();
-
-      // Memory helper
-      const lastUserMsgs = messages.filter(m => m.role === 'user').map(m => m.content?.toLowerCase() || "");
-      const isFollowUpWhy = lower === "why?" || lower === "why" || lower.includes("explain why");
-      const isFollowUpEvidence = lower.includes("evidence") || lower.includes("supporting evidence");
-      const isFollowUpAssociates = lower.includes("associate") || lower.includes("accomplice") || lower.includes("who are his");
-      const isFollowUpRoute = lower.includes("route") || lower.includes("seen") || lower.includes("gps") || lower.includes("movement");
-
+    try {
       let content = "";
       let widget: 'risk' | 'network' | 'map' | 'timeline' | 'report' | 'actions' | undefined;
 
       if (!currentCase) {
         content = "This information is not available in the current investigation. Please load a valid case context from the Left Panel first.";
       } else {
-        // Match terms
-        if (lower.includes("suspect") || lower.includes("who is the primary") || (isFollowUpWhy && lastUserMsgs.some(m => m.includes("suspect")))) {
-          content = `### Primary Accused Profile\n\n**Name:** ${currentCase.suspectName}\n\n**Operational Conclusion:** Confirmed high probability coordination of regional illicit networks.\n\n**Reasoning:**\n• tower connections place the suspect's mobile at crime quarry perimeter during coordinates.\n• Registered vehicle matched license plate logs captured on exit highways.\n• Significant money transfer matches load contractor payroll logs.\n• Prior filings identify a repeating extraction pattern.\n\n**Case Confidence Score:** ${currentCase.confidence}%\n\n*Missing Information:* CCTV DVR hard-drive under forensic decryption.`;
-          widget = 'risk';
-        } else if (lower.includes("network") || lower.includes("associates") || lower.includes("financial link") || isFollowUpAssociates) {
-          content = `### Criminal Syndicate Relationships\n\nActive connections matching **${currentCase.suspectName}** cross-referenced via communication logs and ledger records.\n\nSelect the **Relationship Graph** tab or inspect the visual nodes below to review contact frequencies, last seen registries, and legal dossiers.`;
-          widget = 'network';
-        } else if (lower.includes("map") || lower.includes("where was he") || lower.includes("seen") || lower.includes("route") || isFollowUpRoute) {
-          content = `### Tactical Movement Registry\n\nGPS trace and CCTV coordinates mapped for **${currentCase.suspectName}**'s registered transport trucks.\n\nUse the play controls below to replay the chronolog of events leading from resident addresses to intercept checkposts.`;
-          widget = 'map';
-        } else if (lower.includes("timeline") || lower.includes("chronology") || lower.includes("events")) {
-          content = `### Investigation Event Log\n\nReconstructed chronological events compiled from LPR triggers, cellular tower handoffs, and witness registries. Use the filters below to isolate calls, financial, or vehicle movements.`;
-          widget = 'timeline';
-        } else if (lower.includes("report") || lower.includes("dossier") || lower.includes("export")) {
-          content = `### Government Intelligence Report Generated\n\nFormulated restricted intelligence dossier for case reference **${currentCase.firNumber}**. Download PDF copies or print for command desk reviews.`;
-          widget = 'report';
-        } else if (lower.includes("action") || lower.includes("operations") || lower.includes("steps") || lower.includes("arrest")) {
-          content = `### Tactical Operations Briefing\n\nDecision support matrix recommends the immediate freezing of accounts, border lookouts, and scrap/warehouse search warrants. Prioritized checklists are shown below.`;
-          widget = 'actions';
-        } else {
-          // General lookup in evidence summaries
-          const matchedEvidence = currentCase.evidenceSummary.filter(ev => 
-            lower.split(' ').some(word => word.length > 3 && ev.toLowerCase().includes(word))
-          );
+        const systemPrompt = `You are CrimeVision AI, an expert investigative copilot for the Karnataka State Police.
+Current case context:
+- FIR Number: ${currentCase.firNumber}
+- Suspect: ${currentCase.suspectName}
+- District: ${currentCase.district}
+- Category: ${currentCase.category}
+- Risk Score: ${currentCase.riskScore}/100
+- Assigned Officer: ${currentCase.officer}
+- Evidence Summary: ${currentCase.evidenceSummary.join(" | ")}
 
-          if (matchedEvidence.length > 0) {
-            content = `### Matched Evidence Logs\n\nFound the following matching case records:\n\n${matchedEvidence.map(e => `• ${e}`).join('\n')}`;
+Answer the officer's query professionally, concisely, and with Karnataka Police context. Use bullet points or headers if appropriate.`;
+
+        const chatHistory = messages
+          .filter(m => m.content)
+          .map(m => ({
+            role: m.role,
+            content: m.content!
+          }));
+
+        chatHistory.push({ role: 'user', content: query });
+
+        try {
+          content = await generateText({
+            systemPrompt,
+            messages: chatHistory
+          });
+        } catch (e) {
+          console.warn("Chat API call failed, falling back to rule-based offline engine.", e);
+        }
+
+        if (!content) {
+          const lower = query.toLowerCase();
+          const lastUserMsgs = messages.filter(m => m.role === 'user').map(m => m.content?.toLowerCase() || "");
+          const isFollowUpWhy = lower === "why?" || lower === "why" || lower.includes("explain why");
+          const isFollowUpEvidence = lower.includes("evidence") || lower.includes("supporting evidence");
+          const isFollowUpAssociates = lower.includes("associate") || lower.includes("accomplice") || lower.includes("who are his");
+          const isFollowUpRoute = lower.includes("route") || lower.includes("seen") || lower.includes("gps") || lower.includes("movement");
+
+          if (lower.includes("suspect") || lower.includes("who is the primary") || (isFollowUpWhy && lastUserMsgs.some(m => m.includes("suspect")))) {
+            content = `### Primary Accused Profile\n\n**Name:** ${currentCase.suspectName}\n\n**Operational Conclusion:** Confirmed high probability coordination of regional illicit networks.\n\n**Reasoning:**\n• tower connections place the suspect's mobile at crime quarry perimeter during coordinates.\n• Registered vehicle matched license plate logs captured on exit highways.\n• Significant money transfer matches load contractor payroll logs.\n• Prior filings identify a repeating extraction pattern.\n\n**Case Confidence Score:** ${currentCase.confidence}%\n\n*Missing Information:* CCTV DVR hard-drive under forensic decryption.`;
+            widget = 'risk';
+          } else if (lower.includes("network") || lower.includes("associates") || lower.includes("financial link") || isFollowUpAssociates) {
+            content = `### Criminal Syndicate Relationships\n\nActive connections matching **${currentCase.suspectName}** cross-referenced via communication logs and ledger records.\n\nSelect the **Relationship Graph** tab or inspect the visual nodes below to review contact frequencies, last seen registries, and legal dossiers.`;
+            widget = 'network';
+          } else if (lower.includes("map") || lower.includes("where was he") || lower.includes("seen") || lower.includes("route") || isFollowUpRoute) {
+            content = `### Tactical Movement Registry\n\nGPS trace and CCTV coordinates mapped for **${currentCase.suspectName}**'s registered transport trucks.\n\nUse the play controls below to replay the chronolog of events leading from resident addresses to intercept checkposts.`;
+            widget = 'map';
+          } else if (lower.includes("timeline") || lower.includes("chronology") || lower.includes("events")) {
+            content = `### Investigation Event Log\n\nReconstructed chronological events compiled from LPR triggers, cellular tower handoffs, and witness registries. Use the filters below to isolate calls, financial, or vehicle movements.`;
+            widget = 'timeline';
+          } else if (lower.includes("report") || lower.includes("dossier") || lower.includes("export")) {
+            content = `### Government Intelligence Report Generated\n\nFormulated restricted intelligence dossier for case reference **${currentCase.firNumber}**. Download PDF copies or print for command desk reviews.`;
+            widget = 'report';
+          } else if (lower.includes("action") || lower.includes("operations") || lower.includes("steps") || lower.includes("arrest")) {
+            content = `### Tactical Operations Briefing\n\nDecision support matrix recommends the immediate freezing of accounts, border lookouts, and scrap/warehouse search warrants. Prioritized checklists are shown below.`;
+            widget = 'actions';
           } else {
-            content = `No intelligence data matching "${query}" is available in the current investigation. Please ask about suspect profiles, timelines, risk matrices, or operational recommendations.`;
+            const matchedEvidence = currentCase.evidenceSummary.filter(ev => 
+              lower.split(' ').some(word => word.length > 3 && ev.toLowerCase().includes(word))
+            );
+
+            if (matchedEvidence.length > 0) {
+              content = `### Matched Evidence Logs\n\nFound the following matching case records:\n\n${matchedEvidence.map(e => `• ${e}`).join('\n')}`;
+            } else {
+              content = `No intelligence data matching "${query}" is available in the current investigation. Please ask about suspect profiles, timelines, risk matrices, or operational recommendations.`;
+            }
           }
+        } else {
+          const lower = query.toLowerCase();
+          if (lower.includes("suspect") || lower.includes("risk") || lower.includes("threat")) widget = 'risk';
+          else if (lower.includes("network") || lower.includes("associate")) widget = 'network';
+          else if (lower.includes("map") || lower.includes("route")) widget = 'map';
+          else if (lower.includes("timeline") || lower.includes("event") || lower.includes("chronology")) widget = 'timeline';
+          else if (lower.includes("action") || lower.includes("operations") || lower.includes("recommend")) widget = 'actions';
+          else if (lower.includes("report") || lower.includes("dossier")) widget = 'report';
         }
       }
 
+      const responseTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const aiMsg: Message = {
         id: `a-${Date.now()}`,
         role: 'assistant',
@@ -581,7 +802,11 @@ function AIInvestigatorPageContent() {
       };
 
       setMessages(prev => [...prev, aiMsg]);
-    }, 3200); // Length matching thinking pipeline ticks
+    } catch (err) {
+      console.error("Chat query execution error:", err);
+    } finally {
+      setIsChatTyping(false);
+    }
   };
 
   // ── EXPORT PDF GENERATION ──────────────────────────────────────────────────
@@ -1006,25 +1231,43 @@ function AIInvestigatorPageContent() {
 
   // ── CENTRAL TABBED DESK VIEW ────────────────────────────────────────────────
   const renderIntelligenceDesk = () => {
-    if (isThinking) {
+    if (isEvaluating) {
       return (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 12 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: 340 }}>
-            {REASONING_PIPELINE.map((step, idx) => {
-              const isPassed = idx < thinkingIndex;
-              const isCurrent = idx === thinkingIndex;
-              return (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyItems: 'space-between', opacity: isPassed ? 1 : isCurrent ? 1 : 0.35 }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', marginRight: 10 }}>{step.icon}</span>
-                  <span style={{ fontSize: 13, fontWeight: isCurrent ? 800 : 500, color: isCurrent ? '#1E3A5F' : '#475569', flex: 1 }}>
-                    {step.text}
-                  </span>
-                  {isPassed && <CheckCircle size={14} style={{ color: '#065F46' }} />}
-                  {isCurrent && <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#1E3A5F', animation: 'pulse 1s infinite' }} />}
-                </div>
-              );
-            })}
-          </div>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 12, padding: 24 }}>
+          <style>{`
+            @keyframes spin {
+              to { transform: rotate(360deg); }
+            }
+            .spinner-eval {
+              animation: spin 1s linear infinite;
+            }
+          `}</style>
+          <RefreshCw size={36} className="spinner-eval" style={{ color: '#1E3A5F', marginBottom: 16 }} />
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1F2937', margin: 0 }}>Evaluating Case Context</h2>
+          <p style={{ fontSize: 13, color: '#6B7280', marginTop: 4, maxWidth: 300, textAlign: 'center' }}>
+            Querying intelligence database and processing evidence summaries for FIR docket...
+          </p>
+        </div>
+      );
+    }
+
+    if (evaluationError) {
+      return (
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 12, padding: 24 }}>
+          <AlertTriangle size={48} style={{ color: '#DC2626', marginBottom: 16 }} />
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#DC2626', margin: 0 }}>Evaluation Failed</h2>
+          <p style={{ fontSize: 13, color: '#475569', marginTop: 8, maxWidth: 400, textAlign: 'center', lineHeight: 1.4 }}>
+            {evaluationError}
+          </p>
+          <button
+            onClick={() => triggerLoadAndAnalyze()}
+            style={{
+              marginTop: 18, padding: '8px 16px', background: '#1E3A5F', color: '#FFFFFF',
+              border: 'none', borderRadius: '6px', fontSize: '12px', fontWeight: 700, cursor: 'pointer'
+            }}
+          >
+            Retry Evaluation
+          </button>
         </div>
       );
     }
@@ -1104,6 +1347,34 @@ function AIInvestigatorPageContent() {
                     </div>
                   );
                 })}
+                {isChatTyping && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignSelf: 'flex-start', maxWidth: '85%' }}>
+                    <div style={{
+                      background: '#F8FAFC',
+                      color: '#475569',
+                      border: '1px solid #E2E8F0',
+                      borderRadius: '12px 12px 12px 2px',
+                      padding: '10px 14px', fontSize: 13, lineHeight: 1.5,
+                      display: 'flex', alignItems: 'center', gap: 8
+                    }}>
+                      <style>{`
+                        @keyframes spin-mini {
+                          to { transform: rotate(360deg); }
+                        }
+                        .spinner-mini {
+                          width: 14px;
+                          height: 14px;
+                          border: 2px solid #E2E8F0;
+                          border-top: 2px solid #1E3A5F;
+                          border-radius: 50%;
+                          animation: spin-mini 1s linear infinite;
+                        }
+                      `}</style>
+                      <div className="spinner-mini" />
+                      <span style={{ fontSize: 12, fontStyle: 'italic' }}>AI is compiling intelligence...</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Chat inputs */}
