@@ -42,7 +42,7 @@ crimevisionai/
 │   └── crimevision-ai/          # Serverless Express proxy function
 │       ├── catalyst-config.json # Function metadata (Advanced I/O, Node.js 20)
 │       ├── package.json         # Node.js function dependencies
-│       └── index.js             # Express routing, secure fetch to Anthropic Claude
+│       └── index.js             # Express routing, secure fetch to Google Gemini
 ├── components/
 │   ├── AuthGuard.tsx            # Renders responsive mobile layout overlay
 │   ├── Topbar.tsx               # Hamburger menu button + layout offsets

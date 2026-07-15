@@ -562,16 +562,18 @@ Please generate the restricted police intelligence report in JSON format:
   "findings": "Evidentiary correlation, tower locations, bank transfers, and vehicle checkpoints.",
   "legalSections": "Applicable IPC/BNS/MMRD/IT Act sections.",
   "pendingTasks": "Immediate next investigative tasks.",
-  "officerNotes": "Operational warnings and flight risk advice."
+  "officerNotes": "Operational warnings and flight risk advice.",
+  "riskScore": 85,
+  "confidence": 90
 }`;
 
-      // Enforce a minimum delay for the spinner so it feels natural but fast (e.g. 800ms)
-      const minDelay = new Promise(resolve => setTimeout(resolve, 800));
+      // Enforce a minimum delay for the spinner so it feels natural but fast (e.g. 200ms)
+      const minDelay = new Promise(resolve => setTimeout(resolve, 200));
       
       let aiReportText = '';
       try {
         aiReportText = await generateText({
-          systemPrompt: "You are the CrimeVision AI Intelligence platform for Karnataka State Police. Analyze the provided case details and generate a realistic, professional, restricted police intelligence report. You must respond ONLY with a raw JSON object containing keys: executiveSummary, caseOverview, findings, legalSections, pendingTasks, officerNotes.",
+          systemPrompt: "You are the CrimeVision AI Intelligence platform for Karnataka State Police. Analyze the provided case details and generate a realistic, professional, restricted police intelligence report. You must respond ONLY with a raw JSON object containing keys: executiveSummary, caseOverview, findings, legalSections, pendingTasks, officerNotes, riskScore, confidence.",
           messages: [{ role: 'user', content: prompt }]
         });
       } catch (e) {
@@ -603,6 +605,14 @@ Please generate the restricted police intelligence report in JSON format:
                 parsed.findings,
                 ...baseCaseData.evidenceSummary.slice(1)
               ];
+            }
+
+            if (parsed.riskScore && !isNaN(Number(parsed.riskScore))) {
+              baseCaseData.riskScore = Math.max(1, Math.min(100, Number(parsed.riskScore)));
+              baseCaseData.escapeRisk = baseCaseData.riskScore > 80 ? "High" : baseCaseData.riskScore > 50 ? "Medium" : "Low";
+            }
+            if (parsed.confidence && !isNaN(Number(parsed.confidence))) {
+              baseCaseData.confidence = Math.max(1, Math.min(100, Number(parsed.confidence)));
             }
           }
         } catch (jsonErr) {
@@ -643,10 +653,20 @@ Please generate the restricted police intelligence report in JSON format:
       triggerLoadAndAnalyze();
       setTimeout(() => {
         handleSendQuery(qParam);
-      }, 1200); // Wait for async evaluation
+      }, 300); // Wait for async evaluation
     } else if (!qParam && !currentCase && !isEvaluating) {
-      // Load first case on mount
-      triggerLoadAndAnalyze("FIR/2026/BLR/101");
+      // Load first case on mount immediately (no async delay/spinner)
+      const defaultCase = CASES_DATABASE["FIR/2026/BLR/101"];
+      setCurrentCase(defaultCase);
+      setMessages([
+        {
+          id: `sys-welcome-init`,
+          role: 'assistant',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          caseRef: "FIR/2026/BLR/101",
+          content: `AI investigative workspace initialized for docket **FIR #${defaultCase.firNumber}**. Threat matrix generated, suspect graph verified, and tactical maps calibrated. Ask me anything about suspects, routes, transactions, or operational recommendation items.`
+        }
+      ]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, processedQuery, triggerLoadAndAnalyze]);
@@ -1317,9 +1337,9 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
         {/* Tab Contents */}
         <div style={{ flex: 1, overflowY: 'auto', padding: 20 }}>
           {activeTab === 'chat' && (
-            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: '850px', width: '100%', margin: '0 auto' }}>
               {/* Chat history */}
-              <div ref={chatContainerRef} style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 16, paddingRight: 6 }}>
+              <div ref={chatContainerRef} style={{ maxHeight: '480px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 16, paddingRight: 6 }}>
                 {messages.map((msg) => {
                   const isUser = msg.role === 'user';
                   return (
@@ -1329,7 +1349,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                         color: isUser ? '#FFFFFF' : '#1F2937',
                         border: isUser ? 'none' : '1px solid #E2E8F0',
                         borderRadius: isUser ? '12px 12px 2px 12px' : '12px 12px 12px 2px',
-                        padding: '10px 14px', fontSize: '14px', lineHeight: 1.5,
+                        padding: '14px 18px', fontSize: '14.5px', lineHeight: 1.6,
                         whiteSpace: 'pre-line'
                       }}>
                         {msg.content}
@@ -1354,7 +1374,7 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                       color: '#475569',
                       border: '1px solid #E2E8F0',
                       borderRadius: '12px 12px 12px 2px',
-                      padding: '10px 14px', fontSize: '14px', lineHeight: 1.5,
+                      padding: '14px 18px', fontSize: '14.5px', lineHeight: 1.6,
                       display: 'flex', alignItems: 'center', gap: 8
                     }}>
                       <style>{`
@@ -1392,8 +1412,9 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                       key={prompt}
                       onClick={() => handleSendQuery(prompt)}
                       style={{
-                        fontSize: '12px', padding: '3px 8px', background: '#FFFFFF',
-                        border: '1px solid #D1D5DB', borderRadius: 12, color: '#475569', cursor: 'pointer'
+                        fontSize: '13.5px', padding: '6px 12px', background: '#FFFFFF',
+                        border: '1px solid #D1D5DB', borderRadius: 16, color: '#475569', cursor: 'pointer',
+                        transition: 'all 0.15s ease'
                       }}
                     >
                       {prompt}
@@ -1411,8 +1432,8 @@ Answer the officer's query professionally, concisely, and with Karnataka Police 
                       onChange={e => setInputVal(e.target.value)}
                       onKeyDown={e => { if (e.key === 'Enter') handleSendQuery(inputVal); }}
                       style={{
-                        width: '100%', background: '#FFFFFF', border: '1px solid #D1D5DB', borderRadius: 20,
-                        padding: '8px 38px 8px 14px', fontSize: '14px', color: '#1F2937', outline: 'none'
+                        width: '100%', background: '#FFFFFF', border: '1px solid #D1D5DB', borderRadius: 24,
+                        padding: '12px 42px 12px 18px', fontSize: '15px', color: '#1F2937', outline: 'none'
                       }}
                     />
                     <button

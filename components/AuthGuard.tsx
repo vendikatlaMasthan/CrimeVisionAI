@@ -55,6 +55,10 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       setUser(stored);
       setAccessDenied(false);
 
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+        setIsSidebarOpen(false);
+      }
+
       if (!stored && !isLoginPage) {
         console.log('AuthGuard: Guest user detected. Redirecting to login.');
         router.replace('/login');
@@ -118,6 +122,17 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     sessionStorage.setItem('ksp_intro_seen', '1');
     setShowIntro(false);
   }, []);
+
+  // Synchronize isSidebarOpen state to body.classList (for mobile drawer styles)
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (isSidebarOpen) {
+        document.body.classList.add('sidebar-open');
+      } else {
+        document.body.classList.remove('sidebar-open');
+      }
+    }
+  }, [isSidebarOpen]);
 
   const storedUser = typeof window !== 'undefined' ? getStoredUser() : null;
   const introSeen = typeof window !== 'undefined' ? sessionStorage.getItem('ksp_intro_seen') : null;
@@ -189,20 +204,16 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   }
 
   const closeSidebar = () => {
-    if (typeof document !== 'undefined') {
-      document.body.classList.remove('sidebar-open');
-    }
+    setIsSidebarOpen(false);
   };
 
   return (
     <>
       {showIntro && <AuthenticatingIntro onComplete={handleIntroComplete} />}
 
-      {/* Government Branding Header — fixed at top */}
-      <GovHeader />
-
-      <div className="flex min-h-screen w-full overflow-hidden" style={{ paddingTop: `${GOV_HEADER_HEIGHT}px` }}>
-        {/* Sidebar — starts below GovHeader */}
+      {/* Main layout container (without GovHeader padding) */}
+      <div className="flex min-h-screen w-full overflow-hidden" style={{ paddingTop: '0px' }}>
+        {/* Sidebar */}
         <Sidebar user={user} portalType={portalType} isOpen={isSidebarOpen} />
         <div className="mobile-sidebar-overlay" onClick={closeSidebar} />
 

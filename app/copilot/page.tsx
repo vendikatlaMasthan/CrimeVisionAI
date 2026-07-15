@@ -390,7 +390,7 @@ export default function InvestigationCopilotPage() {
 
               {/* CHAT TAB */}
               {activeTab === 'chat' && (
-                <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', height: '72vh' }}>
+                <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', maxWidth: '850px', width: '100%', margin: '0 auto' }}>
                   {/* Chat header */}
                   <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-default)', display: 'flex', alignItems: 'center', gap: 10 }}>
                     <Brain size={15} color="#0F6B5C" />
@@ -404,22 +404,22 @@ export default function InvestigationCopilotPage() {
                   {/* Suggested Prompts */}
                   <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--border-default)', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     {SUGGESTED_PROMPTS.map(p => (
-                      <button key={p.label} onClick={() => { setActiveTab('chat'); sendMessage(p.query); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 20, cursor: 'pointer', background: p.bg, border: `1px solid ${p.border}`, fontSize: '12px', fontWeight: 700, color: p.color, transition: 'opacity 0.15s', whiteSpace: 'nowrap' }} onMouseEnter={e => { e.currentTarget.style.opacity = '0.75'; }} onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}>
-                        <p.Icon size={11} /> {p.label}
+                      <button key={p.label} onClick={() => { setActiveTab('chat'); sendMessage(p.query); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 20, cursor: 'pointer', background: p.bg, border: `1px solid ${p.border}`, fontSize: '13.5px', fontWeight: 700, color: p.color, transition: 'opacity 0.15s', whiteSpace: 'nowrap' }} onMouseEnter={e => { e.currentTarget.style.opacity = '0.75'; }} onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}>
+                        <p.Icon size={13} /> {p.label}
                       </button>
                     ))}
                   </div>
 
                   {/* Messages */}
-                  <div style={{ flex: 1, overflowY: 'auto', padding: '16px 18px 8px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div style={{ maxHeight: '480px', overflowY: 'auto', padding: '16px 18px 8px', display: 'flex', flexDirection: 'column', gap: 14 }}>
                     {messages.map(msg => (
                       <div key={msg.id} style={{ display: 'flex', flexDirection: msg.role === 'user' ? 'row-reverse' : 'row', gap: 10, alignItems: 'flex-start' }}>
                         <div style={{ flexShrink: 0, width: 30, height: 30, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: msg.role === 'user' ? 'rgba(30,58,95,0.08)' : msg.role === 'system' ? 'rgba(245,158,11,0.08)' : 'rgba(15,107,92,0.08)', border: `1px solid ${msg.role === 'user' ? 'rgba(30,58,95,0.2)' : msg.role === 'system' ? 'rgba(245,158,11,0.2)' : 'rgba(15,107,92,0.2)'}` }}>
                           {msg.role === 'user' ? <User size={14} color="#1e3a5f" /> : msg.role === 'system' ? <Zap size={13} color="#f59e0b" /> : <Brain size={14} color="#0F6B5C" />}
                         </div>
                         <div style={{ maxWidth: '82%' }}>
-                          <div style={{ padding: '10px 14px', borderRadius: msg.role === 'user' ? '14px 4px 14px 14px' : '4px 14px 14px 14px', background: msg.role === 'user' ? 'rgba(30,58,95,0.06)' : msg.role === 'system' ? 'rgba(245,158,11,0.04)' : 'var(--bg-card)', border: `1px solid ${msg.role === 'user' ? 'rgba(30,58,95,0.12)' : msg.role === 'system' ? 'rgba(245,158,11,0.15)' : 'var(--border-default)'}`, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-                            <div style={{ fontSize: 12.5, color: 'var(--text-primary)', lineHeight: 1.65, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                          <div style={{ padding: '14px 18px', borderRadius: msg.role === 'user' ? '14px 4px 14px 14px' : '4px 14px 14px 14px', background: msg.role === 'user' ? 'rgba(30,58,95,0.06)' : msg.role === 'system' ? 'rgba(245,158,11,0.04)' : 'var(--bg-card)', border: `1px solid ${msg.role === 'user' ? 'rgba(30,58,95,0.12)' : msg.role === 'system' ? 'rgba(245,158,11,0.15)' : 'var(--border-default)'}`, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+                            <div style={{ fontSize: 13.5, color: 'var(--text-primary)', lineHeight: 1.65, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                               {msg.content.split(/\*\*(.*?)\*\*/g).map((part, i) =>
                                 i % 2 === 1 ? <strong key={i} style={{ color: msg.role === 'assistant' ? '#0F6B5C' : 'inherit' }}>{part}</strong> : part
                               )}
@@ -446,8 +446,8 @@ export default function InvestigationCopilotPage() {
 
                   {/* Input */}
                   <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border-default)', display: 'flex', gap: 10, alignItems: 'center', background: 'var(--neutral-light)' }}>
-                    <input ref={inputRef} type="text" value={inputText} onChange={e => setInputText(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(inputText); } }} placeholder={`Ask about ${selectedFir.suspectDetails.name} or case ${selectedFir.firNumber}...`} style={{ flex: 1, padding: '10px 14px', borderRadius: 10, border: '1.5px solid var(--border-default)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '14px', fontFamily: 'Inter, sans-serif', outline: 'none' }} onFocus={e => { e.target.style.borderColor = '#0F6B5C'; e.target.style.boxShadow = '0 0 0 2px rgba(15,107,92,0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-default)'; e.target.style.boxShadow = 'none'; }} />
-                    <button onClick={() => sendMessage(inputText)} disabled={!inputText.trim() || isTyping} style={{ width: 42, height: 42, borderRadius: 10, border: 'none', background: inputText.trim() && !isTyping ? '#0F6B5C' : 'var(--border-default)', color: inputText.trim() && !isTyping ? '#fff' : 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: inputText.trim() && !isTyping ? 'pointer' : 'not-allowed', transition: 'all 0.2s', flexShrink: 0 }}>
+                    <input ref={inputRef} type="text" value={inputText} onChange={e => setInputText(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(inputText); } }} placeholder={`Ask about ${selectedFir.suspectDetails.name} or case ${selectedFir.firNumber}...`} style={{ flex: 1, padding: '13px 18px', borderRadius: 14, border: '1.5px solid var(--border-default)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '15px', fontFamily: 'Inter, sans-serif', outline: 'none' }} onFocus={e => { e.target.style.borderColor = '#0F6B5C'; e.target.style.boxShadow = '0 0 0 2px rgba(15,107,92,0.1)'; }} onBlur={e => { e.target.style.borderColor = 'var(--border-default)'; e.target.style.boxShadow = 'none'; }} />
+                    <button onClick={() => sendMessage(inputText)} disabled={!inputText.trim() || isTyping} style={{ width: 48, height: 48, borderRadius: 14, border: 'none', background: inputText.trim() && !isTyping ? '#0F6B5C' : 'var(--border-default)', color: inputText.trim() && !isTyping ? '#fff' : 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: inputText.trim() && !isTyping ? 'pointer' : 'not-allowed', transition: 'all 0.2s', flexShrink: 0 }}>
                       <Send size={17} />
                     </button>
                   </div>

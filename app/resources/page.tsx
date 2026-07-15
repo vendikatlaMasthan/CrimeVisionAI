@@ -441,9 +441,9 @@ export default function ResourcesPage() {
           </div>
 
           {/* Analytics Row */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: '24px', marginBottom: '32px' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
             {/* Budget Allocation Card */}
-            <div className="glass-card" style={{ padding: '24px', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px' }}>
+            <div className="glass-card col-span-12 lg:col-span-7" style={{ padding: '24px', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '20px' }}>
                 <div className="section-header-line" />
                 <h2 className="section-title">Budget Allocation — FY 2025-26</h2>
@@ -493,7 +493,7 @@ export default function ResourcesPage() {
             </div>
 
             {/* Priority Matrix Card */}
-            <div className="glass-card" style={{ padding: '24px', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px' }}>
+            <div className="glass-card col-span-12 lg:col-span-5" style={{ padding: '24px', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '20px' }}>
                 <div className="section-header-line" />
                 <h2 className="section-title">Priority Decision Matrix</h2>

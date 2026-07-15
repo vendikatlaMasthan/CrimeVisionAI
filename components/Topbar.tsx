@@ -53,6 +53,46 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
   // Active unacknowledged alerts count
   const unreadAlertsCount = LIVE_ALERTS.filter(alert => !alert.acknowledged).length;
 
+  // Text size accessibility scaling
+  const SCALES = [80, 90, 100, 110, 120, 130, 140, 150];
+  const DEFAULT_SCALE = 100;
+  const [scale, setScale] = useState<number>(DEFAULT_SCALE);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('ksp_text_scale_v3') || localStorage.getItem('ksp_text_scale_v2');
+      const parsed = saved ? parseInt(saved, 10) : NaN;
+      const resolved = SCALES.includes(parsed) ? parsed : DEFAULT_SCALE;
+      setScale(resolved);
+      applyScale(resolved);
+    } catch (e) {}
+  }, []);
+
+  const applyScale = (pct: number) => {
+    if (typeof document === 'undefined') return;
+    const factor = pct / 100;
+    document.documentElement.style.setProperty('--text-scale', String(factor));
+    document.documentElement.style.fontSize = `${16 * factor}px`;
+  };
+
+  const handleDecrease = () => {
+    const idx = SCALES.indexOf(scale);
+    if (idx <= 0) return;
+    const next = SCALES[idx - 1];
+    setScale(next);
+    try { localStorage.setItem('ksp_text_scale_v3', String(next)); } catch {}
+    applyScale(next);
+  };
+
+  const handleIncrease = () => {
+    const idx = SCALES.indexOf(scale);
+    if (idx >= SCALES.length - 1) return;
+    const next = SCALES[idx + 1];
+    setScale(next);
+    try { localStorage.setItem('ksp_text_scale_v3', String(next)); } catch {}
+    applyScale(next);
+  };
+
   // Voice recognition support check
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -425,7 +465,7 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
         className="fixed top-0 right-0 z-40 header"
         style={{
           left: isSidebarOpen ? '256px' : '0px',
-          top: '72px',
+          top: '0px',
           background: '#FFFFFF',
           borderBottom: '1px solid #E5E7EB',
           height: '72px',
@@ -1175,6 +1215,104 @@ export default function Topbar({ user, portalType, onToggleSidebar, isSidebarOpe
                   {unreadAlertsCount}
                 </span>
               )}
+            </button>
+          </div>
+
+          {/* Text Size Accessibility Control */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            borderRight: '1px solid var(--border-default)',
+            paddingRight: '16px',
+            marginRight: '4px',
+            height: '32px',
+          }}>
+            <span style={{
+              fontSize: '12px',
+              fontWeight: 800,
+              color: 'var(--text-muted)',
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              userSelect: 'none',
+              minWidth: '70px',
+              textAlign: 'center',
+            }}>
+              Text {scale}%
+            </span>
+            <button
+              onClick={handleDecrease}
+              disabled={scale === 80}
+              aria-label="Decrease text size"
+              style={{
+                width: '26px',
+                height: '26px',
+                borderRadius: '6px',
+                border: '1px solid #D1D5DB',
+                background: '#FFFFFF',
+                color: '#374151',
+                fontSize: '12px',
+                fontWeight: 800,
+                cursor: scale === 80 ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: scale === 80 ? 0.4 : 1,
+                transition: 'all 0.15s ease',
+                outline: 'none',
+                userSelect: 'none',
+              }}
+              onMouseEnter={e => {
+                if (scale !== 80) {
+                  e.currentTarget.style.background = '#F1F5F9';
+                  e.currentTarget.style.borderColor = '#94A3B8';
+                }
+              }}
+              onMouseLeave={e => {
+                if (scale !== 80) {
+                  e.currentTarget.style.background = '#FFFFFF';
+                  e.currentTarget.style.borderColor = '#D1D5DB';
+                }
+              }}
+            >
+              A−
+            </button>
+            <button
+              onClick={handleIncrease}
+              disabled={scale === 150}
+              aria-label="Increase text size"
+              style={{
+                width: '26px',
+                height: '26px',
+                borderRadius: '6px',
+                border: '1px solid #D1D5DB',
+                background: '#FFFFFF',
+                color: '#374151',
+                fontSize: '12px',
+                fontWeight: 800,
+                cursor: scale === 150 ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: scale === 150 ? 0.4 : 1,
+                transition: 'all 0.15s ease',
+                outline: 'none',
+                userSelect: 'none',
+              }}
+              onMouseEnter={e => {
+                if (scale !== 150) {
+                  e.currentTarget.style.background = '#F1F5F9';
+                  e.currentTarget.style.borderColor = '#94A3B8';
+                }
+              }}
+              onMouseLeave={e => {
+                if (scale !== 150) {
+                  e.currentTarget.style.background = '#FFFFFF';
+                  e.currentTarget.style.borderColor = '#D1D5DB';
+                }
+              }}
+            >
+              A+
             </button>
           </div>
 

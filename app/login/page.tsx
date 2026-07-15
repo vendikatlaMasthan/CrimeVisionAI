@@ -84,7 +84,7 @@ export default function LoginPage() {
       } else {
         clearInterval(stepInterval);
       }
-    }, 600);
+    }, 320);
 
     // Progress bar
     let prog = 0;
@@ -97,7 +97,7 @@ export default function LoginPage() {
         // Unified routing: all roles go to Home. RBAC sidebar handles portal differences.
         router.replace('/');
       }
-    }, 90);
+    }, 50);
   };
 
   const handleLoginSubmit = async (e: React.FormEvent) => {

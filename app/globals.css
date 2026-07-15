@@ -548,9 +548,9 @@ html, body {
 .animate-pulse-glow    { animation: pulse-glow 2s ease-in-out infinite; }
 .animate-pulse-red     { animation: pulse-red 2s ease-in-out infinite; }
 .animate-blink         { animation: blink 1s step-end infinite; }
-.animate-fadeInUp      { animation: fadeInUp 0.5s ease-out forwards; }
-.animate-fadeInRight   { animation: fadeInRight 0.5s ease-out forwards; }
-.animate-slideInLeft   { animation: slideInLeft 0.4s ease-out forwards; }
+.animate-fadeInUp      { animation: fadeInUp 0.25s ease-out forwards; }
+.animate-fadeInRight   { animation: fadeInRight 0.25s ease-out forwards; }
+.animate-slideInLeft   { animation: slideInLeft 0.25s ease-out forwards; }
 .animate-float         { animation: float 3s ease-in-out infinite; }
 .animate-spin-slow     { animation: spin-slow 8s linear infinite; }
 .animate-ticker        { animation: ticker-scroll 50s linear infinite; }
@@ -1064,7 +1064,7 @@ html, body {
   border-left: 1px solid #E5E7EB;
   box-shadow: -4px 0 16px rgba(0, 0, 0, 0.08);
   z-index: 100;
-  animation: fadeInRight 0.3s ease-out;
+  animation: fadeInRight 0.2s ease-out;
   overflow-y: auto;
 }
 
@@ -1352,6 +1352,84 @@ body {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE GOVHEADER (CM/KSP/HM Bar)
+───────────────────────────────────────────── */
+
+/* Tablet: hide CM/HM text labels, shrink header */
+@media (max-width: 768px) {
+  .gov-header {
+    height: 56px !important;
+    padding: 0 12px !important;
+  }
+  .gov-header .gov-col-left,
+  .gov-header .gov-col-right {
+    display: none !important;
+  }
+  .gov-header .gov-col-center .logo-wordmark {
+    font-size: 14px !important;
+  }
+  .gov-header .gov-col-center .gov-subtitle {
+    display: none !important;
+  }
+  .gov-header .gov-text-scale {
+    display: none !important;
+  }
+  /* Adjust sidebar and topbar offsets */
+  aside.fixed.left-0.top-0 {
+    top: 0px !important;
+    height: 100vh !important;
+  }
+  header.fixed.top-0.right-0 {
+    top: 0px !important;
+  }
+  /* Hide date-time on small screens */
+  .date-time-responsive {
+    display: none !important;
+  }
+  /* Hide pill-label badge on mobile */
+  .pill-label {
+    display: none !important;
+  }
+  /* Make language toggle compact */
+  .lang-toggle-container {
+    display: none !important;
+  }
+}
+
+/* Very small mobile: further simplify */
+@media (max-width: 480px) {
+  .gov-header {
+    height: 48px !important;
+    padding: 0 8px !important;
+  }
+  .gov-header .gov-emblem {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  .gov-header .gov-col-center .logo-wordmark {
+    font-size: 12px !important;
+  }
+  aside.fixed.left-0.top-0 {
+    top: 0px !important;
+    height: 100vh !important;
+  }
+  header.fixed.top-0.right-0 {
+    top: 0px !important;
+  }
+  /* Topbar simplification */
+  header.fixed.top-0.right-0 {
+    height: 56px !important;
+    padding: 0 8px !important;
+    gap: 8px !important;
+  }
+  /* Intel panel full width on mobile */
+  .intel-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
 }
 
 /* ─────────────────────────────────────────────

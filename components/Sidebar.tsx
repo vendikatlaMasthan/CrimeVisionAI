@@ -119,8 +119,8 @@ export default function Sidebar({ user, portalType, isOpen = true }: SidebarProp
         width: isOpen ? '256px' : '0px',
         background: '#FFFFFF',
         borderRight: isOpen ? '1px solid #E5E7EB' : 'none',
-        top: '72px', // Below GovHeader
-        height: 'calc(100vh - 72px)',
+        top: '0px',
+        height: '100vh',
         transition: 'all 250ms ease',
         overflow: 'hidden',
       }}
@@ -169,9 +169,9 @@ export default function Sidebar({ user, portalType, isOpen = true }: SidebarProp
           <SectionLabel label={lang === 'en' ? 'INVESTIGATION' : 'ತನಿಖೆ'} />
           <div>
             <SidebarItem href="/fir" icon={Search} label={lang === 'en' ? 'Cases / FIR Search' : 'ಪ್ರಕರಣಗಳು'} />
-            <SidebarItem href="/investigator" icon={MessageSquare} label={lang === 'en' ? 'AI Investigator' : 'AI ತನಿಖಾಧಿಕಾರಿ'} />
-            <SidebarItem href="/heatmap" icon={Map} label={lang === 'en' ? 'Crime Map' : 'ಅಪರಾಧ ನಕ್ಷೆ'} />
-            <SidebarItem href="/network" icon={Network} label={lang === 'en' ? 'Suspect Network' : 'ಶಂಕಿತ ಜಾಲ'} />
+            <SidebarItem href="/ai-investigator" icon={MessageSquare} label={lang === 'en' ? 'AI Investigator' : 'AI ತನಿಖಾಧಿಕಾರಿ'} />
+            <SidebarItem href="/map" icon={Map} label={lang === 'en' ? 'Crime Map' : 'ಅಪರಾಧ ನಕ್ಷೆ'} />
+            <SidebarItem href="/criminal-network" icon={Network} label={lang === 'en' ? 'Suspect Network' : 'ಶಂಕಿತ ಜಾಲ'} />
           </div>
         </div>
 

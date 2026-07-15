@@ -161,7 +161,7 @@ export default function GovHeader() {
 
 
   return (
-    <div style={{
+    <div className="gov-header" style={{
       width: '100%',
       background: '#FFFFFF',
       borderBottom: '3px solid var(--primary-navy)', // Maroon
@@ -178,7 +178,7 @@ export default function GovHeader() {
     }}>
       
       {/* Column 1: Chief Minister Office (Left aligned) */}
-      <div style={{ flex: '1 1 0%', display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+      <div className="gov-col-left" style={{ flex: '1 1 0%', display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -221,13 +221,13 @@ export default function GovHeader() {
       </div>
 
       {/* Column 2: Karnataka State Police Logo (Center aligned) */}
-      <div style={{ flex: '1 1 0%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="gov-col-center" style={{ flex: '1 1 0%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
           gap: 14,
         }}>
-          <div style={{
+          <div className="gov-emblem" style={{
             width: 48,
             height: 48,
             display: 'flex',
@@ -247,7 +247,7 @@ export default function GovHeader() {
             }}>
               Karnataka State Police
             </div>
-            <div style={{
+            <div className="gov-subtitle" style={{
               fontSize: '12px',
               color: 'var(--text-muted)',
               fontWeight: 500,
@@ -260,8 +260,8 @@ export default function GovHeader() {
       </div>
 
       {/* Column 3: Home Minister Office & Text Scale (Right aligned) */}
-      <div style={{ flex: '1 1 0%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 16 }}>
-        <div style={{
+      <div className="gov-col-right" style={{ flex: '1 1 0%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 16 }}>
+        <div className="gov-text-scale" style={{
           display: 'flex',
           alignItems: 'center',
           gap: 8,
@@ -356,7 +356,7 @@ export default function GovHeader() {
           </button>
         </div>
 
-        <div style={{
+        <div className="gov-col-right-office" style={{
           display: 'flex',
           alignItems: 'center',
           gap: 12,

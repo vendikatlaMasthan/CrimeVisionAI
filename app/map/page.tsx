@@ -305,6 +305,7 @@ export default function HeatmapPage() {
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [geoJson, setGeoJson] = useState<any>(null);
   const [loadingMap, setLoadingMap] = useState(true);
+  const [mapError, setMapError] = useState<string | null>(null);
 
   // New spatiotemporal drill-down, heatmap, and overlay states
   const [viewLevel, setViewLevel] = useState<'state' | 'district' | 'station'>('state');
@@ -321,9 +322,16 @@ export default function HeatmapPage() {
     }
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+      if (active) {
+        setMapError("Failed to load map data — showing cached districts");
+        setLoadingMap(false);
+      }
+    }, 5000); // 5s timeout
 
-    fetch('https://raw.githubusercontent.com/inosaint/StatesOfIndia/master/karnataka.geojson', { signal: controller.signal })
+    // Fetch from local assets/public instead of raw.githubusercontent.com
+    fetch('/karnataka.geojson', { signal: controller.signal })
       .then(res => {
         clearTimeout(timeoutId);
         if (!res.ok) throw new Error("Status " + res.status);
@@ -338,8 +346,10 @@ export default function HeatmapPage() {
       })
       .catch(err => {
         clearTimeout(timeoutId);
+        if (err.name === 'AbortError') return; // expected on timeout/cleanup, ignore
         console.error("Failed to load Karnataka GeoJSON, using schematic fallback:", err);
         if (active) {
+          setMapError("Failed to load map data — showing cached districts");
           setLoadingMap(false);
         }
       });
@@ -531,11 +541,35 @@ export default function HeatmapPage() {
       </div>
 
       {/* Main Grid: SVG Map left, Slide-in Panel right */}
-      <div style={{ display: 'grid', gridTemplateColumns: activeDistrict ? '1fr 360px' : '1fr', gap: '20px', alignItems: 'stretch' }}>
+      <div className={`grid grid-cols-1 ${activeDistrict ? 'lg:grid-cols-[1fr_360px]' : ''} gap-5 items-stretch`}>
         
         {/* MAP COLUMN */}
         <div className="glass-card relative" style={{ background: '#FFFFFF', padding: '24px', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '620px', overflow: 'hidden' }}>
           
+          {/* Error Banner */}
+          {mapError && (
+            <div style={{
+              position: 'absolute',
+              top: '20px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 20,
+              background: '#FEF2F2',
+              border: '1.5px solid #FCA5A5',
+              borderRadius: '16px',
+              padding: '8px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+            }}>
+              <AlertTriangle size={14} color="#EF4444" />
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#991B1B' }}>
+                {mapError}
+              </span>
+            </div>
+          )}
+
           {/* Statewide Stats Strip (Top Left Floating) */}
           <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 10, background: '#FFFFFF', border: '1px solid var(--cyber-border)', borderRadius: '12px', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '180px' }}>
             <span style={{ fontSize: '12px', fontWeight: 900, color: 'var(--text-dim)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Statewide Overview</span>
@@ -925,7 +959,20 @@ export default function HeatmapPage() {
 
           {/* Interactive Floating Tooltip HUD */}
           {hoveredDistrict && (() => {
-            const hDist = DISTRICT_DATA[hoveredDistrict];
+            const hDist = DISTRICT_DATA[hoveredDistrict] || {
+              score: 30,
+              level: 'LOW',
+              color: '#27AE60',
+              crimes: 1000,
+              lat: 0,
+              lng: 0,
+              policeStations: 10,
+              officers: 10,
+              arrests: 10,
+              solved: 10,
+              breakdown: [],
+              recommendations: ['General patrol reinforcement']
+            };
             const sDist = SOCIO_ECONOMIC_DATA[hoveredDistrict] || { unemployment: 5.0, density: 200, urbanization: 'Medium' };
             return (
               <div
@@ -937,22 +984,22 @@ export default function HeatmapPage() {
                   zIndex: 100,
                   transform: 'translateY(-100%)',
                   background: '#FFFFFF',
-                  borderColor: hDist.color,
+                  borderColor: hDist?.color ?? '#27AE60',
                   boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
                   pointerEvents: 'none',
                   borderRadius: '16px',
                   padding: '16px',
-                  border: `1.5px solid ${hDist.color}`
+                  border: `1.5px solid ${hDist?.color ?? '#27AE60'}`
                 }}
               >
                 <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '14px' }}>
                   {hoveredDistrict.toUpperCase()} DISTRICT
                 </div>
                 <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                  Threat Score: <strong style={{ color: hDist.color }}>{hDist.score}/100 ({hDist.level})</strong>
+                  Threat Score: <strong style={{ color: hDist?.color ?? '#27AE60' }}>{(hDist?.score ?? 30)}/100 ({(hDist?.level ?? 'LOW')})</strong>
                 </div>
                 <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                  Active Cases: <strong>{hDist.crimes.toLocaleString()}</strong>
+                  Active Cases: <strong>{(hDist?.crimes ?? 1000).toLocaleString()}</strong>
                 </div>
                 {/* Social Overlay stats */}
                 {socialOverlay === 'density' && (

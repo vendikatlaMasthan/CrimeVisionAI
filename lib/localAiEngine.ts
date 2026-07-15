@@ -385,6 +385,29 @@ export const localAI = {
 
     return overview + suspectIntel + recommendations + publicRisk;
   },
+
+  generateCaseSummaryJson(fNum: string, sName: string, dist: string, cat: string): string {
+    const riskScore = Math.min(99, Math.max(30, (fNum.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % 35) + 60));
+    const confidence = Math.min(95, Math.max(50, 75 + (sName.length % 15)));
+    
+    const report = {
+      executiveSummary: `Restricted intelligence dossier compiled on case #${fNum}. The primary target suspect, ${sName}, has been identified as a key organizer of illegal ${cat.toLowerCase()} activities within the ${dist} division, coordinating regional logistics pipelines.`,
+      caseOverview: `Under investigation of local complaints and patterns, Karnataka Police registered case docket #${fNum} for active ${cat.toLowerCase()} operations. Cellular attachment histories map the target's mobile device to local tower sectors within the event perimeter during incident times. LPR cameras also registered the suspect's vehicle crossing checkpoints.`,
+      findings: `• Cellular logs place the suspect's device active at cell site coordinates matching the crime scene during the event window.\n• Financial records track anomalous deposits matching known illegal transport payoff schedules.\n• Highway cameras (LPR) captured registered vehicle KA-03-P-7281 near checkpoint locations.`,
+      legalSections: cat.toLowerCase().includes('cyber') 
+        ? "Sections 66C & 66D Information Technology Act, 2000; Section 318 BNS (Cheating)" 
+        : cat.toLowerCase().includes('narcotics') 
+        ? "Sections 8(c), 20, 22 Narcotic Drugs and Psychotropic Substances Act, 1985" 
+        : cat.toLowerCase().includes('mining') 
+        ? "Section 4 & 21 MMRD Act, 1957; Section 379 IPC (Illegal Extraction)"
+        : "Section 303 BNS (Theft); Section 351 BNS (Criminal Force)",
+      pendingTasks: `• Secure Look Out Circular (LOC) approval from the Home Ministry.\n• Request formal bank gateway transaction histories and freeze accounts.\n• Execute search warrant on scrap yards and transport centers.`,
+      officerNotes: `Target exhibits elevated threat index. Recommend deploying patrol checkposts along NH corridor routes and border districts. Flight risk is moderate; secure travel documentation locks.`,
+      riskScore,
+      confidence
+    };
+    return JSON.stringify(report);
+  }
 };
 
 export default localAI;
