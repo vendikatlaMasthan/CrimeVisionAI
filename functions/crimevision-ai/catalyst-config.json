@@ -1,5 +1,10 @@
 {
-  "name": "crimevision-ai",
-  "type": "advanced_io",
-  "runtime": "nodejs20"
+  "deployment": {
+    "name": "crimevision-ai",
+    "stack": "node20",
+    "type": "advancedio"
+  },
+  "execution": {
+    "main": "index.js"
+  }
 }
